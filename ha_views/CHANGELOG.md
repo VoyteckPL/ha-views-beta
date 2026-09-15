@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0-beta.55
+
+- mobile first-view creator is compact and scrollable, keeping background-selection actions reachable on short screens.
+
 ## 0.3.0-beta.54
 
 - restored full-width background expansion while zooming on mobile;
