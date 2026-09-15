@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.45
+
+- preserve the current zoom when toggling between View and Edit modes;
+- switching to another view still resets its camera to the default fit.
+
+
 ## 0.3.0-beta.44
 
 - recovery build: restored the stable beta.42 frontend engine after beta.43 could cause browser crashes;
