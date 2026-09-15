@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.37
+
+- fixed a CSS rule that kept a previously loaded image visible after choosing a solid colour;
+- a solid-colour view now fully hides the image layer before rendering the canvas.
+
+
 ## 0.3.0-beta.36
 
 - aligned the Views menu vertically with Settings and Edit menus;
