@@ -44,14 +44,15 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* Compact mobile marker editor */
 @media(max-width:768px), (max-width:900px) and (pointer:coarse){
-  .editor{left:0!important;right:0!important;top:auto!important;bottom:0;width:100%;max-height:min(56dvh,560px);border-radius:18px 18px 0 0;border-bottom:0}
+  .editor{left:0!important;right:0!important;top:auto!important;bottom:0;width:100%;max-height:min(50dvh,560px);border-radius:18px 18px 0 0;border-bottom:0;touch-action:pan-y}
   .editor-head{padding:10px 12px;gap:8px;cursor:default}
   .editor-head h2{font-size:14px;margin:1px 0}
   .editor-head code{font-size:8px;line-height:1.25}
   .editor-head button{width:30px;height:30px}
   .editor-tabs{padding:6px;gap:5px}
   .editor-tabs button{height:32px;font-size:11px}
-  .editor-content{padding:7px 9px}
+  .editor-content{padding:7px 9px;touch-action:pan-y;overscroll-behavior-y:contain}
+  .editor input,.editor select,.editor textarea{touch-action:manipulation}
   .editor-section{margin-bottom:5px;border-radius:8px}
   .editor-section summary{padding:8px 10px;font-size:11px}
   .editor-section-body{padding:6px 8px}
