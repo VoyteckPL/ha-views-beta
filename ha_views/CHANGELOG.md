@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.42
+
+- marker width and height now snap to the currently selected grid size while resizing;
+- disabling the grid retains fully free marker resizing.
+
+
 ## 0.3.0-beta.41
 
 - completed static tooltip translation and added automatic title translation;
