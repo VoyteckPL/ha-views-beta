@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.53
+
+- render restored-view markers immediately on startup; a slow initial state refresh can no longer leave the scene blank;
+- mobile Edit marker focus is 20% closer (2.1×), with a 2.35× cap;
+- clip the expanded portrait camera so the grid and canvas edge never paint in the clean area outside the background.
+
 ## 0.3.0-beta.52
 
 - mobile Edit camera can move beyond the lower scene edge, keeping low markers above the editor;
