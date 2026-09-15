@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0-beta.41
+
+- completed static tooltip translation and added automatic title translation;
+- menus close when clicking outside them;
+- Views and Edit controls are disabled while Integrations is open;
+- grid size is now a compact continuous slider with a 1–20 range;
+- removed the unnecessary background arrow;
+- added an animated background-upload indicator over the first-run canvas.
+
+
 ## 0.3.0-beta.40
 
 - close the Views menu after creating a view;
