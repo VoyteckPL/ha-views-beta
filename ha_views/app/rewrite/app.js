@@ -4,6 +4,7 @@ const clone = value => JSON.parse(JSON.stringify(value));
 const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
 const uid = () => `m_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 const DESIGN_WIDTH = 1600;
+const ACTIVE_VIEW_CACHE_KEY = 'ha-views:last-active-view';
 
 let uiLanguage = 'en';
 const TRANSLATIONS = {
@@ -229,6 +230,10 @@ function ensureMultiViewModel() {
   }
   model.viewOrder = (model.viewOrder || []).filter(id => model.views[id]);
   Object.keys(model.views).forEach(id => { if (!model.viewOrder.includes(id)) model.viewOrder.push(id); });
+  try {
+    const rememberedView = localStorage.getItem(ACTIVE_VIEW_CACHE_KEY);
+    if (rememberedView && model.views[rememberedView]) model.activeViewId = rememberedView;
+  } catch {}
   if (!model.views[model.activeViewId]) model.activeViewId = model.viewOrder[0];
   Object.values(model.views).forEach((view, index) => {
     view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.backgroundTransforms ||= {};
@@ -251,7 +256,7 @@ function renderViewSelector() {
 }
 async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
-  closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; attachActiveEntities(); currentBackground = '';
+  closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
   await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates();
   if (persist) scheduleSave(true);
@@ -683,11 +688,11 @@ function applyMarkerStyle(node, marker) {
     if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize}px`, height:`${s.iconSize}px`, objectFit:'contain' });
   }
   if (marker.type === 'gauge') {
-    // Text anchors are deliberately pixel-based, so marker resizing never changes
-    // the saved visual position of the name, value or percentage.
-    if (label) Object.assign(label.style, { top: `calc(91px + ${s.labelY}px)` });
-    if (value) Object.assign(value.style, { top: `calc(64px + ${s.valueY}px)` });
-    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { top: `calc(36px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale}px` });
+    // Anchor labels to the marker centre: resizing the Gauge changes neither their
+    // horizontal nor vertical screen position. The Position sliders stay additive.
+    if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + 37px + ${s.labelY}px)` });
+    if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + 10px + ${s.valueY}px)` });
+    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% - 18px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale}px` });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
     const gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
@@ -866,7 +871,22 @@ function onMarkerClick(event) {
   if (!editMode) return openMoreInfo(event.currentTarget.dataset.entityId);
   selectMarker(event.currentTarget.dataset.entityId);
 }
-function selectMarker(entityId) { selectedId = entityId; renderMarkers(); openEditor(); }
+function focusSelectedMarkerOnMobile() {
+  if (!mobileView() || !editMode || !selectedId) return;
+  const marker = model.entities[selectedId]; if (!marker) return;
+  const nextZoom = clamp(Math.max(viewZoom, 1.35), minViewZoom(), 1.6);
+  const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
+  const markerX = Number(marker.xPercent || 50) / 100 * sceneWidth;
+  const markerY = Number(marker.yPercent || 50) / 100 * sceneHeight;
+  const targetX = els.viewport.clientWidth / 2;
+  const targetY = Math.max(74, els.viewport.clientHeight * .27);
+  viewZoom = nextZoom; viewPanX = targetX - markerX * nextZoom; viewPanY = targetY - markerY * nextZoom;
+  applyViewTransform();
+}
+function selectMarker(entityId) {
+  selectedId = entityId; renderMarkers(); openEditor();
+  requestAnimationFrame(() => requestAnimationFrame(focusSelectedMarkerOnMobile));
+}
 function hideSelection() { els.selection.classList.remove('visible'); }
 function syncSelection() {
   const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return hideSelection();
@@ -902,7 +922,7 @@ function startDrag(event) {
     marker.xPercent = snapPercent(start.px + dx / r.width * 100); marker.yPercent = snapPercent(start.py + dy / r.height * 100);
     node.style.left = `${marker.xPercent}%`; node.style.top = `${marker.yPercent}%`; if (selectedId === entityId) syncSelection();
   };
-  const up = () => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up); els.editor.classList.remove('marker-moving'); node.dataset.dragged = moved ? '1' : '0'; if (moved) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); positionEditor(); } };
+  const up = () => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up); try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {} els.editor.classList.remove('marker-moving'); node.dataset.dragged = moved ? '1' : '0'; if (moved) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); positionEditor(); } };
   node.addEventListener('pointermove', move); node.addEventListener('pointerup', up, { once: true }); node.addEventListener('pointercancel', up, { once: true });
 }
 
@@ -1245,6 +1265,9 @@ function bindEvents() {
     setViewZoom(viewZoom * Math.exp(-event.deltaY * .0015), event.clientX, event.clientY);
   }, { passive: false });
   // Touch gestures and desktop mouse dragging are deliberately separate.
+  els.editorContent?.addEventListener('focusin', () => {
+    viewPointers.clear(); panGesture = null; pinchGesture = null;
+  });
   els.scene?.addEventListener('mousedown', startDesktopPan);
   els.scene?.addEventListener('pointerdown', viewportPointerDown); els.scene?.addEventListener('pointermove', viewportPointerMove);
   els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp);
@@ -1295,7 +1318,7 @@ async function boot() {
   });
   const gaugeMigrated = migrateGaugeZeroOffsets();
   if (legacyMigrated || multiMigrated || gaugeMigrated) scheduleSave(true);
-  updateSceneGeometry(); els.markers.classList.add('background-pending'); await loadBackgrounds(true); resetViewZoom(); mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop'; await refreshStates(); els.markers.classList.remove('background-pending'); updateSceneGeometry(); connectEvents();
+  updateSceneGeometry(); els.markers.classList.add('background-pending'); await loadBackgrounds(true); renderMarkers(); resetViewZoom(); mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop'; await refreshStates(); els.markers.classList.remove('background-pending'); updateSceneGeometry(); connectEvents();
 }
 
 boot();
