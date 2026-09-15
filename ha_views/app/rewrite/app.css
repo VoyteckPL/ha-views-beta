@@ -394,3 +394,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.37 — an explicitly hidden background image must never cover a solid canvas */
 .scene>img[hidden]{display:none!important}
+
+/* beta.38 — show the selected colour on the first-run layer as well as the scene */
+.scene-empty.solid-background{background:var(--solid-background)!important}
+.scene-empty.solid-background .empty-entities-message,.scene-empty.solid-background .welcome-card{background:rgba(7,27,39,.78)}
