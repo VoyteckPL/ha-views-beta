@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.47
+
+- completed the safe explicit translation of onboarding buttons and first-entity guidance;
+- keeps the beta.46 Edit-mode highlight and stable zoom behaviour.
+
+
 ## 0.3.0-beta.46
 
 - safely added explicit bilingual labels for the first-view onboarding;
