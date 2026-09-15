@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-43">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-44">
 </head>
 <body>
   <header class="topbar">
     <div class="view-tabs-group">
       <nav id="scene-tabs" class="tabs scene-tabs" aria-label="Widoki"></nav>
-      <button id="view-manage" class="icon-action" title="Zarządzaj widokami" aria-label="Zarządzaj widokami"><i class="mdi mdi-view-dashboard-edit-outline"></i></button>
+      <div class="view-manage-anchor"><button id="view-manage" class="icon-action" title="Zarządzaj widokami" aria-label="Zarządzaj widokami"><i class="mdi mdi-view-dashboard-edit-outline"></i></button>
       <div id="view-switcher" class="view-switcher view-management">
         <button id="view-add" class="view-action" title="Dodaj widok" aria-label="Dodaj widok"><i class="mdi mdi-plus"></i><span>Dodaj widok</span></button>
         <button id="view-rename" class="view-action" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i><span>Zmień nazwę</span></button>
@@ -20,17 +20,20 @@
         <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span><i class="mdi mdi-chevron-left"></i></button>
         <div id="background-bar" class="background-bar">
           <select id="background-select" aria-label="Wybierz tło"></select>
-          <div class="background-palette" aria-label="Paleta kolorów">
-            <button data-bg-colour="#FFFFFF" style="--swatch:#FFFFFF"></button><button data-bg-colour="#DCE8EF" style="--swatch:#DCE8EF"></button><button data-bg-colour="#9BC1D8" style="--swatch:#9BC1D8"></button><button data-bg-colour="#607D8B" style="--swatch:#607D8B"></button><button data-bg-colour="#03101A" style="--swatch:#03101A"></button><button data-bg-colour="#102A3A" style="--swatch:#102A3A"></button>
-            <button data-bg-colour="#20B9E7" style="--swatch:#20B9E7"></button><button data-bg-colour="#147EA5" style="--swatch:#147EA5"></button><button data-bg-colour="#22D69B" style="--swatch:#22D69B"></button><button data-bg-colour="#39B86C" style="--swatch:#39B86C"></button><button data-bg-colour="#FFD166" style="--swatch:#FFD166"></button><button data-bg-colour="#F59E0B" style="--swatch:#F59E0B"></button>
-            <button data-bg-colour="#FF6374" style="--swatch:#FF6374"></button><button data-bg-colour="#E63946" style="--swatch:#E63946"></button><button data-bg-colour="#B66DFF" style="--swatch:#B66DFF"></button><button data-bg-colour="#7C4DFF" style="--swatch:#7C4DFF"></button><button data-bg-colour="#EC4899" style="--swatch:#EC4899"></button><button data-bg-colour="#8B5E3C" style="--swatch:#8B5E3C"></button>
+          <div class="background-colour-picker color-picker">
+            <button id="background-color-toggle" type="button" class="color-current" data-bg-color-toggle style="background:#0d2838" aria-label="Wybierz kolor tła"></button>
+            <input id="background-color" class="color-native" type="color" value="#0d2838" aria-label="Własny kolor">
+            <div class="color-menu"><div class="color-palette">
+              <button type="button" data-bg-colour="#FFFFFF" style="background:#FFFFFF"></button><button type="button" data-bg-colour="#DCE8EF" style="background:#DCE8EF"></button><button type="button" data-bg-colour="#9BC1D8" style="background:#9BC1D8"></button><button type="button" data-bg-colour="#607D8B" style="background:#607D8B"></button><button type="button" data-bg-colour="#03101A" style="background:#03101A"></button><button type="button" data-bg-colour="#102A3A" style="background:#102A3A"></button>
+              <button type="button" data-bg-colour="#20B9E7" style="background:#20B9E7"></button><button type="button" data-bg-colour="#147EA5" style="background:#147EA5"></button><button type="button" data-bg-colour="#22D69B" style="background:#22D69B"></button><button type="button" data-bg-colour="#39B86C" style="background:#39B86C"></button><button type="button" data-bg-colour="#FFD166" style="background:#FFD166"></button><button type="button" data-bg-colour="#F59E0B" style="background:#F59E0B"></button>
+              <button type="button" data-bg-colour="#FF6374" style="background:#FF6374"></button><button type="button" data-bg-colour="#E63946" style="background:#E63946"></button><button type="button" data-bg-colour="#B66DFF" style="background:#B66DFF"></button><button type="button" data-bg-colour="#7C4DFF" style="background:#7C4DFF"></button><button type="button" data-bg-colour="#EC4899" style="background:#EC4899"></button><button type="button" data-bg-colour="#8B5E3C" style="background:#8B5E3C"></button>
+            </div><button id="background-rgb-open" type="button" class="rgb-button">Własny kolor RGB…</button></div>
           </div>
-          <div class="background-rgb"><i class="mdi mdi-palette-outline"></i><input id="background-rgb" type="text" inputmode="text" maxlength="7" placeholder="#RRGGBB" aria-label="Własny kolor RGB"><input id="background-color" type="color" value="#0d2838" aria-label="Własny kolor"></div>
-          <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i><span>Wgraj obraz</span></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i><span>Usuń tło</span></button></div>
+          <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i></button></div>
           <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           <span id="background-status"></span>
         </div>
-      </div>
+      </div></div>
     </div>
     <div class="top-actions">
       <div id="settings-menu" class="compact-menu">
@@ -109,7 +112,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b33</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b34</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -150,6 +153,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-43"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260915-44"></script>
 </body>
 </html>
