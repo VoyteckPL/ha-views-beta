@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0-beta.36
+
+- aligned the Views menu vertically with Settings and Edit menus;
+- corrected the background submenu to open to the right;
+- forced solid-colour rendering above all empty-view overlays;
+- solid colour now clears the selected image state and immediately enables marker workflow.
+
+
 ## 0.3.0-beta.35
 
 - increased separation between the Views icon and its menu;
