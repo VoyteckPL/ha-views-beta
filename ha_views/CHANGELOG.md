@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0-beta.40
+
+- close the Views menu after creating a view;
+- keep the last active view highlighted while browsing Integrations;
+- opening Background now closes marker editing and More Info;
+- solid-colour canvases preserve the previous image ratio;
+- added a saved colour-canvas format selector: 16:9, 4:3, 1:1 and 9:16.
+
+
 ## 0.3.0-beta.39
 
 - fixed the no-image background fitting path;
