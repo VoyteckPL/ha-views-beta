@@ -66,7 +66,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), bgRgb: $('#background-rgb'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -178,9 +178,14 @@ function applyBackgroundColour() {
   if (els.emptyColor) els.emptyColor.value = colour || '#0d2838';
 }
 function setBackgroundColour(colour) {
-  const view = activeSceneView(); if (!view) return;
-  view.backgroundColor = colour; view.onboardingDone = true;
-  applyBackgroundColour(); updateEmptyState(); scheduleSave(true);
+  const view = activeSceneView(); if (!view || !/^#[0-9a-f]{6}$/i.test(colour || '')) return;
+  view.background = ''; currentBackground = '';
+  view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
+  els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
+  els.scene.style.backgroundImage = 'none'; els.scene.style.backgroundColor = view.backgroundColor;
+  if (els.bgColor) els.bgColor.value = view.backgroundColor;
+  if (els.bgColorToggle) els.bgColorToggle.style.background = view.backgroundColor;
+  applyBackgroundColour(); updateEmptyState(); updateSceneGeometry(); scheduleSave(true);
 }
 function attachActiveEntities() {
   const view = activeSceneView();
@@ -1157,10 +1162,11 @@ function bindEvents() {
   $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeEntity(m.entityId); });
   $('#background-upload').addEventListener('click', () => els.bgFile.click()); $('#empty-upload').addEventListener('click', () => els.bgFile.click()); els.bgFile.addEventListener('change', () => uploadBackground(els.bgFile.files[0]));
-  const setBackgroundMenuColour = colour => { if (!/^#[0-9a-f]{6}$/i.test(colour || '')) return; els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; if (els.bgColor) els.bgColor.value = colour; if (els.bgRgb) els.bgRgb.value = colour.toUpperCase(); setBackgroundColour(colour); };
+  const setBackgroundMenuColour = colour => { if (!/^#[0-9a-f]{6}$/i.test(colour || '')) return; els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; setBackgroundColour(colour); };
   els.bgColor?.addEventListener('input', () => setBackgroundMenuColour(els.bgColor.value));
-  els.bgRgb?.addEventListener('change', () => setBackgroundMenuColour(els.bgRgb.value.trim()));
-  els.backgroundBar?.addEventListener('click', event => { const swatch = event.target.closest('[data-bg-colour]'); if (swatch) setBackgroundMenuColour(swatch.dataset.bgColour); });
+  els.bgColorToggle?.addEventListener('click', () => els.backgroundBar.querySelector('.color-menu')?.classList.toggle('visible'));
+  els.bgRgbOpen?.addEventListener('click', async () => { const value = await appPrompt({ title:'Własny kolor RGB', message:'Podaj kolor w formacie #RRGGBB.', value:activeSceneView()?.backgroundColor || '#0D2838', confirmText:'Ustaw' }); if (value) setBackgroundMenuColour(value.trim()); });
+  els.backgroundBar?.addEventListener('click', event => { const swatch = event.target.closest('[data-bg-colour]'); if (swatch) { setBackgroundMenuColour(swatch.dataset.bgColour); els.backgroundBar.querySelector('.color-menu')?.classList.remove('visible'); } });
   els.emptyColorStart?.addEventListener('click', () => setBackgroundColour(els.emptyColor.value));
   els.emptyOpenIntegrations?.addEventListener('click', () => els.integrationsButton.click());
   els.bgSelect.addEventListener('change', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
