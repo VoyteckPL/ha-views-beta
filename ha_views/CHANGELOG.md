@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.50
+
+- Gauge label, value and percentage now use fixed pixel anchors;
+- resizing a Gauge no longer shifts those text layers or changes their saved offsets.
+
+
 ## 0.3.0-beta.49
 
 - reduced minimum marker dimensions: Badge to 36 × 24 px and Gauge to 44 × 28 px;
