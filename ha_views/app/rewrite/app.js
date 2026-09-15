@@ -423,6 +423,13 @@ function currentBackgroundTransform() {
 }
 function applyBackgroundTransform() {
   const card = els.sceneCard; if (!card) return;
+  const hasImage = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0;
+  if (!hasImage) {
+    card.style.width = '100%'; card.style.marginLeft = '0'; card.style.marginRight = '0';
+    els.image.style.objectFit = 'fill'; els.image.style.transform = '';
+    requestAnimationFrame(updateSceneGeometry);
+    return;
+  }
   const ratio = els.image.naturalWidth / Math.max(1, els.image.naturalHeight);
   const panorama = mobileWidePanorama();
 
