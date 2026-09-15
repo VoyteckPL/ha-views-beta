@@ -404,3 +404,6 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.41 — global menu behaviour, compact slider and background upload progress */
 #view-manage:disabled,#edit-toggle:disabled{opacity:.34;cursor:not-allowed;filter:saturate(.25)}.grid-size-row{grid-template-columns:22px minmax(0,1fr) 72px 20px}.grid-size-row input[type=range]{width:72px;accent-color:var(--cyan)}.grid-size-row output{color:#8fe3fb;text-align:right;font-size:9px}.background-upload-progress{position:absolute;inset:0;z-index:12;display:none;place-items:center;align-content:center;gap:8px;background:rgba(4,18,27,.78);backdrop-filter:blur(3px);color:#dff7ff;font-size:11px;font-weight:750}.background-upload-progress.visible{display:grid}.background-upload-progress i{font-size:34px;color:#5cdbff;animation:ha-views-spin .8s linear infinite}@keyframes ha-views-spin{to{transform:rotate(360deg)}}
+
+/* beta.46 — unambiguous Edit mode state */
+#edit-toggle{transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease}#edit-toggle[aria-pressed="true"]{background:linear-gradient(135deg,#0ba5d0,#08779f)!important;border-color:#79e8ff!important;color:#fff!important;box-shadow:0 0 0 2px rgba(93,224,255,.28),0 8px 22px rgba(15,181,229,.28)!important}#edit-toggle[aria-pressed="false"]{background:#102b3b;color:#b6d1dd}
