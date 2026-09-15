@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0-beta.35
+
+- increased separation between the Views icon and its menu;
+- aligned all primary menus with a consistent vertical gap;
+- enforced left-opening background submenu;
+- added selectable grid size: small, medium, large and very large;
+- strengthened solid-colour canvas refresh after selection.
+
+
 ## 0.3.0-beta.34
 
 - fixed menu anchoring for views, settings and edit controls;
