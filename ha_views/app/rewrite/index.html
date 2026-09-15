@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-55">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-56">
 </head>
 <body>
   <header class="topbar">
@@ -57,17 +57,17 @@
             <div id="scene-empty" class="scene-empty"><div id="background-upload-progress" class="background-upload-progress" aria-live="polite"><i class="mdi mdi-loading"></i><span>Wgrywanie tła…</span></div>
               <div class="welcome-card">
                 <div class="welcome-icon"><i class="mdi mdi-view-dashboard-plus-outline"></i></div>
-                <h2>Zacznij tworzyć pierwszy widok</h2>
-                <p>Stwórz wizualny pulpit w trzech prostych krokach.</p>
+                <h2 data-i18n="Zacznij tworzyć pierwszy widok">Zacznij tworzyć pierwszy widok</h2>
+                <p data-i18n="Stwórz wizualny pulpit w trzech prostych krokach.">Stwórz wizualny pulpit w trzech prostych krokach.</p>
                 <ol>
-                  <li>Wybierz obraz albo kolor tła.</li>
-                  <li>Otwórz <strong>Integracje</strong> i dodaj encję.</li>
-                  <li>Użyj <strong>Edytuj</strong>, aby ustawić i ostylować marker.</li>
+                  <li data-i18n="Wybierz obraz albo kolor tła.">Wybierz obraz albo kolor tła.</li>
+                  <li data-i18n="Otwórz Integracje i dodaj encję.">Otwórz Integracje i dodaj encję.</li>
+                  <li data-i18n="Użyj Edytuj, aby ustawić i ostylować marker.">Użyj Edytuj, aby ustawić i ostylować marker.</li>
                 </ol>
                 <div class="welcome-actions">
-                  <button id="empty-upload" class="primary"><i class="mdi mdi-image-plus-outline"></i> Wgraj obraz</button>
-                  <label class="welcome-color"><span>Kolor tła</span><input id="empty-background-color" type="color" value="#0d2838" aria-label="Kolor tła"></label>
-                  <button id="empty-color-start"><i class="mdi mdi-palette-outline"></i> Zacznij z kolorem</button>
+                  <button id="empty-upload" class="primary" data-i18n="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i> Wgraj obraz</button>
+                  <label class="welcome-color"><span data-i18n="Kolor tła">Kolor tła</span><input id="empty-background-color" type="color" value="#0d2838" aria-label="Kolor tła"></label>
+                  <button id="empty-color-start" data-i18n="Zacznij z kolorem"><i class="mdi mdi-palette-outline"></i> Zacznij z kolorem</button>
                 </div>
               </div>
               <div class="empty-entities-message">
@@ -113,7 +113,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b45</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b46</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -154,6 +154,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-55"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260915-56"></script>
 </body>
 </html>
