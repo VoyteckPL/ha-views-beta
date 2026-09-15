@@ -8,7 +8,7 @@ const DESIGN_WIDTH = 1600;
 let uiLanguage = 'en';
 const TRANSLATIONS = {
   en: {
-    'Widoki':'Views','Integracje':'Integrations','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
+    'Widoki':'Views','Integracje':'Integrations','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Zarządzaj tłem':'Manage background','Tło':'Background','Dodaj widok':'Add view','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
     'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Wersja aplikacji HA Views':'HA Views app version',
@@ -66,7 +66,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), bgRgb: $('#background-rgb'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -261,6 +261,12 @@ function applySnapUi() {
   const enabled = model.settings?.snapEnabled !== false;
   els.body.classList.toggle('snap-enabled', enabled);
   if (els.snapToggle) { els.snapToggle.classList.toggle('active', enabled); els.snapToggle.title = translateValue(enabled ? 'Siatka włączona' : 'Siatka wyłączona'); els.snapToggle.setAttribute('aria-label', els.snapToggle.title); }
+  if (els.gridStatus) els.gridStatus.textContent = enabled ? 'ON' : 'OFF';
+}
+function closeCompactMenus() {
+  els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
+  els.editMenu?.classList.remove('open'); els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active');
+  els.backgroundBar?.classList.remove('open','onboarding'); els.bgManage?.classList.remove('active');
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
@@ -1123,14 +1129,15 @@ function bindEvents() {
     applyLanguage(); scheduleSave(true);
   });
   els.sceneTabs?.addEventListener('click', event => { const tab=event.target.closest('[data-scene-view]'); if(!tab)return; showMainView('overview'); switchSceneView(tab.dataset.sceneView); });
-  els.integrationsButton?.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active'); showMainView('integrations'); });
-  els.viewManage?.addEventListener('click', () => { const open = !els.viewSwitcher.classList.contains('open'); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); els.backgroundBar.classList.remove('open'); els.bgManage.classList.remove('active'); });
+  els.settingsToggle?.addEventListener('click', () => { const open = !els.settingsMenu?.classList.contains('open'); closeCompactMenus(); els.settingsMenu?.classList.toggle('open', open); els.settingsToggle?.classList.toggle('active', open); });
+  els.integrationsButton?.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
+  els.viewManage?.addEventListener('click', () => { const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
-  els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.innerHTML = editMode ? '&#10003;' : '&#9998;'; els.editToggle.title = translateValue(editMode ? 'Zakończ edycję' : 'Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (!editMode) { closeEditor(); els.backgroundBar.classList.remove('open'); els.bgManage.classList.remove('active'); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); }); });
+  els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
-  els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('open','onboarding'); els.bgManage.classList.remove('active'); els.bgStatus.textContent = ''; } els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active'); if (!open) { els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } });
+  els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
   [els.bgScale].forEach(control => { control?.addEventListener('input', updateBackgroundTransform); control?.addEventListener('change', updateBackgroundTransform); });
   els.mobilePanStart?.addEventListener('change', updateMobilePanStart);
@@ -1150,7 +1157,10 @@ function bindEvents() {
   $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeEntity(m.entityId); });
   $('#background-upload').addEventListener('click', () => els.bgFile.click()); $('#empty-upload').addEventListener('click', () => els.bgFile.click()); els.bgFile.addEventListener('change', () => uploadBackground(els.bgFile.files[0]));
-  els.bgColor?.addEventListener('input', () => { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; setBackgroundColour(els.bgColor.value); });
+  const setBackgroundMenuColour = colour => { if (!/^#[0-9a-f]{6}$/i.test(colour || '')) return; els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; if (els.bgColor) els.bgColor.value = colour; if (els.bgRgb) els.bgRgb.value = colour.toUpperCase(); setBackgroundColour(colour); };
+  els.bgColor?.addEventListener('input', () => setBackgroundMenuColour(els.bgColor.value));
+  els.bgRgb?.addEventListener('change', () => setBackgroundMenuColour(els.bgRgb.value.trim()));
+  els.backgroundBar?.addEventListener('click', event => { const swatch = event.target.closest('[data-bg-colour]'); if (swatch) setBackgroundMenuColour(swatch.dataset.bgColour); });
   els.emptyColorStart?.addEventListener('click', () => setBackgroundColour(els.emptyColor.value));
   els.emptyOpenIntegrations?.addEventListener('click', () => els.integrationsButton.click());
   els.bgSelect.addEventListener('change', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
