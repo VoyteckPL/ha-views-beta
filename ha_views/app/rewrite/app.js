@@ -401,7 +401,10 @@ function clampViewPan() {
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
   const maxX = Math.max(0, els.scene.offsetWidth * viewZoom - els.viewport.clientWidth);
   const maxY = Math.max(0, els.scene.offsetHeight * viewZoom - els.viewport.clientHeight);
-  viewPanX = clamp(viewPanX, -maxX, 0); viewPanY = clamp(viewPanY, -maxY, 0);
+  // While editing on a phone, allow the camera beyond the lower scene edge.
+  // This keeps a marker near the bottom visible above the bottom editor.
+  const editBottomAllowance = mobileView() && editMode ? els.viewport.clientHeight * .78 : 0;
+  viewPanX = clamp(viewPanX, -maxX, 0); viewPanY = clamp(viewPanY, -(maxY + editBottomAllowance), 0);
 }
 function updatePanoramaIndicator() {
   const indicator = els.panoramaIndicator; if (!indicator) return;
@@ -874,7 +877,7 @@ function onMarkerClick(event) {
 function focusSelectedMarkerOnMobile() {
   if (!mobileView() || !editMode || !selectedId) return;
   const marker = model.entities[selectedId]; if (!marker) return;
-  const nextZoom = clamp(Math.max(viewZoom, 1.35), minViewZoom(), 1.6);
+  const nextZoom = clamp(Math.max(viewZoom, 1.75), minViewZoom(), 2);
   const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
   const markerX = Number(marker.xPercent || 50) / 100 * sceneWidth;
   const markerY = Number(marker.yPercent || 50) / 100 * sceneHeight;
@@ -1318,7 +1321,10 @@ async function boot() {
   });
   const gaugeMigrated = migrateGaugeZeroOffsets();
   if (legacyMigrated || multiMigrated || gaugeMigrated) scheduleSave(true);
-  updateSceneGeometry(); els.markers.classList.add('background-pending'); await loadBackgrounds(true); renderMarkers(); resetViewZoom(); mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop'; await refreshStates(); els.markers.classList.remove('background-pending'); updateSceneGeometry(); connectEvents();
+  updateSceneGeometry(); els.markers.classList.add('background-pending'); await loadBackgrounds(true);
+  // loadBackgrounds may run before the last-view entity reference is attached; attach it again
+  // explicitly so the restored view has markers even before the first state refresh succeeds.
+  attachActiveEntities(); renderMarkers(); resetViewZoom(); mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop'; await refreshStates(); els.markers.classList.remove('background-pending'); updateSceneGeometry(); connectEvents();
 }
 
 boot();
