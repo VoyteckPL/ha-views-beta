@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-beta.44
+
+- recovery build: restored the stable beta.42 frontend engine after beta.43 could cause browser crashes;
+- keeps the menu, background, grid-slider and marker-resize features from the stable engine;
+- translation/zoom refinement is temporarily deferred until it is tested safely.
+
+
 ## 0.3.0-beta.43
 
 - fixed translation of inline welcome text, button labels and dynamic name dialogs;
