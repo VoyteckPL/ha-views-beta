@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.49
+
+- reduced minimum marker dimensions: Badge to 36 × 24 px and Gauge to 44 × 28 px;
+- applies consistently in both size sliders and corner-handle resizing.
+
+
 ## 0.3.0-beta.48
 
 - translated all confirmation dialogs, prompts and copy-style notifications in both languages;
