@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-50">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-51">
 </head>
 <body>
   <header class="topbar">
@@ -17,7 +17,7 @@
         <button id="view-rename" class="view-action" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i><span>Zmień nazwę</span></button>
         <button id="view-duplicate" class="view-action" title="Duplikuj widok" aria-label="Duplikuj widok"><i class="mdi mdi-content-duplicate"></i><span>Duplikuj widok</span></button>
         <button id="view-delete" class="view-action danger" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
-        <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span><i class="mdi mdi-chevron-left"></i></button>
+        <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span></button>
         <div id="background-bar" class="background-bar">
           <select id="background-select" aria-label="Wybierz tło"></select>
           <div class="solid-canvas-row"><i class="mdi mdi-aspect-ratio"></i><span>Format koloru</span><select id="solid-canvas-ratio" aria-label="Format kolorowego tła"><option value="1.7777777778">16:9</option><option value="1.3333333333">4:3</option><option value="1">1:1</option><option value="0.5625">9:16</option></select></div>
@@ -43,7 +43,7 @@
         <div class="language-row"><i class="mdi mdi-translate"></i><span>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">EN</option><option value="pl">PL</option></select></div>
       </div>
       <button id="settings-toggle" class="icon-action" title="Ustawienia" aria-label="Ustawienia"><i class="mdi mdi-cog-outline"></i></button>
-      <div id="edit-menu" class="compact-menu edit-menu"><button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large"></i><span>Wielkość siatki</span><select id="grid-size" aria-label="Wielkość siatki"><option value="1">Mała</option><option value="2">Średnia</option><option value="5">Duża</option><option value="10">Bardzo duża</option></select></div></div>
+      <div id="edit-menu" class="compact-menu edit-menu"><button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large"></i><span>Wielkość siatki</span><input id="grid-size" type="range" min="1" max="20" step="1" value="1" aria-label="Wielkość siatki"><output id="grid-size-value">1</output></div></div>
       <button id="edit-toggle" class="icon-action primary" title="Edytuj widok" aria-label="Edytuj widok"><i class="mdi mdi-pencil-outline"></i></button>
     </div>
   </header>
@@ -54,7 +54,7 @@
         <div id="scene-viewport" class="scene-viewport">
           <div id="scene" class="scene">
             <img id="scene-image" alt="Tło widoku HA Views" draggable="false">
-            <div id="scene-empty" class="scene-empty">
+            <div id="scene-empty" class="scene-empty"><div id="background-upload-progress" class="background-upload-progress" aria-live="polite"><i class="mdi mdi-loading"></i><span>Wgrywanie tła…</span></div>
               <div class="welcome-card">
                 <div class="welcome-icon"><i class="mdi mdi-view-dashboard-plus-outline"></i></div>
                 <h2>Zacznij tworzyć pierwszy widok</h2>
@@ -113,7 +113,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b40</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b41</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -154,6 +154,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-50"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260915-51"></script>
 </body>
 </html>
