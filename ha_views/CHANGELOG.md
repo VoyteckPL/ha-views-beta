@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-beta.52
+
+- mobile Edit camera can move beyond the lower scene edge, keeping low markers above the editor;
+- selecting a mobile marker now uses a closer 1.75× focus zoom (still capped, never maximum);
+- explicitly reattach and render the restored view’s markers during startup.
+
+
 ## 0.3.0-beta.51
 
 - fixed Gauge text anchoring: resizing no longer shifts the name, state or percentage;
