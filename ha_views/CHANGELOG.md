@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0-beta.43
+
+- fixed translation of inline welcome text, button labels and dynamic name dialogs;
+- translate prompt title, message and confirmation labels;
+- preserve the current zoom when toggling Edit mode;
+- changing to another view remains the only action that resets canvas zoom.
+
+
 ## 0.3.0-beta.42
 
 - marker width and height now snap to the currently selected grid size while resizing;
