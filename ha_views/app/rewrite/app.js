@@ -66,7 +66,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridSize: $('#grid-size'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -175,6 +175,7 @@ function applyBackgroundColour() {
   const colour = activeSceneView()?.backgroundColor || '';
   els.scene.style.background = colour || 'linear-gradient(145deg,#0d2838,#0a1c27)';
   if (els.bgColor) els.bgColor.value = colour || '#0d2838';
+  if (els.bgColorToggle) els.bgColorToggle.style.background = colour || '#0d2838';
   if (els.emptyColor) els.emptyColor.value = colour || '#0d2838';
 }
 function setBackgroundColour(colour) {
@@ -185,7 +186,7 @@ function setBackgroundColour(colour) {
   els.scene.style.backgroundImage = 'none'; els.scene.style.backgroundColor = view.backgroundColor;
   if (els.bgColor) els.bgColor.value = view.backgroundColor;
   if (els.bgColorToggle) els.bgColorToggle.style.background = view.backgroundColor;
-  applyBackgroundColour(); updateEmptyState(); updateSceneGeometry(); scheduleSave(true);
+  applyBackgroundColour(); updateEmptyState(); renderMarkers(); updateSceneGeometry(); scheduleSave(true);
 }
 function attachActiveEntities() {
   const view = activeSceneView();
@@ -267,6 +268,10 @@ function applySnapUi() {
   els.body.classList.toggle('snap-enabled', enabled);
   if (els.snapToggle) { els.snapToggle.classList.toggle('active', enabled); els.snapToggle.title = translateValue(enabled ? 'Siatka włączona' : 'Siatka wyłączona'); els.snapToggle.setAttribute('aria-label', els.snapToggle.title); }
   if (els.gridStatus) els.gridStatus.textContent = enabled ? 'ON' : 'OFF';
+  const step = clamp(model.settings?.snapStep || 1, 1, 10);
+  els.scene?.style.setProperty('--grid-minor', `${step}%`);
+  els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
+  if (els.gridSize) els.gridSize.value = String(step);
 }
 function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
@@ -1142,6 +1147,7 @@ function bindEvents() {
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
+  els.gridSize?.addEventListener('change', () => { model.settings.snapStep = clamp(els.gridSize.value, 1, 10); applySnapUi(); scheduleSave(true); });
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
   [els.bgScale].forEach(control => { control?.addEventListener('input', updateBackgroundTransform); control?.addEventListener('change', updateBackgroundTransform); });
