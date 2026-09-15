@@ -398,3 +398,6 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 /* beta.38 — show the selected colour on the first-run layer as well as the scene */
 .scene-empty.solid-background{background:var(--solid-background)!important}
 .scene-empty.solid-background .empty-entities-message,.scene-empty.solid-background .welcome-card{background:rgba(7,27,39,.78)}
+
+/* beta.40 — persistent solid-colour canvas format */
+.solid-canvas-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:7px;color:#c9e8f3;font-size:9px}.solid-canvas-row i{color:#62dafb;font-size:15px}.solid-canvas-row select{height:28px;padding:0 5px;border:1px solid rgba(99,181,216,.3);border-radius:6px;background:#0d2e3e;color:#e1f6ff;font-size:9px}
