@@ -1243,7 +1243,13 @@ function startResize(event) {
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
     const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
-    marker.style.width = clamp(start.w + (e.clientX-start.x)*sx*2/scale,54,500); marker.style.height = clamp(start.h + (e.clientY-start.y)*sy*2/scale,34,350);
+    const snapSize = value => {
+      const limited = clamp(value, 1, 500);
+      if (model.settings?.snapEnabled === false) return limited;
+      const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
+      return Math.round(limited / gridPx) * gridPx;
+    };
+    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx*2/scale),54,500); marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy*2/scale),34,350);
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
