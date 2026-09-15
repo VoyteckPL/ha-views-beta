@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-56">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-57">
 </head>
 <body>
   <header class="topbar">
@@ -72,9 +72,9 @@
               </div>
               <div class="empty-entities-message">
                 <div class="welcome-icon"><i class="mdi mdi-puzzle-plus-outline"></i></div>
-                <h2>Dodaj pierwszą encję</h2>
-                <p>Otwórz menu <strong>Integracje</strong> u góry i wybierz encję, którą chcesz umieścić na tym widoku.</p>
-                <button id="empty-open-integrations" class="primary"><i class="mdi mdi-puzzle-outline"></i> Otwórz integracje</button>
+                <h2 data-i18n="Dodaj pierwszą encję">Dodaj pierwszą encję</h2>
+                <p data-i18n="Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.">Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.</p>
+                <button id="empty-open-integrations" class="primary" data-i18n="Otwórz integracje"><i class="mdi mdi-puzzle-outline"></i> Otwórz integracje</button>
               </div>
             </div>
             <div id="markers" class="markers"></div>
@@ -113,7 +113,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b46</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b47</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -154,6 +154,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-56"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260915-57"></script>
 </body>
 </html>
