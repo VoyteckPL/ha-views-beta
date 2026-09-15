@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.48
+
+- translated all confirmation dialogs, prompts and copy-style notifications in both languages;
+- Width and Height sliders now show and store clean whole-pixel values, without decimal noise.
+
+
 ## 0.3.0-beta.47
 
 - completed the safe explicit translation of onboarding buttons and first-entity guidance;
