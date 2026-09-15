@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-49">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-50">
 </head>
 <body>
   <header class="topbar">
@@ -20,6 +20,7 @@
         <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span><i class="mdi mdi-chevron-left"></i></button>
         <div id="background-bar" class="background-bar">
           <select id="background-select" aria-label="Wybierz tło"></select>
+          <div class="solid-canvas-row"><i class="mdi mdi-aspect-ratio"></i><span>Format koloru</span><select id="solid-canvas-ratio" aria-label="Format kolorowego tła"><option value="1.7777777778">16:9</option><option value="1.3333333333">4:3</option><option value="1">1:1</option><option value="0.5625">9:16</option></select></div>
           <div class="background-colour-picker color-picker">
             <button id="background-color-toggle" type="button" class="color-current" data-bg-color-toggle style="background:#0d2838" aria-label="Wybierz kolor tła"></button>
             <input id="background-color" class="color-native" type="color" value="#0d2838" aria-label="Własny kolor">
@@ -112,7 +113,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b39</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b40</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -153,6 +154,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-49"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260915-50"></script>
 </body>
 </html>
