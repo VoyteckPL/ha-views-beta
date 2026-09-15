@@ -8,7 +8,7 @@ const DESIGN_WIDTH = 1600;
 let uiLanguage = 'en';
 const TRANSLATIONS = {
   en: {
-    'Widoki':'Views','Integracje':'Integrations','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Zarządzaj tłem':'Manage background','Tło':'Background','Dodaj widok':'Add view','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
+    'Widoki':'Views','Integracje':'Integrations','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
     'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Wersja aplikacji HA Views':'HA Views app version',
@@ -44,8 +44,8 @@ function applyLanguage() {
   const select = document.querySelector('#language-select');
   if (select) select.value = uiLanguage;
   const titles = {
-    'integrations-button':'Integracje','view-manage':'Zarządzaj widokami','view-add':'Nowy widok','view-rename':'Zmień nazwę widoku','view-duplicate':'Duplikuj widok','view-delete':'Usuń widok',
-    'background-manage':'Zarządzaj tłem','background-upload':'Wgraj obraz','background-delete':'Usuń tło','default-style':'Ustaw domyślny','copy-style':'Kopiuj styl','paste-style':'Wklej styl','remove-marker':'Usuń z widoku','editor-close':'Zamknij','more-info-close':'Zamknij'
+    'settings-toggle':'Ustawienia','integrations-button':'Integracje','edit-toggle':'Edytuj widok','view-manage':'Zarządzaj widokami','view-add':'Dodaj widok','view-rename':'Zmień nazwę widoku','view-duplicate':'Duplikuj widok','view-delete':'Usuń widok',
+    'background-manage':'Zarządzaj tłem','background-upload':'Wgraj obraz','background-delete':'Usuń tło','snap-toggle':'Siatka włączona','default-style':'Ustaw domyślny','copy-style':'Kopiuj styl','paste-style':'Wklej styl','remove-marker':'Usuń z widoku','editor-close':'Zamknij','more-info-close':'Zamknij'
   };
   Object.entries(titles).forEach(([id,label]) => { const el = document.getElementById(id); if (el) { const value = translateValue(label); el.title = value; el.setAttribute('aria-label', value); } });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
@@ -53,6 +53,7 @@ function applyLanguage() {
     el.title = value; el.setAttribute('aria-label', value);
   });
   translateNode(document.body);
+  document.querySelectorAll('[title]').forEach(el => { const original = el.dataset.i18nTitle || el.getAttribute('title') || ''; el.dataset.i18nTitle = original; const value = translateValue(original); el.title = value; el.setAttribute('aria-label', value); });
 }
 function bindLanguageObserver() {
   new MutationObserver(records => records.forEach(record => {
@@ -66,7 +67,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridSize: $('#grid-size'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridSize: $('#grid-size'), gridSizeValue: $('#grid-size-value'), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -222,8 +223,11 @@ function ensureMultiViewModel() {
 }
 function showMainView(name) {
   $$('.view').forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
-  els.integrationsButton?.classList.toggle('active', name === 'integrations');
-  renderViewSelector(); if (name === 'integrations') loadIntegrations();
+  const integrationsOpen = name === 'integrations';
+  els.integrationsButton?.classList.toggle('active', integrationsOpen);
+  els.viewManage.disabled = integrationsOpen; els.editToggle.disabled = integrationsOpen;
+  if (integrationsOpen) { closeCompactMenus(); closeEditor(); closeMoreInfo(); }
+  renderViewSelector(); if (integrationsOpen) loadIntegrations();
 }
 function renderViewSelector() {
   if (!els.sceneTabs) return;
@@ -282,6 +286,7 @@ function applySnapUi() {
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
   if (els.gridSize) els.gridSize.value = String(step);
+  if (els.gridSizeValue) els.gridSizeValue.textContent = String(step);
 }
 function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
@@ -1083,9 +1088,9 @@ async function loadBackgrounds(waitForImage = false, bustCache = false) {
   } catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; }
 }
 async function uploadBackground(file) {
-  if (!file) return; els.bgStatus.textContent = 'Wgrywanie…'; const form = new FormData(); form.append('file', file);
-  try { const result = await api('background/upload', { method: 'POST', body: form }); const view = activeSceneView(); view.background = result.name || null; view.onboardingDone = true; els.bgStatus.textContent = 'Wgrano'; await loadBackgrounds(true, true); scheduleSave(true); }
-  catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; } finally { els.bgFile.value = ''; }
+  if (!file) return; els.bgStatus.textContent = 'Wgrywanie…'; els.bgUploadProgress?.classList.add('visible'); const form = new FormData(); form.append('file', file);
+  try { const result = await api('background/upload', { method: 'POST', body: form }); const view = activeSceneView(); view.background = result.name || null; view.backgroundColor = ''; view.onboardingDone = true; els.bgStatus.textContent = 'Wgrano'; await loadBackgrounds(true, true); scheduleSave(true); }
+  catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; } finally { els.bgFile.value = ''; els.bgUploadProgress?.classList.remove('visible'); }
 }
 
 function viewportPointerDown(event) {
@@ -1167,7 +1172,7 @@ function bindEvents() {
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
-  els.gridSize?.addEventListener('change', () => { model.settings.snapStep = clamp(els.gridSize.value, 1, 10); applySnapUi(); scheduleSave(true); });
+  els.gridSize?.addEventListener('input', () => { model.settings.snapStep = clamp(els.gridSize.value, 1, 20); applySnapUi(); scheduleSave(true); });
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
@@ -1223,6 +1228,10 @@ function bindEvents() {
   els.scene?.addEventListener('pointerdown', viewportPointerDown); els.scene?.addEventListener('pointermove', viewportPointerMove);
   els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp);
   window.addEventListener('pointermove', viewportPointerMove); window.addEventListener('pointerup', viewportPointerUp); window.addEventListener('pointercancel', viewportPointerUp);
+  document.addEventListener('pointerdown', event => {
+    if (event.target.closest('.compact-menu,.view-management,#settings-toggle,#edit-toggle,#view-manage,.editor,.app-confirm-card')) return;
+    closeCompactMenus();
+  });
   document.addEventListener('visibilitychange', resumeLiveConnection);
   window.addEventListener('pageshow', resumeLiveConnection); window.addEventListener('focus', resumeLiveConnection);
 }
