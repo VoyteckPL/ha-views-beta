@@ -683,9 +683,11 @@ function applyMarkerStyle(node, marker) {
     if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize}px`, height:`${s.iconSize}px`, objectFit:'contain' });
   }
   if (marker.type === 'gauge') {
-    if (label) Object.assign(label.style, { top: `calc(12% + 78px + ${s.labelY}px)` });
-    if (value) Object.assign(value.style, { top: `calc(48% + 12px + ${s.valueY}px)` });
-    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { top: `calc(76% - 46px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale}px` });
+    // Text anchors are deliberately pixel-based, so marker resizing never changes
+    // the saved visual position of the name, value or percentage.
+    if (label) Object.assign(label.style, { top: `calc(91px + ${s.labelY}px)` });
+    if (value) Object.assign(value.style, { top: `calc(64px + ${s.valueY}px)` });
+    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { top: `calc(36px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale}px` });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
     const gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
