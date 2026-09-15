@@ -928,7 +928,8 @@ function editorMarkup(marker) {
   const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + control('Jednostka','unitOverride','text',marker.unitOverride) + control('Zaokrąglenie','decimals','select',marker.decimals,{items:[['auto','Auto'],[0,'0'],[1,'1'],[2,'2'],[3,'3']]}) + control('Tekst ON','stateOnLabel','text',marker.stateOnLabel) + control('Tekst OFF','stateOffLabel','text',marker.stateOffLabel));
   const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
-  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:54,max:500,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:34,max:350,step:1,suffix:'px',integer:true}));
+  const minimumSize = marker.type === 'gauge' ? { width: 44, height: 28 } : { width: 36, height: 24 };
+  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:500,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:350,step:1,suffix:'px',integer:true}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
@@ -1267,7 +1268,8 @@ function startResize(event) {
       const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
       return Math.round(limited / gridPx) * gridPx;
     };
-    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx*2/scale),54,500); marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy*2/scale),34,350);
+    const minWidth = marker.type === 'gauge' ? 44 : 36, minHeight = marker.type === 'gauge' ? 28 : 24;
+    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx*2/scale),minWidth,500); marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy*2/scale),minHeight,350);
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
