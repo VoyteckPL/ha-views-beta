@@ -164,6 +164,7 @@ function updateEmptyState() {
   const showEntitiesHint = !currentBackground && !!view?.onboardingDone && !hasMarkers;
   els.empty.classList.toggle('visible', showWelcome || showEntitiesHint);
   els.empty.classList.toggle('show-entities-hint', showEntitiesHint);
+  els.empty.classList.toggle('solid-background', Boolean(view?.backgroundColor));
 }
 function openBackgroundMenu(hint = '') {
   els.backgroundBar.classList.add('open');
@@ -183,7 +184,9 @@ function setBackgroundColour(colour) {
   view.background = ''; currentBackground = '';
   view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
   els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
+  els.scene.style.setProperty('background', view.backgroundColor, 'important');
   els.scene.style.backgroundImage = 'none'; els.scene.style.backgroundColor = view.backgroundColor;
+  els.bgSelect.value = ''; els.bgDelete.disabled = true;
   if (els.bgColor) els.bgColor.value = view.backgroundColor;
   if (els.bgColorToggle) els.bgColorToggle.style.background = view.backgroundColor;
   applyBackgroundColour(); updateEmptyState(); renderMarkers(); updateSceneGeometry(); scheduleSave(true);
