@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.38
+
+- render the chosen solid colour directly on the empty-view layer as well as the scene;
+- retain the add-entity guidance above the selected canvas colour.
+
+
 ## 0.3.0-beta.37
 
 - fixed a CSS rule that kept a previously loaded image visible after choosing a solid colour;
