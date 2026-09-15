@@ -877,7 +877,9 @@ function onMarkerClick(event) {
 function focusSelectedMarkerOnMobile() {
   if (!mobileView() || !editMode || !selectedId) return;
   const marker = model.entities[selectedId]; if (!marker) return;
-  const nextZoom = clamp(Math.max(viewZoom, 1.75), minViewZoom(), 2);
+  // Deliberately closer than beta.52: selected markers remain clear of the
+  // bottom editor even on the lowest part of a portrait background.
+  const nextZoom = clamp(Math.max(viewZoom, 2.1), minViewZoom(), 2.35);
   const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
   const markerX = Number(marker.xPercent || 50) / 100 * sceneWidth;
   const markerY = Number(marker.yPercent || 50) / 100 * sceneHeight;
@@ -1321,10 +1323,15 @@ async function boot() {
   });
   const gaugeMigrated = migrateGaugeZeroOffsets();
   if (legacyMigrated || multiMigrated || gaugeMigrated) scheduleSave(true);
-  updateSceneGeometry(); els.markers.classList.add('background-pending'); await loadBackgrounds(true);
-  // loadBackgrounds may run before the last-view entity reference is attached; attach it again
-  // explicitly so the restored view has markers even before the first state refresh succeeds.
-  attachActiveEntities(); renderMarkers(); resetViewZoom(); mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop'; await refreshStates(); els.markers.classList.remove('background-pending'); updateSceneGeometry(); connectEvents();
+  // Markers are independent from the background image and from live-state
+  // retrieval. Render them immediately: the first `selected_states` request
+  // may be slow, but it must never keep the restored view blank.
+  attachActiveEntities(); updateSceneGeometry(); renderMarkers(); resetViewZoom();
+  mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop';
+  await loadBackgrounds(true);
+  attachActiveEntities(); updateSceneGeometry(); renderMarkers();
+  connectEvents();
+  refreshStates();
 }
 
 boot();
