@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.54
+
+- restored full-width background expansion while zooming on mobile;
+- hide the edit grid during that expanded-camera state, so the side area stays clean.
+
 ## 0.3.0-beta.53
 
 - render restored-view markers immediately on startup; a slow initial state refresh can no longer leave the scene blank;
