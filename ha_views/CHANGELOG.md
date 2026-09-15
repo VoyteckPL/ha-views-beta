@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.3.0-beta.34
+
+- fixed menu anchoring for views, settings and edit controls;
+- moved background management into the Views menu;
+- background picker now uses the same palette and RGB dialog as marker styling;
+- selecting a colour reliably clears the image, saves a solid background and enables adding markers;
+- compact icon-only upload/delete actions with tooltips.
+
+## 0.3.0-beta.33
+
+- introduced compact Settings and Edit menus;
+- added views management menu and initial background submenu.
+
+## 0.3.0-beta.32
+
+- initial navigation-menu redesign for testing.
+
+
 ## 0.3.0-beta.31
 
 - beta delivery channel introduced;
