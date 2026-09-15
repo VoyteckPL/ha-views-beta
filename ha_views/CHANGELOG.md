@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-beta.46
+
+- safely added explicit bilingual labels for the first-view onboarding;
+- translate dynamic New View prompts without the earlier unstable observer change;
+- make active Edit mode visually unmistakable with a brighter pencil button.
+
+
 ## 0.3.0-beta.45
 
 - preserve the current zoom when toggling between View and Edit modes;
