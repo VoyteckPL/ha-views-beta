@@ -32,9 +32,11 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
   main{width:calc(100% - 12px);margin:8px auto 24px}
   .scene-card{border-radius:12px}
   .scene-viewport{touch-action:none;overscroll-behavior:contain}
-  /* Keep the camera's extra area clean.  The transformed canvas must not
-     paint its edit grid outside the original background frame. */
-  .scene-card.portrait-zoom-expanded,.scene-viewport.portrait-zoom-expanded{overflow:hidden}
+  /* Zoomed background may use the full screen width, just like before. */
+  .scene-card.portrait-zoom-expanded,.scene-viewport.portrait-zoom-expanded{overflow:visible}
+  /* The positioning grid belongs to the fitted canvas only.  Once the
+     camera expands it, hide the grid instead of clipping the background. */
+  .portrait-zoom-expanded .scene:after{opacity:0!important}
   .scene-card.portrait-zoom-expanded{position:relative;z-index:3}
   .scene{will-change:transform}
   .editing .mobile-zoom{display:flex;align-items:center;justify-content:center;gap:5px;padding:5px;background:rgba(5,19,29,.96);border-top:1px solid var(--line)}
