@@ -164,7 +164,9 @@ function updateEmptyState() {
   const showEntitiesHint = !currentBackground && !!view?.onboardingDone && !hasMarkers;
   els.empty.classList.toggle('visible', showWelcome || showEntitiesHint);
   els.empty.classList.toggle('show-entities-hint', showEntitiesHint);
-  els.empty.classList.toggle('solid-background', Boolean(view?.backgroundColor));
+  const solid = String(view?.backgroundColor || '');
+  els.empty.classList.toggle('solid-background', Boolean(solid));
+  els.empty.style.setProperty('--solid-background', solid || 'transparent');
 }
 function openBackgroundMenu(hint = '') {
   els.backgroundBar.classList.add('open');
@@ -185,6 +187,8 @@ function setBackgroundColour(colour) {
   view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
   els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
   els.scene.style.setProperty('background', view.backgroundColor, 'important');
+  els.empty.style.setProperty('--solid-background', view.backgroundColor);
+  els.empty.classList.add('solid-background');
   els.scene.style.backgroundImage = 'none'; els.scene.style.backgroundColor = view.backgroundColor;
   els.bgSelect.value = ''; els.bgDelete.disabled = true;
   if (els.bgColor) els.bgColor.value = view.backgroundColor;
