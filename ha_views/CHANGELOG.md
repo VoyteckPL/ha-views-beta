@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0-beta.51
+
+- fixed Gauge text anchoring: resizing no longer shifts the name, state or percentage;
+- remember the last active view after refresh and render its saved markers immediately;
+- on mobile Edit, selecting a marker centres it in the upper scene with a moderate zoom;
+- mobile editor is limited to 50% of screen height and text controls no longer retain scene-touch gestures.
+
+
 ## 0.3.0-beta.50
 
 - Gauge label, value and percentage now use fixed pixel anchors;
