@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.39
+
+- fixed the no-image background fitting path;
+- a solid-colour view now keeps a full-size canvas after entering Edit mode or switching views.
+
+
 ## 0.3.0-beta.38
 
 - render the chosen solid colour directly on the empty-view layer as well as the scene;
