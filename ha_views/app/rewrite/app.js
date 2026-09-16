@@ -1108,8 +1108,8 @@ async function removeEntity(entityId) {
 }
 async function refreshStates() {
   const ids = Object.keys(model.entities); if (!ids.length) return renderMarkers();
-  try { const data = await api('selected_states', jsonOptions({ entity_ids: ids })); stateCache = { ...stateCache, ...(data.states || {}) }; renderMarkers(); els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; }
-  catch (error) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; }
+  try { const data = await api('selected_states', jsonOptions({ entity_ids: ids })); stateCache = { ...stateCache, ...(data.states || {}) }; renderMarkers(); if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; } }
+  catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
 }
 function connectEvents() {
   entityEvents?.close();
