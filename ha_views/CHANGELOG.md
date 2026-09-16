@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.72
+
+- added a compact search field in Integrations for entity name and entity_id;
+- search begins after two characters, loads entities only when needed, and keeps the search field fixed above results;
+- integration entities are fetched with a maximum of four concurrent requests.
+
 ## 0.3.0-beta.71
 
 - fixed the post-toggle refresh error when the optional connection-status element is absent;
