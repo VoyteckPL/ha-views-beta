@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.61
+
+- removed the unnecessary “Saved” status from the marker editor;
+- new solid-colour views now default to a 9:16 canvas on phones, while desktop keeps 16:9;
+- replaced the continuous grid-size slider with S / M / L presets.
+
 ## 0.3.0-beta.60
 
 - recovery build: restored the exact known-working beta.57 snapshot (commit `73b108449cb54b518124a34c0ff839d399db3d75`) after beta.56, beta.58 and beta.59 startup crashes;
