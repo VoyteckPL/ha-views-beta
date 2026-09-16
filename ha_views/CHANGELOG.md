@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.71
+
+- fixed the post-toggle refresh error when the optional connection-status element is absent;
+- toggle now refreshes the marker state without showing a false error.
+
 ## 0.3.0-beta.70
 
 - added an optional per-marker “Tap in View” action for switch, light, fan and input_boolean entities;
