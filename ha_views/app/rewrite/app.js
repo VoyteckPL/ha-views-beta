@@ -473,7 +473,7 @@ function applyBackgroundTransform() {
     const parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
     const top = card.getBoundingClientRect().top;
     const viewportHeight = window.visualViewport?.height || innerHeight;
-    const availableHeight = Math.max(160, viewportHeight - top - (mobileView() && editMode ? 44 : 8));
+    const availableHeight = Math.max(160, viewportHeight - top - 8);
     const fittedWidth = Math.min(parentWidth, availableHeight * ratio);
     card.style.width = `${(fittedWidth / parentWidth) * 100}%`;
     card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';
