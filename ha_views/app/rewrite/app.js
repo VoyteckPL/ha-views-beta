@@ -670,7 +670,7 @@ function enabledIcon(enabled) {
 }
 function applyMarkerStyle(node, marker) {
   const s = marker.style;
-  const displayY = mobileLayoutY.get(marker.entityId) ?? marker.yPercent;
+  const displayY = marker.yPercent;
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
     background: s.showBackground ? rgba(s.backgroundColor, s.backgroundOpacity) : 'transparent',
