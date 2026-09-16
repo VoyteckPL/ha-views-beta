@@ -18,7 +18,7 @@ const TRANSLATIONS = {
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
     'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
-    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
+    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
   }
 };
 function translateValue(value) {
@@ -94,7 +94,7 @@ const els = {
 };
 
 const badgeDefaults = () => ({
-  width: 112, height: 62, showLabel: true, showValue: true, showBackground: true, showBorder: true,
+  width: 112, height: 62, contentScale: 1, showLabel: true, showValue: true, showBackground: true, showBorder: true,
   labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
@@ -103,7 +103,7 @@ const badgeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
-  width: 185, height: 108, min: 0, max: 4000, thickness: 10,
+  width: 185, height: 108, contentScale: 1, min: 0, max: 4000, thickness: 10,
   trackColor: '#294657', progressColor: '#21BCEB', gaugeScale: 1, gaugeY: 0, startAngle: -180, endAngle: 0,
   showTicks: false, tickStep: 500, tickOffset: 4, tickLength: 7, tickWidth: 1, tickColor: '#8FDFFF', tickOpacity: .8,
   showTickLabels: false, tickLabelStep: 1000, tickFontSize: 8, tickFontFamily: 'Inter', tickLabelColor: '#9BC1D8', tickLabelOffset: 12,
@@ -518,7 +518,7 @@ function normalizedStyle(type, raw = {}) {
     nameScale: 'labelScale', stateScale: 'valueScale', gaugeMin: 'min', gaugeMax: 'max'
   };
   Object.entries(raw || {}).forEach(([key, value]) => { const target = aliases[key] || key; if (target in base && value !== undefined && value !== null) base[target] = value; });
-  ['width','height','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity'].forEach(k => base[k] = numberOr(base[k], type === 'gauge' ? gaugeDefaults()[k] : badgeDefaults()[k]));
+  ['width','height','contentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity'].forEach(k => base[k] = numberOr(base[k], type === 'gauge' ? gaugeDefaults()[k] : badgeDefaults()[k]));
   if (type === 'gauge') ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
 }
@@ -669,7 +669,7 @@ function enabledIcon(enabled) {
     : '<span class="entity-enabled off" title="Encja wyłączona" aria-label="Encja wyłączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7m0-7-7 7"/></svg></span>';
 }
 function applyMarkerStyle(node, marker) {
-  const s = marker.style;
+  const s = marker.style, contentScale = clamp(Number(s.contentScale) || 1, .4, 2.5);
   const displayY = marker.yPercent;
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
@@ -678,24 +678,25 @@ function applyMarkerStyle(node, marker) {
     borderRadius: `${s.radius}px`
   });
   const label = $('.label', node), value = $('.value', node);
-  if (label) Object.assign(label.style, { color: rgba(s.labelColor, s.labelOpacity), fontSize: `${12 * s.labelScale}px` });
-  if (value) Object.assign(value.style, { color: rgba(s.valueColor, s.valueOpacity), fontSize: `${22 * s.valueScale}px` });
+  if (label) Object.assign(label.style, { color: rgba(s.labelColor, s.labelOpacity), fontSize: `${12 * s.labelScale * contentScale}px` });
+  if (value) Object.assign(value.style, { color: rgba(s.valueColor, s.valueOpacity), fontSize: `${22 * s.valueScale * contentScale}px` });
   if (marker.type === 'badge') {
-    if (label) label.style.transform = `translateY(${s.labelY}px)`;
-    if (value) value.style.transform = `translateY(${s.valueY}px)`;
+    if (label) label.style.transform = `translateY(${s.labelY * contentScale}px)`;
+    if (value) value.style.transform = `translateY(${s.valueY * contentScale}px)`;
   }
   const icon = $('.marker-icon', node);
   if (icon) {
     const kind = stateKind(marker), color = kind === 'on' ? s.iconOnColor : kind === 'off' ? s.iconOffColor : kind === 'unavailable' ? s.iconUnavailableColor : s.iconColor;
-    Object.assign(icon.style, { color, opacity: clamp(s.iconOpacity, 0, 1), fontSize: `${s.iconSize}px`, left: '50%', top: '50%', transform: `translate(-50%, calc(-50% + ${s.iconY}px))` });
-    if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize}px`, height:`${s.iconSize}px`, objectFit:'contain' });
+    Object.assign(icon.style, { color, opacity: clamp(s.iconOpacity, 0, 1), fontSize: `${s.iconSize * contentScale}px`, left: '50%', top: '50%', transform: `translate(-50%, calc(-50% + ${s.iconY * contentScale}px))` });
+    if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize * contentScale}px`, height:`${s.iconSize * contentScale}px`, objectFit:'contain' });
   }
   if (marker.type === 'gauge') {
     // Anchor labels to the marker centre: resizing the Gauge changes neither their
     // horizontal nor vertical screen position. The Position sliders stay additive.
-    if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + 37px + ${s.labelY}px)` });
-    if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + 10px + ${s.valueY}px)` });
-    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% - 18px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale}px` });
+    if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + ${(37 + Number(s.labelY || 0)) * contentScale}px)` });
+    if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
+    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% - 18px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
+    const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { transform: `scale(${contentScale})`, transformOrigin: '50% 50%' });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
     const gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
@@ -956,7 +957,7 @@ function editorMarkup(marker) {
   const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = marker.type === 'gauge' ? { width: 44, height: 28 } : { width: 36, height: 24 };
-  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:500,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:350,step:1,suffix:'px',integer:true}));
+  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:500,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:350,step:1,suffix:'px',integer:true}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:2.5,step:.05,suffix:'×'}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
