@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0-beta.65
+
+- simplified the grid preset row to its grid icon and S / M / L buttons only.
+
 ## 0.3.0-beta.64
 
 - replaced the continuous grid-size slider with three discrete S / M / L buttons;
