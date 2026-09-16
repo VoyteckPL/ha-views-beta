@@ -411,3 +411,10 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.46 — unambiguous Edit mode state */
 #edit-toggle{transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease}#edit-toggle[aria-pressed="true"]{background:linear-gradient(135deg,#0ba5d0,#08779f)!important;border-color:#79e8ff!important;color:#fff!important;box-shadow:0 0 0 2px rgba(93,224,255,.28),0 8px 22px rgba(15,181,229,.28)!important}#edit-toggle[aria-pressed="false"]{background:#102b3b;color:#b6d1dd}
+
+
+/* beta.61 — discrete grid presets */
+.grid-size-row{grid-template-columns:22px minmax(0,1fr) auto!important}
+.grid-presets{display:grid;grid-template-columns:repeat(3,25px);gap:4px}
+.grid-preset{display:grid;place-items:center;width:25px;height:25px;padding:0;border-radius:6px;font-size:9px;font-weight:850}
+.grid-preset.active{border-color:#45d5ff;background:#087da5;color:#fff;box-shadow:0 0 0 1px rgba(69,213,255,.2)}
