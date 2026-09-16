@@ -83,7 +83,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridSize: $('#grid-size'), gridSizeValue: $('#grid-size-value'), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridPresets: $('.grid-preset'), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -202,7 +202,7 @@ function setBackgroundColour(colour) {
   const view = activeSceneView(); if (!view || !/^#[0-9a-f]{6}$/i.test(colour || '')) return;
   const imageRatio = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0 ? els.image.naturalWidth / els.image.naturalHeight : 0;
   if (imageRatio) view.solidCanvasRatio = imageRatio;
-  view.solidCanvasRatio ||= 16 / 9;
+  view.solidCanvasRatio ||= defaultSolidCanvasRatio();
   view.background = ''; currentBackground = '';
   view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
   els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
@@ -305,8 +305,7 @@ function applySnapUi() {
   const step = clamp(model.settings?.snapStep || 1, 1, 10);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
-  if (els.gridSize) els.gridSize.value = String(step);
-  if (els.gridSizeValue) els.gridSizeValue.textContent = String(step);
+  els.gridPresets?.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === step));
 }
 function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
@@ -319,6 +318,7 @@ function snapPercent(value) {
   return clamp(Math.round(value / step) * step, 0, 100);
 }
 function mobileView() { return matchMedia('(max-width: 900px) and (pointer: coarse), (max-width: 768px)').matches; }
+function defaultSolidCanvasRatio() { return mobileView() ? 9 / 16 : 16 / 9; }
 function sceneCameraActive() { return mobileView() || editMode || viewZoom > 1.001; }
 function mobileWidePanorama() {
   return mobileView() && innerHeight > innerWidth && els.image.naturalWidth > els.image.naturalHeight;
@@ -355,7 +355,7 @@ function updateMobileMarkerLayout(renderedWidth, renderedHeight) {
 }
 function updateSceneGeometry() {
   const hasImage = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0;
-  const solidRatio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4);
+  const solidRatio = clamp(activeSceneView()?.solidCanvasRatio || defaultSolidCanvasRatio(), .25, 4);
   const width = hasImage ? els.image.naturalWidth : solidRatio * 100, height = hasImage ? els.image.naturalHeight : 100, ratio = width / height;
   const panorama = mobileWidePanorama();
   let renderedWidth;
@@ -502,7 +502,7 @@ async function queueSave() {
   saveRunning = true;
   while (savePending) {
     savePending = false; const snapshot = clone(model); delete snapshot.entities;
-    try { await api('rewrite_state', jsonOptions(snapshot)); els.editorStatus.textContent = 'Zapisano'; }
+    try { await api('rewrite_state', jsonOptions(snapshot)); if (els.editorStatus) els.editorStatus.textContent = ''; }
     catch (error) { savePending = true; els.editorStatus.textContent = 'Błąd zapisu'; notify(`Błąd zapisu: ${error.message}`, true); await new Promise(r => setTimeout(r, 900)); }
   }
   saveRunning = false;
@@ -1115,7 +1115,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false) {
     // Each view loads its own named file; no global background selection is needed.
     els.bgSelect.innerHTML = '<option value="">Bez tła</option>' + items.map(x => `<option value="${escapeHtml(x.name)}" ${x.name === currentBackground ? 'selected' : ''}>${escapeHtml(x.name)}</option>`).join('');
     els.bgSelect.value = currentBackground; els.bgSelect.disabled = false; els.bgDelete.disabled = !currentBackground;
-    view.solidCanvasRatio ||= 16 / 9;
+    view.solidCanvasRatio ||= defaultSolidCanvasRatio();
     if (els.solidCanvasRatio) els.solidCanvasRatio.value = String([1.7777777778,1.3333333333,1,.5625].reduce((best, ratio) => Math.abs(ratio - view.solidCanvasRatio) < Math.abs(best - view.solidCanvasRatio) ? ratio : best, 1.7777777778));
     applyBackgroundColour(); updateEmptyState(); els.image.hidden = !currentBackground; syncBackgroundTransformControls();
     if (currentBackground) {
@@ -1218,7 +1218,10 @@ function bindEvents() {
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
-  els.gridSize?.addEventListener('input', () => { model.settings.snapStep = clamp(els.gridSize.value, 1, 20); applySnapUi(); scheduleSave(true); });
+  els.gridPresets?.forEach(button => button.addEventListener('click', () => {
+    model.settings.snapStep = clamp(button.dataset.gridStep, 1, 20);
+    applySnapUi(); scheduleSave(true);
+  }));
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
