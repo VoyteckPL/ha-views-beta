@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.70
+
+- added an optional per-marker “Tap in View” action for switch, light, fan and input_boolean entities;
+- default remains More info; selecting Toggle ON/OFF makes a View-mode tap call the corresponding HA service.
+
 ## 0.3.0-beta.69
 
 - explicitly centers the complete Gauge SVG in its marker;
