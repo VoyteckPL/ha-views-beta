@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.68
+
+- added a per-marker “Element scale” slider in Size (0.4×–2.5×, default 1×);
+- scales marker contents only: text, icon and complete Gauge graphic including ticks;
+- marker width, height, background and border remain unchanged.
+
 ## 0.3.0-beta.67
 
 - keeps the mobile scene canvas at the same size in Edit and View modes;
