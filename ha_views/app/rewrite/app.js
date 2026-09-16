@@ -86,7 +86,7 @@ const els = {
   editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridPresets: Array.from(document.querySelectorAll('.grid-preset')), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
-  addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
+  addedCount: $('#added-count'), integrationList: $('#integration-list'), integrationSearch: $('#integration-search'), snapToggle: $('#snap-toggle'),
   zoomOut: $('#zoom-out'), zoomIn: $('#zoom-in'), zoomReset: $('#zoom-reset'), zoomValue: $('#zoom-value'),
   sceneTabs: $('#scene-tabs'), integrationsButton: $('#integrations-button'), viewManage: $('#view-manage'), viewSwitcher: $('#view-switcher'), viewAdd: $('#view-add'), viewRename: $('#view-rename'), viewDuplicate: $('#view-duplicate'), viewDelete: $('#view-delete'),
   moreInfo: $('#more-info'), moreInfoBackdrop: $('#more-info-backdrop'), moreInfoIcon: $('#more-info-icon'), moreInfoTitle: $('#more-info-title'), moreInfoEntity: $('#more-info-entity'),
@@ -129,6 +129,7 @@ let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: 
 let stateCache = {}, editMode = false, selectedId = null, styleClipboard = null, saveTimer = null;
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
+let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
 let editorDragged = false;
 let sceneScale = 1;
 const mobileLayoutY = new Map();
@@ -1062,7 +1063,48 @@ async function loadIntegrations(force = false) {
   try { const data = await api('integrations'); integrations = data.integrations || []; renderIntegrations(); }
   catch (error) { els.integrationList.innerHTML = `<div class="empty-row">Błąd: ${escapeHtml(error.message)}</div>`; }
 }
+function searchText(value) { return String(value || '').toLocaleLowerCase('pl').trim(); }
+function searchResultMarkup(entity, integration) {
+  const added = !!model.entities[entity.entity_id];
+  return `<div class="entity-row search-result ${entity.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(entity.name || entity.entity_id)}</strong><small>${escapeHtml(entity.entity_id)} · ${escapeHtml(integration.title || integration.domain || 'Home Assistant')}${entity.state != null ? ` · ${escapeHtml(entity.state)}${entity.unit ? ` ${escapeHtml(entity.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(entity.enabled)}<button class="add-entity" data-add="${escapeHtml(entity.entity_id)}" data-entry="${escapeHtml(integration.entry_id)}" ${added || !entity.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : entity.enabled ? 'Dodaj do widoku' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`;
+}
+function renderIntegrationSearch() {
+  const query = searchText(integrationSearchText);
+  if (!query) return false;
+  if (query.length < 2) { els.integrationList.innerHTML = '<div class="empty-row">Wpisz co najmniej 2 znaki.</div>'; return true; }
+  const matches = integrations.flatMap(integration => (integrationEntities.get(integration.entry_id) || []).filter(entity => searchText(entity.entity_id).includes(query) || searchText(entity.name).includes(query)).map(entity => ({ entity, integration }))).sort((a,b) => String(a.entity.name || a.entity.entity_id).localeCompare(String(b.entity.name || b.entity.entity_id), 'pl', { sensitivity:'base' }));
+  const status = integrationSearchLoading ? '<div class="search-status">Wyszukiwanie encji…</div>' : '';
+  els.integrationList.innerHTML = status + (matches.length ? matches.map(({entity,integration}) => searchResultMarkup(entity,integration)).join('') : '<div class="empty-row">Brak pasujących encji.</div>');
+  return true;
+}
+async function loadEntitiesForSearch(request) {
+  const missing = integrations.filter(item => !integrationEntities.has(item.entry_id));
+  if (!missing.length) return;
+  const queue = [...missing];
+  const worker = async () => {
+    while (queue.length && request === integrationSearchRequest) {
+      const item = queue.shift();
+      try {
+        const data = await api(`integration_entities?entry_id=${encodeURIComponent(item.entry_id)}`);
+        integrationEntities.set(item.entry_id, data.entities || []);
+        updateIntegrationMetadata(item.entry_id);
+      } catch {}
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(4, missing.length) }, worker));
+}
+async function runIntegrationSearch() {
+  const query = searchText(integrationSearchText);
+  if (!query || query.length < 2) { integrationSearchLoading = false; renderIntegrations(); return; }
+  const request = ++integrationSearchRequest;
+  integrationSearchLoading = integrations.some(item => !integrationEntities.has(item.entry_id));
+  renderIntegrations();
+  await loadEntitiesForSearch(request);
+  if (request !== integrationSearchRequest) return;
+  integrationSearchLoading = false; renderIntegrations();
+}
 function renderIntegrations() {
+  if (renderIntegrationSearch()) return;
   const groups = getIntegrationGroups();
   if (!groups.length) { els.integrationList.innerHTML = '<div class="empty-row">Brak aktywnych integracji.</div>'; return; }
   const used = groups.filter(group => group.used), unused = groups.filter(group => !group.used);
@@ -1273,6 +1315,11 @@ function bindEvents() {
   els.bgSelect.addEventListener('change', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
   els.bgDelete.addEventListener('click', async () => { const name = els.bgSelect.value; if (!name || !await appConfirm({ title: 'Usunąć tło?', message: `Tło „${name}” zostanie trwale usunięte ze wszystkich widoków.`, confirmText: 'Usuń', danger: true })) return; try { await api('background/delete', jsonOptions({ name })); Object.values(model.views).forEach(view => { if (view.background === name) view.background = ''; if (view.backgroundTransforms) delete view.backgroundTransforms[name]; }); currentBackground = ''; scheduleSave(true); await loadBackgrounds(); notify('Usunięto tło'); } catch (error) { notify(error.message, true); } });
   $('#reload-integrations').addEventListener('click', () => { integrations = []; integrationEntities.clear(); openIntegrations.clear(); loadIntegrations(true); });
+  els.integrationSearch?.addEventListener('input', () => {
+    integrationSearchText = els.integrationSearch.value;
+    clearTimeout(integrationSearchTimer);
+    integrationSearchTimer = setTimeout(runIntegrationSearch, 220);
+  });
   els.integrationList.addEventListener('click', event => {
     const unusedSummary = event.target.closest('.unused-integrations > summary'), add = event.target.closest('[data-add]'), summary = event.target.closest('.integration-summary');
     if (unusedSummary) { event.preventDefault(); unusedIntegrationsOpen = !unusedIntegrationsOpen; renderIntegrations(); }
