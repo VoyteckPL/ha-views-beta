@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-beta.58
+
+- restored the requested marker-position fix without touching the startup path;
+- added a safe global Scale slider (40–250%) for every Badge and Gauge element;
+- replaced the grid-size range with three compact Small / Medium / Large buttons.
+
+
 ## 0.3.0-beta.57
 
 - emergency recovery build: restored the known-working beta.55 frontend after beta.56 prevented the app from starting;
