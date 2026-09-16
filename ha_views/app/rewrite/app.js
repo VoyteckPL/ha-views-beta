@@ -327,33 +327,9 @@ function mobileWidePanorama() {
 }
 // Mobile keeps the readable marker scale. Only markers which truly collide
 // are moved apart temporarily on the Y axis; saved desktop positions stay intact.
-function updateMobileMarkerLayout(renderedWidth, renderedHeight) {
+function updateMobileMarkerLayout() {
+  // Keep desktop, View and Edit marker positions identical on every device.
   mobileLayoutY.clear();
-  if (!mobileView() || editMode || !renderedWidth || !renderedHeight) return;
-  const placed = [];
-  const markers = Object.values(model.entities || {}).map(marker => {
-    const style = marker.style || {};
-    return {
-      marker,
-      x: Number(marker.xPercent || 0) * renderedWidth / 100,
-      y: Number(marker.yPercent || 0) * renderedHeight / 100,
-      width: Number(style.width || 112) * sceneScale,
-      height: Number(style.height || 62) * sceneScale
-    };
-  }).sort((a, b) => a.y - b.y);
-
-  for (const item of markers) {
-    let y = item.y;
-    for (const previous of placed) {
-      const overlapsHorizontally = Math.abs(item.x - previous.x) < (item.width + previous.width) / 2;
-      if (!overlapsHorizontally) continue;
-      const minimumY = previous.y + previous.height / 2 + item.height / 2 + 5;
-      if (y < minimumY) y = minimumY;
-    }
-    y = Math.min(y, renderedHeight - item.height / 2 - 4);
-    mobileLayoutY.set(item.marker.entityId, y * 100 / renderedHeight);
-    placed.push({ ...item, y });
-  }
 }
 function updateSceneGeometry() {
   const hasImage = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0;
@@ -672,11 +648,10 @@ function enabledIcon(enabled) {
 }
 function applyMarkerStyle(node, marker) {
   const s = marker.style;
-  // Render exactly the saved position in both View and Edit modes.
-  const displayY = marker.yPercent;
+  const displayY = mobileLayoutY.get(marker.entityId) ?? marker.yPercent;
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
-    '--marker-extra-scale': clamp(s.markerScale, .4, 2.5),
+    transform: `translate(-50%,-50%) scale(${sceneScale * clamp(s.markerScale, .4, 2.5)})`,
     background: s.showBackground ? rgba(s.backgroundColor, s.backgroundOpacity) : 'transparent',
     border: s.showBorder ? `${s.borderWidth}px solid ${rgba(s.borderColor, s.borderOpacity)}` : '0 solid transparent',
     borderRadius: `${s.radius}px`
@@ -960,7 +935,10 @@ function editorMarkup(marker) {
   const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = marker.type === 'gauge' ? { width: 44, height: 28 } : { width: 36, height: 24 };
-  const size = section('Rozmiar', control('Skala','style.markerScale','range',s.markerScale,{min:.4,max:2.5,step:.05,suffix:'×'}) + control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:500,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:350,step:1,suffix:'px',integer:true}));
+  const size = section('Rozmiar',
+    control('Skala','style.markerScale','range',s.markerScale,{min:.4,max:2.5,step:.05,suffix:'×'}) +
+    control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:500,step:1,suffix:'px',integer:true}) +
+    control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:350,step:1,suffix:'px',integer:true}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
