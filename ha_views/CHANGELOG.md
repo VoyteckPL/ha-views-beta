@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.66
+
+- mobile marker rendering now always uses each marker’s saved position;
+- leaving Edit mode can no longer visually shift markers to collision-avoidance positions.
+
 ## 0.3.0-beta.65
 
 - simplified the grid preset row to its grid icon and S / M / L buttons only.
