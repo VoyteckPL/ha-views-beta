@@ -411,3 +411,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.46 — unambiguous Edit mode state */
 #edit-toggle{transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease}#edit-toggle[aria-pressed="true"]{background:linear-gradient(135deg,#0ba5d0,#08779f)!important;border-color:#79e8ff!important;color:#fff!important;box-shadow:0 0 0 2px rgba(93,224,255,.28),0 8px 22px rgba(15,181,229,.28)!important}#edit-toggle[aria-pressed="false"]{background:#102b3b;color:#b6d1dd}
+
+
+/* beta.63 — suppress transient editor save status */
+#editor-status{display:none!important}
