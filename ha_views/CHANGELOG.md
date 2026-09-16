@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.64
+
+- replaced the continuous grid-size slider with three discrete S / M / L buttons;
+- S = 1%, M = 5%, L = 10%; the closest button is highlighted for existing saved layouts.
+
 ## 0.3.0-beta.63
 
 - hides the transient editor status field, including the unnecessary “Saved” message;
