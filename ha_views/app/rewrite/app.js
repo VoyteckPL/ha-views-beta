@@ -18,7 +18,7 @@ const TRANSLATIONS = {
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
     'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
-    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
+    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
   }
 };
 function translateValue(value) {
@@ -121,7 +121,7 @@ const ICON_CHOICES = [['','Automatyczna'],['mdi:weather-rainy','Deszcz'],['mdi:w
 const freshMarker = (entity, integration) => ({
   id: uid(), entityId: entity.entity_id, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant',
   sourceDomain: integration.domain || entity.entity_id.split('.')[0], displayName: entity.name || entity.entity_id,
-  unitOverride: entity.unit ?? '', decimals: 'auto', stateOnLabel: '', stateOffLabel: '', iconMode: 'auto', iconName: '', iconOn: '', iconOff: '', xPercent: 50, yPercent: 50, type: 'badge', style: badgeDefaults(),
+  unitOverride: entity.unit ?? '', decimals: 'auto', stateOnLabel: '', stateOffLabel: '', iconMode: 'auto', iconName: '', iconOn: '', iconOff: '', tapAction: 'more_info', xPercent: 50, yPercent: 50, type: 'badge', style: badgeDefaults(),
   createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
 });
 
@@ -140,6 +140,7 @@ let confirmResolver = null;
 let confirmInputMode = false;
 let moreInfoEntityId = '';
 let moreInfoRequest = 0;
+const markerTogglesInFlight = new Set();
 
 async function api(path, options = {}) {
   const response = await fetch(`api/${path}`, { cache: 'no-store', ...options });
@@ -238,6 +239,7 @@ function ensureMultiViewModel() {
   Object.values(model.views).forEach((view, index) => {
     view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.backgroundTransforms ||= {};
     view.backgroundColor ??= ''; view.onboardingDone ??= false;
+    Object.values(view.entities).forEach(marker => { marker.tapAction ??= 'more_info'; });
   });
   model.version = 2; attachActiveEntities(); return migrated;
 }
@@ -869,11 +871,27 @@ function renderMarkers() {
   if (previous && model.entities[previous]) syncSelection(); else hideSelection();
   updateEmptyState(); renderAdded();
 }
+function isToggleableMarker(marker) {
+  return ['switch', 'light', 'fan', 'input_boolean'].includes(String(marker?.entityId || '').split('.', 1)[0]);
+}
+async function toggleMarker(marker) {
+  if (!isToggleableMarker(marker) || markerTogglesInFlight.has(marker.entityId)) return;
+  const state = String(stateCache[marker.entityId]?.state || '').toLowerCase();
+  if (!['on', 'off'].includes(state)) return notify('Nie można przełączyć encji w tym stanie.', true);
+  markerTogglesInFlight.add(marker.entityId);
+  try {
+    await api('control', jsonOptions({ entity_id: marker.entityId, action: state === 'on' ? 'turn_off' : 'turn_on' }));
+    await refreshStates();
+  } catch (error) { notify(`Błąd przełączania: ${error.message}`, true); }
+  finally { markerTogglesInFlight.delete(marker.entityId); }
+}
 function onMarkerClick(event) {
   if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; }
   event.stopPropagation();
-  if (!editMode) return openMoreInfo(event.currentTarget.dataset.entityId);
-  selectMarker(event.currentTarget.dataset.entityId);
+  const marker = model.entities[event.currentTarget.dataset.entityId];
+  if (!marker) return;
+  if (!editMode) return marker.tapAction === 'toggle' && isToggleableMarker(marker) ? toggleMarker(marker) : openMoreInfo(marker.entityId);
+  selectMarker(marker.entityId);
 }
 function focusSelectedMarkerOnMobile() {
   if (!mobileView() || !editMode || !selectedId) return;
@@ -953,7 +971,8 @@ function section(title, body, open = false) { return `<details class="editor-sec
 function gaugeSubsection(title, body) { return `<details class="gauge-subsection"><summary>${title}</summary><div class="gauge-subsection-body">${body}</div></details>`; }
 function editorMarkup(marker) {
   const s = marker.style;
-  const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + control('Jednostka','unitOverride','text',marker.unitOverride) + control('Zaokrąglenie','decimals','select',marker.decimals,{items:[['auto','Auto'],[0,'0'],[1,'1'],[2,'2'],[3,'3']]}) + control('Tekst ON','stateOnLabel','text',marker.stateOnLabel) + control('Tekst OFF','stateOffLabel','text',marker.stateOffLabel));
+  const tapAction = isToggleableMarker(marker) ? control('Dotknięcie w widoku','tapAction','select',marker.tapAction || 'more_info',{items:[['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF']]}) : '';
+  const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + control('Jednostka','unitOverride','text',marker.unitOverride) + control('Zaokrąglenie','decimals','select',marker.decimals,{items:[['auto','Auto'],[0,'0'],[1,'1'],[2,'2'],[3,'3']]}) + control('Tekst ON','stateOnLabel','text',marker.stateOnLabel) + control('Tekst OFF','stateOffLabel','text',marker.stateOffLabel) + tapAction);
   const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = marker.type === 'gauge' ? { width: 44, height: 28 } : { width: 36, height: 24 };
