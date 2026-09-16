@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.67
+
+- keeps the mobile scene canvas at the same size in Edit and View modes;
+- prevents background rescaling that made markers appear to move after leaving Edit mode.
+
 ## 0.3.0-beta.66
 
 - mobile marker rendering now always uses each marker’s saved position;
