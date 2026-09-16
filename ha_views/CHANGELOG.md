@@ -1,10 +1,9 @@
 # Changelog
 
-## 0.3.0-beta.56
+## 0.3.0-beta.57
 
-- marker positions remain exact when entering or leaving Edit mode on desktop and mobile;
-- added a global 40–250% Scale slider in Size for Badge and Gauge;
-- replaced the grid-size slider with three compact Small / Medium / Large buttons.
+- emergency recovery build: restored the known-working beta.55 frontend after beta.56 prevented the app from starting;
+- no new UI features in this build.
 
 
 ## 0.3.0-beta.55
