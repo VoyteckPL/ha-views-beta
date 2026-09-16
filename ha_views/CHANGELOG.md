@@ -1,16 +1,14 @@
 # Changelog
 
-## 0.3.0-beta.59
+## 0.3.0-beta.60
 
-- emergency recovery build: restored the known-working beta.57 frontend after beta.58 also failed to start;
-- new scale and grid-preset work is deferred for isolated testing.
+- recovery build: restored the exact known-working beta.57 snapshot (commit `73b108449cb54b518124a34c0ff839d399db3d75`) after beta.56, beta.58 and beta.59 startup crashes;
+- no functional changes in this build.
 
+## 0.3.0-beta.57
 
-## 0.3.0-beta.56
-
-- marker positions remain exact when entering or leaving Edit mode on desktop and mobile;
-- added a global 40–250% Scale slider in Size for Badge and Gauge;
-- replaced the grid-size slider with three compact Small / Medium / Large buttons.
+- emergency recovery build: restored the known-working beta.55 frontend after beta.56 prevented the app from starting;
+- no new UI features in this build.
 
 
 ## 0.3.0-beta.55
