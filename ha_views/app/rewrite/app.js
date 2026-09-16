@@ -695,7 +695,7 @@ function applyMarkerStyle(node, marker) {
     // horizontal nor vertical screen position. The Position sliders stay additive.
     if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + ${(37 + Number(s.labelY || 0)) * contentScale}px)` });
     if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
-    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% - 18px + ${s.percentY}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
+    const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% + ${(-18 + Number(s.percentY || 0)) * contentScale}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
     const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { transform: `scale(${contentScale})`, transformOrigin: '50% 50%' });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
