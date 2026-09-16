@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.69
+
+- explicitly centers the complete Gauge SVG in its marker;
+- global element scaling now scales from that fixed center.
+
 ## 0.3.0-beta.68
 
 - added a per-marker “Element scale” slider in Size (0.4×–2.5×, default 1×);
