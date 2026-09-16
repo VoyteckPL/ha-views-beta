@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260915-65">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260916-02">
 </head>
 <body>
   <header class="topbar">
@@ -43,7 +43,7 @@
         <div class="language-row"><i class="mdi mdi-translate"></i><span>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">EN</option><option value="pl">PL</option></select></div>
       </div>
       <button id="settings-toggle" class="icon-action" title="Ustawienia" aria-label="Ustawienia"><i class="mdi mdi-cog-outline"></i></button>
-      <div id="edit-menu" class="compact-menu edit-menu"><button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large"></i><span>Wielkość siatki</span><input id="grid-size" type="range" min="1" max="20" step="1" value="1" aria-label="Wielkość siatki"><output id="grid-size-value">1</output></div></div>
+      <div id="edit-menu" class="compact-menu edit-menu"><button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large"></i><span>Wielkość siatki</span><div class="grid-size-buttons" role="group" aria-label="Wielkość siatki"><button type="button" data-grid-size="1" title="Mała">S</button><button type="button" data-grid-size="3" title="Średnia">M</button><button type="button" data-grid-size="6" title="Duża">L</button></div></div></div>
       <button id="edit-toggle" class="icon-action primary" title="Edytuj widok" aria-label="Edytuj widok"><i class="mdi mdi-pencil-outline"></i></button>
     </div>
   </header>
@@ -113,7 +113,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
-        <span class="editor-version" title="HA Views app version">v0.3.0-b55</span>
+        <span class="editor-version" title="HA Views app version">v0.3.0-b58</span>
       </div>
     </div>
     <div class="editor-tabs">
@@ -154,6 +154,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260915-65"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260916-02"></script>
 </body>
 </html>
