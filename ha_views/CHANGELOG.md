@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-beta.56
+
+- marker positions remain exact when entering or leaving Edit mode on desktop and mobile;
+- added a global 40–250% Scale slider in Size for Badge and Gauge;
+- replaced the grid-size slider with three compact Small / Medium / Large buttons.
+
+
 ## 0.3.0-beta.55
 
 - mobile first-view creator is compact and scrollable, keeping background-selection actions reachable on short screens.
