@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0-beta.63
+
+- hides the transient editor status field, including the unnecessary “Saved” message;
+- CSS-only change; no JavaScript or startup logic changed.
+
 ## 0.3.0-beta.62
 
 - recovery build: reverted beta.61 after its startup crash on mobile;
