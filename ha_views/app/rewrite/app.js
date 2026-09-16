@@ -83,7 +83,7 @@ const els = {
   selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
-  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridSize: $('#grid-size'), gridSizeValue: $('#grid-size-value'), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
+  editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridPresets: Array.from(document.querySelectorAll('.grid-preset')), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDelete: $('#background-delete'),
   bgFile: $('#background-file'), bgStatus: $('#background-status'), bgManage: $('#background-manage'), backgroundBar: $('#background-bar'), emptyColor: $('#empty-background-color'), emptyColorStart: $('#empty-color-start'), emptyOpenIntegrations: $('#empty-open-integrations'), addedList: $('#added-list'),
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), snapToggle: $('#snap-toggle'),
@@ -305,8 +305,8 @@ function applySnapUi() {
   const step = clamp(model.settings?.snapStep || 1, 1, 10);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
-  if (els.gridSize) els.gridSize.value = String(step);
-  if (els.gridSizeValue) els.gridSizeValue.textContent = String(step);
+  const activePreset = [1, 5, 10].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, 1);
+  els.gridPresets.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === activePreset));
 }
 function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
@@ -1218,7 +1218,10 @@ function bindEvents() {
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
-  els.gridSize?.addEventListener('input', () => { model.settings.snapStep = clamp(els.gridSize.value, 1, 20); applySnapUi(); scheduleSave(true); });
+  els.gridPresets.forEach(button => button.addEventListener('click', () => {
+    model.settings.snapStep = Number(button.dataset.gridStep);
+    applySnapUi(); scheduleSave(true);
+  }));
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
