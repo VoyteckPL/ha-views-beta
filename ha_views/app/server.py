@@ -1386,7 +1386,17 @@ async def index(request):
     return response
 
 
-app = web.Application()
+@web.middleware
+async def frontend_no_store(request, handler):
+    response = await handler(request)
+    if request.path.startswith("/rewrite-assets/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
+
+app = web.Application(middlewares=[frontend_no_store])
 
 app.router.add_get("/", index)
 app.router.add_get("/rewrite", rewrite_index)
