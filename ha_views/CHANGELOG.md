@@ -1,3 +1,9 @@
+## 0.3.0-beta.74
+
+- Tła widoków mają osobny trwały cache przeglądarki.
+- Po pierwszym pobraniu pełnej rozdzielczości przełączenie z powrotem do otwartego widoku używa obrazu od razu.
+- Pliki aplikacji nadal nie są cache'owane, więc kolejne bety odświeżają się poprawnie.
+
 # Changelog
 
 ## 0.3.0-beta.73
