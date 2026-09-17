@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0-beta.73
+
+- frontend assets under /rewrite-assets now use no-store cache headers;
+- prevents Home Assistant WebView from retaining a stale app.js or app.css after an add-on update;
+- keeps the existing build-token cache busting as a second safeguard.
+
 ## 0.3.0-beta.72
 
 - added a compact search field in Integrations for entity name and entity_id;
