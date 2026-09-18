@@ -1,3 +1,8 @@
+## 0.3.0-beta.75
+
+- Dodano ikonę pobierania przy wybranym tle widoku.
+- Pobieranie działa bezpośrednio przez HA Views i zapisuje oryginalny plik tła bez błędu 401 z edytora plików.
+
 ## 0.3.0-beta.74
 
 - Tła widoków mają osobny trwały cache przeglądarki.
