@@ -1,3 +1,8 @@
+## 0.3.0-beta.77
+
+- Naprawiono zablokowanie pinch-zoomu po powrocie do aplikacji na telefonie.
+- Aktywne dotknięcia są resetowane po anulowaniu gestu, utracie focusu oraz powrocie WebView, bez resetowania aktualnego zoomu.
+
 ## 0.3.0-beta.76
 
 - Nowy pusty widok na telefonie domyślnie używa sceny 9:16, więc kreator nie jest obcięty.
