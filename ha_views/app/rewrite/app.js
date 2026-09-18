@@ -1202,11 +1202,17 @@ async function uploadBackground(file) {
   catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; } finally { els.bgFile.value = ''; els.bgUploadProgress?.classList.remove('visible'); }
 }
 
+function resetViewportPointers() {
+  for (const pointerId of viewPointers.keys()) {
+    try { if (els.scene?.hasPointerCapture?.(pointerId)) els.scene.releasePointerCapture(pointerId); } catch {}
+  }
+  viewPointers.clear(); panGesture = null; pinchGesture = null;
+}
 function viewportPointerDown(event) {
   // Desktop uses a dedicated mouse drag below. Pointer gestures are touch-only there.
   if (!sceneCameraActive() || (!mobileView() && event.pointerType === 'mouse') || (event.pointerType === 'mouse' && event.button !== 0)) return;
-  // A mouse can leave the transformed canvas before pointerup; never keep a stale pointer as a fake second touch.
-  if (event.pointerType === 'mouse') { viewPointers.clear(); panGesture = null; pinchGesture = null; }
+  // A new primary touch after an interrupted WebView gesture means every remembered pointer is stale.
+  if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
@@ -1236,6 +1242,10 @@ function viewportPointerMove(event) {
   }
 }
 function viewportPointerUp(event) {
+  if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
+    resetViewportPointers();
+    return;
+  }
   viewPointers.delete(event.pointerId);
   if (panGesture?.id === event.pointerId) panGesture = null;
   if (viewPointers.size < 2) pinchGesture = null;
@@ -1358,19 +1368,18 @@ function bindEvents() {
     setViewZoom(viewZoom * Math.exp(-event.deltaY * .0015), event.clientX, event.clientY);
   }, { passive: false });
   // Touch gestures and desktop mouse dragging are deliberately separate.
-  els.editorContent?.addEventListener('focusin', () => {
-    viewPointers.clear(); panGesture = null; pinchGesture = null;
-  });
+  els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
   els.scene?.addEventListener('pointerdown', viewportPointerDown); els.scene?.addEventListener('pointermove', viewportPointerMove);
-  els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp);
+  els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp); els.scene?.addEventListener('lostpointercapture', viewportPointerUp);
   window.addEventListener('pointermove', viewportPointerMove); window.addEventListener('pointerup', viewportPointerUp); window.addEventListener('pointercancel', viewportPointerUp);
   document.addEventListener('pointerdown', event => {
     if (event.target.closest('.compact-menu,.view-management,#settings-toggle,#edit-toggle,#view-manage,.editor,.app-confirm-card')) return;
     closeCompactMenus();
   });
-  document.addEventListener('visibilitychange', resumeLiveConnection);
-  window.addEventListener('pageshow', resumeLiveConnection); window.addEventListener('focus', resumeLiveConnection);
+  const resumeApp = () => { resetViewportPointers(); resumeLiveConnection(); };
+  document.addEventListener('visibilitychange', resumeApp);
+  window.addEventListener('pageshow', resumeApp); window.addEventListener('focus', resumeApp); window.addEventListener('blur', resetViewportPointers);
 }
 function startResize(event) {
   const marker = model.entities[selectedId];
