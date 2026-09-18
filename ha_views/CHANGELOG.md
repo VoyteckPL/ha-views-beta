@@ -1,3 +1,8 @@
+## 0.3.0-beta.76
+
+- Nowy pusty widok na telefonie domyślnie używa sceny 9:16, więc kreator nie jest obcięty.
+- Kreator używa tej samej palety kolorów i własnego pola RGB co edytor markera, zamiast systemowego okna wyboru koloru.
+
 ## 0.3.0-beta.75
 
 - Dodano ikonę pobierania przy wybranym tle widoku.
