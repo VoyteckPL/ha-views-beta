@@ -715,7 +715,7 @@ function applyMarkerStyle(node, marker) {
   const icon = $('.marker-icon', node);
   if (icon) {
     const kind = stateKind(marker), color = kind === 'on' ? s.iconOnColor : kind === 'off' ? s.iconOffColor : kind === 'unavailable' ? s.iconUnavailableColor : s.iconColor;
-    Object.assign(icon.style, { color, opacity: clamp(s.iconOpacity, 0, 1), fontSize: `${s.iconSize * contentScale}px`, left: '50%', top: '50%', transform: `translate(-50%, calc(-50% + ${s.iconY * contentScale}px))` });
+    Object.assign(icon.style, { color, opacity: clamp(s.iconOpacity, 0, 1), fontSize: `${s.iconSize * contentScale}px`, left: `calc(50% + ${s.iconX * contentScale}px)`, top: `calc(50% + ${s.iconY * contentScale}px)`, transform: 'translate(-50%, -50%)' });
     if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize * contentScale}px`, height:`${s.iconSize * contentScale}px`, objectFit:'contain' });
   }
   if (isGaugeType(marker.type)) {
