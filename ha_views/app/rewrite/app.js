@@ -706,8 +706,8 @@ function applyMarkerStyle(node, marker) {
     borderRadius: `${s.radius}px`
   });
   const label = $('.label', node), value = $('.value', node);
-  if (label) Object.assign(label.style, { color: rgba(s.labelColor, s.labelOpacity), fontSize: `${12 * s.labelScale * contentScale}px` });
-  if (value) Object.assign(value.style, { color: rgba(s.valueColor, s.valueOpacity), fontSize: `${22 * s.valueScale * contentScale}px` });
+  if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
+  if (value) Object.assign(value.style, { color: s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
   if (marker.type === 'badge' || marker.type === 'icon') {
     if (label) label.style.transform = `translateY(${s.labelY * contentScale}px)`;
     if (value) value.style.transform = `translateY(${s.valueY * contentScale}px)`;
@@ -1070,7 +1070,7 @@ function onEditorInput(event) {
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
   const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
   if (input.dataset.path === 'displayName') { els.editorTitle.textContent = value; if (node) node.innerHTML = markerHtml(marker); }
-  if (input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.')) { if (node) node.innerHTML = markerHtml(marker); }
+  if (input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || input.dataset.path.startsWith('style.label') || input.dataset.path.startsWith('style.value') || input.dataset.path.startsWith('style.percent') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.')) { if (node) node.innerHTML = markerHtml(marker); }
   if (node) applyMarkerStyle(node, marker); syncSelection(); renderAdded(); scheduleSave();
 }
 function changeType(type) {
