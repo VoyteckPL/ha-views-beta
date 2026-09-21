@@ -1,3 +1,8 @@
+## 0.3.0-beta.87
+
+- Wyśrodkowano typ markera Ikona względem środka markera.
+- Poprawiono również działanie przesunięć ikony w osi X i Y.
+
 ## 0.3.0-beta.86
 
 - Ustawiono domyślny układ Podkowy dokładnie według zatwierdzonego markera: stan 0.65× / -19 px, procent 0.8× / -8 px.
