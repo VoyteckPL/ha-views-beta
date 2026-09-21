@@ -1,3 +1,8 @@
+## 0.3.0-beta.83
+
+- Przywrócono płynne przesuwanie suwaków w sekcji Nazwa.
+- Marker nie jest już przebudowywany podczas przeciągania suwaka.
+
 ## 0.3.0-beta.82
 
 - Naprawiono regulację nazwy we wszystkich typach markerów: Badge, Gauge, Ikona i Podkowa.
