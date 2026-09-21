@@ -1073,7 +1073,7 @@ function renderIntegrationSearch() {
   const query = searchText(integrationSearchText);
   if (!query) return false;
   if (query.length < 2) { els.integrationList.innerHTML = '<div class="empty-row">Wpisz co najmniej 2 znaki.</div>'; return true; }
-  const matches = integrations.flatMap(integration => (integrationEntities.get(integration.entry_id) || []).filter(entity => searchText(entity.entity_id).includes(query) || searchText(entity.name).includes(query)).map(entity => ({ entity, integration }))).sort((a,b) => String(a.entity.name || a.entity.entity_id).localeCompare(String(b.entity.name || b.entity.entity_id), 'pl', { sensitivity:'base' }));
+  const matches = integrations.flatMap(integration => (integrationEntities.get(integration.entry_id) || []).filter(entity => !model.entities[entity.entity_id] && (searchText(entity.entity_id).includes(query) || searchText(entity.name).includes(query))).map(entity => ({ entity, integration }))).sort((a,b) => String(a.entity.name || a.entity.entity_id).localeCompare(String(b.entity.name || b.entity.entity_id), 'pl', { sensitivity:'base' }));
   const status = integrationSearchLoading ? '<div class="search-status">Wyszukiwanie encji…</div>' : '';
   els.integrationList.innerHTML = status + (matches.length ? matches.map(({entity,integration}) => searchResultMarkup(entity,integration)).join('') : '<div class="empty-row">Brak pasujących encji.</div>');
   return true;
@@ -1089,6 +1089,7 @@ async function loadEntitiesForSearch(request) {
         const data = await api(`integration_entities?entry_id=${encodeURIComponent(item.entry_id)}`);
         integrationEntities.set(item.entry_id, data.entities || []);
         updateIntegrationMetadata(item.entry_id);
+        if (request === integrationSearchRequest) renderIntegrations();
       } catch {}
     }
   };
@@ -1098,6 +1099,8 @@ async function runIntegrationSearch() {
   const query = searchText(integrationSearchText);
   if (!query || query.length < 2) { integrationSearchLoading = false; renderIntegrations(); return; }
   const request = ++integrationSearchRequest;
+  if (!integrations.length) await loadIntegrations();
+  if (request !== integrationSearchRequest) return;
   integrationSearchLoading = integrations.some(item => !integrationEntities.has(item.entry_id));
   renderIntegrations();
   await loadEntitiesForSearch(request);
