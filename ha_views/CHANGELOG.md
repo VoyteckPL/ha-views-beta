@@ -1,3 +1,9 @@
+## 0.3.0-beta.78
+
+- Wyszukiwarka Integracji przeszukuje wszystkie integracje, także nierozwinięte.
+- Wyniki pojawiają się w trakcie ładowania kolejnych integracji.
+- Wyniki zawierają wyłącznie encje, które nie są jeszcze dodane do aktywnego widoku.
+
 ## 0.3.0-beta.77
 
 - Naprawiono zablokowanie pinch-zoomu po powrocie do aplikacji na telefonie.
