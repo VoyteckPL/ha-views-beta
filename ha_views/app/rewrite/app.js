@@ -724,7 +724,7 @@ function applyMarkerStyle(node, marker) {
     if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + ${(37 + Number(s.labelY || 0)) * contentScale}px)` });
     if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
     const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% + ${(-18 + Number(s.percentY || 0)) * contentScale}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
-    const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { inset: 'auto', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${contentScale})`, transformOrigin: '50% 50%' });
+    const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { inset: 'auto', left: '50%', top: '50%', width: marker.type === 'horseshoe' ? '136px' : '', height: marker.type === 'horseshoe' ? '118px' : '', transform: `translate(-50%, -50%) scale(${contentScale})`, transformOrigin: '50% 50%' });
     const visual = $('.gauge-visual', node); if (visual) Object.assign(visual.style, { transform: gaugeVisualTransform(marker, s), transformOrigin: '100px 90px' });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
