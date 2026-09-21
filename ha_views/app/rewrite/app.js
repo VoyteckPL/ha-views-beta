@@ -118,10 +118,16 @@ const gaugeDefaults = () => ({
 });
 
 const iconDefaults = () => ({ ...badgeDefaults(), width: 56, height: 56, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
-const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 150, height: 132, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: .92, gaugeY: 4 });
+const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 150, height: 132, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0 });
 const isGaugeType = type => type === 'gauge' || type === 'horseshoe';
 const markerStyleDefaults = type => type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
 const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa' }[type] || 'Badge');
+const gaugeVisualTransform = (marker, style) => {
+  const horseshoe = marker.type === 'horseshoe';
+  const y = (horseshoe ? -35 : 0) + (Number(style.gaugeY) || 0);
+  const scale = (horseshoe ? .92 : 1) * (Number(style.gaugeScale) || 1);
+  return `translateY(${y}px) scale(${scale})`;
+};
 const COLOR_PALETTE = ['#FFFFFF','#DCE8EF','#9BC1D8','#607D8B','#03101A','#102A3A','#20B9E7','#147EA5','#22D69B','#39B86C','#FFD166','#F59E0B','#FF6374','#E63946','#B66DFF','#7C4DFF','#EC4899','#8B5E3C'];
 const ICON_CHOICES = [['','Automatyczna'],['mdi:weather-rainy','Deszcz'],['mdi:weather-pouring','Ulewa'],['mdi:weather-sunny','Słońce'],['mdi:water','Woda'],['mdi:water-off','Brak wody'],['mdi:water-percent','Wilgotność'],['mdi:pool','Basen'],['mdi:heat-pump','Pompa ciepła'],['mdi:pump','Pompa'],['mdi:solar-power','Fotowoltaika'],['mdi:flash','Energia'],['mdi:home-lightning-bolt','Energia domu'],['mdi:thermometer','Temperatura'],['mdi:fan','Wentylator'],['mdi:power','Zasilanie'],['mdi:toggle-switch','Włączone'],['mdi:toggle-switch-off','Wyłączone'],['mdi:door-open','Drzwi otwarte'],['mdi:door-closed','Drzwi zamknięte'],['mdi:window-open','Okno otwarte'],['mdi:window-closed','Okno zamknięte'],['mdi:motion-sensor','Ruch'],['mdi:smoke-detector','Dym'],['mdi:alert-circle','Alarm'],['mdi:check-circle','OK'],['mdi:close-circle','Wyłączone'],['mdi:gauge','Wskaźnik'],['mdi:lightbulb','Światło'],['mdi:wifi','Sieć']];
 const freshMarker = (entity, integration) => ({
@@ -532,6 +538,18 @@ function normalizedStyle(type, raw = {}) {
   if (isGaugeType(type)) ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
 }
+function migrateHorseshoeBaseline() {
+  if (model.settings?.horseshoeBaselineV1) return false;
+  let changed = false;
+  Object.values(model.views || {}).flatMap(view => Object.values(view.entities || {})).forEach(marker => {
+    if (marker.type !== 'horseshoe') return;
+    marker.style.gaugeY = numberOr(marker.style.gaugeY, 0) + 35;
+    marker.style.gaugeScale = numberOr(marker.style.gaugeScale, 1) / .92;
+    changed = true;
+  });
+  model.settings.horseshoeBaselineV1 = true;
+  return changed;
+}
 function migrateGaugeZeroOffsets() {
   if (model.settings?.gaugeZeroOffsetsV2) return false;
   Object.values(model.views || {}).flatMap(view => Object.values(view.entities || {})).forEach(marker => {
@@ -655,7 +673,7 @@ function markerHtml(marker) {
     let sweep = rawSweep; while (sweep <= 0) sweep += 360; sweep = Math.min(sweep, 359.9);
     const path = gaugeArcPath(cx, cy, radius, start, start + sweep), gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
     const stroke = s.useGradient ? `url(#${gradientId})` : s.progressColor;
-    return `<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:translateY(${Number(s.gaugeY)}px) scale(${Number(s.gaugeScale)});transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
+    return `<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
   }
   return `${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
 }
@@ -707,6 +725,7 @@ function applyMarkerStyle(node, marker) {
     if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
     const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% + ${(-18 + Number(s.percentY || 0)) * contentScale}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
     const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { inset: 'auto', left: '50%', top: '50%', transform: `translate(-50%, -50%) scale(${contentScale})`, transformOrigin: '50% 50%' });
+    const visual = $('.gauge-visual', node); if (visual) Object.assign(visual.style, { transform: gaugeVisualTransform(marker, s), transformOrigin: '100px 90px' });
     const track = $('.gauge-track', node), progress = $('.gauge-value', node), n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
     const gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
@@ -1428,7 +1447,8 @@ async function boot() {
     m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= '';
   });
   const gaugeMigrated = migrateGaugeZeroOffsets();
-  if (legacyMigrated || multiMigrated || gaugeMigrated) scheduleSave(true);
+  const horseshoeMigrated = migrateHorseshoeBaseline();
+  if (legacyMigrated || multiMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
   // Markers are independent from the background image and from live-state
   // retrieval. Render them immediately: the first `selected_states` request
   // may be slow, but it must never keep the restored view blank.
