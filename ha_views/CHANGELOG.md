@@ -1,3 +1,9 @@
+## 0.3.0-beta.79
+
+- Dodano typy markera Ikona oraz Podkowa.
+- Podkowa używa łuku U z podziałką i pełną konfiguracją Gauge.
+- Wybór typu markera ma teraz cztery ikony: Badge, Gauge, Ikona i Podkowa.
+
 ## 0.3.0-beta.78
 
 - Wyszukiwarka Integracji przeszukuje wszystkie integracje, także nierozwinięte.
