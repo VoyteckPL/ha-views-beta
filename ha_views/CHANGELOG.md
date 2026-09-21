@@ -1,3 +1,9 @@
+## 0.3.0-beta.82
+
+- Naprawiono regulację nazwy we wszystkich typach markerów: Badge, Gauge, Ikona i Podkowa.
+- Ustawienia widoczności, koloru, przezroczystości, rozmiaru i pozycji nazwy odświeżają marker od razu.
+- Podkowa korzysta z tego samego pozycjonowania tekstu co Gauge.
+
 ## 0.3.0-beta.81
 
 - Wygląd domyślnej Podkowy zachowuje bazowe przesunięcie i skalę, ale suwaki startują od 0 px i 1×.
