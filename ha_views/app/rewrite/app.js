@@ -1070,7 +1070,10 @@ function onEditorInput(event) {
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
   const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
   if (input.dataset.path === 'displayName') { els.editorTitle.textContent = value; if (node) node.innerHTML = markerHtml(marker); }
-  if (input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.')) { if (node) node.innerHTML = markerHtml(marker); }
+  const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.');
+  // A range input keeps pointer capture only while its DOM node remains intact.
+  // Rebuild Gauge/Horseshoe SVG after the finger is released, never while dragging.
+  if (needsMarkup && (input.type !== 'range' || event.type === 'change')) { if (node) node.innerHTML = markerHtml(marker); }
   if (node) applyMarkerStyle(node, marker); syncSelection(); renderAdded(); scheduleSave();
 }
 function changeType(type) {
