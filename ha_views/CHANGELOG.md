@@ -1,3 +1,8 @@
+## 0.3.0-beta.80
+
+- Domyślna Podkowa nie pokazuje podziałki.
+- Cztery ikony typu markera są wyświetlane w jednym rzędzie.
+
 ## 0.3.0-beta.79
 
 - Dodano typy markera Ikona oraz Podkowa.
