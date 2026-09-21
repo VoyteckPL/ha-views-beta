@@ -1,3 +1,8 @@
+## 0.3.0-beta.88
+
+- Rozłączono rozmiar łuku Podkowy od rozmiaru ramki markera.
+- Łuk skaluje się teraz wyłącznie suwakiem „Skala elementów”.
+
 ## 0.3.0-beta.87
 
 - Wyśrodkowano typ markera Ikona względem środka markera.
