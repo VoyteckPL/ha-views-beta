@@ -1,3 +1,8 @@
+## 0.3.0-beta.85
+
+- Poprawiono domyślny układ tekstów Podkowy: stan jest centralnie i mniejszy.
+- Procent jest mniejszy, nad stanem oraz bez nakładania się na niego.
+
 ## 0.3.0-beta.84
 
 - Naprawiono przeciąganie wszystkich suwaków markerów na telefonie.
