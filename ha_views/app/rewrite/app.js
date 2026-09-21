@@ -118,7 +118,7 @@ const gaugeDefaults = () => ({
 });
 
 const iconDefaults = () => ({ ...badgeDefaults(), width: 56, height: 56, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
-const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 150, height: 132, showLabel: true, showValue: true, showPercent: true, showTicks: true, startAngle: 135, endAngle: 405, gaugeScale: .92, gaugeY: 4 });
+const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 150, height: 132, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: .92, gaugeY: 4 });
 const isGaugeType = type => type === 'gauge' || type === 'horseshoe';
 const markerStyleDefaults = type => type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
 const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa' }[type] || 'Badge');
