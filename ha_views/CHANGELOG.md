@@ -1,3 +1,9 @@
+## 0.3.0-beta.81
+
+- Wygląd domyślnej Podkowy zachowuje bazowe przesunięcie i skalę, ale suwaki startują od 0 px i 1×.
+- Dodano migrację istniejących Podków, aby zachować ich wygląd po wyzerowaniu wartości.
+- Suwak Pozycja w geometrii Podkowy jest stosowany bezpośrednio do łuku.
+
 ## 0.3.0-beta.80
 
 - Domyślna Podkowa nie pokazuje podziałki.
