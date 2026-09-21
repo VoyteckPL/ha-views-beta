@@ -1,3 +1,8 @@
+## 0.3.0-beta.84
+
+- Naprawiono przeciąganie wszystkich suwaków markerów na telefonie.
+- Gauge i Podkowa odświeżają geometrię po puszczeniu suwaka, bez przerywania gestu.
+
 ## 0.3.0-beta.83
 
 - Przywrócono płynne przesuwanie suwaków w sekcji Nazwa.
