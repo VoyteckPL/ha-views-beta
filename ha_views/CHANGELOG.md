@@ -1,3 +1,8 @@
+## 0.3.0-beta.90
+
+- Zmieniono kroki siatki: S 0,25%, M 1%, L 4%.
+- S pozwala precyzyjnie dosuwać markery do siebie; istniejący wybór siatki jest migrowany proporcjonalnie.
+
 ## 0.3.0-beta.89
 
 - Markery zachowują teraz proporcjonalny rozmiar i odstępy względem tła na desktopie i telefonie.
