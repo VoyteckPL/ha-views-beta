@@ -1479,14 +1479,14 @@ function startResize(event) {
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
     const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
-    const snapSize = value => {
-      const limited = clamp(value, 1, 500);
+    const snapSize = (value, maximum) => {
+      const limited = clamp(value, 1, maximum);
       if (model.settings?.snapEnabled === false) return limited;
       const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
       return Math.round(limited / gridPx) * gridPx;
     };
     const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
-    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx*2/scale),minWidth,500); marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy*2/scale),minHeight,350);
+    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx*2/scale, 900),minWidth,900); marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy*2/scale, 600),minHeight,600);
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
