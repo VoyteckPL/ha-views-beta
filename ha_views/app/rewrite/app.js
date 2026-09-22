@@ -94,7 +94,7 @@ const els = {
 };
 
 const badgeDefaults = () => ({
-  width: 247, height: 137, contentScale: 2.2, showLabel: true, showValue: true, showBackground: true, showBorder: true,
+  width: 247, height: 137, contentScale: 1, baseContentScale: 2.2, showLabel: true, showValue: true, showBackground: true, showBorder: true,
   labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
@@ -103,7 +103,7 @@ const badgeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
-  width: 407, height: 237, contentScale: 2.2, min: 0, max: 4000, thickness: 10,
+  width: 407, height: 237, contentScale: 1, baseContentScale: 2.2, min: 0, max: 4000, thickness: 10,
   trackColor: '#294657', progressColor: '#21BCEB', gaugeScale: 1, gaugeY: 0, startAngle: -180, endAngle: 0,
   showTicks: false, tickStep: 500, tickOffset: 4, tickLength: 7, tickWidth: 1, tickColor: '#8FDFFF', tickOpacity: .8,
   showTickLabels: false, tickLabelStep: 1000, tickFontSize: 8, tickFontFamily: 'Inter', tickLabelColor: '#9BC1D8', tickLabelOffset: 12,
@@ -544,7 +544,15 @@ function normalizedStyle(type, raw = {}) {
     nameScale: 'labelScale', stateScale: 'valueScale', gaugeMin: 'min', gaugeMax: 'max'
   };
   Object.entries(raw || {}).forEach(([key, value]) => { const target = aliases[key] || key; if (target in base && value !== undefined && value !== null) base[target] = value; });
-  ['width','height','contentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
+  const legacyContentScale = Number(raw?.contentScale);
+  if (!Object.prototype.hasOwnProperty.call(raw || {}, 'baseContentScale')) {
+    base.baseContentScale = 1;
+    if ([1.3, 1.69, 2.2].some(value => Math.abs(legacyContentScale - value) < .001)) {
+      base.baseContentScale = legacyContentScale;
+      base.contentScale = 1;
+    }
+  }
+  ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
   if (isGaugeType(type)) ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
 }
@@ -707,7 +715,7 @@ function enabledIcon(enabled) {
     : '<span class="entity-enabled off" title="Encja wyłączona" aria-label="Encja wyłączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7m0-7-7 7"/></svg></span>';
 }
 function applyMarkerStyle(node, marker) {
-  const s = marker.style, contentScale = clamp(Number(s.contentScale) || 1, .4, 2.5);
+  const s = marker.style, contentScale = clamp((Number(s.baseContentScale) || 1) * (Number(s.contentScale) || 1), .4, 5.5);
   const displayY = marker.yPercent;
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
