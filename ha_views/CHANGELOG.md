@@ -1,3 +1,7 @@
+## 0.3.0-beta.103
+
+- Powiększono widoczne uchwyty ramki markerów; mają teraz delikatną przezroczystość.
+
 ## 0.3.0-beta.102
 
 - Zwiększono maksymalny rozmiar markerów do 1200 × 900 px.
