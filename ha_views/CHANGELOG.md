@@ -1,3 +1,7 @@
+## 0.3.0-beta.100
+
+- Dodano potwierdzenie przed zmianą typu markera; zmiana nadal przywraca domyślny wygląd wybranego typu.
+
 ## 0.3.0-beta.99
 
 - Usubtelniono ramkę zaznaczenia i niebieskie uchwyty markerów w trybie edycji.
