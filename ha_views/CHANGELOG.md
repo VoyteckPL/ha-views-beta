@@ -1,3 +1,8 @@
+## 0.3.0-beta.91
+
+- Domyślny rozmiar Badge, Gauge, Ikony i Podkowy zwiększono o 30%, wraz z całą zawartością markera.
+- Dotyczy nowych markerów oraz opcji „Ustaw domyślny”.
+
 ## 0.3.0-beta.90
 
 - Zmieniono kroki siatki: S 0,25%, M 1%, L 4%.
