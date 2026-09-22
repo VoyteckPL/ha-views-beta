@@ -392,7 +392,7 @@ function updateSceneGeometry() {
   els.scene.style.minHeight = '0px'; els.scene.style.maxHeight = 'none';
   els.viewport.classList.toggle('panorama-mode', panorama);
   const physicalScale = renderedWidth / (Number(model.settings?.designWidth) || DESIGN_WIDTH);
-  sceneScale = Math.max(.01, physicalScale, mobileView() ? .50 : .58);
+  sceneScale = Math.max(.01, physicalScale);
   updateMobileMarkerLayout(renderedWidth, els.scene.clientHeight);
   els.scene.style.setProperty('--scene-scale', sceneScale);
   applyViewTransform();
