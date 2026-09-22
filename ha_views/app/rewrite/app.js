@@ -94,7 +94,7 @@ const els = {
 };
 
 const badgeDefaults = () => ({
-  width: 190, height: 105, contentScale: 1.69, showLabel: true, showValue: true, showBackground: true, showBorder: true,
+  width: 247, height: 137, contentScale: 2.2, showLabel: true, showValue: true, showBackground: true, showBorder: true,
   labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
@@ -103,7 +103,7 @@ const badgeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
-  width: 313, height: 182, contentScale: 1.69, min: 0, max: 4000, thickness: 10,
+  width: 407, height: 237, contentScale: 2.2, min: 0, max: 4000, thickness: 10,
   trackColor: '#294657', progressColor: '#21BCEB', gaugeScale: 1, gaugeY: 0, startAngle: -180, endAngle: 0,
   showTicks: false, tickStep: 500, tickOffset: 4, tickLength: 7, tickWidth: 1, tickColor: '#8FDFFF', tickOpacity: .8,
   showTickLabels: false, tickLabelStep: 1000, tickFontSize: 8, tickFontFamily: 'Inter', tickLabelColor: '#9BC1D8', tickLabelOffset: 12,
@@ -117,8 +117,8 @@ const gaugeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 
-const iconDefaults = () => ({ ...badgeDefaults(), width: 95, height: 95, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
-const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 254, height: 224, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0, valueScale: .65, valueY: -19, percentScale: .8, percentY: -8 });
+const iconDefaults = () => ({ ...badgeDefaults(), width: 124, height: 124, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
+const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 330, height: 291, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0, valueScale: .65, valueY: -19, percentScale: .8, percentY: -8 });
 const isGaugeType = type => type === 'gauge' || type === 'horseshoe';
 const markerStyleDefaults = type => type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
 const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa' }[type] || 'Badge');
@@ -1118,19 +1118,20 @@ function renderIntegrationSearch() {
 async function loadEntitiesForSearch(request) {
   const missing = integrations.filter(item => !integrationEntities.has(item.entry_id));
   if (!missing.length) return;
-  const queue = [...missing];
-  const worker = async () => {
-    while (queue.length && request === integrationSearchRequest) {
-      const item = queue.shift();
-      try {
-        const data = await api(`integration_entities?entry_id=${encodeURIComponent(item.entry_id)}`);
-        integrationEntities.set(item.entry_id, data.entities || []);
-        updateIntegrationMetadata(item.entry_id);
-        if (request === integrationSearchRequest) renderIntegrations();
-      } catch {}
-    }
-  };
-  await Promise.all(Array.from({ length: Math.min(4, missing.length) }, worker));
+  try {
+    // One server request reads HA registries once, instead of once per integration.
+    const data = await api('integration_entities_all');
+    if (request !== integrationSearchRequest) return;
+    const byEntry = data.entities_by_entry || {};
+    missing.forEach(item => {
+      integrationEntities.set(item.entry_id, Array.isArray(byEntry[item.entry_id]) ? byEntry[item.entry_id] : []);
+      updateIntegrationMetadata(item.entry_id);
+    });
+  } catch {
+    if (request !== integrationSearchRequest) return;
+    missing.forEach(item => integrationEntities.set(item.entry_id, []));
+  }
+  if (request === integrationSearchRequest) renderIntegrations();
 }
 async function runIntegrationSearch() {
   const query = searchText(integrationSearchText);
