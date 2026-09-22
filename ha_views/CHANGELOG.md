@@ -1,3 +1,8 @@
+## 0.3.0-beta.93
+
+- Domyślne rozmiary wszystkich typów markerów zwiększono o kolejne 30%.
+- Wyszukiwarka Integracji pobiera teraz encje jednym zbiorczym żądaniem zamiast osobno dla każdej integracji — wyniki pojawiają się znacznie szybciej.
+
 ## 0.3.0-beta.92
 
 - Domyślny rozmiar wszystkich typów markerów zwiększono o kolejne 30%.
