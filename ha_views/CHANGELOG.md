@@ -1,3 +1,8 @@
+## 0.3.0-beta.94
+
+- Naprawiono synchronizację toggle ON/OFF z ikoną markera.
+- Po przełączeniu aplikacja potwierdza docelowy stan z Home Assistant i ignoruje spóźnione, stare zdarzenia.
+
 ## 0.3.0-beta.93
 
 - Domyślne rozmiary wszystkich typów markerów zwiększono o kolejne 30%.
