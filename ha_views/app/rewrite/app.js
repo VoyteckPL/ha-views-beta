@@ -94,7 +94,7 @@ const els = {
 };
 
 const badgeDefaults = () => ({
-  width: 146, height: 81, contentScale: 1.3, showLabel: true, showValue: true, showBackground: true, showBorder: true,
+  width: 190, height: 105, contentScale: 1.69, showLabel: true, showValue: true, showBackground: true, showBorder: true,
   labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
@@ -103,7 +103,7 @@ const badgeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
-  width: 241, height: 140, contentScale: 1.3, min: 0, max: 4000, thickness: 10,
+  width: 313, height: 182, contentScale: 1.69, min: 0, max: 4000, thickness: 10,
   trackColor: '#294657', progressColor: '#21BCEB', gaugeScale: 1, gaugeY: 0, startAngle: -180, endAngle: 0,
   showTicks: false, tickStep: 500, tickOffset: 4, tickLength: 7, tickWidth: 1, tickColor: '#8FDFFF', tickOpacity: .8,
   showTickLabels: false, tickLabelStep: 1000, tickFontSize: 8, tickFontFamily: 'Inter', tickLabelColor: '#9BC1D8', tickLabelOffset: 12,
@@ -117,8 +117,8 @@ const gaugeDefaults = () => ({
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 
-const iconDefaults = () => ({ ...badgeDefaults(), width: 73, height: 73, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
-const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 195, height: 172, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0, valueScale: .65, valueY: -19, percentScale: .8, percentY: -8 });
+const iconDefaults = () => ({ ...badgeDefaults(), width: 95, height: 95, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
+const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 254, height: 224, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0, valueScale: .65, valueY: -19, percentScale: .8, percentY: -8 });
 const isGaugeType = type => type === 'gauge' || type === 'horseshoe';
 const markerStyleDefaults = type => type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
 const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa' }[type] || 'Badge');
