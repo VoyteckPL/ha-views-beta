@@ -1,3 +1,8 @@
+## 0.3.0-beta.95
+
+- Powiększenie domyślnych markerów przeniesiono do bazowego stylu typu markera.
+- Suwak „Skala elementów” znów startuje neutralnie od 1× dla Badge, Gauge, Ikony i Podkowy, bez zmiany aktualnego wyglądu.
+
 ## 0.3.0-beta.94
 
 - Naprawiono synchronizację toggle ON/OFF z ikoną markera.
