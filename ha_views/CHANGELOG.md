@@ -1,3 +1,7 @@
+## 0.3.0-beta.101
+
+- Zwiększono maksymalną wartość suwaka „Skala elementów” z 2,5× do 5× dla wszystkich typów markerów.
+
 ## 0.3.0-beta.100
 
 - Dodano potwierdzenie przed zmianą typu markera; zmiana nadal przywraca domyślny wygląd wybranego typu.
