@@ -1,3 +1,8 @@
+## 0.3.0-beta.102
+
+- Zwiększono maksymalny rozmiar markerów do 1200 × 900 px.
+- Niebieskie uchwyty ramki mają większy, niewidoczny obszar chwytu — łatwiej je złapać przy większym oddaleniu.
+
 ## 0.3.0-beta.101
 
 - Zwiększono maksymalną wartość suwaka „Skala elementów” z 2,5× do 5× dla wszystkich typów markerów.
