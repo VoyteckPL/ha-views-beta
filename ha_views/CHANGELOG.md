@@ -1,3 +1,8 @@
+## 0.3.0-beta.96
+
+- Zwiększono maksymalny rozmiar ramki Badge do 900 × 600 px.
+- Zakres pozostałych typów markerów pozostaje bez zmian.
+
 ## 0.3.0-beta.95
 
 - Powiększenie domyślnych markerów przeniesiono do bazowego stylu typu markera.
