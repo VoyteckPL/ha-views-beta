@@ -137,7 +137,7 @@ const freshMarker = (entity, integration) => ({
   createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
 });
 
-let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: 1 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
+let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: .25 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
 let stateCache = {}, editMode = false, selectedId = null, styleClipboard = null, saveTimer = null;
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
@@ -313,15 +313,24 @@ function scheduleSave(immediate = false) {
   if (immediate) return queueSave();
   saveTimer = setTimeout(queueSave, 200);
 }
+function migrateGridPresetSteps() {
+  if (model.settings?.gridPresetV2) return false;
+  const legacy = Number(model.settings?.snapStep);
+  if (legacy === 1) model.settings.snapStep = .25;
+  else if (legacy === 5) model.settings.snapStep = 1;
+  else if (legacy === 10) model.settings.snapStep = 4;
+  model.settings.gridPresetV2 = true;
+  return true;
+}
 function applySnapUi() {
   const enabled = model.settings?.snapEnabled !== false;
   els.body.classList.toggle('snap-enabled', enabled);
   if (els.snapToggle) { els.snapToggle.classList.toggle('active', enabled); els.snapToggle.title = translateValue(enabled ? 'Siatka włączona' : 'Siatka wyłączona'); els.snapToggle.setAttribute('aria-label', els.snapToggle.title); }
   if (els.gridStatus) els.gridStatus.textContent = enabled ? 'ON' : 'OFF';
-  const step = clamp(model.settings?.snapStep || 1, 1, 10);
+  const step = clamp(model.settings?.snapStep || .25, .25, 4);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
-  const activePreset = [1, 5, 10].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, 1);
+  const activePreset = [.25, 1, 4].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, .25);
   els.gridPresets.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === activePreset));
 }
 function closeCompactMenus() {
@@ -331,7 +340,7 @@ function closeCompactMenus() {
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
-  const step = Number(model.settings?.snapStep) || 1;
+  const step = Number(model.settings?.snapStep) || .25;
   return clamp(Math.round(value / step) * step, 0, 100);
 }
 function mobileView() { return matchMedia('(max-width: 900px) and (pointer: coarse), (max-width: 768px)').matches; }
@@ -1441,17 +1450,17 @@ async function boot() {
   bindEvents(); let legacyMigrated = false;
   try { const saved = await api('rewrite_state'); if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
   catch (error) { notify(`Nie udało się wczytać układu: ${error.message}`, true); }
-  model.settings = { snapEnabled: true, snapStep: 1, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
+  model.settings = { snapEnabled: true, snapStep: .25, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
   uiLanguage = model.settings.language === 'pl' ? 'pl' : 'en';
   bindLanguageObserver(); applyLanguage();
-  const multiMigrated = ensureMultiViewModel(); applySnapUi(); renderViewSelector();
+  const multiMigrated = ensureMultiViewModel(); const gridPresetMigrated = migrateGridPresetSteps(); applySnapUi(); renderViewSelector();
   Object.values(model.views).flatMap(view => Object.values(view.entities || {})).forEach(m => {
     m.type = ['badge','gauge','icon','horseshoe'].includes(m.type) ? m.type : 'badge'; m.style = normalizedStyle(m.type, m.style);
     m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= '';
   });
   const gaugeMigrated = migrateGaugeZeroOffsets();
   const horseshoeMigrated = migrateHorseshoeBaseline();
-  if (legacyMigrated || multiMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
+  if (legacyMigrated || multiMigrated || gridPresetMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
   // Markers are independent from the background image and from live-state
   // retrieval. Render them immediately: the first `selected_states` request
   // may be slow, but it must never keep the restored view blank.
