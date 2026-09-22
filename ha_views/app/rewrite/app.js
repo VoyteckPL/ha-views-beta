@@ -1124,10 +1124,17 @@ function onEditorInput(event) {
   if (needsMarkup && (input.type !== 'range' || event.type === 'change')) { if (node) node.innerHTML = markerHtml(marker); }
   if (node) applyMarkerStyle(node, marker); syncSelection(); renderAdded(); scheduleSave();
 }
-function changeType(type) {
+async function changeType(type) {
   const marker = model.entities[selectedId]; if (!marker || marker.type === type) return;
+  const targetLabel = markerTypeLabel(type);
+  const confirmed = await appConfirm({
+    title: `Zmienić na ${targetLabel}?`,
+    message: 'Typ markera i jego ustawienia wyglądu zostaną zastąpione domyślnymi.',
+    confirmText: 'Zmień'
+  });
+  if (!confirmed) return;
   marker.type = type; marker.style = markerStyleDefaults(type); marker.updatedAt = new Date().toISOString();
-  renderMarkers(); openEditor(); scheduleSave(true); notify(`Zmieniono na ${markerTypeLabel(type)}`);
+  renderMarkers(); openEditor(); scheduleSave(true); notify(`Zmieniono na ${targetLabel}`);
 }
 
 function renderAdded() {
