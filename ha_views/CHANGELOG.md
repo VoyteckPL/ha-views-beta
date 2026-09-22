@@ -1,3 +1,8 @@
+## 0.3.0-beta.92
+
+- Domyślny rozmiar wszystkich typów markerów zwiększono o kolejne 30%.
+- Dotyczy nowych markerów oraz opcji „Ustaw domyślny”.
+
 ## 0.3.0-beta.91
 
 - Domyślny rozmiar Badge, Gauge, Ikony i Podkowy zwiększono o 30%, wraz z całą zawartością markera.
