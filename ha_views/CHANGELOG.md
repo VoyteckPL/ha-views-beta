@@ -1,3 +1,7 @@
+## 0.3.0-beta.99
+
+- Usubtelniono ramkę zaznaczenia i niebieskie uchwyty markerów w trybie edycji.
+
 ## 0.3.0-beta.98
 
 - Zwiększono limit przeciągania ramki niebieskimi uchwytami do 900 × 600 px dla wszystkich typów markerów.
