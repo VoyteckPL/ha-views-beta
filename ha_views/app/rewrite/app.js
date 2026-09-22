@@ -154,6 +154,7 @@ let confirmInputMode = false;
 let moreInfoEntityId = '';
 let moreInfoRequest = 0;
 const markerTogglesInFlight = new Set();
+const pendingToggleStates = new Map();
 
 async function api(path, options = {}) {
   const response = await fetch(`api/${path}`, { cache: 'no-store', ...options });
@@ -910,16 +911,45 @@ function renderMarkers() {
 function isToggleableMarker(marker) {
   return ['switch', 'light', 'fan', 'input_boolean'].includes(String(marker?.entityId || '').split('.', 1)[0]);
 }
+const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+function renderMarkerState(entityId, nextState) {
+  if (!nextState) return;
+  stateCache[entityId] = { ...stateCache[entityId], ...nextState };
+  const marker = model.entities[entityId], node = marker && $(`.marker[data-entity-id="${CSS.escape(entityId)}"]`);
+  if (marker && node) { node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); }
+  if (moreInfoEntityId === entityId) refreshMoreInfoState();
+}
+async function confirmToggleState(marker, expectedState) {
+  for (const wait of [0, 180, 420, 800]) {
+    if (wait) await delay(wait);
+    const data = await api('selected_states', jsonOptions({ entity_ids: [marker.entityId] }));
+    const current = data.states?.[marker.entityId];
+    const state = String(current?.state || '').toLowerCase();
+    if (state !== expectedState) continue;
+    pendingToggleStates.delete(marker.entityId);
+    renderMarkerState(marker.entityId, current);
+    return true;
+  }
+  return false;
+}
 async function toggleMarker(marker) {
   if (!isToggleableMarker(marker) || markerTogglesInFlight.has(marker.entityId)) return;
   const state = String(stateCache[marker.entityId]?.state || '').toLowerCase();
   if (!['on', 'off'].includes(state)) return notify('Nie można przełączyć encji w tym stanie.', true);
+  const expectedState = state === 'on' ? 'off' : 'on';
   markerTogglesInFlight.add(marker.entityId);
+  pendingToggleStates.set(marker.entityId, expectedState);
   try {
-    await api('control', jsonOptions({ entity_id: marker.entityId, action: state === 'on' ? 'turn_off' : 'turn_on' }));
-    await refreshStates();
-  } catch (error) { notify(`Błąd przełączania: ${error.message}`, true); }
-  finally { markerTogglesInFlight.delete(marker.entityId); }
+    await api('control', jsonOptions({ entity_id: marker.entityId, action: expectedState === 'on' ? 'turn_on' : 'turn_off' }));
+    if (!await confirmToggleState(marker, expectedState)) {
+      pendingToggleStates.delete(marker.entityId);
+      await refreshStates();
+      notify('Stan encji nie został jeszcze potwierdzony.', true);
+    }
+  } catch (error) {
+    pendingToggleStates.delete(marker.entityId);
+    notify(`Błąd przełączania: ${error.message}`, true);
+  } finally { markerTogglesInFlight.delete(marker.entityId); }
 }
 function onMarkerClick(event) {
   if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; }
@@ -1192,14 +1222,24 @@ async function removeEntity(entityId) {
 }
 async function refreshStates() {
   const ids = Object.keys(model.entities); if (!ids.length) return renderMarkers();
-  try { const data = await api('selected_states', jsonOptions({ entity_ids: ids })); stateCache = { ...stateCache, ...(data.states || {}) }; renderMarkers(); if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; } }
-  catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
+  try {
+    const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
+    Object.entries(data.states || {}).forEach(([entityId, nextState]) => {
+      const expected = pendingToggleStates.get(entityId);
+      const received = String(nextState?.state || '').toLowerCase();
+      if (expected && received !== expected) return;
+      if (expected) pendingToggleStates.delete(entityId);
+      stateCache[entityId] = { ...stateCache[entityId], ...nextState };
+    });
+    renderMarkers();
+    if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; }
+  } catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
 }
 function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id]; if (!marker) return; stateCache[data.entity_id] = { ...stateCache[data.entity_id], entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }; const node = $(`.marker[data-entity-id="${CSS.escape(data.entity_id)}"]`); if (node) { node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); } if (moreInfoEntityId === data.entity_id) refreshMoreInfoState(); } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id]; if (!marker) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
