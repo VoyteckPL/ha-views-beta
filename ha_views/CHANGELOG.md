@@ -1,3 +1,8 @@
+## 0.3.0-beta.98
+
+- Zwiększono limit przeciągania ramki niebieskimi uchwytami do 900 × 600 px dla wszystkich typów markerów.
+- Uchwyt i suwaki „Rozmiaru” mają teraz ten sam maksymalny zakres.
+
 ## 0.3.0-beta.97
 
 - Zwiększono maksymalny rozmiar ramki do 900 × 600 px dla wszystkich typów markerów.
