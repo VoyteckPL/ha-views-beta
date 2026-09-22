@@ -1,3 +1,8 @@
+## 0.3.0-beta.89
+
+- Markery zachowują teraz proporcjonalny rozmiar i odstępy względem tła na desktopie i telefonie.
+- Usunięto mobilne wymuszenie minimalnej skali, które powodowało nachodzenie markerów.
+
 ## 0.3.0-beta.88
 
 - Rozłączono rozmiar łuku Podkowy od rozmiaru ramki markera.
