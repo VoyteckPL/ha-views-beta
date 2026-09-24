@@ -736,7 +736,8 @@ function applyMarkerStyle(node, marker) {
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
     background: s.showBackground ? rgba(backgroundColor, backgroundOpacity) : 'transparent',
-    border: s.showBorder ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent',
+    border: '0 solid transparent',
+    '--marker-border-shadow': s.showBorder && borderWidth > 0 ? `0 0 0 ${borderWidth}px ${rgba(borderColor, borderOpacity)}` : 'none',
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
   const label = $('.label', node), value = $('.value', node);
