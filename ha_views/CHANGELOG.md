@@ -1,3 +1,8 @@
+## 0.3.0-beta.113
+
+- Naprawiono zachowanie rozwiniętej sekcji popupu po zmianie checkboxa.
+- Zakładka Ikona, Tło lub Ramka pozostaje otwarta podczas zmiany jej opcji.
+
 ## 0.3.0-beta.112
 
 - Uporządkowano popup tylko dla typu Ikona: sekcje Encja, Rozmiar, Ikona, Tło i Ramka pokazują wyłącznie potrzebne ustawienia.
