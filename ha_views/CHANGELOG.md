@@ -1,3 +1,8 @@
+## 0.3.0-beta.118
+
+- Przywrócono suwak „Zaokrąglenie” w Ramce typu Ikona.
+- Suwak jest dostępny dla kształtu „Zaokrąglony”; dla Koła / owalu jest ukryty.
+
 ## 0.3.0-beta.117
 
 - Checkbox w typie Ikona odświeża teraz tylko aktualnie otwartą zakładkę zamiast całego popupu.
