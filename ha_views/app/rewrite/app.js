@@ -143,6 +143,7 @@ let saveRunning = false, savePending = false, integrations = [], integrationEnti
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
 let editorDragged = false;
+let editorOpenSectionIndex = -1;
 let sceneScale = 1;
 const mobileLayoutY = new Map();
 let viewZoom = 1, viewPanX = 0, viewPanY = 0, mobileOrientation = '';
@@ -1009,7 +1010,7 @@ function focusSelectedMarkerOnMobile() {
   applyViewTransform();
 }
 function selectMarker(entityId) {
-  selectedId = entityId; renderMarkers(); openEditor();
+  editorOpenSectionIndex = -1; selectedId = entityId; renderMarkers(); openEditor();
   requestAnimationFrame(() => requestAnimationFrame(focusSelectedMarkerOnMobile));
 }
 function hideSelection() { els.selection.classList.remove('visible'); }
@@ -1119,7 +1120,7 @@ function editorMarkup(marker) {
   }
   return entity + size + value + label + icon + gauge + background + border;
 }
-function openEditor(preserveSection = -1) {
+function openEditor(preserveSection = editorOpenSectionIndex) {
   const marker = model.entities[selectedId]; if (!marker) return closeEditor();
   els.editorTitle.textContent = marker.displayName; els.editorEntity.textContent = marker.entityId; els.editorIntegration.textContent = `Integracja: ${marker.integrationName || 'Home Assistant'}`;
   if (els.editorIntegrationIcon) els.editorIntegrationIcon.innerHTML = integrationIconMarkupFor(marker.sourceDomain || marker.entityId.split('.')[0], marker.integrationName || marker.sourceDomain, 'editor-brand-icon');
@@ -1131,8 +1132,8 @@ function openEditor(preserveSection = -1) {
   $$('[data-editor-tab]').forEach(b => b.classList.toggle('active', b.dataset.editorTab === marker.type));
   $('#paste-style').disabled = !styleClipboard; els.editor.classList.add('visible'); els.editor.setAttribute('aria-hidden','false');
   $$('input,select', els.editorContent).forEach(input => { input.addEventListener('input', onEditorInput); input.addEventListener('change', onEditorInput); });
-  $$('.editor-section', els.editorContent).forEach(details => details.addEventListener('toggle', () => {
-    if (details.open) $$('.editor-section', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); });
+  $$('.editor-section', els.editorContent).forEach((details, index) => details.addEventListener('toggle', () => {
+    if (details.open) { editorOpenSectionIndex = index; $$('.editor-section', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); }); }
     requestAnimationFrame(() => requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); keepEditorInViewport(); }));
   }));
   $$('.gauge-subsection', els.editorContent).forEach(details => details.addEventListener('toggle', () => {
@@ -1147,7 +1148,7 @@ function onColorPickerClick(event) {
   if (swatch) { event.preventDefault(); const picker = swatch.closest('.color-picker'), input = $('.color-native', picker); input.value = swatch.dataset.paletteColor; $('.color-current', picker).style.background = input.value; input.dispatchEvent(new Event('input', { bubbles: true })); $('.color-menu', picker).classList.remove('visible'); return; }
   if (rgb) { event.preventDefault(); rgb.closest('.color-picker').querySelector('.color-native').click(); }
 }
-function closeEditor() { selectedId = null; editorDragged = false; els.editor.classList.remove('visible'); els.editor.setAttribute('aria-hidden','true'); hideSelection(); $$('.marker.selected').forEach(n => n.classList.remove('selected')); }
+function closeEditor() { selectedId = null; editorDragged = false; editorOpenSectionIndex = -1; els.editor.classList.remove('visible'); els.editor.setAttribute('aria-hidden','true'); hideSelection(); $$('.marker.selected').forEach(n => n.classList.remove('selected')); }
 function startEditorDrag(event) {
   if (mobileView() || event.button !== 0 || (event.buttons & 1) !== 1 || event.target.closest('button,input,select')) return;
   event.preventDefault(); editorDragged = true;
@@ -1177,7 +1178,7 @@ function onEditorInput(event) {
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') value = Number(value); if (input.dataset.integer === 'true') value = Math.round(value);
   setPath(marker, input.dataset.path, value); marker.updatedAt = new Date().toISOString();
   if (input.dataset.editorRefresh === 'true') {
-    const openIndex = $$('.editor-section', els.editorContent).findIndex(section => section.open);
+    const openIndex = editorOpenSectionIndex >= 0 ? editorOpenSectionIndex : $$('.editor-section', els.editorContent).findIndex(section => section.open);
     renderMarkers(); openEditor(openIndex);
     scheduleSave(true); return;
   }
@@ -1474,6 +1475,7 @@ function bindEvents() {
   $('#more-info-close')?.addEventListener('click', closeMoreInfo); els.moreInfoBackdrop?.addEventListener('click', closeMoreInfo);
   $('.history-ranges')?.addEventListener('click', event => { const button=event.target.closest('[data-history-hours]'); if(button) loadMoreInfoHistory(Number(button.dataset.historyHours)); });
   $('.editor-head').addEventListener('pointerdown', startEditorDrag);
+  els.editorContent.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   els.editorContent.addEventListener('click', event => {
     const reset = event.target.closest('[data-reset-path]');
     if (reset) { event.preventDefault(); resetEditorRange(reset.dataset.resetPath); return; }
