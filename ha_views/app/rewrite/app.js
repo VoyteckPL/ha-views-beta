@@ -98,8 +98,8 @@ const badgeDefaults = () => ({
   labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
-  borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 10,
-  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1,
+  borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 10, shape: 'rounded',
+  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineWidth: 1,
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
@@ -109,7 +109,7 @@ const gaugeDefaults = () => ({
   showTickLabels: false, tickLabelStep: 1000, tickFontSize: 8, tickFontFamily: 'Inter', tickLabelColor: '#9BC1D8', tickLabelOffset: 12,
   useGradient: false, gradientStart: '#21BCEB', gradientEnd: '#F59E0B',
   showBackground: true, backgroundColor: '#03101A', backgroundOpacity: .76,
-  showBorder: true, borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 16,
+  showBorder: true, borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 16, shape: 'rounded',
   showLabel: true, labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   showValue: true, valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   showPercent: true, percentColor: '#8FDFFF', percentOpacity: 1, percentScale: 1, percentY: 0,
@@ -552,7 +552,7 @@ function normalizedStyle(type, raw = {}) {
       base.contentScale = 1;
     }
   }
-  ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
+  ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity','iconOutlineWidth'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
   if (isGaugeType(type)) ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
 }
@@ -732,7 +732,7 @@ function applyMarkerStyle(node, marker) {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
     background: s.showBackground ? rgba(s.backgroundColor, s.backgroundOpacity) : 'transparent',
     border: s.showBorder ? `${s.borderWidth}px solid ${rgba(s.borderColor, s.borderOpacity)}` : '0 solid transparent',
-    borderRadius: `${s.radius}px`
+    borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
   const label = $('.label', node), value = $('.value', node);
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
@@ -744,8 +744,10 @@ function applyMarkerStyle(node, marker) {
   const icon = $('.marker-icon', node);
   if (icon) {
     const kind = stateKind(marker), color = kind === 'on' ? s.iconOnColor : kind === 'off' ? s.iconOffColor : kind === 'unavailable' ? s.iconUnavailableColor : s.iconColor;
+    const brandIcon = icon.classList.contains('marker-brand-icon');
     Object.assign(icon.style, { color, opacity: clamp(s.iconOpacity, 0, 1), fontSize: `${s.iconSize * contentScale}px`, left: `calc(50% + ${s.iconX * contentScale}px)`, top: `calc(50% + ${s.iconY * contentScale}px)`, transform: 'translate(-50%, -50%)' });
-    if (icon.classList.contains('marker-brand-icon')) Object.assign(icon.style, { width:`${s.iconSize * contentScale}px`, height:`${s.iconSize * contentScale}px`, objectFit:'contain' });
+    if (!brandIcon) Object.assign(icon.style, { WebkitTextFillColor: s.iconFillEnabled !== false ? color : 'transparent', WebkitTextStroke: s.iconOutlineEnabled ? `${Math.max(1, Number(s.iconOutlineWidth) || 1) * contentScale}px ${s.iconOutlineColor}` : '0 transparent', paintOrder: 'stroke fill' });
+    if (brandIcon) Object.assign(icon.style, { width:`${s.iconSize * contentScale}px`, height:`${s.iconSize * contentScale}px`, objectFit:'contain' });
   }
   if (isGaugeType(marker.type)) {
     // Anchor labels to the marker centre: resizing the Gauge changes neither their
@@ -1065,10 +1067,10 @@ function editorMarkup(marker) {
   const maximumSize = { width: 1200, height: 900 };
   const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}));
-  const border = section('Ramka', control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
+  const border = section('Ramka', control('Kształt','style.shape','select',s.shape,{items:[['square','Prostokąt'],['rounded','Zaokrąglony'],['circle','Koło / owal']]}) + control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
   const manualIcons = `<div data-manual-icons ${marker.iconMode === 'manual' ? '' : 'hidden'}>${mdiControl('Podstawowa','iconName',marker.iconName)}${mdiControl('Dla ON','iconOn',marker.iconOn)}${mdiControl('Dla OFF','iconOff',marker.iconOff)}</div>`;
-  const icon = section('Ikona', control('Pokaż','style.showIcon','checkbox',s.showIcon) + control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']]}) + manualIcons + mdiList + control('Kolor','style.iconColor','color',s.iconColor) + control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) + control('Brak danych','style.iconUnavailableColor','color',s.iconUnavailableColor) + control('Przezrocz.','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Lewo / prawo','style.iconX','range',s.iconX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}));
+  const icon = section('Ikona', control('Pokaż','style.showIcon','checkbox',s.showIcon) + control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']]}) + manualIcons + mdiList + control('Wypełnienie','style.iconFillEnabled','checkbox',s.iconFillEnabled) + control('Kolor','style.iconColor','color',s.iconColor) + control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) + control('Brak danych','style.iconUnavailableColor','color',s.iconUnavailableColor) + control('Obrys','style.iconOutlineEnabled','checkbox',s.iconOutlineEnabled) + control('Kolor obrysu','style.iconOutlineColor','color',s.iconOutlineColor) + control('Grubość obrysu','style.iconOutlineWidth','range',s.iconOutlineWidth,{min:1,max:8,step:.5,suffix:'px'}) + control('Przezrocz.','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Lewo / prawo','style.iconX','range',s.iconX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}));
   let gauge = '';
   if (isGaugeType(marker.type)) {
     const range = gaugeSubsection('Zakres i wartość', control('Minimum','style.min','number',s.min,{valueType:'number'}) + control('Maksimum','style.max','number',s.max,{valueType:'number'}) + control('Grubość','style.thickness','range',s.thickness,{min:2,max:30,step:1,suffix:'px'}) + control('Tor','style.trackColor','color',s.trackColor) + control('Wartość','style.progressColor','color',s.progressColor));
