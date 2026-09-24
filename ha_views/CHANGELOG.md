@@ -1,3 +1,8 @@
+## 0.3.0-beta.117
+
+- Checkbox w typie Ikona odświeża teraz tylko aktualnie otwartą zakładkę zamiast całego popupu.
+- Usunięto podwójne zdarzenie input/change dla checkboxów i list wyboru.
+
 ## 0.3.0-beta.116
 
 - Edytor zapamiętuje aktywną zakładkę przy jej ręcznym otwarciu.
