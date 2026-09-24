@@ -1175,7 +1175,7 @@ function onEditorInput(event) {
   if (input.dataset.editorRefresh === 'true') {
     const openTitle = $('.editor-section[open] > summary', els.editorContent)?.textContent;
     renderMarkers(); openEditor();
-    if (openTitle) { const section = $('.editor-section', els.editorContent).find(item => $('summary', item)?.textContent === openTitle); if (section) section.open = true; }
+    if (openTitle) { const section = $$('.editor-section', els.editorContent).find(item => $('summary', item)?.textContent === openTitle); if (section) section.open = true; }
     scheduleSave(true); return;
   }
   if (input.dataset.path === 'iconMode') { const manual = $('[data-manual-icons]', els.editorContent); if (manual) manual.hidden = value !== 'manual'; }
