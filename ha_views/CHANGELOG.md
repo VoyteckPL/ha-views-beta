@@ -1,3 +1,8 @@
+## 0.3.0-beta.111
+
+- Dopasowano promień zewnętrznej ramki do zaokrąglenia tła.
+- Usunięto puste przestrzenie między ramką a tłem przy zaokrąglonych markerach.
+
 ## 0.3.0-beta.110
 
 - Zastąpiono render ramki niezależną warstwą wokół markera.
