@@ -1,3 +1,8 @@
+## 0.3.0-beta.123
+
+- Przeciąganie każdego rogu markera kotwiczy róg przeciwny i rozciąga marker w wybraną stronę.
+- Przywrócono stopniowanie siatki S/M/L: 0,25% / 1% / 4%.
+
 ## 0.3.0-beta.122
 
 - Siatka w trybie edycji jest wyraźniejsza i mniej gęsta.
