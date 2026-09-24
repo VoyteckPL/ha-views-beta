@@ -51,7 +51,7 @@ function applyLanguage() {
   if (select) select.value = uiLanguage;
   const titles = {
     'settings-toggle':'Ustawienia','integrations-button':'Integracje','edit-toggle':'Edytuj widok','view-manage':'Zarządzaj widokami','view-add':'Dodaj widok','view-rename':'Zmień nazwę widoku','view-duplicate':'Duplikuj widok','view-delete':'Usuń widok',
-    'background-manage':'Zarządzaj tłem','background-upload':'Wgraj obraz','background-download':'Pobierz tło','background-delete':'Usuń tło','snap-toggle':'Siatka włączona','default-style':'Ustaw domyślny','copy-style':'Kopiuj styl','paste-style':'Wklej styl','remove-marker':'Usuń z widoku','editor-close':'Zamknij','more-info-close':'Zamknij'
+    'background-manage':'Zarządzaj tłem','background-upload':'Wgraj obraz','background-download':'Pobierz tło','background-delete':'Usuń tło','snap-toggle':'Siatka włączona','default-style':'Ustaw domyślny','preview-state-toggle':'Testuj stan ON/OFF','copy-style':'Kopiuj styl','paste-style':'Wklej styl','remove-marker':'Usuń z widoku','editor-close':'Zamknij','more-info-close':'Zamknij'
   };
   Object.entries(titles).forEach(([id,label]) => { const el = document.getElementById(id); if (el) { const value = translateValue(label); el.title = value; el.setAttribute('aria-label', value); } });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
@@ -144,6 +144,7 @@ let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
 let editorDragged = false;
 let editorOpenSectionIndex = -1;
+let editorPreview = { entityId: '', state: '' };
 let sceneScale = 1;
 const mobileLayoutY = new Map();
 let viewZoom = 1, viewPanX = 0, viewPanY = 0, mobileOrientation = '';
@@ -613,8 +614,11 @@ async function migrateLegacy() {
   return true;
 }
 
+function previewStateFor(marker) {
+  return editMode && selectedId === marker?.entityId && editorPreview.entityId === marker?.entityId ? editorPreview.state : '';
+}
 function formatState(marker) {
-  const obj = stateCache[marker.entityId] || {}; const raw = obj.state; let value = raw;
+  const obj = stateCache[marker.entityId] || {}; const raw = previewStateFor(marker) || obj.state; let value = raw;
   if (raw === 'on' && marker.stateOnLabel) value = marker.stateOnLabel;
   if (raw === 'off' && marker.stateOffLabel) value = marker.stateOffLabel;
   if (value === undefined || value === null || value === 'unknown' || value === 'unavailable') value = '—';
@@ -624,7 +628,7 @@ function formatState(marker) {
   return { value: String(value), unit: String(unit || '') };
 }
 function stateKind(marker) {
-  const raw = stateCache[marker.entityId]?.state;
+  const raw = previewStateFor(marker) || stateCache[marker.entityId]?.state;
   if (raw === 'on') return 'on';
   if (raw === 'off') return 'off';
   if (raw == null || raw === 'unknown' || raw === 'unavailable') return 'unavailable';
@@ -1010,7 +1014,7 @@ function focusSelectedMarkerOnMobile() {
   applyViewTransform();
 }
 function selectMarker(entityId) {
-  editorOpenSectionIndex = -1; selectedId = entityId; renderMarkers(); openEditor();
+  editorOpenSectionIndex = -1; if (selectedId !== entityId) editorPreview = { entityId:'', state:'' }; selectedId = entityId; renderMarkers(); openEditor();
   requestAnimationFrame(() => requestAnimationFrame(focusSelectedMarkerOnMobile));
 }
 function hideSelection() { els.selection.classList.remove('visible'); }
@@ -1161,7 +1165,14 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
     if (details.open) $$('.gauge-subsection', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); });
     requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); });
   }));
-  requestAnimationFrame(positionEditor);
+  syncPreviewStateButton(); requestAnimationFrame(positionEditor);
+}
+function syncPreviewStateButton() {
+  const button = $('#preview-state-toggle'), marker = model.entities[selectedId]; if (!button) return;
+  const preview = marker ? previewStateFor(marker) : '', actual = marker ? stateKind(marker) : 'off', shown = preview || actual;
+  button.classList.toggle('active', shown === 'on'); button.dataset.previewing = preview ? 'true' : 'false';
+  const label = preview ? `Testowany stan: ${shown.toUpperCase()}` : `Testuj stan: ${shown.toUpperCase()}`;
+  button.title = label; button.setAttribute('aria-label', label);
 }
 function onColorPickerClick(event) {
   const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]');
@@ -1477,7 +1488,7 @@ function bindEvents() {
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
-  els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
     model.settings.snapStep = Number(button.dataset.gridStep);
@@ -1504,6 +1515,12 @@ function bindEvents() {
     onColorPickerClick(event);
   });
   $$('[data-editor-tab]').forEach(button => button.addEventListener('click', () => changeType(button.dataset.editorTab)));
+  $('#preview-state-toggle')?.addEventListener('click', () => {
+    const marker = model.entities[selectedId]; if (!marker || !editMode) return;
+    const current = previewStateFor(marker) || stateKind(marker);
+    editorPreview = { entityId: marker.entityId, state: current === 'on' ? 'off' : 'on' };
+    renderMarkers(); syncPreviewStateButton();
+  });
   $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
   $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style) }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
   $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
