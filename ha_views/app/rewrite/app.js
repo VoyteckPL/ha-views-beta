@@ -740,7 +740,8 @@ function applyMarkerStyle(node, marker) {
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
   const outlineNode = $('.marker-outline', node);
-  if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: 'inherit' });
+  const outlineRadius = s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${Math.max(0, Number(s.radius) || 0) + Math.max(0, Number(borderWidth) || 0)}px`;
+  if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
   const label = $('.label', node), value = $('.value', node);
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
   if (value) Object.assign(value.style, { color: s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
