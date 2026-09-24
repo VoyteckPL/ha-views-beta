@@ -1,3 +1,11 @@
+## 0.3.0-beta.112
+
+- Uporządkowano popup tylko dla typu Ikona: sekcje Encja, Rozmiar, Ikona, Tło i Ramka pokazują wyłącznie potrzebne ustawienia.
+- Wyłączone przełączniki Pokaż, Wypełnienie i Obrys ukrywają zależne pola.
+- Logo integracji nie pokazuje ustawień kolorów, obrysu ani wariantów ON/OFF.
+- Własna ikona MDI ma niezależny przełącznik wariantu ON/OFF; przy wyłączeniu widoczna jest tylko ikona podstawowa.
+- Ujednolicono nazwy opcji zależnych ON/OFF oraz dodano niezależną zależność przezroczystości ikony.
+
 ## 0.3.0-beta.111
 
 - Dopasowano promień zewnętrznej ramki do zaokrąglenia tła.
