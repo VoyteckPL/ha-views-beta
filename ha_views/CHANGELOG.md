@@ -1,3 +1,8 @@
+## 0.3.0-beta.127
+
+- Dodano niezależne przesuwanie pojedynczego rogu powierzchni markera.
+- Treść markera nie jest deformowana i pozostaje wycentrowana.
+
 ## 0.3.0-beta.126
 
 - Recovery: cofnięto wadliwą swobodną deformację markera z beta.125.
