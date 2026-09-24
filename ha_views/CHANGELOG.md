@@ -1,3 +1,7 @@
+## 0.3.0-beta.129
+
+- Poprawiono rozciąganie rogu: róg po przekątnej jest utrzymywany w dokładnie tym samym miejscu na ekranie.
+
 ## 0.3.0-beta.128
 
 - Cofnięto deformowanie powierzchni markerów z beta.127.
