@@ -1,3 +1,8 @@
+## 0.3.0-beta.108
+
+- Ramka markera jest teraz rysowana na zewnątrz tła dla wszystkich typów.
+- Ramka nie zabiera już miejsca wewnątrz markera ani nie wpływa na pozycję jego zawartości.
+
 ## 0.3.0-beta.107
 
 - Dodano niezależne ustawienia ON/OFF dla tła: kolor i przezroczystość.
