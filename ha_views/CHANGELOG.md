@@ -1,3 +1,8 @@
+## 0.3.0-beta.121
+
+- Rozdzielono przezroczystość wypełnienia i obrysu ikon MDI.
+- Obrys ma własną przezroczystość, także osobno dla wariantów ON/OFF.
+
 ## 0.3.0-beta.120
 
 - Dodano przycisk testowego stanu ON/OFF obok „Przywróć domyślne” w edytorze markera.
