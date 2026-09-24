@@ -1119,13 +1119,13 @@ function editorMarkup(marker) {
   }
   return entity + size + value + label + icon + gauge + background + border;
 }
-function openEditor(preserveSection = '') {
+function openEditor(preserveSection = -1) {
   const marker = model.entities[selectedId]; if (!marker) return closeEditor();
   els.editorTitle.textContent = marker.displayName; els.editorEntity.textContent = marker.entityId; els.editorIntegration.textContent = `Integracja: ${marker.integrationName || 'Home Assistant'}`;
   if (els.editorIntegrationIcon) els.editorIntegrationIcon.innerHTML = integrationIconMarkupFor(marker.sourceDomain || marker.entityId.split('.')[0], marker.integrationName || marker.sourceDomain, 'editor-brand-icon');
   els.editorContent.innerHTML = editorMarkup(marker);
-  if (preserveSection) {
-    const section = $$('.editor-section', els.editorContent).find(item => $('summary', item)?.textContent === preserveSection);
+  if (Number.isInteger(preserveSection) && preserveSection >= 0) {
+    const section = $$('.editor-section', els.editorContent)[preserveSection];
     if (section) section.open = true;
   }
   $$('[data-editor-tab]').forEach(b => b.classList.toggle('active', b.dataset.editorTab === marker.type));
@@ -1177,8 +1177,8 @@ function onEditorInput(event) {
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') value = Number(value); if (input.dataset.integer === 'true') value = Math.round(value);
   setPath(marker, input.dataset.path, value); marker.updatedAt = new Date().toISOString();
   if (input.dataset.editorRefresh === 'true') {
-    const openTitle = $('.editor-section[open] > summary', els.editorContent)?.textContent || '';
-    renderMarkers(); openEditor(openTitle);
+    const openIndex = $$('.editor-section', els.editorContent).findIndex(section => section.open);
+    renderMarkers(); openEditor(openIndex);
     scheduleSave(true); return;
   }
   if (input.dataset.path === 'iconMode') { const manual = $('[data-manual-icons]', els.editorContent); if (manual) manual.hidden = value !== 'manual'; }
