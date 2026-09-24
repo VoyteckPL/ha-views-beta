@@ -1,3 +1,8 @@
+## 0.3.0-beta.119
+
+- Dla własnej ikony MDI aktywna zależność ON/OFF pokazuje tylko pola Ikona ON i Ikona OFF.
+- Ikona podstawowa jest widoczna wyłącznie przy wyłączonej zależności ON/OFF.
+
 ## 0.3.0-beta.118
 
 - Przywrócono suwak „Zaokrąglenie” w Ramce typu Ikona.
