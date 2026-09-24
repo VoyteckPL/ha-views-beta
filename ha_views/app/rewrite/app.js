@@ -18,7 +18,7 @@ const TRANSLATIONS = {
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
     'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
-    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
+    'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Przezroczystość':'Opacity','Przezroczystość ON':'ON opacity','Przezroczystość OFF':'OFF opacity','Kolor zależny ON/OFF':'Colour depends on ON/OFF','Przezroczystość zależna ON/OFF':'Opacity depends on ON/OFF','Ikona zależna ON/OFF':'Icon depends on ON/OFF','Tło zależne ON/OFF':'Background depends on ON/OFF','Ramka zależna ON/OFF':'Border depends on ON/OFF','Obrys zależny ON/OFF':'Outline depends on ON/OFF','Ikona podstawowa':'Base icon','Ikona ON':'ON icon','Ikona OFF':'OFF icon','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
   }
 };
 function translateValue(value) {
@@ -99,7 +99,7 @@ const badgeDefaults = () => ({
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76, backgroundStateEnabled: false, backgroundOnColor: '#03101A', backgroundOffColor: '#03101A', backgroundOnOpacity: .76, backgroundOffOpacity: .76,
   borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 10, shape: 'rounded', borderStateEnabled: false, borderOnColor: '#607D8B', borderOffColor: '#607D8B', borderOnOpacity: .55, borderOffOpacity: .55, borderOnWidth: 1, borderOffWidth: 1,
-  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
+  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOpacityStateEnabled: false, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
@@ -113,7 +113,7 @@ const gaugeDefaults = () => ({
   showLabel: true, labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
   showValue: true, valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   showPercent: true, percentColor: '#8FDFFF', percentOpacity: 1, percentScale: 1, percentY: 0,
-  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
+  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOpacityStateEnabled: false, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 
@@ -133,7 +133,7 @@ const ICON_CHOICES = [['','Automatyczna'],['mdi:weather-rainy','Deszcz'],['mdi:w
 const freshMarker = (entity, integration) => ({
   id: uid(), entityId: entity.entity_id, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant',
   sourceDomain: integration.domain || entity.entity_id.split('.')[0], displayName: entity.name || entity.entity_id,
-  unitOverride: entity.unit ?? '', decimals: 'auto', stateOnLabel: '', stateOffLabel: '', iconMode: 'auto', iconName: '', iconOn: '', iconOff: '', tapAction: 'more_info', xPercent: 50, yPercent: 50, type: 'badge', style: badgeDefaults(),
+  unitOverride: entity.unit ?? '', decimals: 'auto', stateOnLabel: '', stateOffLabel: '', iconMode: 'auto', iconName: '', iconOn: '', iconOff: '', iconVariantEnabled: false, tapAction: 'more_info', xPercent: 50, yPercent: 50, type: 'badge', style: badgeDefaults(),
   createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
 });
 
@@ -552,6 +552,7 @@ function normalizedStyle(type, raw = {}) {
       base.contentScale = 1;
     }
   }
+  if (!Object.prototype.hasOwnProperty.call(raw || {}, 'iconOpacityStateEnabled')) base.iconOpacityStateEnabled = Boolean(raw?.iconStateEnabled);
   ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity','iconOutlineWidth','backgroundOnOpacity','backgroundOffOpacity','borderOnOpacity','borderOffOpacity','borderOnWidth','borderOffWidth','iconOnOpacity','iconOffOpacity','iconOutlineOnWidth','iconOutlineOffWidth'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
   if (isGaugeType(type)) ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
@@ -644,9 +645,11 @@ function automaticIcon(marker) {
 }
 function resolvedIcon(marker) {
   if (marker.iconMode !== 'manual') return automaticIcon(marker);
-  const kind = stateKind(marker);
-  if (kind === 'on' && marker.iconOn) return marker.iconOn;
-  if (kind === 'off' && marker.iconOff) return marker.iconOff;
+  if (marker.iconVariantEnabled) {
+    const kind = stateKind(marker);
+    if (kind === 'on' && marker.iconOn) return marker.iconOn;
+    if (kind === 'off' && marker.iconOff) return marker.iconOff;
+  }
   return marker.iconName || automaticIcon(marker);
 }
 function iconMarkup(marker) {
@@ -752,7 +755,7 @@ function applyMarkerStyle(node, marker) {
   const icon = $('.marker-icon', node);
   if (icon) {
     const iconColor = kind === 'unavailable' ? s.iconUnavailableColor : s.iconStateEnabled !== false && stateSuffix ? s[`icon${stateSuffix}Color`] : s.iconColor;
-    const iconOpacity = s.iconStateEnabled !== false && stateSuffix ? s[`icon${stateSuffix}Opacity`] : s.iconOpacity;
+    const iconOpacity = s.iconOpacityStateEnabled && stateSuffix ? s[`icon${stateSuffix}Opacity`] : s.iconOpacity;
     const outlineColor = s.iconOutlineStateEnabled && stateSuffix ? s[`iconOutline${stateSuffix}Color`] : s.iconOutlineColor;
     const outlineWidth = s.iconOutlineStateEnabled && stateSuffix ? s[`iconOutline${stateSuffix}Width`] : s.iconOutlineWidth;
     const brandIcon = icon.classList.contains('marker-brand-icon');
@@ -1053,7 +1056,7 @@ function control(label, path, type, value, options = {}) {
   const displayValue = rounded ? Math.round(Number(value) || 0) : value;
   const attrs = [`data-path="${path}"`, `data-value-type="${options.valueType || type}"`];
   if (rounded) attrs.push('data-integer="true"');
-  if (options.min !== undefined) attrs.push(`min="${options.min}"`); if (options.max !== undefined) attrs.push(`max="${options.max}"`); if (options.step !== undefined) attrs.push(`step="${options.step}"`);
+  if (options.min !== undefined) attrs.push(`min="${options.min}"`); if (options.max !== undefined) attrs.push(`max="${options.max}"`); if (options.step !== undefined) attrs.push(`step="${options.step}"`); if (options.refresh) attrs.push('data-editor-refresh="true"');
   let input;
   if (type === 'checkbox') input = `<input type="checkbox" ${attrs.join(' ')} ${value ? 'checked' : ''}>`;
   else if (type === 'select') input = `<select ${attrs.join(' ')}>${options.items.map(([v,t]) => `<option value="${v}" ${String(v) === String(value) ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
@@ -1068,7 +1071,29 @@ function mdiControl(label, path, value) {
 }
 function section(title, body, open = false) { return `<details class="editor-section" ${open ? 'open' : ''}><summary>${title}</summary><div class="editor-section-body">${body}</div></details>`; }
 function gaugeSubsection(title, body) { return `<details class="gauge-subsection"><summary>${title}</summary><div class="gauge-subsection-body">${body}</div></details>`; }
+function iconEditorMarkup(marker) {
+  const s = marker.style;
+  const refresh = { refresh:true };
+  const tapAction = isToggleableMarker(marker) ? control('Dotknięcie w widoku','tapAction','select',marker.tapAction || 'more_info',{items:[['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF']]}) : '';
+  const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + tapAction);
+  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:24,max:1200,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:24,max:900,step:1,suffix:'px',integer:true}));
+  const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
+  const manual = marker.iconMode === 'manual';
+  const integrationLogo = marker.iconMode === 'integration';
+  const manualIcons = manual ? control('Ikona zależna ON/OFF','iconVariantEnabled','checkbox',!!marker.iconVariantEnabled,refresh) + mdiControl('Ikona podstawowa','iconName',marker.iconName) + (marker.iconVariantEnabled ? mdiControl('Ikona ON','iconOn',marker.iconOn) + mdiControl('Ikona OFF','iconOff',marker.iconOff) : '') : '';
+  const fill = s.iconFillEnabled !== false ? control('Kolor zależny ON/OFF','style.iconStateEnabled','checkbox',s.iconStateEnabled,refresh) + (s.iconStateEnabled ? control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) : control('Kolor','style.iconColor','color',s.iconColor)) + control('Przezroczystość zależna ON/OFF','style.iconOpacityStateEnabled','checkbox',!!s.iconOpacityStateEnabled,refresh) + (s.iconOpacityStateEnabled ? control('Przezroczystość ON','style.iconOnOpacity','range',s.iconOnOpacity,{min:0,max:1,step:.01}) + control('Przezroczystość OFF','style.iconOffOpacity','range',s.iconOffOpacity,{min:0,max:1,step:.01}) : control('Przezroczystość','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01})) : '';
+  const outline = s.iconOutlineEnabled ? control('Obrys zależny ON/OFF','style.iconOutlineStateEnabled','checkbox',s.iconOutlineStateEnabled,refresh) + (s.iconOutlineStateEnabled ? control('Kolor obrysu ON','style.iconOutlineOnColor','color',s.iconOutlineOnColor) + control('Kolor obrysu OFF','style.iconOutlineOffColor','color',s.iconOutlineOffColor) + control('Grubość obrysu ON','style.iconOutlineOnWidth','range',s.iconOutlineOnWidth,{min:1,max:8,step:.5,suffix:'px'}) + control('Grubość obrysu OFF','style.iconOutlineOffWidth','range',s.iconOutlineOffWidth,{min:1,max:8,step:.5,suffix:'px'}) : control('Kolor obrysu','style.iconOutlineColor','color',s.iconOutlineColor) + control('Grubość obrysu','style.iconOutlineWidth','range',s.iconOutlineWidth,{min:1,max:8,step:.5,suffix:'px'})) : '';
+  const iconBody = control('Pokaż','style.showIcon','checkbox',s.showIcon,refresh) + (s.showIcon ? control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']],...refresh}) + manualIcons + mdiList + (!integrationLogo ? control('Wypełnienie','style.iconFillEnabled','checkbox',s.iconFillEnabled,refresh) + fill + control('Obrys','style.iconOutlineEnabled','checkbox',s.iconOutlineEnabled,refresh) + outline : '') + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Lewo / prawo','style.iconX','range',s.iconX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}) : '');
+  const icon = section('Ikona', iconBody);
+  const bgBody = control('Pokaż','style.showBackground','checkbox',s.showBackground,refresh) + (s.showBackground ? (s.backgroundStateEnabled ? control('Kolor ON','style.backgroundOnColor','color',s.backgroundOnColor) + control('Kolor OFF','style.backgroundOffColor','color',s.backgroundOffColor) + control('Przezroczystość ON','style.backgroundOnOpacity','range',s.backgroundOnOpacity,{min:0,max:1,step:.01}) + control('Przezroczystość OFF','style.backgroundOffOpacity','range',s.backgroundOffOpacity,{min:0,max:1,step:.01}) : control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezroczystość','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01})) + control('Tło zależne ON/OFF','style.backgroundStateEnabled','checkbox',s.backgroundStateEnabled,refresh) : '');
+  const background = section('Tło', bgBody);
+  const borderBody = control('Pokaż','style.showBorder','checkbox',s.showBorder,refresh) + (s.showBorder ? control('Kształt','style.shape','select',s.shape,{items:[['rounded','Zaokrąglony'],['circle','Koło / owal']]}) + (s.borderStateEnabled ? control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezroczystość ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezroczystość OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}) : control('Kolor','style.borderColor','color',s.borderColor) + control('Przezroczystość','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'})) + control('Ramka zależna ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled,refresh) : '');
+  const border = section('Ramka', borderBody);
+  return entity + size + icon + background + border;
+}
+
 function editorMarkup(marker) {
+  if (marker.type === 'icon') return iconEditorMarkup(marker);
   const s = marker.style;
   const tapAction = isToggleableMarker(marker) ? control('Dotknięcie w widoku','tapAction','select',marker.tapAction || 'more_info',{items:[['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF']]}) : '';
   const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + control('Jednostka','unitOverride','text',marker.unitOverride) + control('Zaokrąglenie','decimals','select',marker.decimals,{items:[['auto','Auto'],[0,'0'],[1,'1'],[2,'2'],[3,'3']]}) + control('Tekst ON','stateOnLabel','text',marker.stateOnLabel) + control('Tekst OFF','stateOffLabel','text',marker.stateOffLabel) + tapAction);
@@ -1147,6 +1172,12 @@ function onEditorInput(event) {
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') value = Number(value); if (input.dataset.integer === 'true') value = Math.round(value);
   setPath(marker, input.dataset.path, value); marker.updatedAt = new Date().toISOString();
+  if (input.dataset.editorRefresh === 'true') {
+    const openTitle = $('.editor-section[open] > summary', els.editorContent)?.textContent;
+    renderMarkers(); openEditor();
+    if (openTitle) { const section = $('.editor-section', els.editorContent).find(item => $('summary', item)?.textContent === openTitle); if (section) section.open = true; }
+    scheduleSave(true); return;
+  }
   if (input.dataset.path === 'iconMode') { const manual = $('[data-manual-icons]', els.editorContent); if (manual) manual.hidden = value !== 'manual'; }
   if (input.type === 'color') { const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
@@ -1551,7 +1582,7 @@ async function boot() {
   const multiMigrated = ensureMultiViewModel(); const gridPresetMigrated = migrateGridPresetSteps(); applySnapUi(); renderViewSelector();
   Object.values(model.views).flatMap(view => Object.values(view.entities || {})).forEach(m => {
     m.type = ['badge','gauge','icon','horseshoe'].includes(m.type) ? m.type : 'badge'; m.style = normalizedStyle(m.type, m.style);
-    m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= '';
+    m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= ''; m.iconVariantEnabled ??= Boolean(m.iconOn || m.iconOff);
   });
   const iconHorizontalMigrated = migrateIconHorizontalBaseline();
   const gaugeMigrated = migrateGaugeZeroOffsets();
