@@ -132,8 +132,9 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .editor-meta{display:flex!important;align-items:center;gap:5px;min-width:0}
 .editor-meta code{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;color:var(--muted)}
 .editor-meta .editor-status{flex:0 0 auto;min-height:0;padding:0;color:var(--green);font-size:8px}
-.editor-head>.editor-quick-actions{display:grid;grid-template-columns:repeat(5,28px);gap:3px;flex:0 0 auto;min-width:auto}
+.editor-head>.editor-quick-actions{display:grid;grid-template-columns:repeat(6,28px);gap:3px;flex:0 0 auto;min-width:auto}
 .editor-head .editor-icon-button{display:grid;place-items:center;width:28px;height:28px;padding:0;border-radius:7px;font-size:15px}
+.editor-head .editor-icon-button.active{color:#80e9ff;border-color:#20b9e7;background:rgba(32,185,231,.18);box-shadow:0 0 0 1px rgba(32,185,231,.18)}
 .editor-head .editor-icon-button.danger{color:#ff8290}
 .editor-tabs{padding:4px 7px;gap:4px}
 .editor-tabs button{display:flex;align-items:center;justify-content:center;gap:5px;height:29px;padding:0;font-size:10px}
