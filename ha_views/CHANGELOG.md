@@ -1,3 +1,9 @@
+## 0.3.0-beta.107
+
+- Dodano niezależne ustawienia ON/OFF dla tła: kolor i przezroczystość.
+- Dodano niezależne ustawienia ON/OFF dla ramki: kolor, przezroczystość i grubość.
+- Ikony MDI mają przełączaną zależność ON/OFF dla koloru i przezroczystości; obrys ma osobne kolory oraz grubości ON/OFF.
+
 ## 0.3.0-beta.106
 
 - W Ramce dodano wybór kształtu: prostokąt, zaokrąglony lub koło / owal.
