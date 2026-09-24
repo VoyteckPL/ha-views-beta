@@ -432,5 +432,3 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .integration-search input::placeholder{color:#7696a5}
 .search-status{padding:8px 2px;color:#86b7c9;font-size:10px}
 .search-result{margin-bottom:6px}
-
-.marker-frame{display:none;position:absolute;inset:0;z-index:0;width:100%;height:100%;overflow:visible;pointer-events:none}.marker-frame polygon{vector-effect:non-scaling-stroke}.marker>.label,.marker>.value,.marker>.percent{position:relative;z-index:2}.marker.gauge>.gauge-svg,.marker.horseshoe>.gauge-svg,.marker>.marker-icon,.marker.gauge>.label,.marker.gauge>.value,.marker.gauge>.percent,.marker.horseshoe>.label,.marker.horseshoe>.value,.marker.horseshoe>.percent{z-index:2}
