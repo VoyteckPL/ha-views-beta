@@ -1,3 +1,8 @@
+## 0.3.0-beta.122
+
+- Siatka w trybie edycji jest wyraźniejsza i mniej gęsta.
+- Zmieniono kroki S/M/L na 0,5% / 2% / 8%.
+
 ## 0.3.0-beta.121
 
 - Rozdzielono przezroczystość wypełnienia i obrysu ikon MDI.
