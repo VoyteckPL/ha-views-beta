@@ -99,7 +99,7 @@ const badgeDefaults = () => ({
   valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76,
   borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 10,
-  showIcon: false, iconSize: 26, iconX: -38, iconY: 0, iconOpacity: 1,
+  showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1,
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
 });
 const gaugeDefaults = () => ({
@@ -566,6 +566,17 @@ function migrateHorseshoeBaseline() {
     changed = true;
   });
   model.settings.horseshoeBaselineV1 = true;
+  return changed;
+}
+function migrateIconHorizontalBaseline() {
+  if (model.settings?.iconHorizontalBaselineV1) return false;
+  let changed = false;
+  Object.values(model.views || {}).flatMap(view => Object.values(view.entities || {})).forEach(marker => {
+    if (!['badge','icon'].includes(marker.type) || Number(marker.style?.iconX) !== -38) return;
+    marker.style.iconX = 0;
+    changed = true;
+  });
+  model.settings.iconHorizontalBaselineV1 = true;
   return changed;
 }
 function migrateGaugeZeroOffsets() {
@@ -1056,7 +1067,7 @@ function editorMarkup(marker) {
   const border = section('Ramka', control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
   const manualIcons = `<div data-manual-icons ${marker.iconMode === 'manual' ? '' : 'hidden'}>${mdiControl('Podstawowa','iconName',marker.iconName)}${mdiControl('Dla ON','iconOn',marker.iconOn)}${mdiControl('Dla OFF','iconOff',marker.iconOff)}</div>`;
-  const icon = section('Ikona', control('Pokaż','style.showIcon','checkbox',s.showIcon) + control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']]}) + manualIcons + mdiList + control('Kolor','style.iconColor','color',s.iconColor) + control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) + control('Brak danych','style.iconUnavailableColor','color',s.iconUnavailableColor) + control('Przezrocz.','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Pozycja','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}));
+  const icon = section('Ikona', control('Pokaż','style.showIcon','checkbox',s.showIcon) + control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']]}) + manualIcons + mdiList + control('Kolor','style.iconColor','color',s.iconColor) + control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) + control('Brak danych','style.iconUnavailableColor','color',s.iconUnavailableColor) + control('Przezrocz.','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Lewo / prawo','style.iconX','range',s.iconX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}));
   let gauge = '';
   if (isGaugeType(marker.type)) {
     const range = gaugeSubsection('Zakres i wartość', control('Minimum','style.min','number',s.min,{valueType:'number'}) + control('Maksimum','style.max','number',s.max,{valueType:'number'}) + control('Grubość','style.thickness','range',s.thickness,{min:2,max:30,step:1,suffix:'px'}) + control('Tor','style.trackColor','color',s.trackColor) + control('Wartość','style.progressColor','color',s.progressColor));
@@ -1515,9 +1526,10 @@ async function boot() {
     m.type = ['badge','gauge','icon','horseshoe'].includes(m.type) ? m.type : 'badge'; m.style = normalizedStyle(m.type, m.style);
     m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= '';
   });
+  const iconHorizontalMigrated = migrateIconHorizontalBaseline();
   const gaugeMigrated = migrateGaugeZeroOffsets();
   const horseshoeMigrated = migrateHorseshoeBaseline();
-  if (legacyMigrated || multiMigrated || gridPresetMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
+  if (legacyMigrated || multiMigrated || gridPresetMigrated || iconHorizontalMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
   // Markers are independent from the background image and from live-state
   // retrieval. Render them immediately: the first `selected_states` request
   // may be slow, but it must never keep the restored view blank.
