@@ -1,3 +1,9 @@
+## 0.3.0-beta.106
+
+- W Ramce dodano wybór kształtu: prostokąt, zaokrąglony lub koło / owal.
+- Ikony MDI mają niezależne wypełnienie i obrys: oba można włączać, a obrys ma własny kolor oraz grubość 1–8 px.
+- Logo integracji pozostaje obrazem bez nakładanego obrysu.
+
 ## 0.3.0-beta.105
 
 - Dodano mały przycisk resetu przy każdym suwaku w edytorze markera.
