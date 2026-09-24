@@ -1,3 +1,9 @@
+## 0.3.0-beta.128
+
+- Cofnięto deformowanie powierzchni markerów z beta.127.
+- Rozciąganie rogiem zachowuje prostokątny kształt i kotwi róg przeciwny.
+- Zwiększono maksymalny rozmiar markera do 2400 × 1800 px.
+
 ## 0.3.0-beta.127
 
 - Dodano niezależne przesuwanie pojedynczego rogu powierzchni markera.
