@@ -1611,8 +1611,8 @@ function startResize(event) {
     const height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 900),minHeight,900);
     const sceneRect = els.scene.getBoundingClientRect();
     marker.style.width = width; marker.style.height = height;
-    marker.xPercent = snapPercent(start.px + sx * (width - start.w) * scale / 2 / sceneRect.width * 100);
-    marker.yPercent = snapPercent(start.py + sy * (height - start.h) * scale / 2 / sceneRect.height * 100);
+    marker.xPercent = clamp(start.px + sx * (width - start.w) * scale / 2 / sceneRect.width * 100, 0, 100);
+    marker.yPercent = clamp(start.py + sy * (height - start.h) * scale / 2 / sceneRect.height * 100, 0, 100);
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
