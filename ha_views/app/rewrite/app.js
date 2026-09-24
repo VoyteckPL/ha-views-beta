@@ -702,7 +702,7 @@ function gaugeScaleMarkup(marker, s, cx, cy, radius, startAngle, sweep) {
   return markup.join('');
 }
 function markerHtml(marker) {
-  const s = marker.style, formatted = formatState(marker), fullValue = `${formatted.value}${formatted.unit ? ` ${formatted.unit}` : ''}`, icon = iconMarkup(marker), outline = '<span class="marker-outline"></span>';
+  const s = marker.style, formatted = formatState(marker), fullValue = `${formatted.value}${formatted.unit ? ` ${formatted.unit}` : ''}`, icon = iconMarkup(marker), frame = '<svg class="marker-frame" aria-hidden="true"><polygon></polygon></svg>', outline = '<span class="marker-outline"></span>';
   if (isGaugeType(marker.type)) {
     const n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const percent = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
@@ -710,9 +710,9 @@ function markerHtml(marker) {
     let sweep = rawSweep; while (sweep <= 0) sweep += 360; sweep = Math.min(sweep, 359.9);
     const path = gaugeArcPath(cx, cy, radius, start, start + sweep), gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
     const stroke = s.useGradient ? `url(#${gradientId})` : s.progressColor;
-    return `${outline}<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
+    return `${frame}${outline}<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
   }
-  return `${outline}${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
+  return `${frame}${outline}${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
 }
 function escapeHtml(value) { const div = document.createElement('div'); div.textContent = value ?? ''; return div.innerHTML; }
 function integrationIconMarkup(group) {
@@ -733,23 +733,35 @@ function enabledIcon(enabled) {
     ? '<span class="entity-enabled on" title="Encja włączona" aria-label="Encja włączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.7L16.5 9"/></svg></span>'
     : '<span class="entity-enabled off" title="Encja wyłączona" aria-label="Encja wyłączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7m0-7-7 7"/></svg></span>';
 }
+function markerCornerGeometry(marker) {
+  const raw = marker.cornerOffsets || {}, point = key => ({ x:Number(raw[key]?.x) || 0, y:Number(raw[key]?.y) || 0 });
+  const offsets = { nw:point('nw'), ne:point('ne'), se:point('se'), sw:point('sw') };
+  const active = Object.values(offsets).some(value => value.x || value.y);
+  const center = Object.values(offsets).reduce((sum, value) => ({ x:sum.x + value.x / 4, y:sum.y + value.y / 4 }), { x:0, y:0 });
+  const width = Number(marker.style?.width) || 1, height = Number(marker.style?.height) || 1;
+  const points = { nw:{ x:offsets.nw.x-center.x, y:offsets.nw.y-center.y }, ne:{ x:width+offsets.ne.x-center.x, y:offsets.ne.y-center.y }, se:{ x:width+offsets.se.x-center.x, y:height+offsets.se.y-center.y }, sw:{ x:offsets.sw.x-center.x, y:height+offsets.sw.y-center.y } };
+  return { active, center, points };
+}
 function applyMarkerStyle(node, marker) {
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
-  const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '';
+  const geometry = markerCornerGeometry(marker), displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '';
   const backgroundColor = s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Color`] : s.backgroundColor;
   const backgroundOpacity = s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Opacity`] : s.backgroundOpacity;
   const borderColor = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Color`] : s.borderColor;
   const borderOpacity = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Opacity`] : s.borderOpacity;
   const borderWidth = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Width`] : s.borderWidth;
   Object.assign(node.style, {
-    left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
-    background: s.showBackground ? rgba(backgroundColor, backgroundOpacity) : 'transparent',
+    left: `calc(${marker.xPercent}% + ${geometry.center.x * sceneScale}px)`, top: `calc(${displayY}% + ${geometry.center.y * sceneScale}px)`, width: `${s.width}px`, height: `${s.height}px`,
+    background: geometry.active ? 'transparent' : (s.showBackground ? rgba(backgroundColor, backgroundOpacity) : 'transparent'),
     border: '0 solid transparent',
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
+  const frame = $('.marker-frame', node), framePolygon = $('polygon', frame);
+  if (frame) Object.assign(frame.style, { display:geometry.active ? 'block' : 'none', overflow:'visible' });
+  if (framePolygon) { framePolygon.setAttribute('points', Object.values(geometry.points).map(point => `${point.x},${point.y}`).join(' ')); framePolygon.setAttribute('fill', s.showBackground ? rgba(backgroundColor, backgroundOpacity) : 'transparent'); framePolygon.setAttribute('stroke', s.showBorder && borderWidth > 0 ? rgba(borderColor, borderOpacity) : 'transparent'); framePolygon.setAttribute('stroke-width', String(borderWidth || 0)); }
   const outlineNode = $('.marker-outline', node);
   const outlineRadius = s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${Math.max(0, Number(s.radius) || 0) + Math.max(0, Number(borderWidth) || 0)}px`;
-  if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
+  if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: !geometry.active && s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
   const label = $('.label', node), value = $('.value', node);
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
   if (value) Object.assign(value.style, { color: s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
@@ -1020,9 +1032,16 @@ function selectMarker(entityId) {
 }
 function hideSelection() { els.selection.classList.remove('visible'); }
 function syncSelection() {
-  const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return hideSelection();
-  const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1;
-  Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });
+  const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`), marker = model.entities[selectedId]; if (!node || !marker) return hideSelection();
+  const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1, geometry = markerCornerGeometry(marker);
+  if (geometry.active) {
+    const toSelection = point => ({ x:(r.left + point.x * sceneScale - sr.left) / zoom, y:(r.top + point.y * sceneScale - sr.top) / zoom });
+    Object.assign(els.selection.style, { left:'0px', top:'0px', width:'100%', height:'100%', border:'0' });
+    $$('i', els.selection).forEach(handle => { const point = toSelection(geometry.points[handle.dataset.handle]); Object.assign(handle.style, { left:`${point.x}px`, top:`${point.y}px`, right:'auto', bottom:'auto' }); });
+  } else {
+    Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px`, border:'' });
+    $$('i', els.selection).forEach(handle => Object.assign(handle.style, { left:'', top:'', right:'', bottom:'' }));
+  }
   els.selection.classList.add('visible');
 }
 function positionEditor() {
@@ -1522,7 +1541,7 @@ function bindEvents() {
     editorPreview = { entityId: marker.entityId, state: current === 'on' ? 'off' : 'on' };
     renderMarkers(); syncPreviewStateButton();
   });
-  $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
+  $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); delete m.cornerOffsets; renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
   $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style) }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
   $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeEntity(m.entityId); });
@@ -1596,29 +1615,17 @@ function startResize(event) {
   const marker = model.entities[selectedId];
   if (!editMode || !marker || event.button !== 0 || (event.buttons & 1) !== 1) return;
   event.preventDefault(); event.stopPropagation();
-  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, start = { x:event.clientX, y:event.clientY, w:Number(marker.style.width), h:Number(marker.style.height), px:marker.xPercent, py:marker.yPercent }; let changed = false;
+  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, start = { x:event.clientX, y:event.clientY, corners:clone(marker.cornerOffsets || {}) }; let changed = false;
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
-    const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
-    const snapSize = (value, maximum) => {
-      const limited = clamp(value, 1, maximum);
-      if (model.settings?.snapEnabled === false) return limited;
-      const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
-      return Math.round(limited / gridPx) * gridPx;
-    };
-    const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
-    const width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 1200),minWidth,1200);
-    const height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 900),minHeight,900);
-    const sceneRect = els.scene.getBoundingClientRect();
-    marker.style.width = width; marker.style.height = height;
-    marker.xPercent = clamp(start.px + sx * (width - start.w) * scale / 2 / sceneRect.width * 100, 0, 100);
-    marker.yPercent = clamp(start.py + sy * (height - start.h) * scale / 2 / sceneRect.height * 100, 0, 100);
+    const snapOffset = value => { if (model.settings?.snapEnabled === false) return value; const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100); return Math.round(value / gridPx) * gridPx; };
+    const base = start.corners[handle] || { x:0, y:0 };
+    marker.cornerOffsets = clone(start.corners);
+    marker.cornerOffsets[handle] = { x:snapOffset(base.x + (e.clientX-start.x)/scale), y:snapOffset(base.y + (e.clientY-start.y)/scale) };
+    changed = true;
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
-  const finish = () => {
-    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish);
-    if (changed) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); openEditor(); }
-  };
+  const finish = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish); if (changed) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); openEditor(); } };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', finish); window.addEventListener('pointercancel', finish);
 }
 
