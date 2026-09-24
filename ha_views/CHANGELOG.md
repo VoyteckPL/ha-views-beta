@@ -1,3 +1,13 @@
+## 0.3.0-beta.115
+
+- Naprawiono zachowanie otwartej sekcji po zmianie checkboxa niezależnie od języka interfejsu.
+- Edytor zapamiętuje teraz indeks zakładki zamiast jej przetłumaczonej nazwy.
+
+## 0.3.0-beta.114
+
+- Zachowano otwartą sekcję edytora już podczas przebudowy popupu po zmianie checkboxa.
+- Przełączniki w Ikonie, Tle i Ramce nie zwijają aktualnie edytowanej zakładki.
+
 ## 0.3.0-beta.113
 
 - Naprawiono zachowanie rozwiniętej sekcji popupu po zmianie checkboxa.
