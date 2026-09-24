@@ -1,3 +1,8 @@
+## 0.3.0-beta.126
+
+- Recovery: cofnięto wadliwą swobodną deformację markera z beta.125.
+- Przywrócono stabilne zachowanie markerów i ich treści.
+
 ## 0.3.0-beta.125
 
 - Dodano swobodną transformację markera: każdy z czterech rogów można przesuwać niezależnie, bez ruszania trzech pozostałych.
