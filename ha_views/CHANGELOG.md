@@ -1,3 +1,8 @@
+## 0.3.0-beta.116
+
+- Edytor zapamiętuje aktywną zakładkę przy jej ręcznym otwarciu.
+- Kliknięcia checkboxów i list wyboru są odseparowane od obsługi rozwijania sekcji popupu.
+
 ## 0.3.0-beta.115
 
 - Naprawiono zachowanie otwartej sekcji po zmianie checkboxa niezależnie od języka interfejsu.
