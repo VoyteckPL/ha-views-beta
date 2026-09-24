@@ -1,3 +1,9 @@
+## 0.3.0-beta.120
+
+- Dodano przycisk testowego stanu ON/OFF obok „Przywróć domyślne” w edytorze markera.
+- Przycisk zmienia wyłącznie podgląd markera w trybie edycji; nie steruje encją Home Assistant.
+- Po wyjściu z trybu edycji marker wraca do rzeczywistego stanu encji.
+
 ## 0.3.0-beta.119
 
 - Dla własnej ikony MDI aktywna zależność ON/OFF pokazuje tylko pola Ikona ON i Ikona OFF.
