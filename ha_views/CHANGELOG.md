@@ -1,3 +1,7 @@
+## 0.3.0-beta.124
+
+- Poprawiono kotwiczenie rogów podczas rozciągania: pozycja przeciwległego rogu nie jest już zaokrąglana przez siatkę.
+
 ## 0.3.0-beta.123
 
 - Przeciąganie każdego rogu markera kotwiczy róg przeciwny i rozciąga marker w wybraną stronę.
