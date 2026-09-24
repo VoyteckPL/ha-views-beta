@@ -1,3 +1,8 @@
+## 0.3.0-beta.105
+
+- Dodano mały przycisk resetu przy każdym suwaku w edytorze markera.
+- Reset przywraca wyłącznie daną wartość do domyślnej dla typu markera, bez potwierdzenia i bez zmiany pozostałych ustawień.
+
 ## 0.3.0-beta.104
 
 - Wyśrodkowano domyślną ikonę w Badge i typie Ikona, także dla istniejących markerów z poprzednim domyślnym przesunięciem.
