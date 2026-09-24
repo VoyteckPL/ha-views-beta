@@ -694,7 +694,7 @@ function gaugeScaleMarkup(marker, s, cx, cy, radius, startAngle, sweep) {
   return markup.join('');
 }
 function markerHtml(marker) {
-  const s = marker.style, formatted = formatState(marker), fullValue = `${formatted.value}${formatted.unit ? ` ${formatted.unit}` : ''}`, icon = iconMarkup(marker);
+  const s = marker.style, formatted = formatState(marker), fullValue = `${formatted.value}${formatted.unit ? ` ${formatted.unit}` : ''}`, icon = iconMarkup(marker), outline = '<span class="marker-outline"></span>';
   if (isGaugeType(marker.type)) {
     const n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const percent = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
@@ -702,9 +702,9 @@ function markerHtml(marker) {
     let sweep = rawSweep; while (sweep <= 0) sweep += 360; sweep = Math.min(sweep, 359.9);
     const path = gaugeArcPath(cx, cy, radius, start, start + sweep), gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
     const stroke = s.useGradient ? `url(#${gradientId})` : s.progressColor;
-    return `<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
+    return `${outline}<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
   }
-  return `${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
+  return `${outline}${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
 }
 function escapeHtml(value) { const div = document.createElement('div'); div.textContent = value ?? ''; return div.innerHTML; }
 function integrationIconMarkup(group) {
@@ -733,14 +733,14 @@ function applyMarkerStyle(node, marker) {
   const borderColor = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Color`] : s.borderColor;
   const borderOpacity = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Opacity`] : s.borderOpacity;
   const borderWidth = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Width`] : s.borderWidth;
-  const borderShadow = s.showBorder && borderWidth > 0 ? `0 0 0 ${borderWidth}px ${rgba(borderColor, borderOpacity)}` : 'none';
-  node.style.setProperty('--marker-border-shadow', borderShadow);
   Object.assign(node.style, {
     left: `${marker.xPercent}%`, top: `${displayY}%`, width: `${s.width}px`, height: `${s.height}px`,
     background: s.showBackground ? rgba(backgroundColor, backgroundOpacity) : 'transparent',
     border: '0 solid transparent',
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
+  const outlineNode = $('.marker-outline', node);
+  if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: 'inherit' });
   const label = $('.label', node), value = $('.value', node);
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
   if (value) Object.assign(value.style, { color: s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
