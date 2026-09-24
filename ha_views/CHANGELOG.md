@@ -1,3 +1,8 @@
+## 0.3.0-beta.110
+
+- Zastąpiono render ramki niezależną warstwą wokół markera.
+- Ramka jest widoczna na zewnątrz tła i nie wpływa na rozmiar ani zawartość markera.
+
 ## 0.3.0-beta.109
 
 - Naprawiono render zewnętrznej ramki markerów — ramka jest ponownie widoczna dla wszystkich typów.
