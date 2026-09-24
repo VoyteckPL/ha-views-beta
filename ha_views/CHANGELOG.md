@@ -1,3 +1,7 @@
+## 0.3.0-beta.125
+
+- Dodano swobodną transformację markera: każdy z czterech rogów można przesuwać niezależnie, bez ruszania trzech pozostałych.
+
 ## 0.3.0-beta.124
 
 - Poprawiono kotwiczenie rogów podczas rozciągania: pozycja przeciwległego rogu nie jest już zaokrąglana przez siatkę.
