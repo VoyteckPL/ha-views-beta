@@ -1596,24 +1596,22 @@ function startResize(event) {
   const marker = model.entities[selectedId];
   if (!editMode || !marker || event.button !== 0 || (event.buttons & 1) !== 1) return;
   event.preventDefault(); event.stopPropagation();
-  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, start = { x:event.clientX, y:event.clientY, w:Number(marker.style.width), h:Number(marker.style.height), px:marker.xPercent, py:marker.yPercent }; let changed = false;
+  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
+  if (!node) return;
+  const initialRect = node.getBoundingClientRect(), fixed = { x:handle.includes('w') ? initialRect.right : initialRect.left, y:handle.includes('n') ? initialRect.bottom : initialRect.top };
+  const start = { x:event.clientX, y:event.clientY, w:Number(marker.style.width), h:Number(marker.style.height), px:marker.xPercent, py:marker.yPercent }; let changed = false;
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
     const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
-    const snapSize = (value, maximum) => {
-      const limited = clamp(value, 1, maximum);
-      if (model.settings?.snapEnabled === false) return limited;
-      const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
-      return Math.round(limited / gridPx) * gridPx;
-    };
+    const snapSize = (value, maximum) => { const limited = clamp(value, 1, maximum); if (model.settings?.snapEnabled === false) return limited; const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100); return Math.round(limited / gridPx) * gridPx; };
     const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
-    const width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 2400),minWidth,2400);
-    const height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 1800),minHeight,1800);
-    const sceneRect = els.scene.getBoundingClientRect();
-    marker.style.width = width; marker.style.height = height;
-    marker.xPercent = clamp(start.px + sx * (width - start.w) * scale / 2 / sceneRect.width * 100, 0, 100);
-    marker.yPercent = clamp(start.py + sy * (height - start.h) * scale / 2 / sceneRect.height * 100, 0, 100);
-    const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
+    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 2400),minWidth,2400);
+    marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 1800),minHeight,1800);
+    marker.xPercent = start.px; marker.yPercent = start.py; applyMarkerStyle(node, marker);
+    const sceneRect = els.scene.getBoundingClientRect(), current = node.getBoundingClientRect();
+    marker.xPercent += (fixed.x - (handle.includes('w') ? current.right : current.left)) / sceneRect.width * 100;
+    marker.yPercent += (fixed.y - (handle.includes('n') ? current.bottom : current.top)) / sceneRect.height * 100;
+    applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish);
