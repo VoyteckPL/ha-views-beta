@@ -1,3 +1,8 @@
+## 0.3.0-beta.104
+
+- Wyśrodkowano domyślną ikonę w Badge i typie Ikona, także dla istniejących markerów z poprzednim domyślnym przesunięciem.
+- W sekcji Ikona dodano osobny suwak „Lewo / prawo”; dotychczasowy suwak opisano jako „Góra / dół”.
+
 ## 0.3.0-beta.103
 
 - Powiększono widoczne uchwyty ramki markerów; mają teraz delikatną przezroczystość.
