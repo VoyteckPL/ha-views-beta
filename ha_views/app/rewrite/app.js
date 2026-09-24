@@ -1120,6 +1120,27 @@ function editorMarkup(marker) {
   }
   return entity + size + value + label + icon + gauge + background + border;
 }
+function bindEditorInputs(root) {
+  $$('input,select', root).forEach(input => {
+    if (input.type === 'checkbox' || input.tagName === 'SELECT') input.addEventListener('change', onEditorInput);
+    else { input.addEventListener('input', onEditorInput); input.addEventListener('change', onEditorInput); }
+  });
+}
+function refreshIconEditorSection(marker, sourceInput) {
+  const current = sourceInput.closest('.editor-section'), sections = $$('.editor-section', els.editorContent), index = sections.indexOf(current);
+  if (index < 0) return false;
+  const draft = document.createElement('div'); draft.innerHTML = iconEditorMarkup(marker);
+  const replacement = $$('.editor-section', draft)[index];
+  if (!replacement) return false;
+  current.replaceWith(replacement); replacement.open = true; editorOpenSectionIndex = index;
+  bindEditorInputs(replacement);
+  replacement.addEventListener('toggle', () => {
+    if (replacement.open) { editorOpenSectionIndex = index; $$('.editor-section', els.editorContent).forEach(other => { if (other !== replacement) other.removeAttribute('open'); }); }
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (replacement.open) replacement.scrollIntoView({ block: 'nearest' }); keepEditorInViewport(); }));
+  });
+  requestAnimationFrame(keepEditorInViewport);
+  return true;
+}
 function openEditor(preserveSection = editorOpenSectionIndex) {
   const marker = model.entities[selectedId]; if (!marker) return closeEditor();
   els.editorTitle.textContent = marker.displayName; els.editorEntity.textContent = marker.entityId; els.editorIntegration.textContent = `Integracja: ${marker.integrationName || 'Home Assistant'}`;
@@ -1131,7 +1152,7 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
   }
   $$('[data-editor-tab]').forEach(b => b.classList.toggle('active', b.dataset.editorTab === marker.type));
   $('#paste-style').disabled = !styleClipboard; els.editor.classList.add('visible'); els.editor.setAttribute('aria-hidden','false');
-  $$('input,select', els.editorContent).forEach(input => { input.addEventListener('input', onEditorInput); input.addEventListener('change', onEditorInput); });
+  bindEditorInputs(els.editorContent);
   $$('.editor-section', els.editorContent).forEach((details, index) => details.addEventListener('toggle', () => {
     if (details.open) { editorOpenSectionIndex = index; $$('.editor-section', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); }); }
     requestAnimationFrame(() => requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); keepEditorInViewport(); }));
@@ -1178,9 +1199,10 @@ function onEditorInput(event) {
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') value = Number(value); if (input.dataset.integer === 'true') value = Math.round(value);
   setPath(marker, input.dataset.path, value); marker.updatedAt = new Date().toISOString();
   if (input.dataset.editorRefresh === 'true') {
+    renderMarkers();
+    if (marker.type === 'icon' && refreshIconEditorSection(marker, input)) { scheduleSave(true); return; }
     const openIndex = editorOpenSectionIndex >= 0 ? editorOpenSectionIndex : $$('.editor-section', els.editorContent).findIndex(section => section.open);
-    renderMarkers(); openEditor(openIndex);
-    scheduleSave(true); return;
+    openEditor(openIndex); scheduleSave(true); return;
   }
   if (input.dataset.path === 'iconMode') { const manual = $('[data-manual-icons]', els.editorContent); if (manual) manual.hidden = value !== 'manual'; }
   if (input.type === 'color') { const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
