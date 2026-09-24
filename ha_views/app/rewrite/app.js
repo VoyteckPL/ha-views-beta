@@ -1046,8 +1046,9 @@ function control(label, path, type, value, options = {}) {
   else if (type === 'select') input = `<select ${attrs.join(' ')}>${options.items.map(([v,t]) => `<option value="${v}" ${String(v) === String(value) ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
   else if (type === 'color') input = `<div class="color-picker"><button type="button" class="color-current" data-color-toggle style="background:${escapeHtml(value)}" aria-label="Wybierz kolor"></button><input class="color-native" type="color" value="${escapeHtml(value)}" ${attrs.join(' ')}><div class="color-menu"><div class="color-palette">${COLOR_PALETTE.map(color => `<button type="button" data-palette-color="${color}" style="background:${color}" aria-label="${color}"></button>`).join('')}</div><button type="button" class="rgb-button" data-rgb-color>Własny kolor RGB…</button></div></div>`;
   else input = `<input type="${type}" value="${escapeHtml(value)}" ${attrs.join(' ')}>`;
+  const reset = type === 'range' ? `<button type="button" class="slider-reset" data-reset-path="${path}" title="Przywróć domyślną wartość" aria-label="Przywróć domyślną wartość"><i class="mdi mdi-restore"></i></button>` : '';
   const output = type === 'range' ? `<output data-suffix="${escapeHtml(options.suffix || '')}">${displayValue}${options.suffix || ''}</output>` : '<span></span>';
-  return `<div class="control ${type === 'checkbox' ? 'checkbox' : ''}"><label>${label}</label>${input}${output}</div>`;
+  return `<div class="control ${type === 'checkbox' ? 'checkbox' : ''} ${type === 'range' ? 'range-control' : ''}"><label>${label}</label>${input}${reset}${output}</div>`;
 }
 function mdiControl(label, path, value) {
   return `<div class="control"><label>${label}</label><input type="text" list="mdi-icon-list" value="${escapeHtml(value)}" data-path="${path}" data-value-type="text" placeholder="np. mdi:weather-rainy"><span></span></div>`;
@@ -1119,6 +1120,15 @@ function startEditorDrag(event) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', finish); window.addEventListener('pointercancel', finish);
 }
 function setPath(object, path, value) { const parts = path.split('.'); let target = object; while (parts.length > 1) target = target[parts.shift()]; target[parts[0]] = value; }
+function resetEditorRange(path) {
+  const marker = model.entities[selectedId]; if (!marker || !path.startsWith('style.')) return;
+  const defaults = markerStyleDefaults(marker.type), key = path.slice('style.'.length);
+  if (!(key in defaults)) return;
+  const input = els.editorContent.querySelector(`input[data-path="${CSS.escape(path)}"]`);
+  if (!input) return;
+  input.value = defaults[key];
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+}
 function onEditorInput(event) {
   const marker = model.entities[selectedId], input = event.target; if (!marker || !input.dataset.path) return;
   let value = input.type === 'checkbox' ? input.checked : input.value;
@@ -1417,7 +1427,11 @@ function bindEvents() {
   $('#more-info-close')?.addEventListener('click', closeMoreInfo); els.moreInfoBackdrop?.addEventListener('click', closeMoreInfo);
   $('.history-ranges')?.addEventListener('click', event => { const button=event.target.closest('[data-history-hours]'); if(button) loadMoreInfoHistory(Number(button.dataset.historyHours)); });
   $('.editor-head').addEventListener('pointerdown', startEditorDrag);
-  els.editorContent.addEventListener('click', onColorPickerClick);
+  els.editorContent.addEventListener('click', event => {
+    const reset = event.target.closest('[data-reset-path]');
+    if (reset) { event.preventDefault(); resetEditorRange(reset.dataset.resetPath); return; }
+    onColorPickerClick(event);
+  });
   $$('[data-editor-tab]').forEach(button => button.addEventListener('click', () => changeType(button.dataset.editorTab)));
   $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
   $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style) }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
