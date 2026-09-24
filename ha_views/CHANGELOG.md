@@ -1,3 +1,7 @@
+## 0.3.0-beta.109
+
+- Naprawiono render zewnętrznej ramki markerów — ramka jest ponownie widoczna dla wszystkich typów.
+
 ## 0.3.0-beta.108
 
 - Ramka markera jest teraz rysowana na zewnątrz tła dla wszystkich typów.
