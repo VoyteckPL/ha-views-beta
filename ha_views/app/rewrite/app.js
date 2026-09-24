@@ -733,40 +733,6 @@ function enabledIcon(enabled) {
     ? '<span class="entity-enabled on" title="Encja włączona" aria-label="Encja włączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.7L16.5 9"/></svg></span>'
     : '<span class="entity-enabled off" title="Encja wyłączona" aria-label="Encja wyłączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7m0-7-7 7"/></svg></span>';
 }
-function markerCorners(marker) {
-  const raw = marker.cornerOffsets || {};
-  return ['nw','ne','se','sw'].reduce((corners, key) => {
-    const point = raw[key] || {}; corners[key] = { x:Number(point.x) || 0, y:Number(point.y) || 0 }; return corners;
-  }, {});
-}
-function solveLinearSystem(matrix, values) {
-  const n = values.length, a = matrix.map((row, index) => [...row, values[index]]);
-  for (let column = 0; column < n; column += 1) {
-    let pivot = column;
-    for (let row = column + 1; row < n; row += 1) if (Math.abs(a[row][column]) > Math.abs(a[pivot][column])) pivot = row;
-    if (Math.abs(a[pivot][column]) < 1e-8) return null;
-    [a[column], a[pivot]] = [a[pivot], a[column]];
-    const divisor = a[column][column]; for (let j = column; j <= n; j += 1) a[column][j] /= divisor;
-    for (let row = 0; row < n; row += 1) { if (row === column) continue; const factor = a[row][column]; for (let j = column; j <= n; j += 1) a[row][j] -= factor * a[column][j]; }
-  }
-  return a.map(row => row[n]);
-}
-function markerWarpMatrix(marker) {
-  const corners = markerCorners(marker);
-  if (!Object.values(corners).some(point => point.x || point.y)) return '';
-  const width = Number(marker.style?.width) || 1, height = Number(marker.style?.height) || 1;
-  const source = [[0,0],[width,0],[width,height],[0,height]];
-  const target = [[corners.nw.x,corners.nw.y],[width + corners.ne.x,corners.ne.y],[width + corners.se.x,height + corners.se.y],[corners.sw.x,height + corners.sw.y]];
-  const rows = [], values = [];
-  source.forEach(([x,y], index) => {
-    const [u,v] = target[index];
-    rows.push([x,y,1,0,0,0,-u*x,-u*y]); values.push(u);
-    rows.push([0,0,0,x,y,1,-v*x,-v*y]); values.push(v);
-  });
-  const solution = solveLinearSystem(rows, values); if (!solution) return '';
-  const [a,b,c,d,e,f,g,h] = solution;
-  return `matrix3d(${a},${d},0,${g},${b},${e},0,${h},0,0,1,0,${c},${f},0,1)`;
-}
 function applyMarkerStyle(node, marker) {
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
   const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '';
@@ -781,9 +747,6 @@ function applyMarkerStyle(node, marker) {
     border: '0 solid transparent',
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
-  const warp = markerWarpMatrix(marker);
-  node.style.transform = warp ? `translate(-50%,-50%) scale(var(--scene-scale,1)) ${warp}` : '';
-  node.style.transformOrigin = warp ? '0 0' : '';
   const outlineNode = $('.marker-outline', node);
   const outlineRadius = s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${Math.max(0, Number(s.radius) || 0) + Math.max(0, Number(borderWidth) || 0)}px`;
   if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
@@ -1059,18 +1022,7 @@ function hideSelection() { els.selection.classList.remove('visible'); }
 function syncSelection() {
   const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return hideSelection();
   const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1;
-  const quad = node.getBoxQuads?.({ box:'border' })?.[0];
-  if (quad) {
-    const points = { nw:quad.p1, ne:quad.p2, se:quad.p3, sw:quad.p4 };
-    Object.assign(els.selection.style, { left:'0px', top:'0px', width:'100%', height:'100%', border:'0' });
-    $$('i', els.selection).forEach(handle => {
-      const point = points[handle.dataset.handle];
-      Object.assign(handle.style, { left:`${(point.x - sr.left) / zoom}px`, top:`${(point.y - sr.top) / zoom}px`, right:'auto', bottom:'auto' });
-    });
-  } else {
-    Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px`, border:'' });
-    $$('i', els.selection).forEach(handle => Object.assign(handle.style, { left:'', top:'', right:'', bottom:'' }));
-  }
+  Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });
   els.selection.classList.add('visible');
 }
 function positionEditor() {
@@ -1644,18 +1596,23 @@ function startResize(event) {
   const marker = model.entities[selectedId];
   if (!editMode || !marker || event.button !== 0 || (event.buttons & 1) !== 1) return;
   event.preventDefault(); event.stopPropagation();
-  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, start = { x:event.clientX, y:event.clientY, corners:markerCorners(marker) }; let changed = false;
+  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, start = { x:event.clientX, y:event.clientY, w:Number(marker.style.width), h:Number(marker.style.height), px:marker.xPercent, py:marker.yPercent }; let changed = false;
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
-    const dx = (e.clientX - start.x) / scale, dy = (e.clientY - start.y) / scale;
-    const snapOffset = value => {
-      if (model.settings?.snapEnabled === false) return value;
+    const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
+    const snapSize = (value, maximum) => {
+      const limited = clamp(value, 1, maximum);
+      if (model.settings?.snapEnabled === false) return limited;
       const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100);
-      return Math.round(value / gridPx) * gridPx;
+      return Math.round(limited / gridPx) * gridPx;
     };
-    marker.cornerOffsets = clone(start.corners);
-    marker.cornerOffsets[handle] = { x:snapOffset(start.corners[handle].x + dx), y:snapOffset(start.corners[handle].y + dy) };
-    changed = true;
+    const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
+    const width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 1200),minWidth,1200);
+    const height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 900),minHeight,900);
+    const sceneRect = els.scene.getBoundingClientRect();
+    marker.style.width = width; marker.style.height = height;
+    marker.xPercent = clamp(start.px + sx * (width - start.w) * scale / 2 / sceneRect.width * 100, 0, 100);
+    marker.yPercent = clamp(start.py + sy * (height - start.h) * scale / 2 / sceneRect.height * 100, 0, 100);
     const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`); if (node) applyMarkerStyle(node, marker); syncSelection();
   };
   const finish = () => {
