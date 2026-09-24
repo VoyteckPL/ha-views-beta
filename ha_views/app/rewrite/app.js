@@ -333,7 +333,7 @@ function applySnapUi() {
   const step = clamp(model.settings?.snapStep || .25, .25, 4);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
-  const activePreset = [.25, 1, 4].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, .25);
+  const activePreset = [.5, 2, 8].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, .5);
   els.gridPresets.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === activePreset));
 }
 function closeCompactMenus() {
