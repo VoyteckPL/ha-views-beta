@@ -1,3 +1,8 @@
+## 0.3.0-beta.132
+
+- Dodano blokadę geometrii markera w sekcji Rozmiar: chroni rozmiar i pozycję przed przypadkową zmianą.
+- Ujednolicono styl menu widoków, w tym sterowanie kolejnością.
+
 ## 0.3.0-beta.131
 
 - Ujednolicono wygląd sterowania kolejnością widoków z menu widoków.
