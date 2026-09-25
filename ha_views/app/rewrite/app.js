@@ -1133,6 +1133,54 @@ function iconEditorMarkup(marker) {
   return entity + size + icon + background + border;
 }
 
+
+function compactBadgeEditor(root, marker) {
+  const s = marker.style;
+  const hide = paths => paths.forEach(path => {
+    const input = root.querySelector(`[data-path="${path}"]`);
+    if (input) input.closest('.control').hidden = true;
+  });
+  const refresh = paths => paths.forEach(path => {
+    const input = root.querySelector(`[data-path="${path}"]`);
+    if (input) input.dataset.editorRefresh = 'true';
+  });
+  refresh(['style.showLabel','style.showValue','style.showBackground','style.backgroundStateEnabled','style.showBorder','style.shape','style.borderStateEnabled','style.showIcon','iconMode','iconVariantEnabled','style.iconFillEnabled','style.iconStateEnabled','style.iconOpacityStateEnabled','style.iconOutlineEnabled','style.iconOutlineStateEnabled']);
+  if (!s.showLabel) hide(['style.labelColor','style.labelOpacity','style.labelScale','style.labelY']);
+  if (!s.showValue) hide(['style.valueColor','style.valueOpacity','style.valueScale','style.valueY']);
+  if (!s.showBackground) hide(['style.backgroundGradient','style.backgroundGradientX','style.backgroundGradientY','style.backgroundGradientDirection','style.backgroundGradientSpread','style.backgroundGradientFill','style.backgroundColor','style.backgroundOpacity','style.backgroundStateEnabled','style.backgroundOnColor','style.backgroundOffColor','style.backgroundOnOpacity','style.backgroundOffOpacity']);
+  else {
+    if ((s.backgroundGradient || 'none') === 'none') hide(['style.backgroundGradientX','style.backgroundGradientY','style.backgroundGradientDirection','style.backgroundGradientSpread','style.backgroundGradientFill']);
+    else if (s.backgroundGradient === 'wall') hide(['style.backgroundGradientX']);
+    else hide(['style.backgroundGradientDirection']);
+    if (s.backgroundStateEnabled) hide(['style.backgroundColor','style.backgroundOpacity']);
+    else hide(['style.backgroundOnColor','style.backgroundOffColor','style.backgroundOnOpacity','style.backgroundOffOpacity']);
+  }
+  if (!s.showBorder) hide(['style.shape','style.borderColor','style.borderOpacity','style.borderWidth','style.radius','style.borderStateEnabled','style.borderOnColor','style.borderOffColor','style.borderOnOpacity','style.borderOffOpacity','style.borderOnWidth','style.borderOffWidth']);
+  else {
+    if (s.shape !== 'rounded') hide(['style.radius']);
+    if (s.borderStateEnabled) hide(['style.borderColor','style.borderOpacity','style.borderWidth']);
+    else hide(['style.borderOnColor','style.borderOffColor','style.borderOnOpacity','style.borderOffOpacity','style.borderOnWidth','style.borderOffWidth']);
+  }
+  if (!s.showIcon) hide(['iconMode','iconName','iconOn','iconOff','style.iconFillEnabled','style.iconStateEnabled','style.iconColor','style.iconOnColor','style.iconOffColor','style.iconUnavailableColor','style.iconOpacity','style.iconOnOpacity','style.iconOffOpacity','style.iconOutlineEnabled','style.iconOutlineStateEnabled','style.iconOutlineColor','style.iconOutlineOnColor','style.iconOutlineOffColor','style.iconOutlineOpacity','style.iconOutlineOnOpacity','style.iconOutlineOffOpacity','style.iconOutlineWidth','style.iconOutlineOnWidth','style.iconOutlineOffWidth','style.iconSize','style.iconX','style.iconY']);
+  else {
+    const manual = marker.iconMode === 'manual', integration = marker.iconMode === 'integration';
+    if (!manual) hide(['iconName','iconOn','iconOff','iconVariantEnabled']);
+    else if (marker.iconVariantEnabled) hide(['iconName']);
+    else hide(['iconOn','iconOff']);
+    if (integration) hide(['style.iconFillEnabled','style.iconStateEnabled','style.iconColor','style.iconOnColor','style.iconOffColor','style.iconUnavailableColor','style.iconOpacity','style.iconOnOpacity','style.iconOffOpacity','style.iconOutlineEnabled','style.iconOutlineStateEnabled','style.iconOutlineColor','style.iconOutlineOnColor','style.iconOutlineOffColor','style.iconOutlineOpacity','style.iconOutlineOnOpacity','style.iconOutlineOffOpacity','style.iconOutlineWidth','style.iconOutlineOnWidth','style.iconOutlineOffWidth']);
+    else {
+      if (!s.iconFillEnabled) hide(['style.iconStateEnabled','style.iconColor','style.iconOnColor','style.iconOffColor','style.iconUnavailableColor','style.iconOpacity','style.iconOnOpacity','style.iconOffOpacity']);
+      else {
+        if (s.iconStateEnabled) hide(['style.iconColor']); else hide(['style.iconOnColor','style.iconOffColor']);
+        if (s.iconOpacityStateEnabled) hide(['style.iconOpacity']); else hide(['style.iconOnOpacity','style.iconOffOpacity']);
+      }
+      if (!s.iconOutlineEnabled) hide(['style.iconOutlineStateEnabled','style.iconOutlineColor','style.iconOutlineOnColor','style.iconOutlineOffColor','style.iconOutlineOpacity','style.iconOutlineOnOpacity','style.iconOutlineOffOpacity','style.iconOutlineWidth','style.iconOutlineOnWidth','style.iconOutlineOffWidth']);
+      else if (s.iconOutlineStateEnabled) hide(['style.iconOutlineColor','style.iconOutlineOpacity','style.iconOutlineWidth']);
+      else hide(['style.iconOutlineOnColor','style.iconOutlineOffColor','style.iconOutlineOnOpacity','style.iconOutlineOffOpacity','style.iconOutlineOnWidth','style.iconOutlineOffWidth']);
+    }
+  }
+}
+
 function editorMarkup(marker) {
   if (marker.type === 'icon') return iconEditorMarkup(marker);
   const s = marker.style;
@@ -1186,6 +1234,7 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
   els.editorTitle.textContent = marker.displayName; els.editorEntity.textContent = marker.entityId; els.editorIntegration.textContent = `Integracja: ${marker.integrationName || 'Home Assistant'}`;
   if (els.editorIntegrationIcon) els.editorIntegrationIcon.innerHTML = integrationIconMarkupFor(marker.sourceDomain || marker.entityId.split('.')[0], marker.integrationName || marker.sourceDomain, 'editor-brand-icon');
   els.editorContent.innerHTML = editorMarkup(marker);
+  if (marker.type === 'badge') compactBadgeEditor(els.editorContent, marker);
   if (Number.isInteger(preserveSection) && preserveSection >= 0) {
     const section = $$('.editor-section', els.editorContent)[preserveSection];
     if (section) section.open = true;
