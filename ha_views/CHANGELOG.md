@@ -1,3 +1,8 @@
+## 0.3.0-beta.137
+
+- Badge: stany closed/open korzystają z tekstów OFF/ON; przełączniki sekcji faktycznie zwijają zależne pola.
+- Własna ikona Badge ma przełączany wariant ON/OFF jak typ Ikona.
+
 ## 0.3.0-beta.136
 
 - Edytor Badge pokazuje wyłącznie opcje potrzebne dla aktualnie włączonych funkcji, tak jak edytor Ikony.
