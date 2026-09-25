@@ -16,7 +16,7 @@ const TRANSLATIONS = {
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
-    'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Zmieniono kolejność widoków':'View order updated','Ustawiono widok startowy':'Startup view set','Kolejność widoków':'View order','Przesuń widok w lewo':'Move view left','Przesuń widok w prawo':'Move view right','Ustaw jako widok startowy':'Set as startup view','Widok startowy':'Startup view','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
+    'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Zmieniono kolejność widoków':'View order updated','Ustawiono widok startowy':'Startup view set','Kolejność widoków':'View order','Przesuń widok w lewo':'Move view left','Przesuń widok w prawo':'Move view right','Ustaw jako widok startowy':'Set as startup view','Widok startowy':'Startup view','Blokada geometrii':'Geometry lock','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
     'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Przezroczystość':'Opacity','Przezroczystość ON':'ON opacity','Przezroczystość OFF':'OFF opacity','Przezroczystość obrysu':'Outline opacity','Przezroczystość obrysu ON':'ON outline opacity','Przezroczystość obrysu OFF':'OFF outline opacity','Kolor zależny ON/OFF':'Colour depends on ON/OFF','Przezroczystość zależna ON/OFF':'Opacity depends on ON/OFF','Ikona zależna ON/OFF':'Icon depends on ON/OFF','Tło zależne ON/OFF':'Background depends on ON/OFF','Ramka zależna ON/OFF':'Border depends on ON/OFF','Obrys zależny ON/OFF':'Outline depends on ON/OFF','Ikona podstawowa':'Base icon','Ikona ON':'ON icon','Ikona OFF':'OFF icon','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
   }
@@ -1035,11 +1035,12 @@ function selectMarker(entityId) {
   editorOpenSectionIndex = -1; if (selectedId !== entityId) editorPreview = { entityId:'', state:'' }; selectedId = entityId; renderMarkers(); openEditor();
   requestAnimationFrame(() => requestAnimationFrame(focusSelectedMarkerOnMobile));
 }
-function hideSelection() { els.selection.classList.remove('visible'); }
+function hideSelection() { els.selection.classList.remove('visible','geometry-locked'); }
 function syncSelection() {
   const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return hideSelection();
   const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1;
   Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });
+  els.selection.classList.toggle('geometry-locked', Boolean(model.entities[selectedId]?.geometryLocked));
   els.selection.classList.add('visible');
 }
 function positionEditor() {
@@ -1061,6 +1062,7 @@ function keepEditorInViewport() {
 function startDrag(event) {
   if (!editMode || event.button !== 0) return;
   event.preventDefault(); const node = event.currentTarget, entityId = node.dataset.entityId, marker = model.entities[entityId];
+  if (marker?.geometryLocked) return;
   const start = { x: event.clientX, y: event.clientY, px: marker.xPercent, py: marker.yPercent }; let moved = false;
   node.setPointerCapture(event.pointerId);
   const move = e => {
@@ -1079,7 +1081,7 @@ function control(label, path, type, value, options = {}) {
   const displayValue = rounded ? Math.round(Number(value) || 0) : value;
   const attrs = [`data-path="${path}"`, `data-value-type="${options.valueType || type}"`];
   if (rounded) attrs.push('data-integer="true"');
-  if (options.min !== undefined) attrs.push(`min="${options.min}"`); if (options.max !== undefined) attrs.push(`max="${options.max}"`); if (options.step !== undefined) attrs.push(`step="${options.step}"`); if (options.refresh) attrs.push('data-editor-refresh="true"');
+  if (options.min !== undefined) attrs.push(`min="${options.min}"`); if (options.max !== undefined) attrs.push(`max="${options.max}"`); if (options.step !== undefined) attrs.push(`step="${options.step}"`); if (options.refresh) attrs.push('data-editor-refresh="true"'); if (options.disabled) attrs.push('disabled');
   let input;
   if (type === 'checkbox') input = `<input type="checkbox" ${attrs.join(' ')} ${value ? 'checked' : ''}>`;
   else if (type === 'select') input = `<select ${attrs.join(' ')}>${options.items.map(([v,t]) => `<option value="${v}" ${String(v) === String(value) ? 'selected' : ''}>${t}</option>`).join('')}</select>`;
@@ -1099,7 +1101,7 @@ function iconEditorMarkup(marker) {
   const refresh = { refresh:true };
   const tapAction = isToggleableMarker(marker) ? control('Dotknięcie w widoku','tapAction','select',marker.tapAction || 'more_info',{items:[['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF']]}) : '';
   const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + tapAction);
-  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:24,max:2400,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:24,max:1800,step:1,suffix:'px',integer:true}));
+  const size = section('Rozmiar', control('Blokada geometrii','geometryLocked','checkbox',!!marker.geometryLocked,{refresh:true}) + control('Szerokość','style.width','range',s.width,{min:24,max:2400,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:24,max:1800,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
   const manual = marker.iconMode === 'manual';
   const integrationLogo = marker.iconMode === 'integration';
@@ -1124,7 +1126,7 @@ function editorMarkup(marker) {
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = isGaugeType(marker.type) ? { width: 44, height: 28 } : marker.type === 'icon' ? { width: 24, height: 24 } : { width: 36, height: 24 };
   const maximumSize = { width: 2400, height: 1800 };
-  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
+  const size = section('Rozmiar', control('Blokada geometrii','geometryLocked','checkbox',!!marker.geometryLocked,{refresh:true}) + control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}) + control('Zależne ON/OFF','style.backgroundStateEnabled','checkbox',s.backgroundStateEnabled) + control('Kolor ON','style.backgroundOnColor','color',s.backgroundOnColor) + control('Kolor OFF','style.backgroundOffColor','color',s.backgroundOffColor) + control('Przezrocz. ON','style.backgroundOnOpacity','range',s.backgroundOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.backgroundOffOpacity','range',s.backgroundOffOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Kształt','style.shape','select',s.shape,{items:[['square','Prostokąt'],['rounded','Zaokrąglony'],['circle','Koło / owal']]}) + control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}) + control('Zależne ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled) + control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezrocz. ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
@@ -1611,7 +1613,7 @@ function bindEvents() {
 }
 function startResize(event) {
   const marker = model.entities[selectedId];
-  if (!editMode || !marker || event.button !== 0 || (event.buttons & 1) !== 1) return;
+  if (!editMode || !marker || marker.geometryLocked || event.button !== 0 || (event.buttons & 1) !== 1) return;
   event.preventDefault(); event.stopPropagation();
   const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
   if (!node) return;
