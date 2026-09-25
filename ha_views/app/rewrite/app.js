@@ -16,7 +16,7 @@ const TRANSLATIONS = {
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
-    'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
+    'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Zmieniono kolejność widoków':'View order updated','Kolejność widoków':'View order','Przesuń widok w lewo':'Move view left','Przesuń widok w prawo':'Move view right','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
     'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Przezroczystość':'Opacity','Przezroczystość ON':'ON opacity','Przezroczystość OFF':'OFF opacity','Przezroczystość obrysu':'Outline opacity','Przezroczystość obrysu ON':'ON outline opacity','Przezroczystość obrysu OFF':'OFF outline opacity','Kolor zależny ON/OFF':'Colour depends on ON/OFF','Przezroczystość zależna ON/OFF':'Opacity depends on ON/OFF','Ikona zależna ON/OFF':'Icon depends on ON/OFF','Tło zależne ON/OFF':'Background depends on ON/OFF','Ramka zależna ON/OFF':'Border depends on ON/OFF','Obrys zależny ON/OFF':'Outline depends on ON/OFF','Ikona podstawowa':'Base icon','Ikona ON':'ON icon','Ikona OFF':'OFF icon','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error'
   }
@@ -88,7 +88,7 @@ const els = {
   bgTransformToggle: $('#background-transform-toggle'), bgTransformPanel: $('#background-transform-panel'), bgMode: $('#background-mode'), bgScale: $('#background-scale'), bgX: $('#background-x'), bgY: $('#background-y'), bgScaleValue: $('#background-scale-value'), bgXValue: $('#background-x-value'), bgYValue: $('#background-y-value'),
   addedCount: $('#added-count'), integrationList: $('#integration-list'), integrationSearch: $('#integration-search'), snapToggle: $('#snap-toggle'),
   zoomOut: $('#zoom-out'), zoomIn: $('#zoom-in'), zoomReset: $('#zoom-reset'), zoomValue: $('#zoom-value'),
-  sceneTabs: $('#scene-tabs'), integrationsButton: $('#integrations-button'), viewManage: $('#view-manage'), viewSwitcher: $('#view-switcher'), viewAdd: $('#view-add'), viewRename: $('#view-rename'), viewDuplicate: $('#view-duplicate'), viewDelete: $('#view-delete'),
+  sceneTabs: $('#scene-tabs'), integrationsButton: $('#integrations-button'), viewManage: $('#view-manage'), viewSwitcher: $('#view-switcher'), viewAdd: $('#view-add'), viewRename: $('#view-rename'), viewDuplicate: $('#view-duplicate'), viewMoveLeft: $('#view-move-left'), viewMoveRight: $('#view-move-right'), viewDelete: $('#view-delete'),
   moreInfo: $('#more-info'), moreInfoBackdrop: $('#more-info-backdrop'), moreInfoIcon: $('#more-info-icon'), moreInfoTitle: $('#more-info-title'), moreInfoEntity: $('#more-info-entity'),
   moreInfoState: $('#more-info-state'), moreInfoUpdated: $('#more-info-updated'), moreInfoChart: $('#more-info-chart'), moreInfoAttributes: $('#more-info-attributes')
 };
@@ -272,6 +272,9 @@ function renderViewSelector() {
   if (!els.sceneTabs) return;
   els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${escapeHtml(model.views[id].name)}</button>`).join('');
   els.viewDelete.disabled = model.viewOrder.length <= 1;
+  const index = model.viewOrder.indexOf(model.activeViewId);
+  if (els.viewMoveLeft) els.viewMoveLeft.disabled = index <= 0;
+  if (els.viewMoveRight) els.viewMoveRight.disabled = index < 0 || index >= model.viewOrder.length - 1;
 }
 async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
@@ -287,6 +290,12 @@ async function addSceneView() {
   const id = `view_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
   model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: mobileView() ? 9 / 16 : 16 / 9, onboardingDone: false, backgroundTransforms: {}, entities: {} }; model.viewOrder.push(id);
   await switchSceneView(id, false); scheduleSave(true); notify('Dodano nowy widok');
+}
+function moveSceneView(direction) {
+  const index = model.viewOrder.indexOf(model.activeViewId), target = index + direction;
+  if (index < 0 || target < 0 || target >= model.viewOrder.length) return;
+  [model.viewOrder[index], model.viewOrder[target]] = [model.viewOrder[target], model.viewOrder[index]];
+  renderViewSelector(); scheduleSave(true); notify('Zmieniono kolejność widoków');
 }
 async function renameSceneView() {
   const view = activeSceneView(), name = await appPrompt({ title: 'Zmień nazwę widoku', message: 'Wpisz nową nazwę.', value: view?.name || '', confirmText: 'Zapisz' });
@@ -1487,7 +1496,7 @@ function bindEvents() {
   els.integrationsButton?.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
   els.viewManage?.addEventListener('click', () => { const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
-  els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDelete?.addEventListener('click', deleteSceneView);
+  els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewMoveLeft?.addEventListener('click', () => moveSceneView(-1)); els.viewMoveRight?.addEventListener('click', () => moveSceneView(1)); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
