@@ -644,19 +644,21 @@ function previewStateFor(marker) {
   return editMode && selectedId === marker?.entityId && editorPreview.entityId === marker?.entityId ? editorPreview.state : '';
 }
 function formatState(marker) {
-  const obj = stateCache[marker.entityId] || {}; const raw = previewStateFor(marker) || obj.state, state = String(raw || '').toLowerCase(); let value = raw;
-  if (state === 'on' && marker.stateOnLabel) value = marker.stateOnLabel;
-  if (state === 'off' && marker.stateOffLabel) value = marker.stateOffLabel;
+  const obj = stateCache[marker.entityId] || {}; const raw = previewStateFor(marker) || obj.state, kind = stateKind(marker); let value = raw;
+  if (kind === 'on' && marker.stateOnLabel) value = marker.stateOnLabel;
+  if (kind === 'off' && marker.stateOffLabel) value = marker.stateOffLabel;
   if (value === undefined || value === null || value === 'unknown' || value === 'unavailable') value = '—';
   const numeric = Number(value);
   if (Number.isFinite(numeric) && marker.decimals !== 'auto') value = numeric.toFixed(clamp(marker.decimals, 0, 3));
-  const unit = state === 'on' || state === 'off' ? '' : (marker.unitOverride !== '' ? marker.unitOverride : (obj.attributes?.unit_of_measurement || ''));
+  const unit = kind === 'on' || kind === 'off' ? '' : (marker.unitOverride !== '' ? marker.unitOverride : (obj.attributes?.unit_of_measurement || ''));
   return { value: String(value), unit: String(unit || '') };
 }
 function stateKind(marker) {
   const raw = previewStateFor(marker) || stateCache[marker.entityId]?.state, state = String(raw || '').toLowerCase();
   if (state === 'on') return 'on';
   if (state === 'off') return 'off';
+  if (['closed','close','inactive','false'].includes(state)) return 'off';
+  if (['open','opened','active','true'].includes(state)) return 'on';
   if (raw == null || state === 'unknown' || state === 'unavailable') return 'unavailable';
   return 'normal';
 }
@@ -1138,7 +1140,7 @@ function compactBadgeEditor(root, marker) {
   const s = marker.style;
   const hide = paths => paths.forEach(path => {
     const input = root.querySelector(`[data-path="${path}"]`);
-    if (input) input.closest('.control').hidden = true;
+    if (input) input.closest('.control').style.display = 'none';
   });
   const refresh = paths => paths.forEach(path => {
     const input = root.querySelector(`[data-path="${path}"]`);
@@ -1194,7 +1196,9 @@ function editorMarkup(marker) {
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + backgroundGradientControls(s) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}) + control('Zależne ON/OFF','style.backgroundStateEnabled','checkbox',s.backgroundStateEnabled) + control('Kolor ON','style.backgroundOnColor','color',s.backgroundOnColor) + control('Kolor OFF','style.backgroundOffColor','color',s.backgroundOffColor) + control('Przezrocz. ON','style.backgroundOnOpacity','range',s.backgroundOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.backgroundOffOpacity','range',s.backgroundOffOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Kształt','style.shape','select',s.shape,{items:[['square','Prostokąt'],['rounded','Zaokrąglony'],['circle','Koło / owal']]}) + control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}) + control('Zależne ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled) + control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezrocz. ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${label}</option>`).join('')}</datalist>`;
-  const manualIcons = `<div data-manual-icons ${marker.iconMode === 'manual' ? '' : 'hidden'}>${mdiControl('Podstawowa','iconName',marker.iconName)}${mdiControl('Dla ON','iconOn',marker.iconOn)}${mdiControl('Dla OFF','iconOff',marker.iconOff)}</div>`;
+  const manualIcons = marker.type === 'badge'
+    ? (marker.iconMode === 'manual' ? control('Ikona zależna ON/OFF','iconVariantEnabled','checkbox',!!marker.iconVariantEnabled,{refresh:true}) + `<div data-manual-icons>${marker.iconVariantEnabled ? mdiControl('Ikona ON','iconOn',marker.iconOn) + mdiControl('Ikona OFF','iconOff',marker.iconOff) : mdiControl('Ikona podstawowa','iconName',marker.iconName)}</div>` : '')
+    : `<div data-manual-icons ${marker.iconMode === 'manual' ? '' : 'hidden'}>${mdiControl('Podstawowa','iconName',marker.iconName)}${mdiControl('Dla ON','iconOn',marker.iconOn)}${mdiControl('Dla OFF','iconOff',marker.iconOff)}</div>`;
   const icon = section('Ikona', control('Pokaż','style.showIcon','checkbox',s.showIcon) + control('Źródło','iconMode','select',marker.iconMode,{items:[['auto','Z encji Home Assistant'],['integration','Logo integracji'],['manual','Własna ikona MDI']]}) + manualIcons + mdiList + control('Wypełnienie','style.iconFillEnabled','checkbox',s.iconFillEnabled) + control('Kolor zależny ON/OFF','style.iconStateEnabled','checkbox',s.iconStateEnabled) + control('Kolor','style.iconColor','color',s.iconColor) + control('Kolor ON','style.iconOnColor','color',s.iconOnColor) + control('Kolor OFF','style.iconOffColor','color',s.iconOffColor) + control('Brak danych','style.iconUnavailableColor','color',s.iconUnavailableColor) + control('Przezrocz.','style.iconOpacity','range',s.iconOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. ON','style.iconOnOpacity','range',s.iconOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.iconOffOpacity','range',s.iconOffOpacity,{min:0,max:1,step:.01}) + control('Obrys','style.iconOutlineEnabled','checkbox',s.iconOutlineEnabled) + control('Obrys zależny ON/OFF','style.iconOutlineStateEnabled','checkbox',s.iconOutlineStateEnabled) + control('Kolor obrysu','style.iconOutlineColor','color',s.iconOutlineColor) + control('Kolor obrysu ON','style.iconOutlineOnColor','color',s.iconOutlineOnColor) + control('Kolor obrysu OFF','style.iconOutlineOffColor','color',s.iconOutlineOffColor) + control('Grubość obrysu','style.iconOutlineWidth','range',s.iconOutlineWidth,{min:1,max:8,step:.5,suffix:'px'}) + control('Grubość ON','style.iconOutlineOnWidth','range',s.iconOutlineOnWidth,{min:1,max:8,step:.5,suffix:'px'}) + control('Grubość OFF','style.iconOutlineOffWidth','range',s.iconOutlineOffWidth,{min:1,max:8,step:.5,suffix:'px'}) + control('Rozmiar','style.iconSize','range',s.iconSize,{min:8,max:100,step:1,suffix:'px'}) + control('Lewo / prawo','style.iconX','range',s.iconX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.iconY','range',s.iconY,{min:-100,max:100,step:1,suffix:'px'}));
   let gauge = '';
   if (isGaugeType(marker.type)) {
