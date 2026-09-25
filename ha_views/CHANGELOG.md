@@ -1,3 +1,7 @@
+## 0.3.0-beta.136
+
+- Edytor Badge pokazuje wyłącznie opcje potrzebne dla aktualnie włączonych funkcji, tak jak edytor Ikony.
+
 ## 0.3.0-beta.135
 
 - Poprawiono niestandardowe teksty ON/OFF także dla encji zwracających stan z wielkimi literami.
