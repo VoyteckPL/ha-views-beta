@@ -1,3 +1,7 @@
+## 0.3.0-beta.135
+
+- Poprawiono niestandardowe teksty ON/OFF także dla encji zwracających stan z wielkimi literami.
+
 ## 0.3.0-beta.134
 
 - Dodano regulację gradientów tła markera: pozycję, rozproszenie i wypełnienie.
