@@ -644,20 +644,20 @@ function previewStateFor(marker) {
   return editMode && selectedId === marker?.entityId && editorPreview.entityId === marker?.entityId ? editorPreview.state : '';
 }
 function formatState(marker) {
-  const obj = stateCache[marker.entityId] || {}; const raw = previewStateFor(marker) || obj.state; let value = raw;
-  if (raw === 'on' && marker.stateOnLabel) value = marker.stateOnLabel;
-  if (raw === 'off' && marker.stateOffLabel) value = marker.stateOffLabel;
+  const obj = stateCache[marker.entityId] || {}; const raw = previewStateFor(marker) || obj.state, state = String(raw || '').toLowerCase(); let value = raw;
+  if (state === 'on' && marker.stateOnLabel) value = marker.stateOnLabel;
+  if (state === 'off' && marker.stateOffLabel) value = marker.stateOffLabel;
   if (value === undefined || value === null || value === 'unknown' || value === 'unavailable') value = '—';
   const numeric = Number(value);
   if (Number.isFinite(numeric) && marker.decimals !== 'auto') value = numeric.toFixed(clamp(marker.decimals, 0, 3));
-  const unit = raw === 'on' || raw === 'off' ? '' : (marker.unitOverride !== '' ? marker.unitOverride : (obj.attributes?.unit_of_measurement || ''));
+  const unit = state === 'on' || state === 'off' ? '' : (marker.unitOverride !== '' ? marker.unitOverride : (obj.attributes?.unit_of_measurement || ''));
   return { value: String(value), unit: String(unit || '') };
 }
 function stateKind(marker) {
-  const raw = previewStateFor(marker) || stateCache[marker.entityId]?.state;
-  if (raw === 'on') return 'on';
-  if (raw === 'off') return 'off';
-  if (raw == null || raw === 'unknown' || raw === 'unavailable') return 'unavailable';
+  const raw = previewStateFor(marker) || stateCache[marker.entityId]?.state, state = String(raw || '').toLowerCase();
+  if (state === 'on') return 'on';
+  if (state === 'off') return 'off';
+  if (raw == null || state === 'unknown' || state === 'unavailable') return 'unavailable';
   return 'normal';
 }
 function automaticIcon(marker) {
