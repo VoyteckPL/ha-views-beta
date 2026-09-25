@@ -1,3 +1,8 @@
+## 0.3.0-beta.134
+
+- Dodano regulację gradientów tła markera: pozycję, rozproszenie i wypełnienie.
+- Efekt od ściany ma wybór kierunku oraz pozycję światła wzdłuż ściany.
+
 ## 0.3.0-beta.133
 
 - Dodano cztery warianty gradientowego światła tła markera: centralny, róg, od ściany i ambient.
