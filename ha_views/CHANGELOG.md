@@ -1,3 +1,8 @@
+## 0.3.0-beta.133
+
+- Dodano cztery warianty gradientowego światła tła markera: centralny, róg, od ściany i ambient.
+- Każdy gradient korzysta z wybranego koloru i przezroczystości tła markera.
+
 ## 0.3.0-beta.132
 
 - Dodano blokadę geometrii markera w sekcji Rozmiar: chroni rozmiar i pozycję przed przypadkową zmianą.
