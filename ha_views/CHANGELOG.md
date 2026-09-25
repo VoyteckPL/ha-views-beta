@@ -1,3 +1,8 @@
+## 0.3.0-beta.130
+
+- Dodano zmianę kolejności widoków strzałkami ← / → w menu widoków.
+- Strzałki są nieaktywne na początku i końcu listy.
+
 ## 0.3.0-beta.129
 
 - Poprawiono rozciąganie rogu: róg po przekątnej jest utrzymywany w dokładnie tym samym miejscu na ekranie.
