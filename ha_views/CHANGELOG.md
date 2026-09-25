@@ -1,3 +1,8 @@
+## 0.3.0-beta.131
+
+- Ujednolicono wygląd sterowania kolejnością widoków z menu widoków.
+- Dodano wybór widoku startowego uruchamianego przy każdym otwarciu HA Views.
+
 ## 0.3.0-beta.130
 
 - Dodano zmianę kolejności widoków strzałkami ← / → w menu widoków.
