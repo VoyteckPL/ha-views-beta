@@ -1004,16 +1004,22 @@ function renderFlows() {
     const itemClass = flowStyle === 'segments' ? 'flow-segment' : 'flow-chevron';
     node.innerHTML = Array.from({ length:itemCount }, () => '<span class="' + itemClass + '"></span>').join('');
     const chevronSize = Math.max(10, Number(flow.chevronSize) || 22);
+    const chevronWidth = Math.max(10, Number(flow.chevronWidth) || chevronSize);
+    const chevronHeight = Math.max(10, Number(flow.chevronHeight) || chevronSize);
+    const chevronThickness = clamp(Number(flow.chevronThickness) || Math.max(2, chevronSize / 4.4), 1, 32);
+    const chevronMode = flow.chevronMode === 'filled' ? 'filled' : 'outline';
+    const chevronOpacity = clamp(Number(flow.opacity) || 100, 10, 100);
+    const chevronGlow = clamp(Number(flow.glow) || 0, 0, 30);
     const chevronGap = Number.isFinite(Number(flow.gap)) ? Math.max(0, Number(flow.gap)) : 9;
     const chevronColor = flow.color || '#20B9E7';
-    const itemWidth = flowStyle === 'segments' ? Math.max(8, chevronSize * .9) : chevronSize;
-    const itemHeight = flowStyle === 'segments' ? Math.max(5, chevronSize * .32) : chevronSize;
+    const itemWidth = flowStyle === 'segments' ? Math.max(8, chevronWidth * .9) : chevronWidth;
+    const itemHeight = flowStyle === 'segments' ? Math.max(5, chevronHeight * .32) : chevronHeight;
     const contentWidth = itemCount * itemWidth + Math.max(0,itemCount - 1) * chevronGap + 16;
     const directionAngles = { right:0, down:90, left:180, up:-90 };
     const directionAngle = directionAngles[flow.direction] ?? 0;
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
-    if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:chevronColor }));
-    else node.querySelectorAll('.flow-chevron').forEach(chevron => Object.assign(chevron.style, { width:chevronSize + 'px', height:chevronSize + 'px', borderTopWidth:(chevronSize / 4.4) + 'px', borderRightWidth:(chevronSize / 4.4) + 'px', borderColor:chevronColor }));
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
+    if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:chevronColor, boxShadow:chevronGlow ? '0 0 ' + chevronGlow + 'px ' + chevronColor : 'none' }));
+    else node.querySelectorAll('.flow-chevron').forEach(chevron => { chevron.classList.toggle('flow-filled', chevronMode === 'filled'); Object.assign(chevron.style, { width:chevronWidth + 'px', height:chevronHeight + 'px', borderTopWidth:chevronThickness + 'px', borderRightWidth:chevronThickness + 'px', borderColor:chevronColor, backgroundColor:chevronColor, filter:chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + chevronColor + ')' : 'none' }); });
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
     node.addEventListener('pointerdown', startFlowDrag);
     node.addEventListener('click', event => { event.stopPropagation(); if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; } if (editMode) openFlowEditor(flow.id); });
@@ -1053,7 +1059,7 @@ function flowEditorMarkup(flow) {
   const flowCount = clamp(Number(flow.flowCount) || (flow.flowStyle === 'single' ? 1 : flow.flowStyle === 'segments' ? 4 : 3),1,8);
   const rotation = Number(flow.rotation) || 0;
   const rotationControl = '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>' + rotation + '°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="' + rotation + '"></label>';
-  return select('Kształt','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + range('Liczba elementów','flowCount',1,8,1,flowCount,'') + select('Kierunek','direction',flow.direction || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + rotationControl + range('Rozmiar chevronów','chevronSize',10,80,1,flow.chevronSize,' px') + range('Odstęp','gap',0,40,1,flow.gap,' px') + range('Szerokość pola','width',60,600,1,flow.width,' px') + '<label class="flow-color-control"><span>Kolor</span><input type="color" data-flow-prop="color" value="' + escapeHtml(flow.color || '#20B9E7') + '"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" ' + (flow.geometryLocked ? 'checked' : '') + '> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>';
+  return select('Kształt','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode || 'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,flowCount,'') + select('Kierunek','direction',flow.direction || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + rotationControl + range('Szerokość chevrona','chevronWidth',10,180,1,flow.chevronWidth || flow.chevronSize || 22,' px') + range('Wysokość chevrona','chevronHeight',10,180,1,flow.chevronHeight || flow.chevronSize || 22,' px') + range('Grubość konturu','chevronThickness',1,32,1,flow.chevronThickness || Math.max(2,Math.round((flow.chevronSize || 22)/4.4)),' px') + range('Odstęp','gap',0,40,1,flow.gap,' px') + range('Poświata','glow',0,30,1,flow.glow || 0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity || 100,'%') + range('Szerokość pola','width',60,600,1,flow.width,' px') + '<label class="flow-color-control"><span>Kolor</span><input type="color" data-flow-prop="color" value="' + escapeHtml(flow.color || '#20B9E7') + '"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" ' + (flow.geometryLocked ? 'checked' : '') + '> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>';
 }
 function openFlowEditor(id) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return;
@@ -1062,7 +1068,7 @@ function openFlowEditor(id) {
   $$('[data-flow-prop]', els.flowEditorContent).forEach(input => input.addEventListener(input.type === 'range' ? 'input' : 'change', event => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     const prop = event.target.dataset.flowProp; item[prop] = event.target.type === 'checkbox' ? event.target.checked : event.target.type === 'color' || event.target.tagName === 'SELECT' ? event.target.value : Number(event.target.value);
-    const output = event.target.closest('.flow-control')?.querySelector('output'); if (output) output.textContent = event.target.value + (prop === 'rotation' ? '°' : prop === 'flowCount' ? '' : ' px');
+    const output = event.target.closest('.flow-control')?.querySelector('output'); if (output) output.textContent = event.target.value + (prop === 'rotation' ? '°' : prop === 'flowCount' ? '' : prop === 'opacity' ? '%' : ' px');
     item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave();
   }));
   $('#flow-reset-rotation', els.flowEditorContent)?.addEventListener('click', () => {
@@ -1162,13 +1168,14 @@ function startFlowResize(event) {
   if (!editMode || !flow || flow.geometryLocked || event.button !== 0) return;
   event.preventDefault(); event.stopPropagation();
   const handle = event.currentTarget.dataset.flowHandle, scale = sceneScale || 1;
-  const start = { x:event.clientX, y:event.clientY, size:Math.max(10, Number(flow.chevronSize) || 22) };
+  const start = { x:event.clientX, y:event.clientY, size:Math.max(10, Number(flow.chevronSize) || 22), width:Math.max(10, Number(flow.chevronWidth) || Number(flow.chevronSize) || 22), height:Math.max(10, Number(flow.chevronHeight) || Number(flow.chevronSize) || 22) };
   let changed = false;
   const move = current => {
     if ((current.buttons & 1) !== 1) return finish();
     const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1;
     const delta = ((current.clientX - start.x) * sx + (current.clientY - start.y) * sy) / (2 * scale);
-    flow.chevronSize = clamp(Math.round(start.size + delta), 10, 80);
+    const nextSize = clamp(Math.round(start.size + delta), 10, 80), ratio = nextSize / start.size;
+    flow.chevronSize = nextSize; flow.chevronWidth = clamp(Math.round(start.width * ratio), 10, 180); flow.chevronHeight = clamp(Math.round(start.height * ratio), 10, 180);
     changed = true; renderMarkers();
   };
   const finish = () => {
@@ -1550,7 +1557,7 @@ async function addFlow(entityId, entryId) {
   view.flows ||= {};
   const id = 'flow_' + uid();
   const flowOffset = Object.keys(view.flows).length % 5;
-  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, gap:9, flowCount:3, color:'#20B9E7', geometryLocked:false, createdAt:new Date().toISOString() };
+  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, chevronWidth:22, chevronHeight:22, chevronThickness:5, chevronMode:'outline', opacity:100, glow:5, gap:9, flowCount:3, color:'#20B9E7', geometryLocked:false, createdAt:new Date().toISOString() };
   renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — przeciągnij go w trybie edycji');
 }
 async function removeFlow(id) {
