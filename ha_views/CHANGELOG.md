@@ -1,3 +1,7 @@
+## 0.3.0-beta.149
+
+- Podgląd istniejącego tła zachowuje proporcje oryginalnego obrazu i pokazuje cały kadr w kompaktowym rozmiarze.
+
 ## 0.3.0-beta.148
 
 - Wybór istniejącego tła pokazuje jego podgląd oraz przycisk potwierdzający załadowanie.
