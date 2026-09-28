@@ -1,3 +1,8 @@
+## 0.4.1-beta.176
+
+- Flow: animacja przepływu i pulsowania jest płynna także przy częstych aktualizacjach stanu encji. Niezmieniony Flow nie jest już przebudowywany przy każdym odświeżeniu sceny — aktualizowana jest tylko jego pozycja.
+- Flow: przy opcji Tempo od wartości zmiana tempa zachowuje bieżącą pozycję strumienia zamiast przeskakiwać.
+
 ## 0.4.1-beta.175
 
 - Flow: próg aktywności działa jednakowo w obu trybach — Flow jest nieaktywny, gdy |wartość| ≤ próg. Próg 0 wyłącza więc strzałki przy 0 W (np. fotowoltaika w nocy).

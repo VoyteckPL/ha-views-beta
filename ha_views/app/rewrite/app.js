@@ -998,7 +998,8 @@ function openMoreInfo(entityId) {
 
 function renderMarkers() {
   const previous = selectedId;
-  els.markers.innerHTML = '';
+  // Flow nodes are reconciled in place by renderFlows() so running animations are not restarted.
+  [...els.markers.children].forEach(node => { if (!node.classList.contains('flow-marker')) node.remove(); });
   Object.values(model.entities).forEach(marker => {
     const node = document.createElement('div'); node.className = `marker ${marker.type}${marker.id === selectedId ? ' selected' : ''}`;
     node.dataset.entityId = marker.entityId; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker);
@@ -1030,8 +1031,15 @@ function flowShapePath(shape, w, h, t) {
   const d = Math.min(w * .85, clamp(t, 1, 200) * Math.hypot(w, cy) / Math.max(1, cy));
   return poly([[0,0],[d,0],[w,cy],[d,h],[0,h],[w - d,cy]]);
 }
+function retimeFlowAnimations(node, duration) {
+  $$('.flow-train,.flow-chevron', node).forEach(element => element.getAnimations?.().forEach(animation => {
+    const progress = Number(animation.effect?.getComputedTiming?.().progress);
+    animation.effect?.updateTiming?.({ duration: duration * 1000, delay: 0 });
+    if (Number.isFinite(progress)) animation.currentTime = progress * duration * 1000;
+  }));
+}
 function renderFlows() {
-  const flows = Object.values(activeSceneView()?.flows || {});
+  const flows = Object.values(activeSceneView()?.flows || {}), existing = new Map($$('.flow-marker', els.markers).map(node => [node.dataset.flowId, node])), kept = new Set();
   flows.forEach(flow => {
     const numericState = flowNumericState(flow.entityId), autoDirection = flow.directionMode === 'auto';
     const deadband = Math.max(0, Number(flow.deadband) || 0);
@@ -1058,18 +1066,29 @@ function renderFlows() {
     node.dataset.angle = String(angle);
     const speedFactor = style.speedByValue && numericState !== null ? Math.max(.2, Math.min(1, Math.abs(numericState) / Math.max(1, Number(style.speedValueMax) || 1000))) : 1;
     const duration = 1.2 / Math.max(.05, (Number(style.animationSpeed) || 1.2) * speedFactor);
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: contentWidth + 'px', height: itemHeight + 'px', opacity: opacity / 100, transform: 'translate(-50%,-50%) rotate(' + angle + 'deg) scale(var(--scene-scale,1))' });
-    node.style.setProperty('--flow-color', color); node.style.setProperty('--flow-gap', gap + 'px'); node.style.setProperty('--flow-duration', duration.toFixed(3) + 's');
-    node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
+    Object.assign(node.style, { width: contentWidth + 'px', height: itemHeight + 'px', opacity: opacity / 100, transform: 'translate(-50%,-50%) rotate(' + angle + 'deg) scale(var(--scene-scale,1))' });
+    node.style.setProperty('--flow-color', color); node.style.setProperty('--flow-gap', gap + 'px');
     if (glow) node.style.setProperty('--flow-glow', 'drop-shadow(0 0 ' + glow + 'px ' + glowColor + ')');
     if (streaming) node.querySelector('.flow-train').style.paddingRight = gap + 'px';
     node.classList.toggle('flow-inactive', !isActive); node.classList.toggle('flow-hidden-preview', !isActive && Boolean(flow.hideInactive));
     node.classList.toggle('flow-animate-pulse', isActive && animation === 'pulse'); node.classList.toggle('flow-animate-flow', isActive && animation === 'flow');
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
+    // Unchanged Flow keeps its DOM node (and its running animation); only position and tempo are updated.
+    const signature = node.outerHTML, durationKey = duration.toFixed(3), previous = existing.get(flow.id);
+    if (previous && previous.dataset.signature === signature) {
+      previous.style.left = Number(flow.xPercent) + '%'; previous.style.top = Number(flow.yPercent) + '%';
+      if (previous.dataset.duration !== durationKey) { retimeFlowAnimations(previous, duration); previous.dataset.duration = durationKey; }
+      kept.add(previous); return;
+    }
+    node.dataset.signature = signature; node.dataset.duration = durationKey;
+    node.style.left = Number(flow.xPercent) + '%'; node.style.top = Number(flow.yPercent) + '%';
+    node.style.setProperty('--flow-duration', durationKey + 's'); node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
     node.addEventListener('pointerdown', startFlowDrag);
     node.addEventListener('click', event => { event.stopPropagation(); if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; } if (editMode) openFlowEditor(flow.id); });
-    els.markers.append(node);
+    if (previous) previous.replaceWith(node); else els.markers.append(node);
+    kept.add(node);
   });
+  existing.forEach(node => { if (!kept.has(node)) node.remove(); });
 }
 function startFlowDrag(event) {
   if (!editMode || event.button !== 0) return;
