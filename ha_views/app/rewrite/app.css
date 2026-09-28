@@ -461,3 +461,10 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .welcome-choice-panel .welcome-existing-background{width:100%}
 .welcome-colour-choice .welcome-color{justify-content:space-between;width:100%}
 @media(max-width:600px){.welcome-choice-columns{grid-template-columns:1fr;gap:9px}.welcome-choice-panel{padding:12px}.welcome-choice-panel .welcome-actions{display:grid}.welcome-existing-background{grid-column:auto}}
+
+/* beta.147: stable two-column welcome chooser */
+.welcome-image-choice #empty-upload{box-sizing:border-box;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.welcome-image-choice .welcome-existing-background{box-sizing:border-box;width:100%;min-width:0}
+.welcome-image-choice .welcome-existing-background select{box-sizing:border-box;width:100%;min-width:0;max-width:100%;border-color:rgba(99,181,216,.42)}
+.welcome-image-choice .welcome-existing-background select:focus{border-color:#35c9f3;box-shadow:0 0 0 2px rgba(53,201,243,.16)}
+.welcome-image-choice .welcome-existing-background select option:checked{background:#123d50;color:#fff}
