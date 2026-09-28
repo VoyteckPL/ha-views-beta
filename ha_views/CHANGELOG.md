@@ -1,3 +1,15 @@
+## 0.4.1-beta.171
+
+- Flow: Długość i Szerokość są liczone względem kierunku strzałki — po obrocie o 90° nie zamieniają się miejscami.
+- Flow: narożne kółka skalują jak w markerach — przeciwległy róg zostaje w miejscu, także przy obróconym Flow.
+- Flow: większe limity — długość/szerokość do 600 px, odstęp do 300 px, grubość do 120 px, do 12 elementów, tempo do 6×.
+- Flow: próg aktywności działa także przy stałym kierunku (np. wyłączenie strzałek fotowoltaiki w nocy); w trybie edycji ukryty Flow jest widoczny jako przygaszony, żeby dało się go kliknąć.
+- Flow: nowe rodzaje: Chevron, Strzałka, Grot, Trójkąt, Segment. Usunięto stare warianty i osobny wybór Chevrony/Segmenty.
+- Flow: usunięto niejasne Wypełnienie/Kontur — kształt jest zawsze wypełniony, a Obrys (grubość + kolor) jest widoczny na zewnątrz kształtu.
+- Flow: w trybie + / − przełącznik Wartość + / Wartość − pokazuje podgląd każdej strony; opcja Osobny styl dla − pozwala ustawić dla minusa własny kształt, rozmiar, obrys, poświatę, krycie i animację.
+- Flow: skaluje się razem ze sceną, tak jak markery.
+- Flow: w edytorze widać aktualną wartość encji.
+
 ## 0.4.1-beta.170
 
 - Flow: edytor wygląda i działa jak edytor markerów (ten sam nagłówek, sekcje, suwaki, palety kolorów, przeciąganie okna).
