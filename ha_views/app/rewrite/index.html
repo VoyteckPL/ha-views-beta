@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-147">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-148">
 </head>
 <body>
   <header class="topbar">
@@ -63,6 +63,7 @@
                     <div class="welcome-actions">
                   <button id="empty-upload" class="primary" data-i18n="Wgraj nowy obraz"><i class="mdi mdi-image-plus-outline"></i> Wgraj nowy obraz</button>
                   <div class="welcome-existing-background"><select id="empty-background-select" aria-label="Wybierz istniejące tło"><option value="">Wybierz istniejące tło…</option></select></div>
+                  <div id="empty-background-preview-wrap" class="empty-background-preview-wrap" hidden><img id="empty-background-preview" alt="Podgląd wybranego tła"><button id="empty-background-confirm" type="button" class="primary">Załaduj wybrane tło</button></div>
                     </div>
                   </section>
                   <section class="welcome-choice-panel welcome-colour-choice"><h3>Kolor</h3>
@@ -161,6 +162,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-147"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-148"></script>
 </body>
 </html>
