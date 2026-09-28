@@ -1,3 +1,8 @@
+## 0.3.0-beta.146
+
+- Ekran wyboru tła podzielono na dwa panele: Obraz (wgranie lub wybór istniejącego) oraz Kolor.
+- Usunięto niebieską ikonę/kafelek z ekranu powitalnego.
+
 ## 0.3.0-beta.145
 
 - Język przeniesiono na sam dół menu Edytuj widok.
