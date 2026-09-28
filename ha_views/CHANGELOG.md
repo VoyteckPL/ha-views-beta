@@ -1,3 +1,12 @@
+## 0.4.1-beta.180
+
+- Flow: kształt strzałek nie zmienia się przy zmianie odstępu ani liczby — odstęp zmienia tylko odległość między strzałkami, a liczba tylko ich ilość. Ramka też zostaje taka sama.
+- Flow: nowy suwak „Długość elementu” (rozmiar jednej strzałki); dotychczasowa „Długość” to teraz „Długość ramki”.
+- Flow: elementy są wyśrodkowane w ramce; jeśli się nie mieszczą, są przycinane na krawędziach ramki.
+- Flow: animacja przepływu zawsze wypełnia całą ramkę, niezależnie od liczby i odstępu.
+- Flow: narożne kółka skalują ramkę razem ze strzałkami i odstępem (poziomo) oraz szerokość (pionowo).
+- Istniejące Flow zachowują dotychczasowy wygląd po aktualizacji.
+
 ## 0.4.1-beta.179
 
 - Flow: na komputerze edytor Flow otwiera się obok klikniętego Flow, tak jak edytor markerów, i przesuwa się razem z nim po przeciągnięciu (chyba że okno edytora zostało ręcznie przestawione).

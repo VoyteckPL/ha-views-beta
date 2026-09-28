@@ -544,4 +544,8 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .view-management .view-delete-separated{margin-top:6px;position:relative}.view-management .view-delete-separated:before{content:"";position:absolute;left:4px;right:4px;top:-5px;border-top:1px solid rgba(139,190,216,.2)}
 .toast.with-action{display:flex;align-items:center;gap:12px;pointer-events:auto}.toast.with-action button{height:28px;padding:0 12px;font-size:12px;font-weight:800;color:#8fdfff;border-color:rgba(32,185,231,.55);background:#123b50}
 #app-confirm-message{white-space:pre-line}
+/* beta.180: fixed item size; stream shifts by one group period; overflowing static groups are clipped to the frame */
+.flow-animate-flow .flow-train{animation-name:flow-stream-period}
+@keyframes flow-stream-period{from{transform:translateX(calc(var(--flow-period,0px) * -1))}to{transform:translateX(0)}}
+.flow-marker.flow-overflow{clip-path:inset(-60px 0 -60px 0)}
 
