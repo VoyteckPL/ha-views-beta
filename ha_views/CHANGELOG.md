@@ -1,3 +1,8 @@
+## 0.3.0-beta.147
+
+- Ustabilizowano dwa panele ekranu wyboru tła: przyciski i lista istniejących obrazów mieszczą się w obrysie.
+- Usunięto zbędny przycisk z ptaszkiem. Wybór istniejącego tła z listy jest stosowany od razu.
+
 ## 0.3.0-beta.146
 
 - Ekran wyboru tła podzielono na dwa panele: Obraz (wgranie lub wybór istniejącego) oraz Kolor.
