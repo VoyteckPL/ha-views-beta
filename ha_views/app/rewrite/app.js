@@ -1807,7 +1807,8 @@ function bindEvents() {
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
   els.addedList.addEventListener('click', event => { const removeFlowButton = event.target.closest('[data-remove-flow]'), remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (removeFlowButton) removeFlow(removeFlowButton.dataset.removeFlow); else if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
-  $('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));; $('.flow-selection i').forEach(handle => handle.addEventListener('pointerdown', startFlowResize));
+  document.querySelectorAll('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));
+  document.querySelectorAll('.flow-selection i').forEach(handle => handle.addEventListener('pointerdown', startFlowResize));
   els.image.addEventListener('load', () => { updateSceneGeometry(); applyBackgroundTransform(); });
   window.addEventListener('resize', () => { applyBackgroundTransform(); syncMobileOrientation(); });
   window.visualViewport?.addEventListener('resize', () => { if (mobileView()) applyBackgroundTransform(); });
