@@ -1,3 +1,11 @@
+## 0.4.1-beta.177
+
+- Język: dodano ok. 150 brakujących tłumaczeń PL → EN — cały edytor Flow, opcje markerów (kolory i obrys ON/OFF, kształt ramki, pozycja ikony), okna potwierdzeń, ekran powitalny, tła, historia, wyszukiwanie encji, komunikaty błędów i etykiety ikon.
+- Język: tłumaczone są też podpowiedzi (title), etykiety dostępności (aria-label) i placeholdery, również te tworzone po starcie aplikacji.
+- Język: zdania z nazwą w środku (usuwanie Flow, usuwanie tła, zmiana typu markera) są tłumaczone w całości.
+- Język: nazwy encji, Flow i integracji nie są tłumaczone (np. encja „Basen” nie zmieni się na „Pool”).
+- Tłumaczenie działa szybciej — mapa odwrotna PL/EN jest liczona raz, a nie przy każdym tekście.
+
 ## 0.4.1-beta.176
 
 - Flow: animacja przepływu i pulsowania jest płynna także przy częstych aktualizacjach stanu encji. Niezmieniony Flow nie jest już przebudowywany przy każdym odświeżeniu sceny — aktualizowana jest tylko jego pozycja.
