@@ -1,3 +1,8 @@
+## 0.4.1-beta.168
+
+- Flow: odwrócono kierunek przesuwającego się strumienia, aby był zgodny z kierunkiem strzałek.
+- Flow: suwak zmieniono na tempo animacji — większa wartość oznacza szybszy ruch.
+
 ## 0.4.1-beta.167
 
 - Flow: animację „Przepływ” zmieniono na zapętlony przesuwający się strumień całej grupy chevronów.
