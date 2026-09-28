@@ -1,3 +1,10 @@
+## 0.4.1-beta.165
+
+- Flow: usunięto szerokość pola — ramka zawsze ma dokładnie rozmiar zawartości.
+- Flow: narożne uchwyty niezależnie zmieniają szerokość i wysokość chevronów.
+- Flow: edytor podzielono na sekcje oraz dodano palety dla wypełnienia, konturu i poświaty.
+- Flow: dodano warianty strzałek: klasyczny, szeroki, strzałka i strzałka z belką.
+
 ## 0.4.1-beta.164
 
 - Flow: dodano automatyczne sterowanie kierunkiem na podstawie wartości dodatniej/ujemnej, z osobnymi kierunkami i kolorami dla + oraz −.
