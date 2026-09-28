@@ -993,8 +993,15 @@ function renderMarkers() {
   updateEmptyState(); renderAdded();
 }
 function renderFlows() {
+  
   const flows = Object.values(activeSceneView()?.flows || {});
   flows.forEach(flow => {
+    const numericState = flowNumericState(flow.entityId), autoDirection = flow.directionMode === 'auto';
+    const deadband = Math.max(0, Number(flow.deadband) || 0);
+    const isActive = numericState === null || !autoDirection || Math.abs(numericState) > deadband;
+    if (!isActive && flow.hideInactive) return;
+    const direction = autoDirection && numericState !== null ? (numericState >= 0 ? (flow.positiveDirection || 'right') : (flow.negativeDirection || 'left')) : (flow.direction || 'right');
+    const activeColor = autoDirection && numericState !== null ? (numericState >= 0 ? (flow.positiveColor || flow.color || '#20B9E7') : (flow.negativeColor || '#ff6b6b')) : (flow.color || '#20B9E7');
     const node = document.createElement('div');
     node.className = 'flow-marker';
     node.dataset.flowId = flow.id;
@@ -1011,13 +1018,14 @@ function renderFlows() {
     const chevronOpacity = clamp(Number(flow.opacity) || 100, 10, 100);
     const chevronGlow = clamp(Number(flow.glow) || 0, 0, 30);
     const chevronGap = Number.isFinite(Number(flow.gap)) ? Math.max(0, Number(flow.gap)) : 9;
-    const chevronColor = flow.color || '#20B9E7';
+    const chevronColor = activeColor;
     const itemWidth = flowStyle === 'segments' ? Math.max(8, chevronWidth * .9) : chevronWidth;
     const itemHeight = flowStyle === 'segments' ? Math.max(5, chevronHeight * .32) : chevronHeight;
     const contentWidth = itemCount * itemWidth + Math.max(0,itemCount - 1) * chevronGap + 16;
     const directionAngles = { right:0, down:90, left:180, up:-90 };
-    const directionAngle = directionAngles[flow.direction] ?? 0;
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
+    const directionAngle = directionAngles[direction] ?? 0;
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px', '--flow-duration':(flow.speedByValue && numericState !== null ? Math.max(.2, (Number(flow.animationSpeed) || 1.2) / Math.max(.2, Math.min(1, Math.abs(numericState) / Math.max(1, Number(flow.speedValueMax) || 1000)))) : (Number(flow.animationSpeed) || 1.2)) + 's' });
+    node.classList.toggle('flow-inactive', !isActive); node.classList.toggle('flow-animate-pulse', isActive && flow.animation === 'pulse'); node.classList.toggle('flow-animate-flow', isActive && flow.animation === 'flow');
     if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:chevronColor, boxShadow:chevronGlow ? '0 0 ' + chevronGlow + 'px ' + chevronColor : 'none' }));
     else node.querySelectorAll('.flow-chevron').forEach(chevron => {
       const path = chevron.querySelector('path'), filled = chevronMode === 'filled';
@@ -1059,14 +1067,22 @@ function closeFlowEditor() {
   hideFlowSelection();
   els.flowEditor?.classList.remove('visible'); els.flowEditor?.setAttribute('aria-hidden','true');
 }
+function flowNumericState(entityId) {
+  const raw = stateCache?.[entityId]?.state;
+  const value = Number(String(raw ?? '').replace(',', '.'));
+  return Number.isFinite(value) ? value : null;
+}
 function flowEditorMarkup(flow) {
   const range = (label, prop, min, max, step, value, suffix='') => '<label class="flow-control"><span>' + label + '<output>' + value + suffix + '</output></span><input type="range" data-flow-prop="' + prop + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + value + '"></label>';
   const select = (label, prop, value, options) => '<label class="flow-select-control"><span>' + label + '</span><select data-flow-prop="' + prop + '">' + options.map(option => '<option value="' + option[0] + '"' + (value === option[0] ? ' selected' : '') + '>' + option[1] + '</option>').join('') + '</select></label>';
   const flowStyle = flow.flowStyle === 'segments' ? 'segments' : 'chevrons';
   const flowCount = clamp(Number(flow.flowCount) || (flow.flowStyle === 'single' ? 1 : flow.flowStyle === 'segments' ? 4 : 3),1,8);
-  const rotation = Number(flow.rotation) || 0;
+  const rotation = Number(flow.rotation) || 0, auto = flow.directionMode === 'auto';
   const rotationControl = '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>' + rotation + '°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="' + rotation + '"></label>';
-  return select('Kształt','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode || 'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,flowCount,'') + select('Kierunek','direction',flow.direction || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + rotationControl + range('Szerokość chevrona','chevronWidth',10,180,1,flow.chevronWidth || flow.chevronSize || 22,' px') + range('Wysokość chevrona','chevronHeight',10,180,1,flow.chevronHeight || flow.chevronSize || 22,' px') + range('Grubość konturu','chevronThickness',1,32,1,flow.chevronThickness || Math.max(2,Math.round((flow.chevronSize || 22)/4.4)),' px') + range('Odstęp','gap',0,40,1,flow.gap,' px') + range('Poświata','glow',0,30,1,flow.glow || 0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity || 100,'%') + range('Szerokość pola','width',60,600,1,flow.width,' px') + '<label class="flow-color-control"><span>Kolor</span><input type="color" data-flow-prop="color" value="' + escapeHtml(flow.color || '#20B9E7') + '"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" ' + (flow.geometryLocked ? 'checked' : '') + '> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>';
+  const color = (label, prop, value) => '<label class="flow-color-control"><span>' + label + '</span><input type="color" data-flow-prop="' + prop + '" value="' + escapeHtml(value || '#20B9E7') + '"></label>';
+  const manual = '<div class="flow-mode-options' + (auto ? ' hidden' : '') + '">' + select('Kierunek','direction',flow.direction || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor','color',flow.color) + '</div>';
+  const automatic = '<div class="flow-mode-options' + (auto ? '' : ' hidden') + '">' + select('Kierunek dla +','positiveDirection',flow.positiveDirection || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + select('Kierunek dla −','negativeDirection',flow.negativeDirection || 'left',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor dla +','positiveColor',flow.positiveColor || flow.color) + color('Kolor dla −','negativeColor',flow.negativeColor || '#ff6b6b') + range('Próg martwy','deadband',0,1000,1,flow.deadband || 0,'') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="hideInactive" ' + (flow.hideInactive ? 'checked' : '') + '> Ukryj w progu martwym</label></div>';
+  return select('Sterowanie kierunkiem','directionMode',auto ? 'auto' : 'manual',[['manual','Ręczne'],['auto','Automatyczne z + / −']]) + manual + automatic + select('Kształt','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode || 'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,flowCount,'') + rotationControl + range('Szerokość chevrona','chevronWidth',10,180,1,flow.chevronWidth || flow.chevronSize || 22,' px') + range('Wysokość chevrona','chevronHeight',10,180,1,flow.chevronHeight || flow.chevronSize || 22,' px') + range('Grubość konturu','chevronThickness',1,32,1,flow.chevronThickness || Math.max(2,Math.round((flow.chevronSize || 22)/4.4)),' px') + range('Odstęp','gap',0,40,1,flow.gap,' px') + range('Poświata','glow',0,30,1,flow.glow || 0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity || 100,'%') + select('Animacja','animation',flow.animation || 'none',[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']]) + range('Szybkość animacji','animationSpeed',0.2,4,0.1,flow.animationSpeed || 1.2,' s') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="speedByValue" ' + (flow.speedByValue ? 'checked' : '') + '> Szybkość zależna od wartości</label><div class="flow-mode-options' + (flow.speedByValue ? '' : ' hidden') + '">' + range('Wartość dla maksimum','speedValueMax',1,10000,1,flow.speedValueMax || 1000,'') + '</div>' + range('Szerokość pola','width',60,600,1,flow.width,' px') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" ' + (flow.geometryLocked ? 'checked' : '') + '> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>';
 }
 function openFlowEditor(id) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return;
@@ -1075,8 +1091,8 @@ function openFlowEditor(id) {
   $$('[data-flow-prop]', els.flowEditorContent).forEach(input => input.addEventListener(input.type === 'range' ? 'input' : 'change', event => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     const prop = event.target.dataset.flowProp; item[prop] = event.target.type === 'checkbox' ? event.target.checked : event.target.type === 'color' || event.target.tagName === 'SELECT' ? event.target.value : Number(event.target.value);
-    const output = event.target.closest('.flow-control')?.querySelector('output'); if (output) output.textContent = event.target.value + (prop === 'rotation' ? '°' : prop === 'flowCount' ? '' : prop === 'opacity' ? '%' : ' px');
-    item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave();
+    const output = event.target.closest('.flow-control')?.querySelector('output'); if (output) output.textContent = event.target.value + (prop === 'rotation' ? '°' : prop === 'flowCount' || prop === 'deadband' || prop === 'speedValueMax' ? '' : prop === 'opacity' ? '%' : prop === 'animationSpeed' ? ' s' : ' px');
+    item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); if (prop === 'directionMode' || prop === 'speedByValue') openFlowEditor(item.id);
   }));
   $('#flow-reset-rotation', els.flowEditorContent)?.addEventListener('click', () => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
@@ -1564,7 +1580,7 @@ async function addFlow(entityId, entryId) {
   view.flows ||= {};
   const id = 'flow_' + uid();
   const flowOffset = Object.keys(view.flows).length % 5;
-  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, chevronWidth:22, chevronHeight:22, chevronThickness:5, chevronMode:'outline', opacity:100, glow:5, gap:9, flowCount:3, color:'#20B9E7', geometryLocked:false, createdAt:new Date().toISOString() };
+  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, chevronWidth:22, chevronHeight:22, chevronThickness:5, chevronMode:'outline', opacity:100, glow:5, gap:9, flowCount:3, directionMode:'manual', positiveDirection:'right', negativeDirection:'left', color:'#20B9E7', positiveColor:'#20B9E7', negativeColor:'#ff6b6b', deadband:0, hideInactive:false, animation:'none', animationSpeed:1.2, speedByValue:false, speedValueMax:1000, geometryLocked:false, createdAt:new Date().toISOString() };
   renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — przeciągnij go w trybie edycji');
 }
 async function removeFlow(id) {
@@ -1582,7 +1598,7 @@ async function removeEntity(entityId) {
   renderMarkers(); renderIntegrations(); await queueSave(); notify('Usunięto marker i wszystkie jego ustawienia');
 }
 async function refreshStates() {
-  const ids = Object.keys(model.entities); if (!ids.length) return renderMarkers();
+  const ids = [...new Set([...Object.keys(model.entities), ...Object.values(activeSceneView()?.flows || {}).map(flow => flow.entityId)])]; if (!ids.length) return renderMarkers();
   try {
     const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
     Object.entries(data.states || {}).forEach(([entityId, nextState]) => {
@@ -1600,7 +1616,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id]; if (!marker) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) renderMarkers(); } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
