@@ -1018,22 +1018,26 @@ function renderFlows() {
     const chevronOpacity = clamp(Number(flow.opacity) || 100, 10, 100);
     const chevronGlow = clamp(Number(flow.glow) || 0, 0, 30);
     const chevronGap = Number.isFinite(Number(flow.gap)) ? Math.max(0, Number(flow.gap)) : 9;
-    const chevronColor = activeColor;
+    const chevronColor = activeColor, fillColor = flow.fillColor || chevronColor, outlineColor = flow.outlineColor || chevronColor, glowColor = flow.glowColor || chevronColor;
     const itemWidth = flowStyle === 'segments' ? Math.max(8, chevronWidth * .9) : chevronWidth;
     const itemHeight = flowStyle === 'segments' ? Math.max(5, chevronHeight * .32) : chevronHeight;
-    const contentWidth = itemCount * itemWidth + Math.max(0,itemCount - 1) * chevronGap + 16;
+    const contentWidth = itemCount * itemWidth + Math.max(0,itemCount - 1) * chevronGap;
     const directionAngles = { right:0, down:90, left:180, up:-90 };
     const directionAngle = directionAngles[direction] ?? 0;
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px', '--flow-duration':(flow.speedByValue && numericState !== null ? Math.max(.2, (Number(flow.animationSpeed) || 1.2) / Math.max(.2, Math.min(1, Math.abs(numericState) / Math.max(1, Number(flow.speedValueMax) || 1000)))) : (Number(flow.animationSpeed) || 1.2)) + 's' });
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: contentWidth + 'px', height: itemHeight + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px', '--flow-duration':(flow.speedByValue && numericState !== null ? Math.max(.2, (Number(flow.animationSpeed) || 1.2) / Math.max(.2, Math.min(1, Math.abs(numericState) / Math.max(1, Number(flow.speedValueMax) || 1000)))) : (Number(flow.animationSpeed) || 1.2)) + 's' });
     node.classList.toggle('flow-inactive', !isActive); node.classList.toggle('flow-animate-pulse', isActive && flow.animation === 'pulse'); node.classList.toggle('flow-animate-flow', isActive && flow.animation === 'flow');
-    if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:chevronColor, boxShadow:chevronGlow ? '0 0 ' + chevronGlow + 'px ' + chevronColor : 'none' }));
+    if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:fillColor, boxShadow:chevronGlow ? '0 0 ' + chevronGlow + 'px ' + glowColor : 'none' }));
     else node.querySelectorAll('.flow-chevron').forEach(chevron => {
       const path = chevron.querySelector('path'), filled = chevronMode === 'filled';
       chevron.classList.toggle('flow-filled', filled);
       Object.assign(chevron.style, { width:chevronWidth + 'px', height:chevronHeight + 'px', filter:chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + chevronColor + ')' : 'none' });
-      path.setAttribute('d', filled ? 'M 5 0 L 100 50 L 5 100 L 0 100 L 58 50 L 0 0 Z' : 'M 8 5 L 92 50 L 8 95');
-      path.setAttribute('fill', filled ? chevronColor : 'none'); path.setAttribute('stroke', filled ? 'none' : chevronColor);
+      const variant = flow.chevronVariant || 'classic';
+      const outlinePath = variant === 'arrow' ? 'M 4 15 L 58 15 L 58 2 L 98 50 L 58 98 L 58 85 L 4 85' : variant === 'bar' ? 'M 2 38 L 68 38 L 68 12 L 98 50 L 68 88 L 68 62 L 2 62' : variant === 'wide' ? 'M 4 4 L 96 50 L 4 96' : 'M 8 5 L 92 50 L 8 95';
+      const filledPath = variant === 'arrow' ? 'M 2 14 L 56 14 L 56 0 L 100 50 L 56 100 L 56 86 L 2 86 Z' : variant === 'bar' ? 'M 0 36 L 66 36 L 66 10 L 100 50 L 66 90 L 66 64 L 0 64 Z' : variant === 'wide' ? 'M 2 0 L 100 50 L 2 100 L 0 100 L 62 50 L 0 0 Z' : 'M 5 0 L 100 50 L 5 100 L 0 100 L 58 50 L 0 0 Z';
+      path.setAttribute('d', filled ? filledPath : outlinePath);
+      path.setAttribute('fill', filled ? fillColor : 'none'); path.setAttribute('stroke', filled ? 'none' : outlineColor);
       path.setAttribute('stroke-width', String(chevronThickness)); path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round');
+      chevron.style.filter = chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + glowColor + ')' : 'none';
     });
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
     node.addEventListener('pointerdown', startFlowDrag);
@@ -1075,14 +1079,15 @@ function flowNumericState(entityId) {
 function flowEditorMarkup(flow) {
   const range = (label, prop, min, max, step, value, suffix='') => '<label class="flow-control"><span>' + label + '<output>' + value + suffix + '</output></span><input type="range" data-flow-prop="' + prop + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + value + '"></label>';
   const select = (label, prop, value, options) => '<label class="flow-select-control"><span>' + label + '</span><select data-flow-prop="' + prop + '">' + options.map(option => '<option value="' + option[0] + '"' + (value === option[0] ? ' selected' : '') + '>' + option[1] + '</option>').join('') + '</select></label>';
-  const flowStyle = flow.flowStyle === 'segments' ? 'segments' : 'chevrons';
-  const flowCount = clamp(Number(flow.flowCount) || (flow.flowStyle === 'single' ? 1 : flow.flowStyle === 'segments' ? 4 : 3),1,8);
-  const rotation = Number(flow.rotation) || 0, auto = flow.directionMode === 'auto';
-  const rotationControl = '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>' + rotation + '°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="' + rotation + '"></label>';
-  const color = (label, prop, value) => '<label class="flow-color-control"><span>' + label + '</span><input type="color" data-flow-prop="' + prop + '" value="' + escapeHtml(value || '#20B9E7') + '"></label>';
-  const manual = '<div class="flow-mode-options' + (auto ? ' hidden' : '') + '">' + select('Kierunek','direction',flow.direction || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor','color',flow.color) + '</div>';
-  const automatic = '<div class="flow-mode-options' + (auto ? '' : ' hidden') + '">' + select('Kierunek dla +','positiveDirection',flow.positiveDirection || 'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + select('Kierunek dla −','negativeDirection',flow.negativeDirection || 'left',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor dla +','positiveColor',flow.positiveColor || flow.color) + color('Kolor dla −','negativeColor',flow.negativeColor || '#ff6b6b') + range('Próg martwy','deadband',0,1000,1,flow.deadband || 0,'') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="hideInactive" ' + (flow.hideInactive ? 'checked' : '') + '> Ukryj w progu martwym</label></div>';
-  return select('Sterowanie kierunkiem','directionMode',auto ? 'auto' : 'manual',[['manual','Ręczne'],['auto','Automatyczne z + / −']]) + manual + automatic + select('Kształt','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode || 'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,flowCount,'') + rotationControl + range('Szerokość chevrona','chevronWidth',10,180,1,flow.chevronWidth || flow.chevronSize || 22,' px') + range('Wysokość chevrona','chevronHeight',10,180,1,flow.chevronHeight || flow.chevronSize || 22,' px') + range('Grubość konturu','chevronThickness',1,32,1,flow.chevronThickness || Math.max(2,Math.round((flow.chevronSize || 22)/4.4)),' px') + range('Odstęp','gap',0,40,1,flow.gap,' px') + range('Poświata','glow',0,30,1,flow.glow || 0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity || 100,'%') + select('Animacja','animation',flow.animation || 'none',[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']]) + range('Szybkość animacji','animationSpeed',0.2,4,0.1,flow.animationSpeed || 1.2,' s') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="speedByValue" ' + (flow.speedByValue ? 'checked' : '') + '> Szybkość zależna od wartości</label><div class="flow-mode-options' + (flow.speedByValue ? '' : ' hidden') + '">' + range('Wartość dla maksimum','speedValueMax',1,10000,1,flow.speedValueMax || 1000,'') + '</div>' + range('Szerokość pola','width',60,600,1,flow.width,' px') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" ' + (flow.geometryLocked ? 'checked' : '') + '> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>';
+  const section = (title, body, open=false) => '<details class="flow-section"' + (open ? ' open' : '') + '><summary>' + title + '<i class="mdi mdi-chevron-down"></i></summary><div class="flow-section-body">' + body + '</div></details>';
+  const color = (label, prop, value) => '<label class="flow-color-control"><span>' + label + '</span><div class="flow-color-picker" data-flow-color-prop="' + prop + '"><button type="button" class="flow-color-current" data-flow-color-toggle style="background:' + escapeHtml(value || '#20B9E7') + '"></button><input class="flow-color-native" type="color" data-flow-prop="' + prop + '" value="' + escapeHtml(value || '#20B9E7') + '"><div class="flow-color-menu"><div class="flow-color-palette">' + COLOR_PALETTE.map(c => '<button type="button" data-flow-palette-color="' + c + '" style="background:' + c + '"></button>').join('') + '</div><button type="button" class="rgb-button" data-flow-rgb-color>Własny kolor RGB…</button></div></div></label>';
+  const auto = flow.directionMode === 'auto', flowStyle = flow.flowStyle === 'segments' ? 'segments' : 'chevrons', count = clamp(Number(flow.flowCount) || 3,1,8), rotation = Number(flow.rotation) || 0;
+  const direction = section('Sterowanie', select('Tryb kierunku','directionMode',auto?'auto':'manual',[['manual','Ręczne'],['auto','Automatyczne z + / −']]) + '<div class="flow-mode-options' + (auto?' hidden':'') + '">' + select('Kierunek','direction',flow.direction||'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor główny','color',flow.color) + '</div><div class="flow-mode-options' + (auto?'':' hidden') + '">' + select('Kierunek dla +','positiveDirection',flow.positiveDirection||'right',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + select('Kierunek dla −','negativeDirection',flow.negativeDirection||'left',[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']]) + color('Kolor dla +','positiveColor',flow.positiveColor||flow.color) + color('Kolor dla −','negativeColor',flow.negativeColor||'#ff6b6b') + range('Próg martwy','deadband',0,1000,1,flow.deadband||0,'') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="hideInactive" '+(flow.hideInactive?'checked':'')+'> Ukryj w progu martwym</label></div>',true);
+  const shape = section('Kształt', select('Rodzaj strzałki','chevronVariant',flow.chevronVariant||'classic',[['classic','Klasyczny'],['wide','Szeroki'],['arrow','Strzałka'],['bar','Strzałka z belką']]) + select('Kształt grupy','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode||'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,count,'') + range('Szerokość','chevronWidth',10,180,1,flow.chevronWidth||flow.chevronSize||22,' px') + range('Wysokość','chevronHeight',10,180,1,flow.chevronHeight||flow.chevronSize||22,' px') + range('Grubość chevrona','chevronThickness',1,32,1,flow.chevronThickness||5,' px') + range('Odstęp','gap',0,40,1,flow.gap||0,' px'));
+  const appearance = section('Kolory i wygląd', color('Wypełnienie','fillColor',flow.fillColor||flow.color) + color('Kontur','outlineColor',flow.outlineColor||flow.color) + color('Poświata','glowColor',flow.glowColor||flow.color) + range('Poświata','glow',0,30,1,flow.glow||0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity||100,'%'));
+  const animation = section('Animacja', select('Typ','animation',flow.animation||'none',[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']]) + range('Szybkość','animationSpeed',.2,4,.1,flow.animationSpeed||1.2,' s') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="speedByValue" '+(flow.speedByValue?'checked':'')+'> Szybkość zależna od wartości</label><div class="flow-mode-options'+(flow.speedByValue?'':' hidden')+'">'+range('Wartość dla maksimum','speedValueMax',1,10000,1,flow.speedValueMax||1000,'')+'</div>');
+  const geometry = section('Pozycja', '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>'+rotation+'°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="'+rotation+'"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" '+(flow.geometryLocked?'checked':'')+'> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>');
+  return direction + shape + appearance + animation + geometry;
 }
 function openFlowEditor(id) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return;
@@ -1097,6 +1102,16 @@ function openFlowEditor(id) {
   $('#flow-reset-rotation', els.flowEditorContent)?.addEventListener('click', () => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     item.rotation = 0; item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); openFlowEditor(item.id);
+  });
+  els.flowEditorContent.addEventListener('click', async event => {
+    const toggle = event.target.closest('[data-flow-color-toggle]'), swatch = event.target.closest('[data-flow-palette-color]'), rgb = event.target.closest('[data-flow-rgb-color]');
+    if (toggle) { const menu = toggle.parentElement.querySelector('.flow-color-menu'); els.flowEditorContent.querySelectorAll('.flow-color-menu').forEach(x => { if (x !== menu) x.classList.remove('visible'); }); menu.classList.toggle('visible'); return; }
+    const picker = (swatch || rgb)?.closest('.flow-color-picker'); if (!picker) return;
+    const prop = picker.dataset.flowColorProp, item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
+    let color = swatch?.dataset.flowPaletteColor;
+    if (rgb) color = await appPrompt({ title:'Własny kolor RGB', message:'Podaj kolor w formacie #RRGGBB.', value:item[prop] || '#20B9E7', confirmText:'Ustaw' });
+    if (!color || !/^#[0-9a-f]{6}$/i.test(color)) return;
+    item[prop] = color.toUpperCase(); item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); openFlowEditor(item.id);
   });
   $('#flow-delete', els.flowEditorContent)?.addEventListener('click', () => { const id = selectedFlowId; closeFlowEditor(); removeFlow(id); });
 }
@@ -1191,21 +1206,11 @@ function startFlowResize(event) {
   if (!editMode || !flow || flow.geometryLocked || event.button !== 0) return;
   event.preventDefault(); event.stopPropagation();
   const handle = event.currentTarget.dataset.flowHandle, scale = sceneScale || 1;
-  const start = { x:event.clientX, y:event.clientY, size:Math.max(10, Number(flow.chevronSize) || 22), width:Math.max(10, Number(flow.chevronWidth) || Number(flow.chevronSize) || 22), height:Math.max(10, Number(flow.chevronHeight) || Number(flow.chevronSize) || 22) };
+  const start = { x:event.clientX, y:event.clientY, width:Math.max(10, Number(flow.chevronWidth) || Number(flow.chevronSize) || 22), height:Math.max(10, Number(flow.chevronHeight) || Number(flow.chevronSize) || 22) };
   let changed = false;
-  const move = current => {
-    if ((current.buttons & 1) !== 1) return finish();
-    const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1;
-    const delta = ((current.clientX - start.x) * sx + (current.clientY - start.y) * sy) / (2 * scale);
-    const nextSize = clamp(Math.round(start.size + delta), 10, 80), ratio = nextSize / start.size;
-    flow.chevronSize = nextSize; flow.chevronWidth = clamp(Math.round(start.width * ratio), 10, 180); flow.chevronHeight = clamp(Math.round(start.height * ratio), 10, 180);
-    changed = true; renderMarkers();
-  };
-  const finish = () => {
-    window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',finish); window.removeEventListener('pointercancel',finish);
-    if (changed) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); openFlowEditor(flow.id); }
-  };
-  window.addEventListener('pointermove',move); window.addEventListener('pointerup',finish); window.addEventListener('pointercancel',finish);
+  const move = current => { if ((current.buttons & 1) !== 1) return finish(); const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; flow.chevronWidth = clamp(Math.round(start.width + (current.clientX-start.x)*sx/scale),10,180); flow.chevronHeight = clamp(Math.round(start.height + (current.clientY-start.y)*sy/scale),10,180); flow.chevronSize = Math.round((flow.chevronWidth + flow.chevronHeight) / 2); changed=true; renderMarkers(); };
+  const finish = () => { window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',finish); window.removeEventListener('pointercancel',finish); if(changed){flow.updatedAt=new Date().toISOString();scheduleSave(true);openFlowEditor(flow.id);} };
+  window.addEventListener('pointermove',move);window.addEventListener('pointerup',finish);window.addEventListener('pointercancel',finish);
 }
 function positionEditor() {
   if (mobileView() || editorDragged || !selectedId || !els.editor.classList.contains('visible')) return;
@@ -1580,7 +1585,7 @@ async function addFlow(entityId, entryId) {
   view.flows ||= {};
   const id = 'flow_' + uid();
   const flowOffset = Object.keys(view.flows).length % 5;
-  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, chevronWidth:22, chevronHeight:22, chevronThickness:5, chevronMode:'outline', opacity:100, glow:5, gap:9, flowCount:3, directionMode:'manual', positiveDirection:'right', negativeDirection:'left', color:'#20B9E7', positiveColor:'#20B9E7', negativeColor:'#ff6b6b', deadband:0, hideInactive:false, animation:'none', animationSpeed:1.2, speedByValue:false, speedValueMax:1000, geometryLocked:false, createdAt:new Date().toISOString() };
+  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, direction:'right', flowStyle:'triple', rotation:0, width:140, height:54, chevronSize:22, chevronWidth:22, chevronHeight:22, chevronThickness:5, chevronMode:'outline', chevronVariant:'classic', fillColor:'#20B9E7', outlineColor:'#20B9E7', glowColor:'#20B9E7', opacity:100, glow:5, gap:9, flowCount:3, directionMode:'manual', positiveDirection:'right', negativeDirection:'left', color:'#20B9E7', positiveColor:'#20B9E7', negativeColor:'#ff6b6b', deadband:0, hideInactive:false, animation:'none', animationSpeed:1.2, speedByValue:false, speedValueMax:1000, geometryLocked:false, createdAt:new Date().toISOString() };
   renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — przeciągnij go w trybie edycji');
 }
 async function removeFlow(id) {
