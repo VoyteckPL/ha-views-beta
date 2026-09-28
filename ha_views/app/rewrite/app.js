@@ -256,7 +256,7 @@ function ensureMultiViewModel() {
   } catch {}
   if (!model.views[model.activeViewId]) model.activeViewId = model.viewOrder[0];
   Object.values(model.views).forEach((view, index) => {
-    view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.backgroundTransforms ||= {};
+    view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.flows ||= {}; view.backgroundTransforms ||= {};
     view.backgroundColor ??= ''; view.onboardingDone ??= false;
     Object.values(view.entities).forEach(marker => { marker.tapAction ??= 'more_info'; });
   });
@@ -291,7 +291,7 @@ async function addSceneView() {
   const name = await appPrompt({ title: 'Nowy widok', message: 'Podaj krótką nazwę nowego widoku.', value: `Widok ${model.viewOrder.length + 1}`, confirmText: 'Dodaj' });
   if (!name) return;
   const id = `view_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
-  model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: mobileView() ? 9 / 16 : 16 / 9, onboardingDone: false, backgroundTransforms: {}, entities: {} }; model.viewOrder.push(id);
+  model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: mobileView() ? 9 / 16 : 16 / 9, onboardingDone: false, backgroundTransforms: {}, entities: {}, flows: {} }; model.viewOrder.push(id);
   await switchSceneView(id, false); scheduleSave(true); notify('Dodano nowy widok');
 }
 function setDefaultSceneView() {
@@ -1331,8 +1331,11 @@ async function changeType(type) {
 }
 
 function renderAdded() {
-  const items = Object.values(model.entities); els.addedCount.textContent = items.length;
-  els.addedList.innerHTML = items.length ? items.map(m => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(m.entityId)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(m.entityId)}">Usuń z widoku</button></div></div>`).join('') : '<div class="empty-row">Nie dodano jeszcze żadnych encji.</div>';
+  const view = activeSceneView(), markers = Object.values(model.entities), flows = Object.values(view?.flows || {});
+  const markerRows = markers.map(m => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(m.entityId)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(m.entityId)}">Usuń z widoku</button></div></div>`);
+  const flowRows = flows.map(flow => `<div class="entity-row added-row flow-row"><div class="added-identity"><span class="added-flow-icon">↝</span><div><strong>${escapeHtml(flow.displayName)}</strong><small>${escapeHtml(flow.entityId)} · ${escapeHtml(flow.integrationName || 'Home Assistant')} · Flow (test — bez wizualizacji)</small></div></div><div class="entity-actions"><button class="danger" data-remove-flow="${escapeHtml(flow.id)}">Usuń</button></div></div>`);
+  const items = [...markerRows, ...flowRows]; els.addedCount.textContent = items.length;
+  els.addedList.innerHTML = items.length ? items.join('') : '<div class="empty-row">Nie dodano jeszcze żadnych elementów.</div>';
 }
 async function loadIntegrations(force = false) {
   if (integrations.length && !force) return renderIntegrations();
@@ -1343,13 +1346,13 @@ async function loadIntegrations(force = false) {
 function searchText(value) { return String(value || '').toLocaleLowerCase('pl').trim(); }
 function searchResultMarkup(entity, integration) {
   const added = !!model.entities[entity.entity_id];
-  return `<div class="entity-row search-result ${entity.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(entity.name || entity.entity_id)}</strong><small>${escapeHtml(entity.entity_id)} · ${escapeHtml(integration.title || integration.domain || 'Home Assistant')}${entity.state != null ? ` · ${escapeHtml(entity.state)}${entity.unit ? ` ${escapeHtml(entity.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(entity.enabled)}<button class="add-entity" data-add="${escapeHtml(entity.entity_id)}" data-entry="${escapeHtml(integration.entry_id)}" ${added || !entity.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : entity.enabled ? 'Dodaj do widoku' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`;
+  return `<div class="entity-row search-result ${entity.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(entity.name || entity.entity_id)}</strong><small>${escapeHtml(entity.entity_id)} · ${escapeHtml(integration.title || integration.domain || 'Home Assistant')}${entity.state != null ? ` · ${escapeHtml(entity.state)}${entity.unit ? ` ${escapeHtml(entity.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(entity.enabled)}<button class="add-entity" data-add="${escapeHtml(entity.entity_id)}" data-entry="${escapeHtml(integration.entry_id)}" ${added || !entity.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : 'Dodaj wskaźnik'}">${added ? '✓' : '+'}</button><button class="add-entity add-flow" data-add-flow="${escapeHtml(entity.entity_id)}" data-entry="${escapeHtml(integration.entry_id)}" ${!entity.enabled ? 'disabled' : ''} title="Dodaj Flow testowy">↝</button></div></div>`;
 }
 function renderIntegrationSearch() {
   const query = searchText(integrationSearchText);
   if (!query) return false;
   if (query.length < 2) { els.integrationList.innerHTML = '<div class="empty-row">Wpisz co najmniej 2 znaki.</div>'; return true; }
-  const matches = integrations.flatMap(integration => (integrationEntities.get(integration.entry_id) || []).filter(entity => !model.entities[entity.entity_id] && (searchText(entity.entity_id).includes(query) || searchText(entity.name).includes(query))).map(entity => ({ entity, integration }))).sort((a,b) => String(a.entity.name || a.entity.entity_id).localeCompare(String(b.entity.name || b.entity.entity_id), 'pl', { sensitivity:'base' }));
+  const matches = integrations.flatMap(integration => (integrationEntities.get(integration.entry_id) || []).filter(entity => searchText(entity.entity_id).includes(query) || searchText(entity.name).includes(query)).map(entity => ({ entity, integration }))).sort((a,b) => String(a.entity.name || a.entity.entity_id).localeCompare(String(b.entity.name || b.entity.entity_id), 'pl', { sensitivity:'base' }));
   const status = integrationSearchLoading ? '<div class="search-status">Wyszukiwanie encji…</div>' : '';
   els.integrationList.innerHTML = status + (matches.length ? matches.map(({entity,integration}) => searchResultMarkup(entity,integration)).join('') : '<div class="empty-row">Brak pasujących encji.</div>');
   return true;
@@ -1405,7 +1408,7 @@ function integrationBody(group) {
   if (group.entries.some(item => !integrationEntities.has(item.entry_id))) return '<div class="empty-row">Kliknij, aby wczytać encje.</div>';
   const seen = new Set(), entities = group.entries.flatMap(item => (integrationEntities.get(item.entry_id) || []).map(entity => ({ ...entity, _entryId: item.entry_id }))).filter(entity => !seen.has(entity.entity_id) && seen.add(entity.entity_id)).sort((a,b) => String(a.name).localeCompare(String(b.name), 'pl', { sensitivity: 'base' }));
   if (!entities.length) return '<div class="empty-row">Brak encji.</div>';
-  return entities.map(e => { const added = !!model.entities[e.entity_id]; return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj do widoku' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`; }).join('');
+  return entities.map(e => { const added = !!model.entities[e.entity_id]; return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj wskaźnik' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button><button class="add-entity add-flow" data-add-flow="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${!e.enabled ? 'disabled' : ''} title="Dodaj Flow testowy">↝</button></div></div>`; }).join('');
 }
 async function toggleIntegration(groupKey) {
   if (openIntegrations.has(groupKey)) { openIntegrations.delete(groupKey); return renderIntegrations(); }
@@ -1418,6 +1421,18 @@ function updateIntegrationMetadata(entryId) {
   const integration = integrations.find(x => x.entry_id === entryId), entities = integrationEntities.get(entryId) || []; let changed = false;
   entities.forEach(e => { const marker = model.entities[e.entity_id]; if (marker && integration && (!marker.integrationId || marker.integrationName === 'Home Assistant')) { marker.integrationId = entryId; marker.integrationName = integration.title; marker.sourceDomain = integration.domain; changed = true; } });
   if (changed) { renderAdded(); scheduleSave(); }
+}
+async function addFlow(entityId, entryId) {
+  const view = activeSceneView(), integration = integrations.find(x => x.entry_id === entryId), entity = (integrationEntities.get(entryId) || []).find(x => x.entity_id === entityId);
+  if (!view || !integration || !entity) return;
+  view.flows ||= {};
+  const id = 'flow_' + uid();
+  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, createdAt:new Date().toISOString() };
+  renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — bez markera na scenie');
+}
+async function removeFlow(id) {
+  const view = activeSceneView(); if (!view?.flows?.[id]) return;
+  delete view.flows[id]; renderAdded(); renderIntegrations(); await queueSave(); notify('Usunięto Flow testowy');
 }
 async function addEntity(entityId, entryId) {
   if (model.entities[entityId]) return;
@@ -1667,12 +1682,13 @@ function bindEvents() {
     integrationSearchTimer = setTimeout(runIntegrationSearch, 220);
   });
   els.integrationList.addEventListener('click', event => {
-    const unusedSummary = event.target.closest('.unused-integrations > summary'), add = event.target.closest('[data-add]'), summary = event.target.closest('.integration-summary');
+    const unusedSummary = event.target.closest('.unused-integrations > summary'), flow = event.target.closest('[data-add-flow]'), add = event.target.closest('[data-add]'), summary = event.target.closest('.integration-summary');
     if (unusedSummary) { event.preventDefault(); unusedIntegrationsOpen = !unusedIntegrationsOpen; renderIntegrations(); }
+    else if (flow) addFlow(flow.dataset.addFlow, flow.dataset.entry);
     else if (add) addEntity(add.dataset.add, add.dataset.entry);
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
-  els.addedList.addEventListener('click', event => { const remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
+  els.addedList.addEventListener('click', event => { const removeFlowButton = event.target.closest('[data-remove-flow]'), remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (removeFlowButton) removeFlow(removeFlowButton.dataset.removeFlow); else if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
   $$('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));
   els.image.addEventListener('load', () => { updateSceneGeometry(); applyBackgroundTransform(); });
   window.addEventListener('resize', () => { applyBackgroundTransform(); syncMobileOrientation(); });
