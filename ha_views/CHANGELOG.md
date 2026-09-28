@@ -1,3 +1,10 @@
+## 0.4.1-beta.175
+
+- Flow: próg aktywności działa jednakowo w obu trybach — Flow jest nieaktywny, gdy |wartość| ≤ próg. Próg 0 wyłącza więc strzałki przy 0 W (np. fotowoltaika w nocy).
+- Flow: nieaktywny Flow z animacją przepływu nie pokazuje już zdublowanych strzałek wystających poza ramkę.
+- Flow: ukryty Flow (Ukryj poniżej progu) poza edycją jest całkowicie niewidoczny; w trybie edycji zostaje tylko przerywana ramka bez strzałek, żeby dało się go kliknąć i edytować.
+- Flow: po włączeniu trybu edycji Flow są od razu odświeżane.
+
 ## 0.4.1-beta.174
 
 - Start aplikacji: układ, lista teł i uprawnienia są pobierane równolegle, a stany encji razem z obrazem tła, a nie jeden po drugim.

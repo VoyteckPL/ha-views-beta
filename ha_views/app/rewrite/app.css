@@ -534,4 +534,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .flow-animate-pulse .flow-train{animation:flow-pulse-train var(--flow-duration,1.2s) ease-in-out infinite;animation-delay:var(--flow-delay,0s);transform-origin:50% 50%}
 @keyframes flow-pulse-train{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.28;transform:scale(.86)}}
 .flow-marker .flow-train{flex:0 0 auto}
+/* beta.175: hidden-below-threshold Flow shows only a dashed placeholder in edit mode */
+.editing .flow-marker.flow-hidden-preview{opacity:1!important;outline:1px dashed rgba(143,223,255,.55);outline-offset:2px}
+.flow-marker.flow-hidden-preview .flow-train{visibility:hidden}
 

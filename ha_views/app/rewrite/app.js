@@ -1035,7 +1035,7 @@ function renderFlows() {
   flows.forEach(flow => {
     const numericState = flowNumericState(flow.entityId), autoDirection = flow.directionMode === 'auto';
     const deadband = Math.max(0, Number(flow.deadband) || 0);
-    const isActive = numericState === null || (!autoDirection && deadband <= 0) || Math.abs(numericState) > deadband;
+    const isActive = numericState === null || Math.abs(numericState) > deadband;
     if (!isActive && flow.hideInactive && !editMode) return;
     const previewSide = editMode && selectedFlowId === flow.id && autoDirection ? flowEditorSide : null;
     const side = previewSide || flowSideOf(flow, numericState), style = flowEffective(flow, side);
@@ -1051,7 +1051,8 @@ function renderFlows() {
     const items = item.repeat(itemCount), animation = style.animation || 'none';
     const node = document.createElement('div');
     node.className = 'flow-marker'; node.dataset.flowId = flow.id; node.dataset.side = side;
-    node.innerHTML = '<div class="flow-train">' + items + (animation === 'flow' ? items : '') + '</div>';
+    const streaming = isActive && animation === 'flow';
+    node.innerHTML = '<div class="flow-train">' + items + (streaming ? items : '') + '</div>';
     const contentWidth = frameLength;
     const angle = ({ right:0, down:90, left:180, up:-90 }[style.activeDirection] ?? 0) + Number(flow.rotation || 0);
     node.dataset.angle = String(angle);
@@ -1061,7 +1062,7 @@ function renderFlows() {
     node.style.setProperty('--flow-color', color); node.style.setProperty('--flow-gap', gap + 'px'); node.style.setProperty('--flow-duration', duration.toFixed(3) + 's');
     node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
     if (glow) node.style.setProperty('--flow-glow', 'drop-shadow(0 0 ' + glow + 'px ' + glowColor + ')');
-    if (animation === 'flow') node.querySelector('.flow-train').style.paddingRight = gap + 'px';
+    if (streaming) node.querySelector('.flow-train').style.paddingRight = gap + 'px';
     node.classList.toggle('flow-inactive', !isActive); node.classList.toggle('flow-hidden-preview', !isActive && Boolean(flow.hideInactive));
     node.classList.toggle('flow-animate-pulse', isActive && animation === 'pulse'); node.classList.toggle('flow-animate-flow', isActive && animation === 'flow');
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
@@ -1113,7 +1114,7 @@ function flowEditorMarkup(flow) {
     + control('Sterowanie','directionMode','select',auto ? 'auto' : 'manual',{ items:[['manual','Stały kierunek'],['auto','Kierunek wg znaku + / −']], refresh:true })
     + (auto ? control('Kierunek dla +','positiveDirection','select',flow.positiveDirection || 'right',dirs) + control('Kierunek dla −','negativeDirection','select',flow.negativeDirection || 'left',dirs) + control('Osobny styl dla −','negativeStyleEnabled','checkbox',!!flow.negativeStyleEnabled,refresh) : control('Kierunek','direction','select',flow.direction || 'right',dirs))
     + control('Próg aktywności','deadband','number',Number(flow.deadband) || 0,{ valueType:'number', min:0 }) + control('Ukryj poniżej progu','hideInactive','checkbox',!!flow.hideInactive)
-    + note('Gdy |wartość| ≤ próg, Flow jest przygaszony i bez animacji albo ukryty (np. fotowoltaika w nocy). Próg 0 w trybie stałym = zawsze aktywny.'));
+    + note('Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.'));
   const shapeKey = FLOW_SHAPES.some(([key]) => key === s.shape) ? s.shape : 'chevron';
   const shape = section('Kształt', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true }) + control('Liczba','flowCount','range',clamp(Number(s.flowCount) || 3,1,FLOW_LIMITS.count),{ min:1, max:FLOW_LIMITS.count, step:1, integer:true })
     + (shapeKey === 'chevron' || shapeKey === 'arrow' ? control(shapeKey === 'arrow' ? 'Grubość trzonu' : 'Grubość','chevronThickness','range',Number(s.chevronThickness) || 5,{ min:1, max:FLOW_LIMITS.thickness, step:1, suffix:'px', integer:true }) : ''));
@@ -1881,7 +1882,7 @@ function bindEvents() {
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
-  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeFlowEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeFlowEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
     model.settings.snapStep = Number(button.dataset.gridStep);
