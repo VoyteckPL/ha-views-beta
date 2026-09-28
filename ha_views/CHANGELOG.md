@@ -1,3 +1,9 @@
+## 0.4.1-beta.172
+
+- Flow: naprawiono za małe strzałki — stara reguła CSS wymuszała 22×22 px, przez co Długość, Szerokość i narożne kółka zmieniały tylko ramkę. Ramka znów dokładnie obejmuje strzałki.
+- Flow: przepływ nie znika w połowie animacji — ciąg strzałek zawsze wypełnia całą ramkę.
+- Flow: naprawiono pulsowanie — pulsuje cała grupa (jasność i skala); wcześniej skalowanie blokowała stara reguła CSS.
+
 ## 0.4.1-beta.171
 
 - Flow: Długość i Szerokość są liczone względem kierunku strzałki — po obrocie o 90° nie zamieniają się miejscami.

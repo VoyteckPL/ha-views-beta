@@ -1041,7 +1041,7 @@ function renderFlows() {
     const outlineWidth = clamp(Number(style.outlineWidth) || 0, 0, 20), glow = clamp(Number(style.glow) || 0, 0, 40), opacity = clamp(Number(style.opacity) || 100, 10, 100);
     const color = style.activeColor, glowColor = style.glowCustom ? (style.glowColor || color) : color, outlineColor = style.outlineColor || '#FFFFFF';
     const pathData = flowShapePath(shape, itemWidth, itemHeight, thickness);
-    const item = '<svg class="flow-chevron" width="' + itemWidth + '" height="' + itemHeight + '" viewBox="0 0 ' + itemWidth + ' ' + itemHeight + '" aria-hidden="true"><path d="' + pathData + '" fill="' + escapeHtml(color) + '"' + (outlineWidth ? ' stroke="' + escapeHtml(outlineColor) + '" stroke-width="' + outlineWidth + '" stroke-linejoin="round" paint-order="stroke fill"' : ' stroke="none"') + '></path></svg>';
+    const item = '<svg class="flow-chevron" width="' + itemWidth + '" height="' + itemHeight + '" style="width:' + itemWidth + 'px;height:' + itemHeight + 'px" preserveAspectRatio="none" viewBox="0 0 ' + itemWidth + ' ' + itemHeight + '" aria-hidden="true"><path d="' + pathData + '" fill="' + escapeHtml(color) + '"' + (outlineWidth ? ' stroke="' + escapeHtml(outlineColor) + '" stroke-width="' + outlineWidth + '" stroke-linejoin="round" paint-order="stroke fill"' : ' stroke="none"') + '></path></svg>';
     const items = item.repeat(itemCount), animation = style.animation || 'none';
     const node = document.createElement('div');
     node.className = 'flow-marker'; node.dataset.flowId = flow.id; node.dataset.side = side;
