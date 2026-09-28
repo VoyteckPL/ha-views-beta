@@ -1,3 +1,8 @@
+## 0.4.1-beta.158
+
+- Flow: chevrony nie deformują się przy większym rozmiarze; pole automatycznie zachowuje potrzebną szerokość.
+- Flow: dodano niebieskie uchwyty do zmiany szerokości pola bezpośrednio na scenie.
+
 ## 0.4.1-beta.157
 
 - Flow: dodano wybór kształtu: pojedynczy, potrójny albo segmenty.
