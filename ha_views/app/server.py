@@ -109,6 +109,9 @@ async def api_selected_states(request):
 
 # Generic optional control endpoint. It never contains user-specific entity IDs.
 async def api_control(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     try:
         body = await request.json()
     except Exception:
@@ -324,6 +327,9 @@ async def api_layout_get(request):
 
 
 async def api_layout_save(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     try:
         body = await request.json()
     except Exception:
@@ -483,6 +489,38 @@ async def ha_ws_command(command):
                     )
 
                 return msg.get("result")
+
+
+USER_ACCESS_CACHE = {}
+USER_ACCESS_CACHE_SECONDS = 60
+
+async def request_is_admin(request):
+    user_id = str(request.headers.get("X-Remote-User-Id", "")).strip()
+    if not user_id:
+        return False
+    cached = USER_ACCESS_CACHE.get(user_id)
+    if cached and time.monotonic() - cached["checked"] < USER_ACCESS_CACHE_SECONDS:
+        return cached["is_admin"]
+    try:
+        users = await ha_ws_command({"type": "config/auth/list"})
+        user = next((item for item in users if str(item.get("id", "")) == user_id), None)
+        is_admin = bool(user and (user.get("is_admin") or user.get("is_owner")))
+    except Exception as err:
+        print(f"HA Views access lookup failed: {type(err).__name__}: {err}", flush=True)
+        is_admin = False
+    USER_ACCESS_CACHE[user_id] = {"checked": time.monotonic(), "is_admin": is_admin}
+    return is_admin
+
+async def editor_denial(request):
+    if await request_is_admin(request):
+        return None
+    return web.json_response(
+        {"ok": False, "error": "HA Views is view-only for this user"},
+        status=403,
+    )
+
+async def api_access(request):
+    return web.json_response({"ok": True, "viewer": not await request_is_admin(request)})
 
 
 async def ha_all_states():
@@ -987,6 +1025,9 @@ async def api_all_integration_entities(request):
 # ============================================================
 
 async def api_enable_entity(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
 
     try:
 
@@ -1064,6 +1105,9 @@ async def api_enable_entity(request):
 # ============================================================
 
 async def api_disable_entity(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
 
     try:
 
@@ -1335,6 +1379,9 @@ async def api_background_download(request):
     return response
 
 async def api_background_upload(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     ensure_background_store()
     reader = await request.multipart()
     field = await reader.next()
@@ -1368,6 +1415,9 @@ async def api_background_upload(request):
     return web.json_response({"ok": True, "name": name, "size": size})
 
 async def api_background_select(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     ensure_background_store()
     body = await request.json()
     name = _background_name(body.get("name"))
@@ -1378,6 +1428,9 @@ async def api_background_select(request):
     return web.json_response({"ok": True, "current": name})
 
 async def api_background_delete(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     ensure_background_store()
     body = await request.json()
     name = _background_name(body.get("name"))
@@ -1395,6 +1448,9 @@ async def api_marker_styles_get(request):
     return web.json_response({"ok": True, "data": data})
 
 async def api_marker_styles_save(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     data = await request.json()
     if not isinstance(data, dict):
         return web.json_response({"ok": False, "error": "Dane muszą być obiektem JSON"}, status=400)
@@ -1419,6 +1475,9 @@ async def api_rewrite_state_get(request):
     })
 
 async def api_rewrite_state_save(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
     try:
         data = await request.json()
     except Exception:
@@ -1491,6 +1550,7 @@ app = web.Application(middlewares=[frontend_no_store])
 
 app.router.add_get("/", index)
 app.router.add_get("/rewrite", rewrite_index)
+app.router.add_get("/api/access", api_access)
 app.router.add_get("/api/rewrite_state", api_rewrite_state_get)
 app.router.add_post("/api/rewrite_state", api_rewrite_state_save)
 app.router.add_get("/api/integration_icon", api_integration_icon)
