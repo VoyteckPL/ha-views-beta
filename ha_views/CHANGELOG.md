@@ -1,3 +1,7 @@
+## 0.4.1-beta.154
+
+- Naprawiono podpięcie kontrolek w edytorze Flow. Zmiany rozmiaru, odstępu, obrotu, szerokości, koloru i blokady są teraz zapisywane oraz od razu widoczne.
+
 ## 0.4.1-beta.153
 
 - Naprawiono obsługę kontrolek edytora Flow: kolor, rozmiar, odstęp, obrót, szerokość i blokada działają od razu na właściwym Flow.
