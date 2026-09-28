@@ -120,8 +120,9 @@ const gaugeDefaults = () => ({
 const iconDefaults = () => ({ ...badgeDefaults(), width: 124, height: 124, showLabel: false, showValue: false, showBackground: true, backgroundOpacity: .76, showBorder: true, radius: 16, showIcon: true, iconSize: 32, iconX: 0, iconY: 0 });
 const horseshoeDefaults = () => ({ ...gaugeDefaults(), width: 330, height: 291, showLabel: true, showValue: true, showPercent: true, showTicks: false, startAngle: 135, endAngle: 405, gaugeScale: 1, gaugeY: 0, valueScale: .65, valueY: -19, percentScale: .8, percentY: -8 });
 const isGaugeType = type => type === 'gauge' || type === 'horseshoe';
-const markerStyleDefaults = type => type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
-const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa' }[type] || 'Badge');
+const flowDefaults = () => ({ width:260, height:70, contentScale:1, rotation:0, chevronStyle:'outline', chevronCount:3, chevronSize:30, gap:8, opacity:1, speed:1.1, colorForward:'#20B9E7', colorReverse:'#F59E0B', colorIdle:'#607D8B', showLine:true, lineWidth:3 });
+const markerStyleDefaults = type => type === 'flow' ? flowDefaults() : type === 'icon' ? iconDefaults() : type === 'horseshoe' ? horseshoeDefaults() : type === 'gauge' ? gaugeDefaults() : badgeDefaults();
+const markerTypeLabel = type => ({ badge:'Badge', gauge:'Gauge', icon:'Ikona', horseshoe:'Podkowa', flow:'Przepływ' }[type] || 'Badge');
 const gaugeVisualTransform = (marker, style) => {
   const horseshoe = marker.type === 'horseshoe';
   const y = (horseshoe ? -35 : 0) + (Number(style.gaugeY) || 0);
@@ -733,6 +734,11 @@ function gaugeScaleMarkup(marker, s, cx, cy, radius, startAngle, sweep) {
 }
 function markerHtml(marker) {
   const s = marker.style, formatted = formatState(marker), fullValue = `${formatted.value}${formatted.unit ? ` ${formatted.unit}` : ''}`, icon = iconMarkup(marker), outline = '<span class="marker-outline"></span>';
+  if (marker.type === 'flow') {
+    const flow = flowDirection(marker);
+    const chevrons = Array.from({length: clamp(Number(s.chevronCount) || 3, 1, 8)}, (_, index) => '<span class="flow-chevron" data-step="' + index + '"></span>').join('');
+    return '<div class="flow-track"><span class="flow-line"></span><div class="flow-chevrons ' + flow.direction + ' ' + (s.chevronStyle || 'outline') + '">' + chevrons + '</div></div>';
+  }
   if (isGaugeType(marker.type)) {
     const n = Number(stateCache[marker.entityId]?.state), span = Number(s.max) - Number(s.min) || 1;
     const percent = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
@@ -743,6 +749,16 @@ function markerHtml(marker) {
     return `${outline}<svg class="gauge-svg" viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${escapeHtml(s.gradientStart)}"/><stop offset="100%" stop-color="${escapeHtml(s.gradientEnd)}"/></linearGradient></defs><g class="gauge-visual" style="transform:${gaugeVisualTransform(marker, s)};transform-origin:${cx}px ${cy}px"><path class="gauge-track" pathLength="100" d="${path}"/><path class="gauge-value" pathLength="100" d="${path}" style="stroke:${escapeHtml(stroke)};stroke-dasharray:${percent} 100"/>${gaugeScaleMarkup(marker,s,cx,cy,radius,start,sweep)}</g></svg>${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}${s.showPercent ? `<span class="percent">${Math.round(percent)}%</span>` : ''}`;
   }
   return `${outline}${icon}${s.showLabel ? `<span class="label">${escapeHtml(marker.displayName)}</span>` : ''}${s.showValue ? `<span class="value">${escapeHtml(fullValue)}</span>` : ''}`;
+}
+function flowDirection(marker) {
+  const threshold = Math.max(0, Number(marker.flowThreshold) || 0), primary = Number(stateCache[marker.entityId]?.state), reverse = Number(stateCache[marker.flowReverseEntity]?.state), mode = marker.flowMode || 'signed';
+  if (mode === 'fixed') return { direction: marker.flowFixedDirection === 'reverse' ? 'reverse' : 'forward', active: true };
+  if (mode === 'onoff') return { direction: marker.flowOnDirection === 'reverse' ? 'reverse' : 'forward', active: ['on','open','true','1'].includes(String(stateCache[marker.entityId]?.state || '').toLowerCase()) };
+  if (mode === 'pair') return Number.isFinite(reverse) && reverse > threshold ? {direction:'reverse',active:true} : {direction:'forward',active:Number.isFinite(primary) && primary > threshold};
+  if (!Number.isFinite(primary)) return {direction:'idle',active:false};
+  if (mode === 'positive') return {direction:'forward',active:primary > threshold};
+  if (mode === 'negative') return {direction:'reverse',active:primary < -threshold};
+  return primary > threshold ? {direction:'forward',active:true} : primary < -threshold ? {direction:'reverse',active:true} : {direction:'idle',active:false};
 }
 function escapeHtml(value) { const div = document.createElement('div'); div.textContent = value ?? ''; return div.innerHTML; }
 function integrationIconMarkup(group) {
@@ -764,6 +780,13 @@ function enabledIcon(enabled) {
     : '<span class="entity-enabled off" title="Encja wyłączona" aria-label="Encja wyłączona"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5l7 7m0-7-7 7"/></svg></span>';
 }
 function applyMarkerStyle(node, marker) {
+  if (marker.type === 'flow') {
+    const s = marker.style, flow = flowDirection(marker), color = flow.direction === 'reverse' ? s.colorReverse : flow.direction === 'forward' ? s.colorForward : s.colorIdle;
+    Object.assign(node.style, { left: marker.xPercent + '%', top: marker.yPercent + '%', width: s.width + 'px', height: s.height + 'px', background:'transparent', border:'0', borderRadius:'0', transform:'translate(-50%,-50%) rotate(' + (Number(s.rotation)||0) + 'deg)', opacity: clamp(Number(s.opacity)||1,0,1), '--flow-color': color, '--flow-size': (Number(s.chevronSize)||30) + 'px', '--flow-gap': (Number(s.gap)||8) + 'px', '--flow-speed': (Math.max(.15,Number(s.speed)||1.1)) + 's', '--flow-line-width': (Number(s.lineWidth)||3) + 'px' });
+    node.classList.toggle('flow-active', flow.active); node.classList.toggle('flow-idle', !flow.active);
+    const line = $('.flow-line', node); if (line) line.style.display = s.showLine ? '' : 'none';
+    return;
+  }
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
   const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '';
   const backgroundColor = s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Color`] : s.backgroundColor;
@@ -971,9 +994,9 @@ function openMoreInfo(entityId) {
 function renderMarkers() {
   const previous = selectedId;
   els.markers.innerHTML = '';
-  Object.values(model.entities).forEach(marker => {
-    const node = document.createElement('div'); node.className = `marker ${marker.type}${marker.id === selectedId ? ' selected' : ''}`;
-    node.dataset.entityId = marker.entityId; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker);
+  Object.entries(model.entities).forEach(([markerKey, marker]) => {
+    const node = document.createElement('div'); node.className = `marker ${marker.type}${markerKey === selectedId ? ' selected' : ''}`;
+    node.dataset.entityId = markerKey; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker);
     node.addEventListener('pointerdown', startDrag); node.addEventListener('click', onMarkerClick); els.markers.append(node);
   });
   if (previous && model.entities[previous]) syncSelection(); else hideSelection();
@@ -1185,7 +1208,16 @@ function compactBadgeEditor(root, marker) {
   }
 }
 
+function flowEditorMarkup(marker) {
+  const s = marker.style, mode = marker.flowMode || 'signed';
+  const source = section('Sterowanie', '<div class="editor-note">Encja główna: <b>' + escapeHtml(marker.entityId) + '</b></div>' + control('Tryb','flowMode','select',mode,{items:[['signed','Moc ze znakiem (+ / −)'],['positive','Tylko dodatnia moc'],['negative','Tylko ujemna moc'],['pair','Dwie encje: przód / tył'],['onoff','Stan ON/OFF'],['fixed','Stały kierunek']],refresh:true}) + (mode === 'pair' ? control('Encja wstecz','flowReverseEntity','text',marker.flowReverseEntity || '') : '') + (mode === 'onoff' ? control('Kierunek po ON','flowOnDirection','select',marker.flowOnDirection || 'forward',{items:[['forward','Do przodu'],['reverse','Wstecz']]}) : '') + (mode === 'fixed' ? control('Kierunek','flowFixedDirection','select',marker.flowFixedDirection || 'forward',{items:[['forward','Do przodu'],['reverse','Wstecz']]}) : '') + (['signed','positive','negative','pair'].includes(mode) ? control('Próg martwy','flowThreshold','range',marker.flowThreshold ?? 20,{min:0,max:1000,step:1,suffix:' W',integer:true}) : ''));
+  const appearance = section('Chevrony', control('Typ','style.chevronStyle','select',s.chevronStyle,{items:[['outline','Konturowe'],['filled','Pełne'],['pulse','Impuls'],['capsule','Kapsuła']]}) + control('Liczba','style.chevronCount','range',s.chevronCount,{min:1,max:8,step:1,integer:true}) + control('Rozmiar','style.chevronSize','range',s.chevronSize,{min:10,max:100,step:1,suffix:'px',integer:true}) + control('Odstęp','style.gap','range',s.gap,{min:0,max:50,step:1,suffix:'px',integer:true}) + control('Szybkość','style.speed','range',s.speed,{min:.15,max:4,step:.05,suffix:' s'}) + control('Przezrocz.','style.opacity','range',s.opacity,{min:0,max:1,step:.01}));
+  const colors = section('Kolory', control('Do przodu','style.colorForward','color',s.colorForward) + control('Wstecz','style.colorReverse','color',s.colorReverse) + control('Nieaktywny','style.colorIdle','color',s.colorIdle));
+  const geometry = section('Pozycja i obrót', control('Blokada geometrii','geometryLocked','checkbox',!!marker.geometryLocked,{refresh:true}) + control('Szerokość','style.width','range',s.width,{min:60,max:1600,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:24,max:500,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Obrót','style.rotation','range',s.rotation,{min:-180,max:180,step:1,suffix:'°',integer:true}) + control('Linia łącząca','style.showLine','checkbox',s.showLine) + control('Grubość linii','style.lineWidth','range',s.lineWidth,{min:1,max:20,step:1,suffix:'px',integer:true}));
+  return source + appearance + colors + geometry;
+}
 function editorMarkup(marker) {
+  if (marker.type === 'flow') return flowEditorMarkup(marker);
   if (marker.type === 'icon') return iconEditorMarkup(marker);
   const s = marker.style;
   const tapAction = isToggleableMarker(marker) ? control('Dotknięcie w widoku','tapAction','select',marker.tapAction || 'more_info',{items:[['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF']]}) : '';
@@ -1311,7 +1343,7 @@ function onEditorInput(event) {
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
   const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
   if (input.dataset.path === 'displayName') { els.editorTitle.textContent = value; if (node) node.innerHTML = markerHtml(marker); }
-  const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.');
+  const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.') || marker.type === 'flow';
   // A range input keeps pointer capture only while its DOM node remains intact.
   // Rebuild Gauge/Horseshoe SVG after the finger is released, never while dragging.
   if (needsMarkup && (input.type !== 'range' || event.type === 'change')) { if (node) node.innerHTML = markerHtml(marker); }
@@ -1331,8 +1363,8 @@ async function changeType(type) {
 }
 
 function renderAdded() {
-  const items = Object.values(model.entities); els.addedCount.textContent = items.length;
-  els.addedList.innerHTML = items.length ? items.map(m => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(m.entityId)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(m.entityId)}">Usuń z widoku</button></div></div>`).join('') : '<div class="empty-row">Nie dodano jeszcze żadnych encji.</div>';
+  const items = Object.entries(model.entities); els.addedCount.textContent = items.length;
+  els.addedList.innerHTML = items.length ? items.map(([key,m]) => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(key)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(key)}">Usuń z widoku</button></div></div>`).join('') : '<div class="empty-row">Nie dodano jeszcze żadnych markerów.</div>';
 }
 async function loadIntegrations(force = false) {
   if (integrations.length && !force) return renderIntegrations();
@@ -1405,7 +1437,7 @@ function integrationBody(group) {
   if (group.entries.some(item => !integrationEntities.has(item.entry_id))) return '<div class="empty-row">Kliknij, aby wczytać encje.</div>';
   const seen = new Set(), entities = group.entries.flatMap(item => (integrationEntities.get(item.entry_id) || []).map(entity => ({ ...entity, _entryId: item.entry_id }))).filter(entity => !seen.has(entity.entity_id) && seen.add(entity.entity_id)).sort((a,b) => String(a.name).localeCompare(String(b.name), 'pl', { sensitivity: 'base' }));
   if (!entities.length) return '<div class="empty-row">Brak encji.</div>';
-  return entities.map(e => { const added = !!model.entities[e.entity_id]; return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj do widoku' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`; }).join('');
+  return entities.map(e => { const added = !!model.entities[e.entity_id]; return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj wskaźnik' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button><button class="add-entity" data-add-flow="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${!e.enabled ? 'disabled' : ''} title="Dodaj przepływ">↝</button></div></div>`; }).join('');
 }
 async function toggleIntegration(groupKey) {
   if (openIntegrations.has(groupKey)) { openIntegrations.delete(groupKey); return renderIntegrations(); }
@@ -1419,6 +1451,11 @@ function updateIntegrationMetadata(entryId) {
   entities.forEach(e => { const marker = model.entities[e.entity_id]; if (marker && integration && (!marker.integrationId || marker.integrationName === 'Home Assistant')) { marker.integrationId = entryId; marker.integrationName = integration.title; marker.sourceDomain = integration.domain; changed = true; } });
   if (changed) { renderAdded(); scheduleSave(); }
 }
+async function addFlow(entityId, entryId) {
+  const integration = integrations.find(x => x.entry_id === entryId), entity = (integrationEntities.get(entryId) || []).find(x => x.entity_id === entityId); if (!integration || !entity) return;
+  const key = 'flow_' + uid(), marker = { ...freshMarker(entity, integration), id:key, type:'flow', displayName:(entity.name || entityId) + ' — przepływ', style:flowDefaults(), flowMode:'signed', flowThreshold:20, flowReverseEntity:'', flowOnDirection:'forward', flowFixedDirection:'forward' };
+  marker.xPercent = 50; marker.yPercent = 50; model.entities[key] = marker; renderMarkers(); renderAdded(); await queueSave(); await refreshStates(); notify('Dodano marker Przepływ');
+}
 async function addEntity(entityId, entryId) {
   if (model.entities[entityId]) return;
   const integration = integrations.find(x => x.entry_id === entryId), entity = (integrationEntities.get(entryId) || []).find(x => x.entity_id === entityId); if (!integration || !entity) return;
@@ -1430,7 +1467,7 @@ async function removeEntity(entityId) {
   renderMarkers(); renderIntegrations(); await queueSave(); notify('Usunięto marker i wszystkie jego ustawienia');
 }
 async function refreshStates() {
-  const ids = Object.keys(model.entities); if (!ids.length) return renderMarkers();
+  const ids = [...new Set(Object.values(model.entities).flatMap(marker => [marker.entityId, marker.flowReverseEntity]).filter(Boolean))]; if (!ids.length) return renderMarkers();
   try {
     const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
     Object.entries(data.states || {}).forEach(([entityId, nextState]) => {
@@ -1650,8 +1687,9 @@ function bindEvents() {
     integrationSearchTimer = setTimeout(runIntegrationSearch, 220);
   });
   els.integrationList.addEventListener('click', event => {
-    const unusedSummary = event.target.closest('.unused-integrations > summary'), add = event.target.closest('[data-add]'), summary = event.target.closest('.integration-summary');
+    const unusedSummary = event.target.closest('.unused-integrations > summary'), flow = event.target.closest('[data-add-flow]'), add = event.target.closest('[data-add]'), summary = event.target.closest('.integration-summary');
     if (unusedSummary) { event.preventDefault(); unusedIntegrationsOpen = !unusedIntegrationsOpen; renderIntegrations(); }
+    else if (flow) addFlow(flow.dataset.addFlow, flow.dataset.entry);
     else if (add) addEntity(add.dataset.add, add.dataset.entry);
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
@@ -1754,5 +1792,13 @@ async function boot() {
   connectEvents();
   refreshStates();
 }
+
+function installFlowStyles() {
+  if (document.getElementById('ha-views-flow-styles')) return;
+  const style = document.createElement('style'); style.id = 'ha-views-flow-styles';
+  style.textContent = '@keyframes haFlowPulse{0%,100%{opacity:.2;transform:translateX(-3px)}50%{opacity:1;transform:translateX(4px)}}.marker.flow{overflow:visible!important;transform-origin:center;pointer-events:auto}.flow-track{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}.flow-line{position:absolute;left:2%;right:2%;height:var(--flow-line-width);background:color-mix(in srgb,var(--flow-color) 45%,transparent);border-radius:999px}.flow-chevrons{display:flex;align-items:center;gap:var(--flow-gap);position:relative}.flow-chevrons.reverse{transform:scaleX(-1)}.flow-chevron{display:block;width:var(--flow-size);height:var(--flow-size);box-sizing:border-box;border-right:calc(var(--flow-size)/6) solid var(--flow-color);border-top:calc(var(--flow-size)/6) solid var(--flow-color);transform:rotate(45deg);animation:haFlowPulse var(--flow-speed) ease-in-out infinite}.flow-chevron:nth-child(2){animation-delay:calc(var(--flow-speed)*.16)}.flow-chevron:nth-child(3){animation-delay:calc(var(--flow-speed)*.32)}.flow-chevron:nth-child(4){animation-delay:calc(var(--flow-speed)*.48)}.flow-chevron:nth-child(n+5){animation-delay:calc(var(--flow-speed)*.64)}.flow-idle .flow-chevron{animation-play-state:paused;opacity:.35}.flow-chevrons.filled .flow-chevron{background:var(--flow-color);border-color:var(--flow-color);clip-path:polygon(10% 0,100% 50%,10% 100%,34% 50%)}.flow-chevrons.pulse .flow-chevron{border-width:calc(var(--flow-size)/8);border-radius:50%;animation-duration:calc(var(--flow-speed)*.7)}.flow-chevrons.capsule{padding:calc(var(--flow-size)*.18) calc(var(--flow-size)*.35);border-radius:999px;background:color-mix(in srgb,var(--flow-color) 15%,transparent)}';
+  document.head.append(style);
+}
+installFlowStyles();
 
 boot();
