@@ -193,7 +193,7 @@ function appPrompt({ title, message = '', value = '', confirmText = 'Zapisz' }) 
 }
 function activeSceneView() { return model.views?.[model.activeViewId] || null; }
 function updateEmptyState() {
-  const view = activeSceneView(), hasMarkers = Object.keys(model.entities || {}).length > 0;
+  const view = activeSceneView(), hasMarkers = Object.keys(model.entities || {}).length > 0 || Object.keys(view?.flows || {}).length > 0;
   const showWelcome = !currentBackground && !view?.onboardingDone && !hasMarkers;
   const showEntitiesHint = !showWelcome && !!view?.onboardingDone && !hasMarkers;
   els.empty.classList.toggle('visible', showWelcome || showEntitiesHint);
@@ -259,6 +259,13 @@ function ensureMultiViewModel() {
     view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.flows ||= {}; view.backgroundTransforms ||= {};
     view.backgroundColor ??= ''; view.onboardingDone ??= false;
     Object.values(view.entities).forEach(marker => { marker.tapAction ??= 'more_info'; });
+    Object.values(view.flows).forEach((flow, flowIndex) => {
+      if (!Number.isFinite(Number(flow.xPercent))) { flow.xPercent = 50 + (flowIndex % 4) * 3; migrated = true; }
+      if (!Number.isFinite(Number(flow.yPercent))) { flow.yPercent = 50 + (flowIndex % 4) * 3; migrated = true; }
+      if (!Number.isFinite(Number(flow.rotation))) { flow.rotation = 0; migrated = true; }
+      if (!Number.isFinite(Number(flow.width))) { flow.width = 140; migrated = true; }
+      if (!Number.isFinite(Number(flow.height))) { flow.height = 54; migrated = true; }
+    });
   });
   model.version = 2; attachActiveEntities(); return migrated;
 }
@@ -976,8 +983,42 @@ function renderMarkers() {
     node.dataset.entityId = marker.entityId; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker);
     node.addEventListener('pointerdown', startDrag); node.addEventListener('click', onMarkerClick); els.markers.append(node);
   });
+  renderFlows();
   if (previous && model.entities[previous]) syncSelection(); else hideSelection();
   updateEmptyState(); renderAdded();
+}
+function renderFlows() {
+  const flows = Object.values(activeSceneView()?.flows || {});
+  flows.forEach(flow => {
+    const node = document.createElement('div');
+    node.className = 'flow-marker';
+    node.dataset.flowId = flow.id;
+    node.innerHTML = '<span class="flow-chevron"></span><span class="flow-chevron"></span><span class="flow-chevron"></span>';
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Number(flow.width) + 'px', height: Number(flow.height) + 'px', transform:'translate(-50%,-50%) rotate(' + Number(flow.rotation) + 'deg)' });
+    node.addEventListener('pointerdown', startFlowDrag);
+    node.addEventListener('click', event => event.stopPropagation());
+    els.markers.append(node);
+  });
+}
+function startFlowDrag(event) {
+  if (!editMode || event.button !== 0) return;
+  const flow = activeSceneView()?.flows?.[event.currentTarget.dataset.flowId]; if (!flow) return;
+  event.preventDefault(); event.stopPropagation();
+  const node = event.currentTarget, start = { x:event.clientX, y:event.clientY, px:Number(flow.xPercent), py:Number(flow.yPercent) };
+  let moved = false; node.setPointerCapture(event.pointerId);
+  const move = current => {
+    const rect = els.scene.getBoundingClientRect(), dx=current.clientX-start.x, dy=current.clientY-start.y;
+    if (Math.hypot(dx,dy) > 3) moved = true;
+    if (!moved) return;
+    flow.xPercent = snapPercent(start.px + dx / rect.width * 100); flow.yPercent = snapPercent(start.py + dy / rect.height * 100);
+    node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%';
+  };
+  const finish = () => {
+    node.removeEventListener('pointermove',move); node.removeEventListener('pointerup',finish); node.removeEventListener('pointercancel',finish);
+    try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {}
+    if (moved) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); renderAdded(); }
+  };
+  node.addEventListener('pointermove',move); node.addEventListener('pointerup',finish,{once:true}); node.addEventListener('pointercancel',finish,{once:true});
 }
 function isToggleableMarker(marker) {
   return ['switch', 'light', 'fan', 'input_boolean'].includes(String(marker?.entityId || '').split('.', 1)[0]);
@@ -1333,7 +1374,7 @@ async function changeType(type) {
 function renderAdded() {
   const view = activeSceneView(), markers = Object.values(model.entities), flows = Object.values(view?.flows || {});
   const markerRows = markers.map(m => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(m.entityId)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(m.entityId)}">Usuń z widoku</button></div></div>`);
-  const flowRows = flows.map(flow => `<div class="entity-row added-row flow-row"><div class="added-identity"><span class="added-flow-icon">↝</span><div><strong>${escapeHtml(flow.displayName)}</strong><small>${escapeHtml(flow.entityId)} · ${escapeHtml(flow.integrationName || 'Home Assistant')} · Flow (test — bez wizualizacji)</small></div></div><div class="entity-actions"><button class="danger" data-remove-flow="${escapeHtml(flow.id)}">Usuń</button></div></div>`);
+  const flowRows = flows.map(flow => `<div class="entity-row added-row flow-row"><div class="added-identity"><span class="added-flow-icon">↝</span><div><strong>${escapeHtml(flow.displayName)}</strong><small>${escapeHtml(flow.entityId)} · ${escapeHtml(flow.integrationName || 'Home Assistant')} · Flow (test statyczny)</small></div></div><div class="entity-actions"><button class="danger" data-remove-flow="${escapeHtml(flow.id)}">Usuń</button></div></div>`);
   const items = [...markerRows, ...flowRows]; els.addedCount.textContent = items.length;
   els.addedList.innerHTML = items.length ? items.join('') : '<div class="empty-row">Nie dodano jeszcze żadnych elementów.</div>';
 }
@@ -1427,12 +1468,13 @@ async function addFlow(entityId, entryId) {
   if (!view || !integration || !entity) return;
   view.flows ||= {};
   const id = 'flow_' + uid();
-  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, createdAt:new Date().toISOString() };
-  renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — bez markera na scenie');
+  const flowOffset = Object.keys(view.flows).length % 5;
+  view.flows[id] = { id, entityId, integrationId: integration.entry_id || '', integrationName: integration.title || integration.domain || 'Home Assistant', sourceDomain: integration.domain || entityId.split('.')[0], displayName: entity.name || entityId, xPercent:50 + flowOffset * 3, yPercent:50 + flowOffset * 3, rotation:0, width:140, height:54, createdAt:new Date().toISOString() };
+  renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Dodano Flow testowy — przeciągnij go w trybie edycji');
 }
 async function removeFlow(id) {
   const view = activeSceneView(); if (!view?.flows?.[id]) return;
-  delete view.flows[id]; renderAdded(); renderIntegrations(); await queueSave(); notify('Usunięto Flow testowy');
+  delete view.flows[id]; renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Usunięto Flow testowy');
 }
 async function addEntity(entityId, entryId) {
   if (model.entities[entityId]) return;
