@@ -1,3 +1,7 @@
+## 0.4.1-beta.182
+
+- Flow: nowy suwak „Ostrość” w sekcji Kształt (10–100%). 100% = dotychczasowy kształt; mniejsza wartość spłaszcza i otwiera „V”, np. prostuje wąski chevron. Działa dla Chevronu, Grotu i Trójkąta, a przy Strzałce skraca grot. Rozmiar elementu, odstęp i ramka się nie zmieniają. Można go ustawić osobno dla wartości ujemnej i kopiować ze stylem.
+
 ## 0.4.1-beta.181
 
 - Flow: nowy przycisk „Duplikuj Flow” w nagłówku edytora — tworzy niezależną kopię z tym samym stylem, lekko przesuniętą, i od razu otwiera ją do edycji. Ta sama encja może mieć dowolnie wiele Flow w różnych miejscach i z różnym stylem.

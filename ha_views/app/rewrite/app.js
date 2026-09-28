@@ -23,7 +23,8 @@ const TRANSLATIONS = {
     "Brak entity_id":"Missing entity_id","Brak entry_id":"Missing entry_id","Brak listy encji":"Missing entity list","Brak pliku":"No file","Dane muszą być obiektem JSON":"Data must be a JSON object","Dozwolone: PNG, JPG, JPEG, WEBP":"Allowed: PNG, JPG, JPEG, WEBP","Layout jest za duży":"Layout is too large","Layout musi być obiektem JSON":"Layout must be a JSON object","Nie znaleziono tła":"Background not found","Nieprawidlowa encja":"Invalid entity","Nieprawidłowy JSON":"Invalid JSON","Plik stylów jest za duży":"Style file is too large","Stan jest za duży":"State is too large","Stan musi być obiektem JSON":"State must be a JSON object",
     "Cofnij":"Undo","Przywrócono widok":"View restored","Usunięto widok":"View deleted","Widok jest pusty.":"The view is empty.","Usuń widok":"Delete view","Usunąć widok?":"Delete view?",
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
-    "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want"
+    "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
+    "Ostrość":"Sharpness"
   }
 };
 function translateValue(value) {
@@ -158,8 +159,8 @@ const gaugeVisualTransform = (marker, style) => {
   return `translateY(${y}px) scale(${scale})`;
 };
 const COLOR_PALETTE = ['#FFFFFF','#DCE8EF','#9BC1D8','#607D8B','#03101A','#102A3A','#20B9E7','#147EA5','#22D69B','#39B86C','#FFD166','#F59E0B','#FF6374','#E63946','#B66DFF','#7C4DFF','#EC4899','#8B5E3C'];
-const FLOW_DEFAULTS = Object.freeze({ direction:'right', directionMode:'manual', positiveDirection:'right', negativeDirection:'left', negativeStyleEnabled:false, itemSizeV2:true, shape:'chevron', flowCount:3, flowLength:84, chevronWidth:22, chevronHeight:22, chevronThickness:5, gap:9, rotation:0, color:'#20B9E7', positiveColor:'#20B9E7', negativeColor:'#FF6374', outlineWidth:0, outlineColor:'#FFFFFF', glowCustom:false, glowColor:'#20B9E7', glow:5, opacity:100, deadband:0, hideInactive:false, animation:'none', animationSpeed:1.2, speedByValue:false, speedValueMax:1000 });
-const FLOW_STYLE_KEYS = ['shape','flowCount','flowLength','chevronWidth','chevronHeight','chevronThickness','gap','outlineWidth','outlineColor','glow','glowCustom','glowColor','opacity','animation','animationSpeed','speedByValue','speedValueMax'];
+const FLOW_DEFAULTS = Object.freeze({ direction:'right', directionMode:'manual', positiveDirection:'right', negativeDirection:'left', negativeStyleEnabled:false, itemSizeV2:true, shape:'chevron', shapeSharpness:100, flowCount:3, flowLength:84, chevronWidth:22, chevronHeight:22, chevronThickness:5, gap:9, rotation:0, color:'#20B9E7', positiveColor:'#20B9E7', negativeColor:'#FF6374', outlineWidth:0, outlineColor:'#FFFFFF', glowCustom:false, glowColor:'#20B9E7', glow:5, opacity:100, deadband:0, hideInactive:false, animation:'none', animationSpeed:1.2, speedByValue:false, speedValueMax:1000 });
+const FLOW_STYLE_KEYS = ['shape','shapeSharpness','flowCount','flowLength','chevronWidth','chevronHeight','chevronThickness','gap','outlineWidth','outlineColor','glow','glowCustom','glowColor','opacity','animation','animationSpeed','speedByValue','speedValueMax'];
 const FLOW_SHAPES = [['chevron','Chevron'],['arrow','Strzałka'],['dart','Grot'],['triangle','Trójkąt'],['segment','Segment']];
 const FLOW_LIMITS = Object.freeze({ min:4, size:600, length:1600, thickness:120, gap:300, count:12 });
 const ICON_LABELS_EN = {"Deszcz": "Rain", "Ulewa": "Downpour", "Słońce": "Sun", "Woda": "Water", "Wilgotność": "Humidity", "Basen": "Pool", "Pompa": "Pump", "Fotowoltaika": "Solar", "Energia": "Energy", "Temperatura": "Temperature", "Wentylator": "Fan", "Zasilanie": "Power", "Włączone": "On", "Wyłączone": "Off", "Ruch": "Motion", "Dym": "Smoke", "Alarm": "Alarm", "Wskaźnik": "Gauge", "Światło": "Light", "Sieć": "Network"};
@@ -1113,17 +1114,21 @@ function flowEffective(flow, side) {
   style.activeDirection = flow.directionMode === 'auto' ? (side === 'negative' ? (flow.negativeDirection || 'left') : (flow.positiveDirection || 'right')) : (flow.direction || 'right');
   return style;
 }
-function flowShapePath(shape, w, h, t) {
+// sharpness (10–100 %) is the depth of the point as a share of the item length: lower = flatter, more open V.
+// The flattened shape stays centred in its item slot, so item size, spacing and frame do not change.
+function flowShapePath(shape, w, h, t, sharpness = 100) {
   const cy = h / 2, f = n => Math.round(n * 100) / 100, poly = points => 'M ' + points.map(p => f(p[0]) + ' ' + f(p[1])).join(' L ') + ' Z';
+  const k = clamp(Number(sharpness) || 100, 10, 100) / 100;
   if (shape === 'segment') { const r = Math.min(w, h) / 2; return 'M ' + f(r) + ' 0 H ' + f(w - r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(w) + ' ' + f(r) + ' V ' + f(h - r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(w - r) + ' ' + f(h) + ' H ' + f(r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 0 ' + f(h - r) + ' V ' + f(r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(r) + ' 0 Z'; }
-  if (shape === 'triangle') return poly([[0,0],[w,cy],[0,h]]);
-  if (shape === 'dart') return poly([[0,0],[w,cy],[0,h],[w * .32,cy]]);
   if (shape === 'arrow') {
-    const head = Math.min(w * .55, h * .95), shaft = clamp(t, 1, h * .8), neck = w - head * .78;
+    const head = Math.min(w * .55, h * .95) * k, shaft = clamp(t, 1, h * .8), neck = w - head * .78;
     return poly([[0,cy - shaft / 2],[neck,cy - shaft / 2],[w - head,0],[w,cy],[w - head,h],[neck,cy + shaft / 2],[0,cy + shaft / 2]]);
   }
-  const d = Math.min(w * .85, clamp(t, 1, 200) * Math.hypot(w, cy) / Math.max(1, cy));
-  return poly([[0,0],[d,0],[w,cy],[d,h],[0,h],[w - d,cy]]);
+  const depth = w * k, x0 = (w - depth) / 2, tip = x0 + depth;
+  if (shape === 'triangle') return poly([[x0,0],[tip,cy],[x0,h]]);
+  if (shape === 'dart') return poly([[x0,0],[tip,cy],[x0,h],[x0 + depth * .32,cy]]);
+  const d = Math.min(depth * .85, clamp(t, 1, 200) * Math.hypot(depth, cy) / Math.max(1, cy));
+  return poly([[x0,0],[x0 + d,0],[tip,cy],[x0 + d,h],[x0,h],[tip - d,cy]]);
 }
 function retimeFlowAnimations(node, duration) {
   $$('.flow-train,.flow-chevron', node).forEach(element => element.getAnimations?.().forEach(animation => {
@@ -1148,7 +1153,7 @@ function renderFlows() {
     const itemWidth = clamp(Number(style.chevronWidth) || 22, 2, FLOW_LIMITS.size), thickness = clamp(Number(style.chevronThickness) || 5, 1, FLOW_LIMITS.thickness);
     const outlineWidth = clamp(Number(style.outlineWidth) || 0, 0, 20), glow = clamp(Number(style.glow) || 0, 0, 40), opacity = clamp(Number(style.opacity) || 100, 10, 100);
     const color = style.activeColor, glowColor = style.glowCustom ? (style.glowColor || color) : color, outlineColor = style.outlineColor || '#FFFFFF';
-    const pathData = flowShapePath(shape, itemWidth, itemHeight, thickness);
+    const pathData = flowShapePath(shape, itemWidth, itemHeight, thickness, style.shapeSharpness);
     const item = '<svg class="flow-chevron" width="' + itemWidth + '" height="' + itemHeight + '" style="width:' + itemWidth + 'px;height:' + itemHeight + 'px" preserveAspectRatio="none" viewBox="0 0 ' + itemWidth + ' ' + itemHeight + '" aria-hidden="true"><path d="' + pathData + '" fill="' + escapeHtml(color) + '"' + (outlineWidth ? ' stroke="' + escapeHtml(outlineColor) + '" stroke-width="' + outlineWidth + '" stroke-linejoin="round" paint-order="stroke fill"' : ' stroke="none"') + '></path></svg>';
     const items = item.repeat(itemCount), animation = style.animation || 'none';
     const node = document.createElement('div');
@@ -1234,7 +1239,7 @@ function flowEditorMarkup(flow) {
     + control('Próg aktywności','deadband','number',Number(flow.deadband) || 0,{ valueType:'number', min:0 }) + control('Ukryj poniżej progu','hideInactive','checkbox',!!flow.hideInactive)
     + note('Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.'));
   const shapeKey = FLOW_SHAPES.some(([key]) => key === s.shape) ? s.shape : 'chevron';
-  const shape = section('Kształt', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true }) + control('Liczba','flowCount','range',clamp(Number(s.flowCount) || 3,1,FLOW_LIMITS.count),{ min:1, max:FLOW_LIMITS.count, step:1, integer:true })
+  const shape = section('Kształt', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true }) + (shapeKey === 'segment' ? '' : control('Ostrość','shapeSharpness','range',clamp(Number(s.shapeSharpness) || 100,10,100),{ min:10, max:100, step:1, suffix:'%', integer:true })) + control('Liczba','flowCount','range',clamp(Number(s.flowCount) || 3,1,FLOW_LIMITS.count),{ min:1, max:FLOW_LIMITS.count, step:1, integer:true })
     + (shapeKey === 'chevron' || shapeKey === 'arrow' ? control(shapeKey === 'arrow' ? 'Grubość trzonu' : 'Grubość','chevronThickness','range',Number(s.chevronThickness) || 5,{ min:1, max:FLOW_LIMITS.thickness, step:1, suffix:'px', integer:true }) : ''));
   const size = section('Rozmiar i pozycja', note(styleNote) + control('Blokada geometrii','geometryLocked','checkbox',locked,refresh)
     + control('Długość ramki','flowLength','range',Number(s.flowLength) || 84,{ min:8, max:FLOW_LIMITS.length, step:1, suffix:'px', integer:true, disabled:locked })
