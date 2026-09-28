@@ -371,6 +371,7 @@ async function switchSceneView(id, persist = true) {
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
   await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
+  prebuildSwipePreviews();
 }
 async function addSceneView() {
   closeCompactMenus();
@@ -1924,7 +1925,7 @@ async function refreshStates() {
       if (expected) pendingToggleStates.delete(entityId);
       stateCache[entityId] = { ...stateCache[entityId], ...nextState };
     });
-    renderMarkers();
+    renderMarkers(); prebuildSwipePreviews();
     if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; }
   } catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
 }
@@ -2012,7 +2013,7 @@ function viewportPointerDown(event) {
 }
 function viewportPointerMove(event) {
   if (!viewPointers.has(event.pointerId)) return;
-  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
+  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
@@ -2021,13 +2022,17 @@ function viewportPointerMove(event) {
   } else if (panGesture?.id === event.pointerId) {
     const dx = event.clientX - panGesture.x, dy = event.clientY - panGesture.y;
     if (Math.hypot(dx, dy) > 6) { panGesture.moved = true; if (panGesture.marker) panGesture.marker.dataset.dragged = '1'; }
-    viewPanX = panGesture.panX + dx; viewPanY = panGesture.panY + dy; applyViewTransform();
+    const wantedPanX = panGesture.panX + dx;
+    viewPanX = wantedPanX; viewPanY = panGesture.panY + dy; applyViewTransform();
+    // A panorama scrolled to its edge hands the rest of the horizontal drag over to the view swipe.
+    const overscroll = wantedPanX - viewPanX;
+    if (viewSwipe?.id === event.pointerId && !pinchGesture && (Math.abs(overscroll) > 1 || viewSwipe.tracking)) { viewSwipe.fromPan = true; trackViewSwipe(event, overscroll); }
     if (panGesture.moved) event.preventDefault();
   }
 }
 function viewportPointerUp(event) {
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
-    if (viewSwipe?.tracking) settleViewSwipe(0).then(() => { removeSwipePreview(); positionSwipe(0, 1); });
+    if (viewSwipe?.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); });
     viewSwipe = null; resetViewportPointers();
     return;
   }
@@ -2038,69 +2043,126 @@ function viewportPointerUp(event) {
 }
 // One-finger horizontal swipe switches to the neighbouring view (view mode, phone), but only
 // when the gesture was not used to pan a zoomed-in or panoramic scene.
-// Swiping between views works like a pager: the current scene follows the finger and a static
-// preview of the neighbouring view (background, markers, Flow) slides in next to it.
+// Swiping between views works like the phone gallery: the current scene card follows the finger and a
+// ready-made preview of the neighbouring view (same geometry as the real view) slides in next to it.
+// Previews are prepared ahead of time (image decoded first, markers added afterwards), so a swipe only moves them.
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-let swipePreview = null;
+const swipeImages = new Map(), swipePreviews = new Map();
+let swipePreview = null, swipePrebuildTimer = null;
 function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
-function buildSwipePreview(targetId) {
-  const view = model.views[targetId]; if (!view) return null;
-  const width = els.viewport.offsetWidth || innerWidth;
-  const wrap = document.createElement('div'); wrap.className = 'swipe-preview'; wrap.setAttribute('data-no-i18n', ''); wrap.setAttribute('aria-hidden', 'true');
-  Object.assign(wrap.style, { top: els.viewport.offsetTop + 'px', left: els.viewport.offsetLeft + 'px', width: width + 'px', height: (els.viewport.offsetHeight || 0) + 'px' });
-  const scene = document.createElement('div'); scene.className = 'scene swipe-preview-scene';
-  scene.style.setProperty('--scene-scale', sceneScale);
-  scene.style.height = width / clamp(view.solidCanvasRatio || 16 / 9, .25, 4) + 'px';
-  scene.style.background = view.backgroundColor || 'linear-gradient(145deg,#0d2838,#0a1c27)';
-  if (view.background) {
-    const image = new Image(); image.className = 'swipe-preview-image'; image.draggable = false; image.alt = '';
-    const fit = () => { if (image.naturalWidth) scene.style.height = width * image.naturalHeight / image.naturalWidth + 'px'; };
-    image.addEventListener('load', fit, { once:true }); image.src = `api/background/file?name=${encodeURIComponent(view.background)}`; if (image.complete) fit();
-    scene.append(image);
+function swipePageDistance() { return (els.sceneCard?.parentElement?.clientWidth || innerWidth) + 16; }
+function swipeImage(name) {
+  if (!swipeImages.has(name)) {
+    const image = new Image(); image.decoding = 'async'; image.src = `api/background/file?name=${encodeURIComponent(name)}`;
+    const ready = (image.decode ? image.decode() : new Promise(resolve => { image.onload = resolve; })).catch(() => {}).then(() => image);
+    swipeImages.set(name, { image, ready });
   }
-  const layer = document.createElement('div'); layer.className = 'markers';
-  Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); layer.append(node); });
-  Object.values(view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
-  scene.append(layer); wrap.append(scene); els.viewport.parentElement.append(wrap);
-  return { element: wrap, targetId };
+  return swipeImages.get(name);
 }
-function removeSwipePreview() { swipePreview?.element.remove(); swipePreview = null; }
+// Mirrors applyBackgroundTransform()/updateSceneGeometry()/resetViewZoom() for a view that is not active yet.
+function swipeGeometry(view, image) {
+  const card = els.sceneCard, parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth), cardTop = card.getBoundingClientRect().top;
+  const screenHeight = window.visualViewport?.height || innerHeight, border = 2, designWidth = Number(model.settings?.designWidth) || DESIGN_WIDTH;
+  const hasImage = Boolean(image?.naturalWidth && image?.naturalHeight), ratio = hasImage ? image.naturalWidth / image.naturalHeight : clamp(view.solidCanvasRatio || 16 / 9, .25, 4);
+  if (hasImage && mobileView() && innerHeight > innerWidth && image.naturalWidth > image.naturalHeight) {
+    const viewportHeight = Math.max(180, screenHeight - cardTop - 1 - 8), sceneWidth = Math.round(viewportHeight * ratio), viewportWidth = parentWidth - border;
+    const panStart = clamp(view.backgroundTransforms?.[view.background]?.mobilePanStart ?? .5, 0, 1);
+    return { cardWidth: parentWidth, cardLeft: 0, viewportHeight, sceneWidth, sceneHeight: viewportHeight, panX: -Math.max(0, sceneWidth - viewportWidth) * panStart, scale: sceneWidth / designWidth };
+  }
+  const cardWidth = hasImage ? Math.min(parentWidth, Math.max(160, screenHeight - cardTop - 8) * ratio) : parentWidth, sceneWidth = cardWidth - border, sceneHeight = sceneWidth / ratio;
+  return { cardWidth, cardLeft: (parentWidth - cardWidth) / 2, viewportHeight: sceneHeight, sceneWidth, sceneHeight, panX: 0, scale: sceneWidth / designWidth };
+}
+function buildSwipePreview(targetId) {
+  const view = model.views[targetId]; if (!view || !els.sceneCard) return null;
+  const imageEntry = view.background ? swipeImage(view.background) : null;
+  const wrap = document.createElement('div'); wrap.className = 'scene-card swipe-preview'; wrap.setAttribute('data-no-i18n', ''); wrap.setAttribute('aria-hidden', 'true'); wrap.hidden = true;
+  const viewport = document.createElement('div'); viewport.className = 'swipe-preview-viewport';
+  const scene = document.createElement('div'); scene.className = 'scene swipe-preview-scene';
+  scene.style.background = view.backgroundColor || 'linear-gradient(145deg,#0d2838,#0a1c27)';
+  viewport.append(scene); wrap.append(viewport); els.sceneCard.parentElement.append(wrap);
+  const preview = { element: wrap, targetId, viewport, scene, geometry: null };
+  const layout = image => {
+    const g = preview.geometry = swipeGeometry(view, image);
+    Object.assign(wrap.style, { top: els.sceneCard.offsetTop + 'px', left: g.cardLeft + 'px', width: g.cardWidth + 'px' });
+    viewport.style.height = g.viewportHeight + 'px';
+    Object.assign(scene.style, { width: g.sceneWidth + 'px', height: g.sceneHeight + 'px', transform: `translateX(${g.panX}px)` });
+    scene.style.setProperty('--scene-scale', g.scale);
+  };
+  const addMarkers = () => {
+    if (!wrap.isConnected) return;
+    const layer = document.createElement('div'); layer.className = 'markers';
+    Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); layer.append(node); });
+    Object.values(view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
+    scene.append(layer);
+  };
+  if (imageEntry) {
+    layout(null);
+    imageEntry.ready.then(image => { if (!wrap.isConnected) return; const clone = image.cloneNode(); clone.className = 'swipe-preview-image'; clone.alt = ''; clone.draggable = false; scene.prepend(clone); layout(image); addMarkers(); });
+  } else { layout(null); addMarkers(); }
+  return preview;
+}
+function clearSwipePreviews() { swipePreviews.forEach(preview => preview.element.remove()); swipePreviews.clear(); }
+function prebuildSwipePreviews() {
+  clearTimeout(swipePrebuildTimer);
+  swipePrebuildTimer = setTimeout(() => {
+    if (viewSwipe?.tracking || swipePreview) return;
+    clearSwipePreviews();
+    if (!mobileView() || editMode || model.viewOrder.length < 2 || !els.sceneCard) return;
+    const index = model.viewOrder.indexOf(model.activeViewId);
+    [model.viewOrder[index - 1], model.viewOrder[index + 1]].filter(Boolean).forEach(id => { const preview = buildSwipePreview(id); if (preview) swipePreviews.set(id, preview); });
+  }, 400);
+}
+function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = true; swipePreview = null; els.sceneCard?.parentElement?.classList.remove('view-swiping'); }
 function positionSwipe(offset, direction, animate = 0) {
-  const width = els.viewport.offsetWidth || innerWidth, transition = animate ? `transform ${animate}ms ease` : 'none';
-  els.viewport.style.transition = transition; els.viewport.style.transform = offset ? `translateX(${offset}px)` : '';
-  if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transform = `translateX(${offset - direction * width}px)`; }
+  const distance = swipePageDistance(), transition = animate ? `transform ${animate}ms cubic-bezier(.22,.61,.36,1)` : 'none';
+  if (els.sceneCard) { els.sceneCard.style.transition = transition; els.sceneCard.style.transform = offset ? `translateX(${offset}px)` : ''; }
+  if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transform = `translateX(${offset - direction * distance}px)`; }
 }
-function trackViewSwipe(event) {
-  const swipe = viewSwipe, dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
+function trackViewSwipe(event, forcedDx = null) {
+  const swipe = viewSwipe, dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
+  swipe.lastDx = dx;
+  swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]).slice(-6);
   if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; }
-  const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1;
-  if (target && swipePreview?.targetId !== target) { removeSwipePreview(); swipePreview = buildSwipePreview(target); }
-  if (!target) removeSwipePreview();
-  positionSwipe(target ? dx : dx * .25, direction);
+  if (swipe.fromPan && Math.abs(dx) < .5) { removeSwipePreview(); positionSwipe(0, swipe.direction || 1); return; }
+  const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1; swipe.direction = direction;
+  if (swipePreview?.targetId !== target) {
+    removeSwipePreview();
+    if (target) { swipePreview = swipePreviews.get(target) || null; if (!swipePreview) { swipePreview = buildSwipePreview(target); if (swipePreview) swipePreviews.set(target, swipePreview); } if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); } }
+  }
+  const offset = target ? dx : dx * .25;
+  cancelAnimationFrame(swipe.frame); swipe.frame = requestAnimationFrame(() => positionSwipe(offset, direction));
   event.preventDefault();
 }
-function settleViewSwipe(offset = 0, direction = 1, duration = 200) {
+function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
   return new Promise(resolve => {
-    if (reducedMotion()) { positionSwipe(0, direction); removeSwipePreview(); return resolve(); }
+    if (reducedMotion()) { positionSwipe(offset, direction); return resolve(); }
     positionSwipe(offset, direction, duration);
-    setTimeout(resolve, duration + 20);
+    setTimeout(resolve, duration + 30);
   });
 }
 async function finishViewSwipe(event) {
-  const swipe = viewSwipe; viewSwipe = null;
-  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y, width = els.viewport.offsetWidth || innerWidth, direction = dx < 0 ? -1 : 1;
-  const quick = Date.now() - swipe.t <= 800 && Math.abs(dx) >= 70, far = swipe.tracking && Math.abs(dx) > width * .3;
-  const valid = (quick || far) && Math.abs(dx) >= Math.abs(dy) * 1.6 && Math.abs(viewPanX - swipe.panX) <= 12;
-  const target = valid ? swipeNeighbour(dx) : null;
-  if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction); removeSwipePreview(); positionSwipe(0, direction); } return; }
+  const swipe = viewSwipe; viewSwipe = null; cancelAnimationFrame(swipe.frame);
+  const dx = swipe.fromPan ? (swipe.lastDx || 0) : event.clientX - swipe.x, dy = swipe.fromPan ? 0 : event.clientY - swipe.y, distance = swipePageDistance(), direction = dx < 0 ? -1 : 1;
+  // Gallery-like decision: the finger's speed at release wins (moving back = stay), otherwise past 40 % of the width.
+  if (!swipe.fromPan) swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]);
+  const samples = (swipe.samples || []).filter(([, t]) => performance.now() - t < 120), first = samples[0], last = samples[samples.length - 1];
+  const velocity = first && last && last[1] - first[1] >= 8 ? (last[0] - first[0]) / (last[1] - first[1]) : 0;
+  const horizontal = Math.abs(dx) >= Math.abs(dy) * 1.3 && (swipe.fromPan || Math.abs(viewPanX - swipe.panX) <= 12);
+  let go = Math.abs(velocity) > .3 ? Math.sign(velocity) === Math.sign(dx) && Math.abs(dx) > 40 : Math.abs(dx) > distance * .4;
+  // A short, quick flick (few move events) also counts, unless the finger was clearly moving back.
+  if (!swipe.fromPan && Date.now() - swipe.t <= 300 && Math.abs(dx) >= 50 && !(Math.abs(velocity) > .3 && Math.sign(velocity) !== Math.sign(dx))) go = true;
+  const target = go && horizontal ? swipeNeighbour(dx) : null;
+  if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction, 200); removeSwipePreview(); positionSwipe(0, direction); } return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
-  if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = buildSwipePreview(target); positionSwipe(dx, direction); void els.viewport.offsetWidth; }
-  // Slide the preview fully in, then swap in the real view underneath it and fade the preview out.
-  await settleViewSwipe(direction * width, direction, Math.round(clamp(260 * (1 - Math.abs(dx) / width), 120, 260)));
-  const preview = swipePreview; swipePreview = null;
+  if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = swipePreviews.get(target) || buildSwipePreview(target); if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); positionSwipe(dx, direction); void els.sceneCard.offsetWidth; } }
+  const remaining = Math.max(0, distance - Math.abs(dx)), speed = Math.max(Math.abs(velocity), 1.2);
+  await settleViewSwipe(direction * distance, direction, Math.round(clamp(remaining / speed, 120, 300)));
+  // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
+  const preview = swipePreview; swipePreview = null; swipePreviews.delete(target);
   await switchSceneView(target);
   positionSwipe(0, direction);
-  if (preview) { preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
+  els.sceneCard.parentElement.classList.remove('view-swiping');
+  if (preview) { preview.element.style.transition = 'opacity 160ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 190); }
 }
 function startDesktopPan(event) {
   if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;
@@ -2364,6 +2426,7 @@ async function boot() {
   connectEvents();
   try { const message = sessionStorage.getItem(RELOAD_MESSAGE_KEY); sessionStorage.removeItem(RELOAD_MESSAGE_KEY); if (message) notify(message); } catch {}
   setInterval(checkRemoteLayout, 20000);
+  prebuildSwipePreviews(); window.addEventListener('resize', prebuildSwipePreviews);
 }
 
 boot();

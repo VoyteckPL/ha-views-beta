@@ -1,3 +1,10 @@
+## 0.4.1-beta.187
+
+- Widoki (telefon): przesuwanie między widokami działa jak w galerii telefonu. Sąsiedni widok jest przygotowywany zawczasu — obraz w docelowej rozdzielczości i geometrii (także panorama na pełną wysokość), markery i Flow dodawane po wczytaniu obrazu — więc w trakcie ruchu nic się nie dociąga.
+- Decyzja po puszczeniu zależy od kierunku i prędkości palca: jeśli cofasz palec, widok wraca na miejsce; szybkie machnięcie w stronę kolejnego widoku przełącza; przy wolnym ruchu przełącza powyżej 40% szerokości. Dojazd ma tempo zależne od prędkości palca.
+- W widoku z panoramą najpierw przewija się obraz, a po dojściu do jego krawędzi dalszy ruch przesuwa do sąsiedniego widoku.
+- Przesuwa się cała karta widoku, a podgląd ma identyczne położenie i rozmiar jak widok po przełączeniu.
+
 ## 0.4.1-beta.186
 
 - Widoki (telefon): przy przesuwaniu palcem widok, do którego zmierzasz, pojawia się już w trakcie ruchu i wsuwa się obok bieżącego (tło, markery z aktualnymi wartościami i Flow) — jak przewijanie stron. Po puszczeniu dojeżdża do końca i zamienia się w pełny widok; za krótki ruch cofa oba widoki na miejsce.
