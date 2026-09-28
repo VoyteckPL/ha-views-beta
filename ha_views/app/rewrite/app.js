@@ -1031,7 +1031,7 @@ function startFlowDrag(event) {
     if (Math.hypot(dx,dy) > 3) moved = true;
     if (!moved) return;
     flow.xPercent = snapPercent(start.px + dx / rect.width * 100); flow.yPercent = snapPercent(start.py + dy / rect.height * 100);
-    node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%';
+    node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%'; if (selectedFlowId === flow.id) syncFlowSelection();
   };
   const finish = () => {
     node.removeEventListener('pointermove',move); node.removeEventListener('pointerup',finish); node.removeEventListener('pointercancel',finish);
@@ -1161,20 +1161,14 @@ function startFlowResize(event) {
   const flow = activeSceneView()?.flows?.[selectedFlowId];
   if (!editMode || !flow || flow.geometryLocked || event.button !== 0) return;
   event.preventDefault(); event.stopPropagation();
-  const handle = event.currentTarget.dataset.flowHandle, rect = els.scene.getBoundingClientRect(), scale = sceneScale || 1;
-  const directionAngles = { right:0, down:90, left:180, up:-90 };
-  const angle = (directionAngles[flow.direction] ?? 0) + Number(flow.rotation || 0), radians = angle * Math.PI / 180;
-  const start = { x:event.clientX, y:event.clientY, width:Number(flow.width) || 140, px:Number(flow.xPercent), py:Number(flow.yPercent) };
+  const handle = event.currentTarget.dataset.flowHandle, scale = sceneScale || 1;
+  const start = { x:event.clientX, y:event.clientY, size:Math.max(10, Number(flow.chevronSize) || 22) };
   let changed = false;
   const move = current => {
     if ((current.buttons & 1) !== 1) return finish();
-    const projected = ((current.clientX - start.x) * Math.cos(radians) + (current.clientY - start.y) * Math.sin(radians)) / scale;
-    const sign = handle === 'west' ? -1 : 1;
-    const nextWidth = clamp(start.width + projected * sign, 60, 600);
-    const grown = nextWidth - start.width;
-    flow.width = nextWidth;
-    flow.xPercent = start.px + sign * grown / 2 * Math.cos(radians) / rect.width * 100;
-    flow.yPercent = start.py + sign * grown / 2 * Math.sin(radians) / rect.height * 100;
+    const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1;
+    const delta = ((current.clientX - start.x) * sx + (current.clientY - start.y) * sy) / (2 * scale);
+    flow.chevronSize = clamp(Math.round(start.size + delta), 10, 80);
     changed = true; renderMarkers();
   };
   const finish = () => {
