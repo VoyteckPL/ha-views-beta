@@ -479,3 +479,8 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .add-flow{color:#8ce7ff!important;border-color:rgba(32,185,231,.5)!important;background:#102f40!important}
 .added-flow-icon{display:grid;place-items:center;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:rgba(32,185,231,.14);color:#7fe5ff;font-size:19px;font-weight:800}
 .flow-row{border-color:rgba(32,185,231,.26)}
+
+/* beta.151: isolated static Flow marker */
+.flow-marker{position:absolute;z-index:7;display:flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;overflow:visible;pointer-events:auto}
+.flow-chevron{display:block;width:22px;height:22px;box-sizing:border-box;border-top:5px solid #20b9e7;border-right:5px solid #20b9e7;filter:drop-shadow(0 0 5px rgba(32,185,231,.38));transform:rotate(45deg)}
+.editing .flow-marker{outline:1px dashed rgba(77,213,255,.45);outline-offset:7px}
