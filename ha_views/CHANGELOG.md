@@ -1,3 +1,9 @@
+## 0.3.0-beta.145
+
+- Język przeniesiono na sam dół menu Edytuj widok.
+- Na ekranie nowego/pustego widoku można wybrać istniejące tło z listy — bez ponownego wgrywania pliku.
+- Uporządkowano ekran powitalny: usunięto instrukcję trzech kroków, pozostawiając prosty wybór tła (nowy obraz, istniejące tło lub kolor).
+
 ## 0.3.0-beta.144
 
 - Uproszczono pasek narzędzi: usunięto menu Ustawienia, a Integracje i wybór języka przeniesiono do menu Edytuj widok.
