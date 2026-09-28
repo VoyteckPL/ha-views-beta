@@ -1,3 +1,8 @@
+## 0.4.1-beta.159
+
+- Naprawiono błąd startu aplikacji po dodaniu uchwytów Flow.
+- Poprawiono podpinanie uchwytów standardowych markerów i Flow do list elementów DOM.
+
 ## 0.4.1-beta.158
 
 - Flow: chevrony nie deformują się przy większym rozmiarze; pole automatycznie zachowuje potrzebną szerokość.
