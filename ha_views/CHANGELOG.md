@@ -1,3 +1,8 @@
+## 0.3.0-beta.138
+
+- Dodano Viewer mode dla zwykłych użytkowników Home Assistant: panel jest widoczny, ale edycja widoków, markerów i teł oraz sterowanie encjami są blokowane także po stronie serwera.
+- Administratorzy zachowują pełny edytor. Gdy nie można potwierdzić uprawnień użytkownika, aplikacja bezpiecznie przechodzi do trybu tylko do odczytu.
+
 ## 0.3.0-beta.137
 
 - Badge: stany closed/open korzystają z tekstów OFF/ON; przełączniki sekcji faktycznie zwijają zależne pola.
