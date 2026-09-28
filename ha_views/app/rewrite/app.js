@@ -1038,7 +1038,7 @@ function openFlowEditor(id) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return;
   closeEditor(); selectedFlowId = id; els.flowEditorEntity.textContent = flow.entityId;
   els.flowEditorContent.innerHTML = flowEditorMarkup(flow); els.flowEditor.classList.add('visible'); els.flowEditor.setAttribute('aria-hidden','false');
-  $('[data-flow-prop]', els.flowEditorContent).forEach(input => input.addEventListener(input.type === 'range' ? 'input' : 'change', event => {
+  $$('[data-flow-prop]', els.flowEditorContent).forEach(input => input.addEventListener(input.type === 'range' ? 'input' : 'change', event => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     const prop = event.target.dataset.flowProp; item[prop] = event.target.type === 'checkbox' ? event.target.checked : event.target.type === 'color' ? event.target.value : Number(event.target.value);
     const output = event.target.closest('.flow-control')?.querySelector('output'); if (output) output.textContent = event.target.value + (prop === 'rotation' ? '°' : ' px');
