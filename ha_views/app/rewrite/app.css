@@ -500,3 +500,6 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.160: one Flow frame and count control */
 .flow-reset{min-height:22px;margin-left:auto;padding:1px 7px;border-radius:6px;font-size:10px;line-height:1;border-color:rgba(99,181,216,.35);background:rgba(24,67,88,.55);color:#bdefff}.flow-control>span{align-items:center}.flow-selection{box-sizing:border-box}
+
+/* beta.161: corner handles resize chevrons uniformly */
+.flow-selection i{top:auto;transform:none}.flow-selection i[data-flow-handle=nw]{left:-11px;top:-11px;cursor:nwse-resize}.flow-selection i[data-flow-handle=ne]{right:-11px;top:-11px;cursor:nesw-resize}.flow-selection i[data-flow-handle=sw]{left:-11px;bottom:-11px;cursor:nesw-resize}.flow-selection i[data-flow-handle=se]{right:-11px;bottom:-11px;cursor:nwse-resize}.flow-selection i[data-flow-handle=west],.flow-selection i[data-flow-handle=east]{display:none}
