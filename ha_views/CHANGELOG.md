@@ -1,3 +1,7 @@
+## 0.4.1-beta.167
+
+- Flow: animację „Przepływ” zmieniono na zapętlony przesuwający się strumień całej grupy chevronów.
+
 ## 0.4.1-beta.166
 
 - Flow: dodano niezależne kopiowanie i wklejanie stylu wyłącznie między Flow.
