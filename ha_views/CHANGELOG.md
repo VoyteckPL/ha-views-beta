@@ -1,3 +1,11 @@
+## 0.4.1-beta.174
+
+- Start aplikacji: układ, lista teł i uprawnienia są pobierane równolegle, a stany encji razem z obrazem tła, a nie jeden po drugim.
+- Start aplikacji: scena pojawia się dopiero, gdy znane są układ, tło i pierwsze stany — bez mignięcia panelu wyboru tła i bez chwilowo czerwonych ikon.
+- Start aplikacji: przyciski edycji są ukryte do sprawdzenia uprawnień, więc w trybie Viewer nie migają.
+- Start aplikacji: arkusz ikon MDI nie blokuje już uruchomienia skryptu; język interfejsu jest zapamiętywany i ustawiany od razu.
+- Zabezpieczenie: jeśli coś się zawiesi, widok i tak pokazuje się najpóźniej po 5 s. Funkcje aplikacji bez zmian.
+
 ## 0.4.1-beta.173
 
 - Flow: Długość i Szerokość określają teraz rozmiar ramki. Liczba elementów i odstęp rozkładają strzałki wewnątrz ramki i nie zmieniają jej rozmiaru.

@@ -1744,15 +1744,17 @@ function connectEvents() {
   entityEvents.addEventListener('open', refreshStates);
 }
 function resumeLiveConnection() {
-  if (document.hidden) return;
+  if (document.hidden || !appRevealed) return;
   clearTimeout(resumeTimer); resumeTimer = setTimeout(() => {
     refreshStates();
     if (!entityEvents || entityEvents.readyState === EventSource.CLOSED) connectEvents();
   }, 120);
 }
-async function loadBackgrounds(waitForImage = false, bustCache = false) {
+async function loadBackgrounds(waitForImage = false, bustCache = false, prefetched = null, imageTimeout = 0) {
   try {
-    const data = await api('backgrounds'), items = data.items || [], names = new Set(items.map(item => item.name)), view = activeSceneView();
+    const data = prefetched ? await prefetched : await api('backgrounds');
+    if (data instanceof Error) throw data;
+    const items = data.items || [], names = new Set(items.map(item => item.name)), view = activeSceneView();
     if (view.background === undefined || view.background === null) { view.background = data.current || ''; scheduleSave(); }
     if (view.background && !names.has(view.background)) view.background = '';
     currentBackground = view.background || '';
@@ -1776,7 +1778,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false) {
           els.image.addEventListener('load', done, { once:true }); els.image.addEventListener('error', done, { once:true });
         });
         els.image.dataset.backgroundName = currentBackground; els.image.src = src;
-        if (waitForImage) await loaded;
+        if (waitForImage) await (imageTimeout > 0 ? Promise.race([loaded, new Promise(resolve => setTimeout(resolve, imageTimeout))]) : loaded);
       }
     } else { els.image.removeAttribute('src'); delete els.image.dataset.backgroundName; applyBackgroundTransform(); updateSceneGeometry(); }
   } catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; }
@@ -1863,7 +1865,7 @@ function startDesktopPan(event) {
 function bindEvents() {
   document.addEventListener('error', integrationIconError, true);
   els.language?.addEventListener('change', () => {
-    uiLanguage = els.language.value === 'pl' ? 'pl' : 'en';
+    uiLanguage = els.language.value === 'pl' ? 'pl' : 'en'; try { localStorage.setItem(LANGUAGE_CACHE_KEY, uiLanguage); } catch {}
     model.settings ||= {}; model.settings.language = uiLanguage;
     applyLanguage(); scheduleSave(true);
   });
@@ -2040,16 +2042,35 @@ function applyViewerMode() {
   els.settingsMenu?.remove();
 }
 
+const LANGUAGE_CACHE_KEY = 'ha_views_language';
+let appRevealed = false;
+// Scene content stays hidden (CSS: .app-booting) until the saved layout, the
+// background list and the first entity states are known, so the start view
+// never flashes onboarding panels or "unavailable" marker colours.
+function revealApp() {
+  if (appRevealed) return; appRevealed = true;
+  document.documentElement.classList.remove('app-booting');
+}
+const settleWithin = (promise, ms) => Promise.race([Promise.resolve(promise).catch(() => {}), new Promise(resolve => setTimeout(resolve, ms))]);
 async function boot() {
+  const revealFallback = setTimeout(revealApp, 5000);
   bindEvents();
-  try { access = await api('access'); } catch { access = { viewer: true }; }
+  bindLanguageObserver();
+  try { const cachedLanguage = localStorage.getItem(LANGUAGE_CACHE_KEY); if (cachedLanguage === 'pl' || cachedLanguage === 'en') { uiLanguage = cachedLanguage; applyLanguage(); } } catch {}
+  // Independent start-up requests run in parallel instead of one after another.
+  const accessRequest = api('access').catch(() => ({ viewer: true }));
+  const layoutRequest = api('rewrite_state').then(data => ({ data }), error => ({ error }));
+  const backgroundsRequest = api('backgrounds').catch(error => error instanceof Error ? error : new Error(String(error)));
+  const iconsReady = new Promise(resolve => { const link = document.getElementById('mdi-stylesheet'); if (!link || link.sheet) return resolve(); link.addEventListener('load', resolve, { once:true }); link.addEventListener('error', resolve, { once:true }); });
+  access = await accessRequest;
   applyViewerMode();
   let legacyMigrated = false;
-  try { const saved = await api('rewrite_state'); if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
+  try { const layout = await layoutRequest; if (layout.error) throw layout.error; const saved = layout.data; if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
   catch (error) { notify(`Nie udało się wczytać układu: ${error.message}`, true); }
   model.settings = { snapEnabled: true, snapStep: .25, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
   uiLanguage = model.settings.language === 'pl' ? 'pl' : 'en';
-  bindLanguageObserver(); applyLanguage();
+  try { localStorage.setItem(LANGUAGE_CACHE_KEY, uiLanguage); } catch {}
+  applyLanguage();
   const multiMigrated = ensureMultiViewModel(); const gridPresetMigrated = migrateGridPresetSteps(); applySnapUi(); renderViewSelector();
   Object.values(model.views).flatMap(view => Object.values(view.entities || {})).forEach(m => {
     m.type = ['badge','gauge','icon','horseshoe'].includes(m.type) ? m.type : 'badge'; m.style = normalizedStyle(m.type, m.style);
@@ -2059,15 +2080,15 @@ async function boot() {
   const gaugeMigrated = migrateGaugeZeroOffsets();
   const horseshoeMigrated = migrateHorseshoeBaseline();
   if (legacyMigrated || multiMigrated || gridPresetMigrated || iconHorizontalMigrated || gaugeMigrated || horseshoeMigrated) scheduleSave(true);
-  // Markers are independent from the background image and from live-state
-  // retrieval. Render them immediately: the first `selected_states` request
-  // may be slow, but it must never keep the restored view blank.
   attachActiveEntities(); updateSceneGeometry(); renderMarkers(); resetViewZoom();
   mobileOrientation = mobileView() ? (innerHeight > innerWidth ? 'portrait' : 'landscape') : 'desktop';
-  await loadBackgrounds(true);
+  // Live states are requested now, in parallel with the background image.
+  const statesReady = refreshStates();
+  await loadBackgrounds(true, false, backgroundsRequest, 2500);
   attachActiveEntities(); updateSceneGeometry(); renderMarkers();
+  await settleWithin(Promise.all([statesReady, iconsReady]), 1500);
+  clearTimeout(revealFallback); revealApp();
   connectEvents();
-  refreshStates();
 }
 
 boot();
