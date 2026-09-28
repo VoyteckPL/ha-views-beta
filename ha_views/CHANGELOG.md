@@ -1,3 +1,9 @@
+## 0.3.0-beta.141
+
+- Naprawiono markery Przepływ: zachowują swój typ po F5/restartcie i po kliknięciu otwierają właściwy edytor chevronów.
+- Usunięcie Przepływu usuwa wyłącznie ten marker, bez naruszania głównego wskaźnika tej samej encji.
+- Wyszukiwarka Integracji pokazuje teraz także przycisk dodawania Przepływu dla encji już dodanej do widoku; przepływy odświeżają się na bieżąco wraz ze stanem źródła.
+
 ## 0.3.0-beta.140
 
 - Nowy marker **Przepływ**: animowane chevrony niezależne od Badge, Gauge, Ikony i Podkowy. Tę samą encję można użyć wielokrotnie — jako wskaźnik i jako osobne przepływy.
