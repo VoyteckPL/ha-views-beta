@@ -1,3 +1,15 @@
+## 0.4.1-beta.170
+
+- Flow: edytor wygląda i działa jak edytor markerów (ten sam nagłówek, sekcje, suwaki, palety kolorów, przeciąganie okna).
+- Flow: w nagłówku przyciski Ustaw domyślny, Kopiuj styl, Wklej styl, Usuń Flow i Zamknij. Kopiuj/wklej działa tylko Flow → Flow.
+- Flow: każdy suwak ma przycisk przywracania wartości domyślnej.
+- Flow: nowy, logiczny podział sekcji: Encja i kierunek, Kształt, Rozmiar i pozycja, Kolory i wygląd, Animacja. Po zmianie opcji otwarta sekcja zostaje otwarta.
+- Flow: uproszczone kolory — kolor główny (lub kolor dla + / −) barwi całe Flow; osobny kontur i osobna poświata są opcjonalne.
+- Flow: naprawiono tempo animacji i odstęp — zmienne CSS nie były wcześniej w ogóle ustawiane.
+- Flow: animacja nie restartuje się przy każdej zmianie stanu encji, strumień jest płynny i bez przeskoku na łączeniu.
+- Flow: poświata nie jest ucinana podczas animacji przepływu.
+- Flow: Escape i kliknięcie w tło zamykają edytor Flow; usuwanie Flow wymaga potwierdzenia.
+
 ## 0.4.1-beta.169
 
 - Flow: naprawiono błąd `$(...).forEach` w edytorze Flow, przez który nie działały przyciski Kopiuj styl, Wklej styl i Usuń Flow.

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>HA Views</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-169">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-170">
 </head>
 <body>
   <header class="topbar">
@@ -131,9 +131,23 @@
     <div id="editor-content" class="editor-content"></div>
   </aside>
 
-  <aside id="flow-editor" class="flow-editor" aria-hidden="true">
-    <div class="flow-editor-head"><div><strong>Flow</strong><small id="flow-editor-entity"></small></div><button id="flow-editor-close" type="button" aria-label="Zamknij"><i class="mdi mdi-close"></i></button></div>
-    <div id="flow-editor-content" class="flow-editor-content"></div>
+  <aside id="flow-editor" class="editor flow-editor" aria-hidden="true">
+    <div class="editor-head">
+      <div id="flow-editor-icon" class="editor-integration-icon"></div>
+      <div class="editor-title-block">
+        <h2 id="flow-editor-title">Flow</h2>
+        <code id="flow-editor-entity"></code>
+        <div class="editor-meta"><code id="flow-editor-integration"></code></div>
+      </div>
+      <div class="editor-quick-actions">
+        <button id="flow-default-style" class="editor-icon-button" title="Ustaw domyślny" aria-label="Ustaw domyślny"><i class="mdi mdi-restore"></i></button>
+        <button id="flow-copy-style" class="editor-icon-button" title="Kopiuj styl Flow" aria-label="Kopiuj styl Flow"><i class="mdi mdi-content-copy"></i></button>
+        <button id="flow-paste-style" class="editor-icon-button" title="Wklej styl Flow" aria-label="Wklej styl Flow"><i class="mdi mdi-content-paste"></i></button>
+        <button id="flow-remove" class="editor-icon-button danger" title="Usuń Flow" aria-label="Usuń Flow"><i class="mdi mdi-delete-outline"></i></button>
+        <button id="flow-editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
+      </div>
+    </div>
+    <div id="flow-editor-content" class="editor-content flow-editor-content"></div>
   </aside>
 
   <div id="more-info-backdrop" class="more-info-backdrop" aria-hidden="true"></div>
@@ -167,6 +181,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-169"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-170"></script>
 </body>
 </html>

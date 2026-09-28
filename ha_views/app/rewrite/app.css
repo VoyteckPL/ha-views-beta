@@ -518,3 +518,9 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.166: Flow clipboard and visible filled outline */
 .flow-clipboard{display:grid;grid-template-columns:1fr 1fr;gap:7px}.flow-clipboard button{min-height:32px;padding:0 8px;font-size:11px}.flow-clipboard button:disabled{opacity:.45}.flow-chevron.flow-filled path{paint-order:stroke fill}
+/* Flow editor uses the marker editor look (beta.170) */
+.editor.flow-editor{z-index:61;color:inherit}.editor.flow-editor .editor-content.flow-editor-content{display:block;gap:0;padding:10px 12px}
+.flow-train{padding-right:0}.flow-animate-flow{overflow:visible;clip-path:inset(-60px 0 -60px 0)}
+.flow-animate-flow .flow-train{animation:flow-stream var(--flow-duration,1.2s) linear infinite;animation-delay:var(--flow-delay,0s)}
+.flow-animate-pulse .flow-chevron,.flow-animate-pulse .flow-segment{animation-delay:var(--flow-delay,0s)}
+@media(max-width:768px), (max-width:900px) and (pointer:coarse){.editor.flow-editor{bottom:0;max-height:min(50dvh,560px)}}
