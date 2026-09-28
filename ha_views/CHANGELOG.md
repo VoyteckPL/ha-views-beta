@@ -1,3 +1,8 @@
+## 0.3.0-beta.148
+
+- Wybór istniejącego tła pokazuje jego podgląd oraz przycisk potwierdzający załadowanie.
+- Po załadowaniu tła obrazkowego pusty widok pokazuje ten sam ekran „Dodaj pierwszą encję”, co po wyborze tła jednokolorowego.
+
 ## 0.3.0-beta.147
 
 - Ustabilizowano dwa panele ekranu wyboru tła: przyciski i lista istniejących obrazów mieszczą się w obrysie.
