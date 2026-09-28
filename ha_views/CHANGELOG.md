@@ -1,3 +1,9 @@
+## 0.4.1-beta.150
+
+- Etap testowy Flow: encję można dodać niezależnie jako Flow przez przycisk `↝`, także gdy ma już zwykły marker.
+- Flow jest zapisywany osobno od markerów, pokazuje się na liście „Dodane do widoku” i można go bezpiecznie usunąć.
+- Ten etap celowo nie rysuje jeszcze chevronów ani nie zmienia istniejących markerów.
+
 ## 0.3.0-beta.149
 
 - Podgląd istniejącego tła zachowuje proporcje oryginalnego obrazu i pokazuje cały kadr w kompaktowym rozmiarze.
