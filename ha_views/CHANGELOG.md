@@ -1,3 +1,8 @@
+## 0.4.1-beta.156
+
+- Naprawiono błąd, który zatrzymywał dodawanie Flow testowego do widoku.
+- Renderowanie chevronów nie zależy już od pojedynczego selektora DOM.
+
 ## 0.4.1-beta.155
 
 - Naprawiono wizualną aktualizację rozmiaru, odstępu i koloru chevronów Flow. Wartości są teraz nakładane bezpośrednio na właściwy Flow.
