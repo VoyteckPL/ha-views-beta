@@ -138,7 +138,7 @@ const freshMarker = (entity, integration) => ({
 });
 
 let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: .25 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
-let stateCache = {}, editMode = false, selectedId = null, selectedFlowId = null, styleClipboard = null, saveTimer = null, access = { viewer: false };
+let stateCache = {}, editMode = false, selectedId = null, selectedFlowId = null, styleClipboard = null, flowStyleClipboard = null, saveTimer = null, access = { viewer: false };
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
@@ -1035,7 +1035,7 @@ function renderFlows() {
       const outlinePath = variant === 'arrow' ? 'M 4 15 L 58 15 L 58 2 L 98 50 L 58 98 L 58 85 L 4 85' : variant === 'bar' ? 'M 2 38 L 68 38 L 68 12 L 98 50 L 68 88 L 68 62 L 2 62' : variant === 'wide' ? 'M 4 4 L 96 50 L 4 96' : 'M 8 5 L 92 50 L 8 95';
       const filledPath = variant === 'arrow' ? 'M 2 14 L 56 14 L 56 0 L 100 50 L 56 100 L 56 86 L 2 86 Z' : variant === 'bar' ? 'M 0 36 L 66 36 L 66 10 L 100 50 L 66 90 L 66 64 L 0 64 Z' : variant === 'wide' ? 'M 2 0 L 100 50 L 2 100 L 0 100 L 62 50 L 0 0 Z' : 'M 5 0 L 100 50 L 5 100 L 0 100 L 58 50 L 0 0 Z';
       path.setAttribute('d', filled ? filledPath : outlinePath);
-      path.setAttribute('fill', filled ? fillColor : 'none'); path.setAttribute('stroke', filled ? 'none' : outlineColor);
+      path.setAttribute('fill', filled ? fillColor : 'none'); path.setAttribute('stroke', outlineColor);
       path.setAttribute('stroke-width', String(chevronThickness)); path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round');
       chevron.style.filter = chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + glowColor + ')' : 'none';
     });
@@ -1086,7 +1086,7 @@ function flowEditorMarkup(flow) {
   const shape = section('Kształt', select('Rodzaj strzałki','chevronVariant',flow.chevronVariant||'classic',[['classic','Klasyczny'],['wide','Szeroki'],['arrow','Strzałka'],['bar','Strzałka z belką']]) + select('Kształt grupy','flowStyle',flowStyle,[['chevrons','Chevrony'],['segments','Segmenty']]) + select('Wypełnienie','chevronMode',flow.chevronMode||'outline',[['outline','Kontur'],['filled','Pełne']]) + range('Liczba elementów','flowCount',1,8,1,count,'') + range('Szerokość','chevronWidth',10,180,1,flow.chevronWidth||flow.chevronSize||22,' px') + range('Wysokość','chevronHeight',10,180,1,flow.chevronHeight||flow.chevronSize||22,' px') + range('Grubość chevrona','chevronThickness',1,32,1,flow.chevronThickness||5,' px') + range('Odstęp','gap',0,40,1,flow.gap||0,' px'));
   const appearance = section('Kolory i wygląd', color('Wypełnienie','fillColor',flow.fillColor||flow.color) + color('Kontur','outlineColor',flow.outlineColor||flow.color) + color('Poświata','glowColor',flow.glowColor||flow.color) + range('Poświata','glow',0,30,1,flow.glow||0,' px') + range('Przezroczystość','opacity',10,100,1,flow.opacity||100,'%'));
   const animation = section('Animacja', select('Typ','animation',flow.animation||'none',[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']]) + range('Szybkość','animationSpeed',.2,4,.1,flow.animationSpeed||1.2,' s') + '<label class="flow-lock-control"><input type="checkbox" data-flow-prop="speedByValue" '+(flow.speedByValue?'checked':'')+'> Szybkość zależna od wartości</label><div class="flow-mode-options'+(flow.speedByValue?'':' hidden')+'">'+range('Wartość dla maksimum','speedValueMax',1,10000,1,flow.speedValueMax||1000,'')+'</div>');
-  const geometry = section('Pozycja', '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>'+rotation+'°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="'+rotation+'"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" '+(flow.geometryLocked?'checked':'')+'> Blokada przesuwania</label><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>');
+  const geometry = section('Pozycja', '<label class="flow-control"><span>Korekta obrotu <button id="flow-reset-rotation" class="flow-reset" type="button">Reset</button><output>'+rotation+'°</output></span><input type="range" data-flow-prop="rotation" min="-180" max="180" step="1" value="'+rotation+'"></label><label class="flow-lock-control"><input type="checkbox" data-flow-prop="geometryLocked" '+(flow.geometryLocked?'checked':'')+'> Blokada przesuwania</label><div class="flow-clipboard"><button id="flow-copy-style" type="button">Kopiuj styl</button><button id="flow-paste-style" type="button" '+(flowStyleClipboard?'':'disabled')+'>Wklej styl</button></div><button id="flow-delete" class="flow-delete" type="button">Usuń Flow</button>');
   return direction + shape + appearance + animation + geometry;
 }
 function openFlowEditor(id) {
@@ -1111,7 +1111,21 @@ function openFlowEditor(id) {
     let color = swatch?.dataset.flowPaletteColor;
     if (rgb) color = await appPrompt({ title:'Własny kolor RGB', message:'Podaj kolor w formacie #RRGGBB.', value:item[prop] || '#20B9E7', confirmText:'Ustaw' });
     if (!color || !/^#[0-9a-f]{6}$/i.test(color)) return;
-    item[prop] = color.toUpperCase(); item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); openFlowEditor(item.id);
+    item[prop] = color.toUpperCase(); item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); picker.querySelector('.flow-color-current').style.background = item[prop]; picker.querySelector('.flow-color-menu')?.classList.remove('visible');
+  });
+  $('.flow-color-native', els.flowEditorContent).forEach(input => input.addEventListener('input', () => {
+    const picker = input.closest('.flow-color-picker'); picker?.querySelector('.flow-color-current')?.style.setProperty('background', input.value);
+  }));
+  $('#flow-copy-style', els.flowEditorContent)?.addEventListener('click', () => {
+    const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
+    const excluded = new Set(['id','entityId','integrationId','integrationName','sourceDomain','displayName','xPercent','yPercent','createdAt','updatedAt','geometryLocked']);
+    flowStyleClipboard = Object.fromEntries(Object.entries(item).filter(([key]) => !excluded.has(key)));
+    const paste = $('#flow-paste-style', els.flowEditorContent); if (paste) paste.disabled = false;
+    notify('Skopiowano styl Flow');
+  });
+  $('#flow-paste-style', els.flowEditorContent)?.addEventListener('click', () => {
+    const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item || !flowStyleClipboard) return;
+    Object.assign(item, clone(flowStyleClipboard), { updatedAt:new Date().toISOString() }); renderMarkers(); scheduleSave(); openFlowEditor(item.id); notify('Wklejono styl Flow');
   });
   $('#flow-delete', els.flowEditorContent)?.addEventListener('click', () => { const id = selectedFlowId; closeFlowEditor(); removeFlow(id); });
 }
