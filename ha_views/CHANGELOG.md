@@ -1,3 +1,8 @@
+## 0.4.1-beta.163
+
+- Naprawiono kształt chevronów Flow: są renderowane jako wektory SVG zamiast obróconych ramek CSS.
+- Chevron zachowuje prawidłowy kształt przy każdej niezależnej szerokości i wysokości.
+
 ## 0.4.1-beta.162
 
 - Flow: dodano niezależną szerokość i wysokość chevrona — można rozciągać dowolny kształt.
