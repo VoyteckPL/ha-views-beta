@@ -369,9 +369,9 @@ async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
   closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
-  await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates();
+  await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
-  prebuildSwipePreviews();
+  prebuildSwipePreviews(60);
 }
 async function addSceneView() {
   closeCompactMenus();
@@ -2048,7 +2048,7 @@ function viewportPointerUp(event) {
 // Previews are prepared ahead of time (image decoded first, markers added afterwards), so a swipe only moves them.
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const swipeImages = new Map(), swipePreviews = new Map();
-let swipePreview = null, swipePrebuildTimer = null;
+let swipePreview = null, swipePrebuildTimer = null, swipeBusy = false, pendingSwipe = 0;
 function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
 function swipePageDistance() { return (els.sceneCard?.parentElement?.clientWidth || innerWidth) + 16; }
 function swipeImage(name) {
@@ -2067,7 +2067,7 @@ function swipeGeometry(view, image) {
   if (hasImage && mobileView() && innerHeight > innerWidth && image.naturalWidth > image.naturalHeight) {
     const viewportHeight = Math.max(180, screenHeight - cardTop - 1 - 8), sceneWidth = Math.round(viewportHeight * ratio), viewportWidth = parentWidth - border;
     const panStart = clamp(view.backgroundTransforms?.[view.background]?.mobilePanStart ?? .5, 0, 1);
-    return { cardWidth: parentWidth, cardLeft: 0, viewportHeight, sceneWidth, sceneHeight: viewportHeight, panX: -Math.max(0, sceneWidth - viewportWidth) * panStart, scale: sceneWidth / designWidth };
+    return { cardWidth: parentWidth, cardLeft: 0, viewportHeight, viewportWidth, sceneWidth, sceneHeight: viewportHeight, panX: -Math.max(0, sceneWidth - viewportWidth) * panStart, scale: sceneWidth / designWidth, panorama: sceneWidth - viewportWidth > 1 };
   }
   const cardWidth = hasImage ? Math.min(parentWidth, Math.max(160, screenHeight - cardTop - 8) * ratio) : parentWidth, sceneWidth = cardWidth - border, sceneHeight = sceneWidth / ratio;
   return { cardWidth, cardLeft: (parentWidth - cardWidth) / 2, viewportHeight: sceneHeight, sceneWidth, sceneHeight, panX: 0, scale: sceneWidth / designWidth };
@@ -2087,6 +2087,12 @@ function buildSwipePreview(targetId) {
     viewport.style.height = g.viewportHeight + 'px';
     Object.assign(scene.style, { width: g.sceneWidth + 'px', height: g.sceneHeight + 'px', transform: `translateX(${g.panX}px)` });
     scene.style.setProperty('--scene-scale', g.scale);
+    wrap.querySelector('.panorama-indicator')?.remove();
+    if (g.panorama) {
+      const indicator = document.createElement('div'), thumb = document.createElement('i'), maxX = g.sceneWidth - g.viewportWidth, size = clamp(g.viewportWidth / g.sceneWidth * 100, 12, 92);
+      indicator.className = 'panorama-indicator visible'; thumb.style.width = `${size}%`; thumb.style.transform = `translateX(${(-g.panX / maxX) * (100 - size)}%)`;
+      indicator.append(thumb); wrap.append(indicator);
+    }
   };
   const addMarkers = () => {
     if (!wrap.isConnected) return;
@@ -2102,15 +2108,15 @@ function buildSwipePreview(targetId) {
   return preview;
 }
 function clearSwipePreviews() { swipePreviews.forEach(preview => preview.element.remove()); swipePreviews.clear(); }
-function prebuildSwipePreviews() {
+function prebuildSwipePreviews(delay = 400) {
   clearTimeout(swipePrebuildTimer);
   swipePrebuildTimer = setTimeout(() => {
-    if (viewSwipe?.tracking || swipePreview) return;
+    if (viewSwipe?.tracking || swipePreview || swipeBusy) return prebuildSwipePreviews(300);
     clearSwipePreviews();
     if (!mobileView() || editMode || model.viewOrder.length < 2 || !els.sceneCard) return;
     const index = model.viewOrder.indexOf(model.activeViewId);
     [model.viewOrder[index - 1], model.viewOrder[index + 1]].filter(Boolean).forEach(id => { const preview = buildSwipePreview(id); if (preview) swipePreviews.set(id, preview); });
-  }, 400);
+  }, delay);
 }
 function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = true; swipePreview = null; els.sceneCard?.parentElement?.classList.remove('view-swiping'); }
 function positionSwipe(offset, direction, animate = 0) {
@@ -2119,10 +2125,14 @@ function positionSwipe(offset, direction, animate = 0) {
   if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transform = `translateX(${offset - direction * distance}px)`; }
 }
 function trackViewSwipe(event, forcedDx = null) {
-  const swipe = viewSwipe, dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
+  const swipe = viewSwipe;
+  // While the previous page is still settling, remember the gesture; once it is done, continue from the finger's current position.
+  if (swipeBusy) { swipe.busyDx = event.clientX - swipe.x; swipe.rebase = true; return; }
+  if (swipe.rebase && forcedDx === null) { swipe.rebase = false; swipe.x = event.clientX; swipe.y = event.clientY; swipe.t = Date.now(); swipe.samples = []; swipe.panX = viewPanX; return; }
+  const dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
   swipe.lastDx = dx;
   swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]).slice(-6);
-  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; }
+  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
   if (swipe.fromPan && Math.abs(dx) < .5) { removeSwipePreview(); positionSwipe(0, swipe.direction || 1); return; }
   const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1; swipe.direction = direction;
   if (swipePreview?.targetId !== target) {
@@ -2142,6 +2152,7 @@ function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
 }
 async function finishViewSwipe(event) {
   const swipe = viewSwipe; viewSwipe = null; cancelAnimationFrame(swipe.frame);
+  if (swipeBusy) { const queued = swipe.busyDx ?? event.clientX - swipe.x; if (Math.abs(queued) >= 40) pendingSwipe = Math.sign(queued); return; }
   const dx = swipe.fromPan ? (swipe.lastDx || 0) : event.clientX - swipe.x, dy = swipe.fromPan ? 0 : event.clientY - swipe.y, distance = swipePageDistance(), direction = dx < 0 ? -1 : 1;
   // Gallery-like decision: the finger's speed at release wins (moving back = stay), otherwise past 40 % of the width.
   if (!swipe.fromPan) swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]);
@@ -2154,15 +2165,28 @@ async function finishViewSwipe(event) {
   const target = go && horizontal ? swipeNeighbour(dx) : null;
   if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction, 200); removeSwipePreview(); positionSwipe(0, direction); } return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
+  await completeViewSwipe(target, direction, dx, velocity);
+}
+async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
+  const distance = swipePageDistance();
   if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = swipePreviews.get(target) || buildSwipePreview(target); if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); positionSwipe(dx, direction); void els.sceneCard.offsetWidth; } }
-  const remaining = Math.max(0, distance - Math.abs(dx)), speed = Math.max(Math.abs(velocity), 1.2);
-  await settleViewSwipe(direction * distance, direction, Math.round(clamp(remaining / speed, 120, 300)));
-  // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
-  const preview = swipePreview; swipePreview = null; swipePreviews.delete(target);
-  await switchSceneView(target);
-  positionSwipe(0, direction);
-  els.sceneCard.parentElement.classList.remove('view-swiping');
-  if (preview) { preview.element.style.transition = 'opacity 160ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 190); }
+  const remaining = Math.max(0, distance - Math.abs(dx)), speed = Math.max(Math.abs(velocity), 1.4);
+  swipeBusy = true; let preview = null;
+  try {
+    await settleViewSwipe(direction * distance, direction, Math.round(clamp(remaining / speed, 110, 240)));
+    // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
+    preview = swipePreview; swipePreview = null; swipePreviews.delete(target);
+    await switchSceneView(target);
+    positionSwipe(0, direction);
+    els.sceneCard.parentElement.classList.remove('view-swiping');
+  } finally { swipeBusy = false; }
+  if (preview) { preview.element.classList.add('swipe-fading'); preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
+  // A flick made during this transition continues straight to the next view.
+  if (pendingSwipe && !viewSwipe?.tracking) {
+    const queued = pendingSwipe, next = swipeNeighbour(queued); pendingSwipe = 0;
+    if (next) { removeSwipePreview(); swipePreview = swipePreviews.get(next) || buildSwipePreview(next); if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); positionSwipe(0, queued < 0 ? -1 : 1); void els.sceneCard.offsetWidth; } await completeViewSwipe(next, queued < 0 ? -1 : 1, 0, 1.6); }
+  }
+  pendingSwipe = 0;
 }
 function startDesktopPan(event) {
   if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;

@@ -1,3 +1,8 @@
+## 0.4.1-beta.188
+
+- Widoki (telefon): usunięto mrugnięcie u dołu wjeżdżającego widoku z panoramą — podgląd ma teraz także pasek pozycji panoramy, więc ma dokładnie tę samą wysokość co prawdziwy widok.
+- Widoki (telefon): szybkie przewijanie kilku widoków pod rząd — przełączenie nie czeka już na odpowiedź serwera ze stanami (są już w pamięci), podglądy kolejnych widoków przygotowują się od razu, a machnięcie wykonane w trakcie kończenia poprzedniego przejścia jest zapamiętywane i wykonywane zaraz po nim.
+
 ## 0.4.1-beta.187
 
 - Widoki (telefon): przesuwanie między widokami działa jak w galerii telefonu. Sąsiedni widok jest przygotowywany zawczasu — obraz w docelowej rozdzielczości i geometrii (także panorama na pełną wysokość), markery i Flow dodawane po wczytaniu obrazu — więc w trakcie ruchu nic się nie dociąga.
