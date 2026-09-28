@@ -1,3 +1,9 @@
+## 0.4.1-beta.152
+
+- Flow ma własny, niezależny edytor otwierany kliknięciem w trybie Edytuj widok.
+- Dodano regulację: koloru, rozmiaru chevronów, odstępu, obrotu, szerokości pola oraz blokadę przesuwania i usuwanie Flow.
+- Ustawienia geometrii są zapisywane wyłącznie w osobnym obiekcie Flow, bez wpływu na zwykłe markery.
+
 ## 0.4.1-beta.151
 
 - Flow testowy jest teraz widoczny na scenie jako trzy statyczne chevrony.
