@@ -1,3 +1,8 @@
+## 0.4.1-beta.183
+
+- Poprawka: marker encji, która ma też Flow, mógł „uciec” poza ekran podczas zmiany rozmiaru. Aktualizacja stanu encji przebudowywała scenę w trakcie przeciągania kółka i rozmiar liczony był z odłączonego elementu. Teraz aktualizacje stanu przebudowują tylko Flow, a zmiana rozmiaru i przeciąganie zawsze używają widocznego elementu.
+- Poprawka: markery i Flow zapisane poza sceną wracają na jej krawędź przy wczytaniu, a „Pokaż w widoku” przywraca marker na scenę.
+
 ## 0.4.1-beta.182
 
 - Flow: nowy suwak „Ostrość” w sekcji Kształt (10–100%). 100% = dotychczasowy kształt; mniejsza wartość spłaszcza i otwiera „V”, np. prostuje wąski chevron. Działa dla Chevronu, Grotu i Trójkąta, a przy Strzałce skraca grot. Rozmiar elementu, odstęp i ramka się nie zmieniają. Można go ustawić osobno dla wartości ujemnej i kopiować ze stylem.

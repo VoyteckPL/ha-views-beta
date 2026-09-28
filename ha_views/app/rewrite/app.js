@@ -304,8 +304,9 @@ function ensureMultiViewModel() {
   Object.values(model.views).forEach((view, index) => {
     view.id ||= model.viewOrder[index]; view.name ||= `Widok ${index + 1}`; view.entities ||= {}; view.flows ||= {}; view.backgroundTransforms ||= {};
     view.backgroundColor ??= ''; view.onboardingDone ??= false;
-    Object.values(view.entities).forEach(marker => { marker.tapAction ??= 'more_info'; });
+    Object.values(view.entities).forEach(marker => { marker.tapAction ??= 'more_info'; if (bringIntoScene(marker)) migrated = true; });
     Object.values(view.flows).forEach((flow, flowIndex) => {
+      if (Number.isFinite(Number(flow.xPercent)) && Number.isFinite(Number(flow.yPercent)) && bringIntoScene(flow)) migrated = true;
       if (!Number.isFinite(Number(flow.xPercent))) { flow.xPercent = 50 + (flowIndex % 4) * 3; migrated = true; }
       if (!Number.isFinite(Number(flow.yPercent))) { flow.yPercent = 50 + (flowIndex % 4) * 3; migrated = true; }
       if (!Number.isFinite(Number(flow.rotation))) { flow.rotation = 0; migrated = true; }
@@ -490,6 +491,14 @@ function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
   els.editMenu?.classList.remove('open'); els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active');
   els.backgroundBar?.classList.remove('open','onboarding'); els.bgManage?.classList.remove('active');
+}
+// Keeps a stored position inside the scene (0–100 %); returns true when it had to be corrected.
+function bringIntoScene(item) {
+  if (!item) return false;
+  const x = Number(item.xPercent), y = Number(item.yPercent);
+  const nx = Number.isFinite(x) ? clamp(x, 0, 100) : 50, ny = Number.isFinite(y) ? clamp(y, 0, 100) : 50;
+  if (nx === x && ny === y) return false;
+  item.xPercent = nx; item.yPercent = ny; return true;
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
@@ -1500,7 +1509,8 @@ function startDrag(event) {
     if (Math.hypot(dx, dy) > 3 && !moved) { moved = true; els.editor.classList.add('marker-moving'); }
     if (!moved) return;
     marker.xPercent = snapPercent(start.px + dx / r.width * 100); marker.yPercent = snapPercent(start.py + dy / r.height * 100);
-    node.style.left = `${marker.xPercent}%`; node.style.top = `${marker.yPercent}%`; if (selectedId === entityId) syncSelection();
+    const live = node.isConnected ? node : $(`.marker[data-entity-id="${CSS.escape(entityId)}"]`);
+    if (live) { live.style.left = `${marker.xPercent}%`; live.style.top = `${marker.yPercent}%`; } if (selectedId === entityId) syncSelection();
   };
   const up = () => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up); try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {} els.editor.classList.remove('marker-moving'); node.dataset.dragged = moved ? '1' : '0'; if (moved) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); positionEditor(); } };
   node.addEventListener('pointermove', move); node.addEventListener('pointerup', up, { once: true }); node.addEventListener('pointercancel', up, { once: true });
@@ -1883,7 +1893,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) renderMarkers(); } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
@@ -2132,7 +2142,7 @@ function bindEvents() {
     else if (add) addEntity(add.dataset.add, add.dataset.entry);
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
-  els.addedList.addEventListener('click', event => { const removeFlowButton = event.target.closest('[data-remove-flow]'), remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (removeFlowButton) removeFlow(removeFlowButton.dataset.removeFlow); else if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
+  els.addedList.addEventListener('click', event => { const removeFlowButton = event.target.closest('[data-remove-flow]'), remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (removeFlowButton) removeFlow(removeFlowButton.dataset.removeFlow); else if (remove) removeEntity(remove.dataset.remove); else if (focus) { if (bringIntoScene(model.entities[focus.dataset.focus])) scheduleSave(true); showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
   document.querySelectorAll('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));
   document.querySelectorAll('.flow-selection i').forEach(handle => handle.addEventListener('pointerdown', startFlowResize));
   els.image.addEventListener('load', () => { updateSceneGeometry(); applyBackgroundTransform(); });
@@ -2175,11 +2185,15 @@ function startResize(event) {
     const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
     marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 2400),minWidth,2400);
     marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 1800),minHeight,1800);
-    marker.xPercent = start.px; marker.yPercent = start.py; applyMarkerStyle(node, marker);
-    const sceneRect = els.scene.getBoundingClientRect(), current = node.getBoundingClientRect();
-    marker.xPercent += (fixed.x - (handle.includes('w') ? current.right : current.left)) / sceneRect.width * 100;
-    marker.yPercent += (fixed.y - (handle.includes('n') ? current.bottom : current.top)) / sceneRect.height * 100;
-    applyMarkerStyle(node, marker); syncSelection();
+    // The scene may be re-rendered during the gesture (live states); always measure the node that is on screen.
+    const live = node.isConnected ? node : $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
+    if (!live) return;
+    marker.xPercent = start.px; marker.yPercent = start.py; applyMarkerStyle(live, marker);
+    const sceneRect = els.scene.getBoundingClientRect(), current = live.getBoundingClientRect();
+    if (!sceneRect.width || !sceneRect.height || !current.width || !current.height) return;
+    marker.xPercent = clamp(marker.xPercent + (fixed.x - (handle.includes('w') ? current.right : current.left)) / sceneRect.width * 100, 0, 100);
+    marker.yPercent = clamp(marker.yPercent + (fixed.y - (handle.includes('n') ? current.bottom : current.top)) / sceneRect.height * 100, 0, 100);
+    applyMarkerStyle(live, marker); syncSelection();
   };
   const finish = () => {
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish);
