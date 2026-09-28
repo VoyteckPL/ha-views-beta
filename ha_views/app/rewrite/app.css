@@ -468,3 +468,9 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .welcome-image-choice .welcome-existing-background select{box-sizing:border-box;width:100%;min-width:0;max-width:100%;border-color:rgba(99,181,216,.42)}
 .welcome-image-choice .welcome-existing-background select:focus{border-color:#35c9f3;box-shadow:0 0 0 2px rgba(53,201,243,.16)}
 .welcome-image-choice .welcome-existing-background select option:checked{background:#123d50;color:#fff}
+
+/* beta.148: preview and confirm an existing background */
+.empty-background-preview-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:2px}
+.empty-background-preview-wrap[hidden]{display:none!important}
+.empty-background-preview-wrap img{display:block;width:100%;height:92px;object-fit:cover;border:1px solid rgba(99,181,216,.42);border-radius:8px;background:#081c27}
+.empty-background-preview-wrap .primary{box-sizing:border-box;width:100%;max-width:100%}
