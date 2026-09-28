@@ -1,3 +1,9 @@
+## 0.3.0-beta.140
+
+- Nowy marker **Przepływ**: animowane chevrony niezależne od Badge, Gauge, Ikony i Podkowy. Tę samą encję można użyć wielokrotnie — jako wskaźnik i jako osobne przepływy.
+- Cztery style: konturowe, pełne, impuls i kapsuła; regulacja liczby, rozmiaru, odstępu, szybkości animacji, przezroczystości, linii, geometrii i obrotu.
+- Sterowanie: moc ze znakiem (+/−), tylko dodatnia, tylko ujemna, dwie encje, ON/OFF albo kierunek stały; z progiem martwym oraz oddzielnymi kolorami przód / wstecz / nieaktywny.
+
 ## 0.3.0-beta.139
 
 - Viewer mode: ukryto także ikonę edycji, edytor widoków i zębatkę wraz z ich panelami dla zwykłych użytkowników.
