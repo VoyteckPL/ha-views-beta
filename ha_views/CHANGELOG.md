@@ -1,3 +1,8 @@
+## 0.4.1-beta.157
+
+- Flow: dodano wybór kształtu: pojedynczy, potrójny albo segmenty.
+- Flow: dodano ręczny kierunek: prawo, lewo, góra albo dół; obrót pozostaje niezależną korektą.
+
 ## 0.4.1-beta.156
 
 - Naprawiono błąd, który zatrzymywał dodawanie Flow testowego do widoku.
