@@ -80,7 +80,7 @@ function bindLanguageObserver() {
 
 const els = {
   body: document.body, viewport: $('#scene-viewport'), sceneCard: $('.scene-card'), scene: $('#scene'), image: $('#scene-image'), empty: $('#scene-empty'), markers: $('#markers'), panoramaIndicator: $('#panorama-indicator'), mobilePanStart: $('#mobile-pan-start'),
-  selection: $('#selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
+  selection: $('#selection'), flowSelection: $('#flow-selection'), editor: $('#editor'), editorTitle: $('#editor-title'), editorEntity: $('#editor-entity'), editorIntegration: $('#editor-integration'), editorIntegrationIcon: $('#editor-integration-icon'),
   editorContent: $('#editor-content'), editorStatus: $('#editor-status'), flowEditor: $('#flow-editor'), flowEditorEntity: $('#flow-editor-entity'), flowEditorContent: $('#flow-editor-content'), flowEditorClose: $('#flow-editor-close'), toast: $('#toast'), connection: $('#connection'),
   confirmBox: $('#app-confirm'), confirmTitle: $('#app-confirm-title'), confirmMessage: $('#app-confirm-message'), confirmInput: $('#app-confirm-input'), confirmCancel: $('#app-confirm-cancel'), confirmOk: $('#app-confirm-ok'), language: $('#language-select'),
   editToggle: $('#edit-toggle'), editMenu: $('#edit-menu'), settingsToggle: $('#settings-toggle'), settingsMenu: $('#settings-menu'), gridStatus: $('#grid-status'), gridPresets: Array.from(document.querySelectorAll('.grid-preset')), bgUploadProgress: $('#background-upload-progress'), solidCanvasRatio: $('#solid-canvas-ratio'), bgColorToggle: $('#background-color-toggle'), bgRgbOpen: $('#background-rgb-open'), bgSelect: $('#background-select'), bgColor: $('#background-color'), bgDownload: $('#background-download'), bgDelete: $('#background-delete'),
@@ -989,6 +989,7 @@ function renderMarkers() {
   });
   renderFlows();
   if (previous && model.entities[previous]) syncSelection(); else hideSelection();
+  if (selectedFlowId && activeSceneView()?.flows?.[selectedFlowId]) syncFlowSelection(); else hideFlowSelection();
   updateEmptyState(); renderAdded();
 }
 function renderFlows() {
@@ -1006,7 +1007,7 @@ function renderFlows() {
     const chevronColor = flow.color || '#20B9E7';
     const directionAngles = { right:0, down:90, left:180, up:-90 };
     const directionAngle = directionAngles[flow.direction] ?? 0;
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Number(flow.width) + 'px', height: Number(flow.height) + 'px', gap:chevronGap + 'px', transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, itemCount * chevronSize + Math.max(0,itemCount - 1) * chevronGap + 16) + 'px', height: Number(flow.height) + 'px', gap:chevronGap + 'px', transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
     if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:Math.max(8, chevronSize * .9) + 'px', height:Math.max(5, chevronSize * .32) + 'px', backgroundColor:chevronColor }));
     else node.querySelectorAll('.flow-chevron').forEach(chevron => Object.assign(chevron.style, { width:chevronSize + 'px', height:chevronSize + 'px', borderTopWidth:(chevronSize / 4.4) + 'px', borderRightWidth:(chevronSize / 4.4) + 'px', borderColor:chevronColor }));
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
@@ -1038,6 +1039,7 @@ function startFlowDrag(event) {
 }
 function closeFlowEditor() {
   selectedFlowId = null;
+  hideFlowSelection();
   els.flowEditor?.classList.remove('visible'); els.flowEditor?.setAttribute('aria-hidden','true');
 }
 function flowEditorMarkup(flow) {
@@ -1048,7 +1050,7 @@ function flowEditorMarkup(flow) {
 function openFlowEditor(id) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return;
   closeEditor(); selectedFlowId = id; els.flowEditorEntity.textContent = flow.entityId;
-  els.flowEditorContent.innerHTML = flowEditorMarkup(flow); els.flowEditor.classList.add('visible'); els.flowEditor.setAttribute('aria-hidden','false');
+  els.flowEditorContent.innerHTML = flowEditorMarkup(flow); els.flowEditor.classList.add('visible'); els.flowEditor.setAttribute('aria-hidden','false'); syncFlowSelection();
   $$('[data-flow-prop]', els.flowEditorContent).forEach(input => input.addEventListener(input.type === 'range' ? 'input' : 'change', event => {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     const prop = event.target.dataset.flowProp; item[prop] = event.target.type === 'checkbox' ? event.target.checked : event.target.type === 'color' || event.target.tagName === 'SELECT' ? event.target.value : Number(event.target.value);
@@ -1133,6 +1135,41 @@ function syncSelection() {
   Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });
   els.selection.classList.toggle('geometry-locked', Boolean(model.entities[selectedId]?.geometryLocked));
   els.selection.classList.add('visible');
+}
+function hideFlowSelection() { els.flowSelection?.classList.remove('visible','geometry-locked'); }
+function syncFlowSelection() {
+  const flow = activeSceneView()?.flows?.[selectedFlowId], node = flow && $('.flow-marker[data-flow-id="' + CSS.escape(flow.id) + '"]');
+  if (!flow || !node || !els.flowSelection) return hideFlowSelection();
+  const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1;
+  Object.assign(els.flowSelection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });
+  els.flowSelection.classList.toggle('geometry-locked', Boolean(flow.geometryLocked));
+  els.flowSelection.classList.add('visible');
+}
+function startFlowResize(event) {
+  const flow = activeSceneView()?.flows?.[selectedFlowId];
+  if (!editMode || !flow || flow.geometryLocked || event.button !== 0) return;
+  event.preventDefault(); event.stopPropagation();
+  const handle = event.currentTarget.dataset.flowHandle, rect = els.scene.getBoundingClientRect(), scale = sceneScale || 1;
+  const directionAngles = { right:0, down:90, left:180, up:-90 };
+  const angle = (directionAngles[flow.direction] ?? 0) + Number(flow.rotation || 0), radians = angle * Math.PI / 180;
+  const start = { x:event.clientX, y:event.clientY, width:Number(flow.width) || 140, px:Number(flow.xPercent), py:Number(flow.yPercent) };
+  let changed = false;
+  const move = current => {
+    if ((current.buttons & 1) !== 1) return finish();
+    const projected = ((current.clientX - start.x) * Math.cos(radians) + (current.clientY - start.y) * Math.sin(radians)) / scale;
+    const sign = handle === 'west' ? -1 : 1;
+    const nextWidth = clamp(start.width + projected * sign, 60, 600);
+    const grown = nextWidth - start.width;
+    flow.width = nextWidth;
+    flow.xPercent = start.px + sign * grown / 2 * Math.cos(radians) / rect.width * 100;
+    flow.yPercent = start.py + sign * grown / 2 * Math.sin(radians) / rect.height * 100;
+    changed = true; renderMarkers();
+  };
+  const finish = () => {
+    window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',finish); window.removeEventListener('pointercancel',finish);
+    if (changed) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); openFlowEditor(flow.id); }
+  };
+  window.addEventListener('pointermove',move); window.addEventListener('pointerup',finish); window.addEventListener('pointercancel',finish);
 }
 function positionEditor() {
   if (mobileView() || editorDragged || !selectedId || !els.editor.classList.contains('visible')) return;
@@ -1770,7 +1807,7 @@ function bindEvents() {
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
   els.addedList.addEventListener('click', event => { const removeFlowButton = event.target.closest('[data-remove-flow]'), remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (removeFlowButton) removeFlow(removeFlowButton.dataset.removeFlow); else if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
-  $$('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));
+  $('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));; $('.flow-selection i').forEach(handle => handle.addEventListener('pointerdown', startFlowResize));
   els.image.addEventListener('load', () => { updateSceneGeometry(); applyBackgroundTransform(); });
   window.addEventListener('resize', () => { applyBackgroundTransform(); syncMobileOrientation(); });
   window.visualViewport?.addEventListener('resize', () => { if (mobileView()) applyBackgroundTransform(); });
