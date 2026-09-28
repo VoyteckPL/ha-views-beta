@@ -1001,8 +1001,8 @@ function renderFlows() {
     const flowStyle = flow.flowStyle === 'segments' ? 'segments' : 'chevrons';
     const legacyCount = flow.flowStyle === 'single' ? 1 : flow.flowStyle === 'segments' ? 4 : 3;
     const itemCount = clamp(Number(flow.flowCount) || legacyCount, 1, 8);
-    const itemClass = flowStyle === 'segments' ? 'flow-segment' : 'flow-chevron';
-    node.innerHTML = Array.from({ length:itemCount }, () => '<span class="' + itemClass + '"></span>').join('');
+    const itemMarkup = flowStyle === 'segments' ? '<span class="flow-segment"></span>' : '<svg class="flow-chevron" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path></path></svg>';
+    node.innerHTML = Array.from({ length:itemCount }, () => itemMarkup).join('');
     const chevronSize = Math.max(10, Number(flow.chevronSize) || 22);
     const chevronWidth = Math.max(10, Number(flow.chevronWidth) || chevronSize);
     const chevronHeight = Math.max(10, Number(flow.chevronHeight) || chevronSize);
@@ -1019,7 +1019,14 @@ function renderFlows() {
     const directionAngle = directionAngles[flow.direction] ?? 0;
     Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Math.max(Number(flow.width) || 140, contentWidth) + 'px', height: Math.max(Number(flow.height) || 54, itemHeight + 16) + 'px', gap:chevronGap + 'px', opacity:chevronOpacity / 100, transform:'translate(-50%,-50%) rotate(' + (directionAngle + Number(flow.rotation || 0)) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
     if (flowStyle === 'segments') node.querySelectorAll('.flow-segment').forEach(segment => Object.assign(segment.style, { width:itemWidth + 'px', height:itemHeight + 'px', backgroundColor:chevronColor, boxShadow:chevronGlow ? '0 0 ' + chevronGlow + 'px ' + chevronColor : 'none' }));
-    else node.querySelectorAll('.flow-chevron').forEach(chevron => { chevron.classList.toggle('flow-filled', chevronMode === 'filled'); Object.assign(chevron.style, { width:chevronWidth + 'px', height:chevronHeight + 'px', borderTopWidth:chevronThickness + 'px', borderRightWidth:chevronThickness + 'px', borderColor:chevronColor, backgroundColor:chevronColor, filter:chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + chevronColor + ')' : 'none' }); });
+    else node.querySelectorAll('.flow-chevron').forEach(chevron => {
+      const path = chevron.querySelector('path'), filled = chevronMode === 'filled';
+      chevron.classList.toggle('flow-filled', filled);
+      Object.assign(chevron.style, { width:chevronWidth + 'px', height:chevronHeight + 'px', filter:chevronGlow ? 'drop-shadow(0 0 ' + chevronGlow + 'px ' + chevronColor + ')' : 'none' });
+      path.setAttribute('d', filled ? 'M 5 0 L 100 50 L 5 100 L 0 100 L 58 50 L 0 0 Z' : 'M 8 5 L 92 50 L 8 95');
+      path.setAttribute('fill', filled ? chevronColor : 'none'); path.setAttribute('stroke', filled ? 'none' : chevronColor);
+      path.setAttribute('stroke-width', String(chevronThickness)); path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round');
+    });
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
     node.addEventListener('pointerdown', startFlowDrag);
     node.addEventListener('click', event => { event.stopPropagation(); if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; } if (editMode) openFlowEditor(flow.id); });
