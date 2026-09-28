@@ -1,3 +1,9 @@
+## 0.4.1-beta.162
+
+- Flow: dodano niezależną szerokość i wysokość chevrona — można rozciągać dowolny kształt.
+- Flow: dodano wypełnienie pełne albo kontur, grubość konturu, poświatę i przezroczystość.
+- Narożne uchwyty skalują teraz równomiernie aktualny kształt.
+
 ## 0.4.1-beta.161
 
 - Flow: ramka zaznaczenia śledzi element podczas przeciągania.
