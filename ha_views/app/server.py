@@ -1502,6 +1502,28 @@ async def api_rewrite_state_save(request):
             {"ok": False, "error": "Stan musi być obiektem JSON"},
             status=400,
         )
+    # Optimistic concurrency: a client sends the revision it last loaded/saved.
+    # A save based on an older revision (e.g. a phone that kept a stale page
+    # open) is rejected instead of silently overwriting newer changes.
+    base_revision = data.pop("baseRevision", None)
+    current = _read_json(REWRITE_STATE_FILE, None)
+    current_revision = _layout_revision(current)
+    if base_revision is not None:
+        try:
+            base_revision = int(base_revision)
+        except (TypeError, ValueError):
+            base_revision = -1
+        if isinstance(current, dict) and base_revision != current_revision:
+            return web.json_response(
+                {
+                    "ok": False,
+                    "conflict": True,
+                    "revision": current_revision,
+                    "error": "Układ został zmieniony na innym urządzeniu",
+                },
+                status=409,
+            )
+        data["revision"] = current_revision + 1
     encoded = json.dumps(data, ensure_ascii=False).encode("utf-8")
     if len(encoded) > 2 * 1024 * 1024:
         return web.json_response(
@@ -1509,7 +1531,20 @@ async def api_rewrite_state_save(request):
             status=413,
         )
     _atomic_json(REWRITE_STATE_FILE, data)
-    return web.json_response({"ok": True})
+    return web.json_response({"ok": True, "revision": data.get("revision")})
+
+
+def _layout_revision(data):
+    if not isinstance(data, dict):
+        return 0
+    try:
+        return int(data.get("revision") or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+async def api_rewrite_state_revision(request):
+    return web.json_response({"ok": True, "revision": _layout_revision(_read_json(REWRITE_STATE_FILE, None))})
 
 CUSTOM_COMPONENTS_DIR = "/config/custom_components"
 INTEGRATION_ICON_FILES = (
@@ -1564,6 +1599,7 @@ app.router.add_get("/", index)
 app.router.add_get("/rewrite", rewrite_index)
 app.router.add_get("/api/access", api_access)
 app.router.add_get("/api/rewrite_state", api_rewrite_state_get)
+app.router.add_get("/api/rewrite_state_revision", api_rewrite_state_revision)
 app.router.add_post("/api/rewrite_state", api_rewrite_state_save)
 app.router.add_get("/api/integration_icon", api_integration_icon)
 

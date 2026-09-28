@@ -1,3 +1,9 @@
+## 0.4.1-beta.184
+
+- Synchronizacja między urządzeniami: otwarta aplikacja (np. w aplikacji HA na telefonie) sprawdza co 20 s i przy powrocie na ekran, czy układ zmienił się na innym urządzeniu, i wczytuje najnowszą wersję, zostając na tym samym widoku. W trybie edycji zamiast automatycznego przeładowania pojawia się przycisk „Wczytaj”.
+- Ochrona przed nadpisaniem: serwer odrzuca zapis oparty na starszej wersji układu (np. z telefonu, który miał otwartą starą stronę). Takie urządzenie wczytuje wtedy aktualny układ i informuje, że jego ostatnia zmiana nie została zapisana — zmiany z drugiego urządzenia zostają.
+- Przełączanie widoków nie zapisuje już całego układu na serwerze; otwarty widok jest zapamiętywany osobno na każdym urządzeniu.
+
 ## 0.4.1-beta.183
 
 - Poprawka: marker encji, która ma też Flow, mógł „uciec” poza ekran podczas zmiany rozmiaru. Aktualizacja stanu encji przebudowywała scenę w trakcie przeciągania kółka i rozmiar liczony był z odłączonego elementu. Teraz aktualizacje stanu przebudowują tylko Flow, a zmiana rozmiaru i przeciąganie zawsze używają widocznego elementu.

@@ -24,7 +24,8 @@ const TRANSLATIONS = {
     "Cofnij":"Undo","Przywrócono widok":"View restored","Usunięto widok":"View deleted","Widok jest pusty.":"The view is empty.","Usuń widok":"Delete view","Usunąć widok?":"Delete view?",
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
-    "Ostrość":"Sharpness"
+    "Ostrość":"Sharpness",
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device"
   }
 };
 function translateValue(value) {
@@ -199,7 +200,7 @@ async function api(path, options = {}) {
   const response = await fetch(`api/${path}`, { cache: 'no-store', ...options });
   const type = response.headers.get('content-type') || '';
   const data = type.includes('json') ? await response.json() : await response.text();
-  if (!response.ok || (data && data.ok === false)) throw new Error(data?.error || `HTTP ${response.status}`);
+  if (!response.ok || (data && data.ok === false)) { const error = new Error(data?.error || `HTTP ${response.status}`); error.status = response.status; error.data = data; throw error; }
   return data;
 }
 const jsonOptions = body => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -295,7 +296,9 @@ function ensureMultiViewModel() {
   model.viewOrder = (model.viewOrder || []).filter(id => model.views[id]);
   Object.keys(model.views).forEach(id => { if (!model.viewOrder.includes(id)) model.viewOrder.push(id); });
   const defaultView = model.settings?.defaultViewId;
-  if (defaultView && model.views[defaultView]) model.activeViewId = defaultView;
+  let reloadView = ''; try { reloadView = sessionStorage.getItem(RELOAD_VIEW_KEY) || ''; sessionStorage.removeItem(RELOAD_VIEW_KEY); } catch {}
+  if (reloadView && model.views[reloadView]) model.activeViewId = reloadView;
+  else if (defaultView && model.views[defaultView]) model.activeViewId = defaultView;
   else try {
     const rememberedView = localStorage.getItem(ACTIVE_VIEW_CACHE_KEY);
     if (rememberedView && model.views[rememberedView]) model.activeViewId = rememberedView;
@@ -367,7 +370,7 @@ async function switchSceneView(id, persist = true) {
   closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
   await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates();
-  if (persist) scheduleSave(true);
+  // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
 }
 async function addSceneView() {
   closeCompactMenus();
@@ -463,7 +466,7 @@ function markerBackgroundFill(color, opacity, variant = 'none', style = {}) {
 }
 function scheduleSave(immediate = false) {
   if (isViewer()) return Promise.resolve();
-  model.revision = (model.revision || 0) + 1; clearTimeout(saveTimer);
+  clearTimeout(saveTimer); lastLocalChangeAt = Date.now();
   if (immediate) return queueSave();
   saveTimer = setTimeout(queueSave, 200);
 }
@@ -683,15 +686,37 @@ function updateMobilePanStart() {
   currentBackgroundTransform().mobilePanStart = Number(els.mobilePanStart.value);
   resetViewZoom(); syncBackgroundTransformControls(); scheduleSave();
 }
+// ---- Layout sync between devices -------------------------------------------------
+// The layout is stored on the server with a revision. Saves send the revision they are based on
+// (the server rejects stale ones), and an open page checks for newer revisions and reloads.
+let serverRevision = 0, lastLocalChangeAt = 0;
+const RELOAD_VIEW_KEY = 'ha-views:reload-view', RELOAD_MESSAGE_KEY = 'ha-views:reload-message';
+function reloadLayout(message = '') {
+  try { sessionStorage.setItem(RELOAD_VIEW_KEY, model.activeViewId || ''); if (message) sessionStorage.setItem(RELOAD_MESSAGE_KEY, message); } catch {}
+  location.reload();
+}
+let remoteCheckRunning = false;
+async function checkRemoteLayout() {
+  if (document.hidden || remoteCheckRunning || !appRevealed || saveRunning || savePending || Date.now() - lastLocalChangeAt < 3000) return;
+  remoteCheckRunning = true;
+  try {
+    const { revision } = await api('rewrite_state_revision');
+    if (!(Number(revision) > serverRevision) || saveRunning || savePending) return;
+    if (editMode) { notifyWithAction('Układ zmieniono na innym urządzeniu', 'Wczytaj', () => reloadLayout(), 15000); return; }
+    reloadLayout('Wczytano zmiany z innego urządzenia');
+  } catch {} finally { remoteCheckRunning = false; }
+}
 async function queueSave() {
   if (isViewer()) return;
   clearTimeout(saveTimer); savePending = true;
   if (saveRunning) return;
   saveRunning = true;
   while (savePending) {
-    savePending = false; const snapshot = clone(model); delete snapshot.entities;
-    try { await api('rewrite_state', jsonOptions(snapshot)); els.editorStatus.textContent = 'Zapisano'; }
-    catch (error) { savePending = true; els.editorStatus.textContent = 'Błąd zapisu'; notify(`Błąd zapisu: ${error.message}`, true); await new Promise(r => setTimeout(r, 900)); }
+    savePending = false; const snapshot = clone(model); delete snapshot.entities; snapshot.baseRevision = serverRevision;
+    try { const result = await api('rewrite_state', jsonOptions(snapshot)); if (Number.isFinite(Number(result?.revision))) serverRevision = model.revision = Number(result.revision); els.editorStatus.textContent = 'Zapisano'; }
+    catch (error) {
+      if (error.status === 409) { savePending = false; saveRunning = false; reloadLayout('Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.'); return; }
+      savePending = true; els.editorStatus.textContent = 'Błąd zapisu'; notify(`Błąd zapisu: ${error.message}`, true); await new Promise(r => setTimeout(r, 900)); }
   }
   saveRunning = false;
 }
@@ -1899,6 +1924,7 @@ function connectEvents() {
 }
 function resumeLiveConnection() {
   if (document.hidden || !appRevealed) return;
+  checkRemoteLayout();
   clearTimeout(resumeTimer); resumeTimer = setTimeout(() => {
     refreshStates();
     if (!entityEvents || entityEvents.readyState === EventSource.CLOSED) connectEvents();
@@ -2243,6 +2269,7 @@ async function boot() {
   try { const layout = await layoutRequest; if (layout.error) throw layout.error; const saved = layout.data; if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
   catch (error) { notify(`Nie udało się wczytać układu: ${error.message}`, true); }
   model.settings = { snapEnabled: true, snapStep: .25, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
+  serverRevision = model.revision = Number(model.revision) || 0;
   uiLanguage = model.settings.language === 'pl' ? 'pl' : 'en';
   try { localStorage.setItem(LANGUAGE_CACHE_KEY, uiLanguage); } catch {}
   applyLanguage();
@@ -2264,6 +2291,8 @@ async function boot() {
   await settleWithin(Promise.all([statesReady, iconsReady]), 1500);
   clearTimeout(revealFallback); revealApp();
   connectEvents();
+  try { const message = sessionStorage.getItem(RELOAD_MESSAGE_KEY); sessionStorage.removeItem(RELOAD_MESSAGE_KEY); if (message) notify(message); } catch {}
+  setInterval(checkRemoteLayout, 20000);
 }
 
 boot();
