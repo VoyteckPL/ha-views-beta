@@ -1,3 +1,10 @@
+## 0.4.1-beta.160
+
+- Flow: usunięto zdublowaną ramkę zaznaczenia; pozostała jedna ramka z uchwytami.
+- Flow: ramka obejmuje całą zawartość, także większe chevrony i segmenty.
+- Flow: dodano regulację liczby elementów (1–8).
+- Flow: obrót nazwano korektą obrotu i dodano przycisk Reset.
+
 ## 0.4.1-beta.159
 
 - Naprawiono błąd startu aplikacji po dodaniu uchwytów Flow.
