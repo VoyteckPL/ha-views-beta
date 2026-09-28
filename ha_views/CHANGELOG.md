@@ -1,3 +1,9 @@
+## 0.4.1-beta.166
+
+- Flow: dodano niezależne kopiowanie i wklejanie stylu wyłącznie między Flow.
+- Flow: paleta kolorów działa wielokrotnie bez zamykania i ponownego otwierania edytora.
+- Flow: pełne chevrony obsługują widoczny obrys oraz jego grubość.
+
 ## 0.4.1-beta.165
 
 - Flow: usunięto szerokość pola — ramka zawsze ma dokładnie rozmiar zawartości.
