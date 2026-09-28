@@ -1,3 +1,8 @@
+## 0.4.1-beta.161
+
+- Flow: ramka zaznaczenia śledzi element podczas przeciągania.
+- Flow: cztery narożne uchwyty zmieniają jednolicie rozmiar chevronów.
+
 ## 0.4.1-beta.160
 
 - Flow: usunięto zdublowaną ramkę zaznaczenia; pozostała jedna ramka z uchwytami.
