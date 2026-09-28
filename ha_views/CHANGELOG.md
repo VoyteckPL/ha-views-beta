@@ -1,3 +1,9 @@
+## 0.3.0-beta.139
+
+- Viewer mode: ukryto także ikonę edycji, edytor widoków i zębatkę wraz z ich panelami dla zwykłych użytkowników.
+- Kliknięcie markera w Viewer mode nadal świadomie otwiera wyłącznie More Info; sterowanie ON/OFF pozostaje dostępne dla administratora.
+- Rozpoznawanie administratora uwzględnia grupę Home Assistant `system-admin`.
+
 ## 0.3.0-beta.138
 
 - Dodano Viewer mode dla zwykłych użytkowników Home Assistant: panel jest widoczny, ale edycja widoków, markerów i teł oraz sterowanie encjami są blokowane także po stronie serwera.
