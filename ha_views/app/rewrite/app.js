@@ -20,11 +20,13 @@ const TRANSLATIONS = {
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
     'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Przezroczystość':'Opacity','Przezroczystość ON':'ON opacity','Przezroczystość OFF':'OFF opacity','Przezroczystość obrysu':'Outline opacity','Przezroczystość obrysu ON':'ON outline opacity','Przezroczystość obrysu OFF':'OFF outline opacity','Kolor zależny ON/OFF':'Colour depends on ON/OFF','Przezroczystość zależna ON/OFF':'Opacity depends on ON/OFF','Ikona zależna ON/OFF':'Icon depends on ON/OFF','Tło zależne ON/OFF':'Background depends on ON/OFF','Ramka zależna ON/OFF':'Border depends on ON/OFF','Obrys zależny ON/OFF':'Outline depends on ON/OFF','Ikona podstawowa':'Base icon','Ikona ON':'ON icon','Ikona OFF':'OFF icon','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error',
     "Encja i kierunek":"Entity and direction","Aktualna wartość":"Current value","Sterowanie":"Control","Stały kierunek":"Fixed direction","Kierunek wg znaku + / −":"Direction by sign + / −","Kierunek dla +":"Direction for +","Kierunek dla −":"Direction for −","Osobny styl dla −":"Separate style for −","Prawo":"Right","Lewo":"Left","Próg aktywności":"Activity threshold","Ukryj poniżej progu":"Hide below threshold","Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.":"Flow is inactive when |value| ≤ threshold — e.g. a threshold of 0 turns off the solar arrows at 0 W at night. An inactive Flow is dimmed without animation or, with hiding enabled, fully invisible. In edit mode a hidden Flow shows only a dashed frame so it can still be clicked.","Kształt":"Shape","Rodzaj":"Type","Chevron":"Chevron","Strzałka":"Arrow","Grot":"Arrowhead","Trójkąt":"Triangle","Segment":"Segment","Liczba":"Count","Grubość trzonu":"Shaft thickness","Rozmiar i pozycja":"Size and position","Odstęp":"Spacing","Korekta obrotu":"Rotation offset","Długość i szerokość to rozmiar ramki liczony względem kierunku strzałki. Liczba i odstęp rozkładają elementy wewnątrz ramki i nie zmieniają jej rozmiaru.":"Length and width are the frame size, measured along the arrow direction. Count and spacing arrange the items inside the frame and do not change its size.","Kolory i wygląd":"Colours and appearance","Kolor dla +":"Colour for +","Kolor dla −":"Colour for −","Obrys":"Outline","Kolor obrysu":"Outline colour","Poświata":"Glow","Osobny kolor poświaty":"Separate glow colour","Kolor poświaty":"Glow colour","Krycie":"Opacity","Animacja":"Animation","Typ":"Type","Brak":"None","Pulsowanie":"Pulse","Przepływ":"Flow","Tempo":"Speed","Tempo od wartości":"Speed follows value","Pełne tempo przy":"Full speed at","Wartość +":"Value +","Wartość −":"Value −","Styl dla +":"Style for +","Styl dla −":"Style for −","Styl wspólny dla + i −":"Shared style for + and −","Podgląd i edycja dla wartości dodatniej.":"Preview and editing for a positive value.","Podgląd i edycja dla wartości ujemnej.":"Preview and editing for a negative value.","Każda strona ma własny styl.":"Each side has its own style.","Kształt, rozmiar i animacja są wspólne — kolor jest osobny.":"Shape, size and animation are shared — only the colour is separate.","Kopiuj styl Flow":"Copy Flow style","Wklej styl Flow":"Paste Flow style","Usuń Flow":"Delete Flow","Dodaj Flow testowy":"Add Flow","Skopiowano styl Flow — wklej go w innym Flow":"Flow style copied — paste it into another Flow","Wklejono styl Flow":"Flow style pasted","Przywrócono domyślny Flow":"Flow defaults restored","Dodano Flow — przeciągnij go w trybie edycji":"Flow added — drag it in edit mode","Usunięto Flow":"Flow removed","Przywrócić domyślny Flow?":"Restore Flow defaults?","Obecne ustawienia wyglądu i działania Flow zostaną zastąpione domyślnymi. Pozycja i nazwa zostaną zachowane.":"The current Flow appearance and behaviour settings will be replaced with defaults. Position and name are kept.","Usunąć Flow?":"Delete Flow?","Kolor ON":"ON colour","Kolor OFF":"OFF colour","Kolor obrysu ON":"ON outline colour","Kolor obrysu OFF":"OFF outline colour","Grubość obrysu":"Outline thickness","Grubość obrysu ON":"ON outline thickness","Grubość obrysu OFF":"OFF outline thickness","Grubość ON":"ON thickness","Grubość OFF":"OFF thickness","Zależne ON/OFF":"Depends on ON/OFF","Przezrocz. ON":"ON opacity","Przezrocz. OFF":"OFF opacity","Lewo / prawo":"Left / right","Góra / dół":"Up / down","Prostokąt":"Rectangle","Zaokrąglony":"Rounded","Koło / owal":"Circle / oval","Gradient":"Gradient","Auto":"Auto","Monospace":"Monospace","Przywróć domyślną wartość":"Restore default value","Wybierz kolor":"Choose colour","Własny kolor":"Custom colour","Własny kolor RGB":"Custom RGB colour","Podaj kolor w formacie #RRGGBB.":"Enter a colour in #RRGGBB format.","Ustaw":"Set","Typ markera i jego ustawienia wyglądu zostaną zastąpione domyślnymi.":"The marker type and its appearance settings will be replaced with defaults.","Zmień":"Change","Nie można przełączyć encji w tym stanie.":"This entity cannot be toggled in its current state.","Stan encji nie został jeszcze potwierdzony.":"The entity state has not been confirmed yet.","Błąd encji":"Entity error","Błąd przełączania":"Toggle error","Nie udało się pobrać historii":"Could not load history","Pobierz tło":"Download background","Wybierz tło widoku":"Choose view background","Wgraj nowy obraz":"Upload a new image","Wybierz istniejące tło":"Choose an existing background","Wybierz istniejące tło…":"Choose an existing background…","Załaduj wybrane tło":"Load selected background","Wybierz kolor tła":"Choose background colour","Format kolorowego tła":"Colour background format","Usunąć tło?":"Delete background?","Zresetować dopasowanie tła?":"Reset background fit?","Skala, pozycja i tryb dopasowania tego tła wrócą do wartości domyślnych.":"Scale, position and fit mode of this background will return to defaults.","Resetuj":"Reset","Brak aktywnych integracji.":"No active integrations.","Brak encji.":"No entities.","Brak historii w wybranym okresie.":"No history in the selected period.","Brak pasujących encji.":"No matching entities.","Nie dodano jeszcze żadnych elementów.":"Nothing has been added yet.","Widok ogólny":"Overview",
-    "Brak entity_id":"Missing entity_id","Brak entry_id":"Missing entry_id","Brak listy encji":"Missing entity list","Brak pliku":"No file","Dane muszą być obiektem JSON":"Data must be a JSON object","Dozwolone: PNG, JPG, JPEG, WEBP":"Allowed: PNG, JPG, JPEG, WEBP","Layout jest za duży":"Layout is too large","Layout musi być obiektem JSON":"Layout must be a JSON object","Nie znaleziono tła":"Background not found","Nieprawidlowa encja":"Invalid entity","Nieprawidłowy JSON":"Invalid JSON","Plik stylów jest za duży":"Style file is too large","Stan jest za duży":"State is too large","Stan musi być obiektem JSON":"State must be a JSON object"
+    "Brak entity_id":"Missing entity_id","Brak entry_id":"Missing entry_id","Brak listy encji":"Missing entity list","Brak pliku":"No file","Dane muszą być obiektem JSON":"Data must be a JSON object","Dozwolone: PNG, JPG, JPEG, WEBP":"Allowed: PNG, JPG, JPEG, WEBP","Layout jest za duży":"Layout is too large","Layout musi być obiektem JSON":"Layout must be a JSON object","Nie znaleziono tła":"Background not found","Nieprawidlowa encja":"Invalid entity","Nieprawidłowy JSON":"Invalid JSON","Plik stylów jest za duży":"Style file is too large","Stan jest za duży":"State is too large","Stan musi być obiektem JSON":"State must be a JSON object",
+    "Cofnij":"Undo","Przywrócono widok":"View restored","Usunięto widok":"View deleted","Widok jest pusty.":"The view is empty.","Usuń widok":"Delete view","Usunąć widok?":"Delete view?"
   }
 };
 function translateValue(value) {
   const text = String(value ?? '');
+  if (text.includes('\n')) return text.split('\n').map(translateValue).join('\n');
   if (uiLanguage === 'pl') {
     translateValue.reverse ||= Object.fromEntries(Object.entries(TRANSLATIONS.en).map(([pl,en]) => [en,pl]));
     return translateValue.reverse[text] || text;
@@ -36,6 +38,8 @@ function translateValue(value) {
   const deleteMarkerMatch = text.match(/^„(.+)” zniknie z tego widoku razem ze swoimi ustawieniami\.$/);
   if (deleteMarkerMatch) return `“${deleteMarkerMatch[1]}” will be removed from this view together with its settings.`;
   if (text.startsWith('Skopiowano styl ')) return `Style copied: ${text.slice('Skopiowano styl '.length)}`;
+  const viewCountsMatch = text.match(/^Markery: (\d+), Flow: (\d+)\.$/);
+  if (viewCountsMatch) return `Markers: ${viewCountsMatch[1]}, Flow: ${viewCountsMatch[2]}.`;
   const deleteFlowMatch = text.match(/^„(.+)” zniknie z tego widoku\. Zwykły marker tej encji zostanie\.$/);
   if (deleteFlowMatch) return `“${deleteFlowMatch[1]}” will be removed from this view. The regular marker of this entity stays.`;
   const deleteBackgroundMatch = text.match(/^Tło „(.+)” zostanie trwale usunięte ze wszystkich widoków\.$/);
@@ -168,6 +172,7 @@ const freshMarker = (entity, integration) => ({
 
 let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: .25 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
 let stateCache = {}, editMode = false, selectedId = null, selectedFlowId = null, styleClipboard = null, flowStyleClipboard = null, saveTimer = null, access = { viewer: false };
+let viewSwipe = null, tabDrag = null, suppressTabClick = false;
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
@@ -196,8 +201,17 @@ async function api(path, options = {}) {
 }
 const jsonOptions = body => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 function notify(text, error = false) {
+  els.toast.classList.remove('with-action');
   els.toast.textContent = text; els.toast.style.borderColor = error ? '#ff6374' : ''; els.toast.classList.add('visible');
   clearTimeout(notify.timer); notify.timer = setTimeout(() => els.toast.classList.remove('visible'), 2200);
+}
+function notifyWithAction(text, actionText, action, duration = 7000) {
+  els.toast.innerHTML = ''; els.toast.style.borderColor = ''; els.toast.classList.add('visible','with-action');
+  const label = document.createElement('span'), button = document.createElement('button');
+  label.textContent = text; button.type = 'button'; button.textContent = actionText;
+  button.addEventListener('click', () => { clearTimeout(notify.timer); els.toast.classList.remove('visible','with-action'); action(); }, { once:true });
+  els.toast.append(label, button);
+  clearTimeout(notify.timer); notify.timer = setTimeout(() => els.toast.classList.remove('visible','with-action'), duration);
 }
 function closeAppConfirm(result = false) {
   if (!confirmResolver) return;
@@ -325,7 +339,7 @@ function showMainView(name) {
 }
 function renderViewSelector() {
   if (!els.sceneTabs) return;
-  els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${escapeHtml(model.views[id].name)}</button>`).join('');
+  els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${model.settings?.defaultViewId === id ? '<i class="mdi mdi-home-variant-outline scene-tab-home" title="Widok startowy" aria-label="Widok startowy"></i>' : ''}<span data-no-i18n>${escapeHtml(model.views[id].name)}</span></button>`).join('');
   els.viewDelete.disabled = model.viewOrder.length <= 1;
   const index = model.viewOrder.indexOf(model.activeViewId);
   if (els.viewMoveLeft) els.viewMoveLeft.disabled = index <= 0;
@@ -346,6 +360,37 @@ async function addSceneView() {
   const id = `view_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
   model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: mobileView() ? 9 / 16 : 16 / 9, onboardingDone: false, backgroundTransforms: {}, entities: {}, flows: {} }; model.viewOrder.push(id);
   await switchSceneView(id, false); scheduleSave(true); notify('Dodano nowy widok');
+}
+// Tabs can be reordered by dragging (mouse: drag; touch: long-press, then drag). Admin only.
+function startTabDrag(event) {
+  const tab = event.target.closest('[data-scene-view]');
+  if (!tab || isViewer() || model.viewOrder.length < 2 || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  const touch = event.pointerType !== 'mouse';
+  tabDrag = { tab, id:event.pointerId, x:event.clientX, y:event.clientY, active:false, timer:null };
+  const activate = () => { if (!tabDrag) return; tabDrag.active = true; tab.classList.add('dragging'); els.sceneTabs.classList.add('reordering'); try { tab.setPointerCapture(event.pointerId); } catch {} navigator.vibrate?.(15); };
+  if (touch) tabDrag.timer = setTimeout(activate, 380);
+  const move = e => {
+    if (!tabDrag || e.pointerId !== tabDrag.id) return;
+    const dx = e.clientX - tabDrag.x, dy = e.clientY - tabDrag.y;
+    if (!tabDrag.active) { if (touch) { if (Math.hypot(dx, dy) > 8) finish(); return; } if (Math.abs(dx) > 6) activate(); else return; }
+    e.preventDefault();
+    const siblings = $$('[data-scene-view]', els.sceneTabs).filter(item => item !== tab);
+    const before = siblings.find(item => { const r = item.getBoundingClientRect(); return e.clientX < r.left + r.width / 2; });
+    if (before) { if (tab.nextElementSibling !== before) els.sceneTabs.insertBefore(tab, before); } else if (els.sceneTabs.lastElementChild !== tab) els.sceneTabs.append(tab);
+    const r = els.sceneTabs.getBoundingClientRect();
+    if (e.clientX < r.left + 24) els.sceneTabs.scrollLeft -= 8; else if (e.clientX > r.right - 24) els.sceneTabs.scrollLeft += 8;
+  };
+  const finish = () => {
+    if (!tabDrag) return;
+    clearTimeout(tabDrag.timer); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish);
+    const wasActive = tabDrag.active; tabDrag = null; tab.classList.remove('dragging'); els.sceneTabs.classList.remove('reordering');
+    if (!wasActive) return;
+    suppressTabClick = true; setTimeout(() => { suppressTabClick = false; }, 200);
+    const order = $$('[data-scene-view]', els.sceneTabs).map(item => item.dataset.sceneView);
+    if (order.join('|') === model.viewOrder.join('|')) return renderViewSelector();
+    model.viewOrder = order; renderViewSelector(); scheduleSave(true); notify('Zmieniono kolejność widoków');
+  };
+  window.addEventListener('pointermove', move, { passive:false }); window.addEventListener('pointerup', finish); window.addEventListener('pointercancel', finish);
 }
 function setDefaultSceneView() {
   if (!model.views[model.activeViewId]) return;
@@ -372,9 +417,19 @@ async function duplicateSceneView() {
 }
 async function deleteSceneView() {
   const view = activeSceneView(); if (!view || model.viewOrder.length <= 1) return;
-  if (!await appConfirm({ title: 'Usunąć widok?', message: `„${view.name}” oraz wszystkie markery tego widoku zostaną usunięte.`, confirmText: 'Usuń widok', danger: true })) return;
-  const index = model.viewOrder.indexOf(view.id); delete model.views[view.id]; model.viewOrder.splice(index, 1);
-  model.activeViewId = model.viewOrder[Math.max(0, index - 1)]; if (model.settings?.defaultViewId === view.id) model.settings.defaultViewId = model.activeViewId; attachActiveEntities(); renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations(); await loadBackgrounds(true); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates(); scheduleSave(true); notify('Usunięto widok');
+  const markerCount = Object.keys(view.entities || {}).length, flowCount = Object.keys(view.flows || {}).length;
+  const message = `„${view.name}” oraz wszystkie markery tego widoku zostaną usunięte.`;
+  const details = markerCount || flowCount ? `Markery: ${markerCount}, Flow: ${flowCount}.` : 'Widok jest pusty.';
+  if (!await appConfirm({ title: 'Usunąć widok?', message: message + '\n' + details, confirmText: 'Usuń widok', danger: true })) return;
+  const index = model.viewOrder.indexOf(view.id), snapshot = clone(view), wasDefault = model.settings?.defaultViewId === view.id;
+  delete model.views[view.id]; model.viewOrder.splice(index, 1);
+  model.activeViewId = model.viewOrder[Math.max(0, index - 1)]; if (wasDefault) model.settings.defaultViewId = model.activeViewId; attachActiveEntities(); renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations(); await loadBackgrounds(true); renderMarkers(); els.markers.classList.remove('background-pending'); await refreshStates(); scheduleSave(true);
+  notifyWithAction('Usunięto widok', 'Cofnij', async () => {
+    if (model.views[snapshot.id]) return;
+    model.views[snapshot.id] = snapshot; model.viewOrder.splice(Math.min(index, model.viewOrder.length), 0, snapshot.id);
+    if (wasDefault) model.settings.defaultViewId = snapshot.id;
+    await switchSceneView(snapshot.id, false); scheduleSave(true); notify('Przywrócono widok');
+  });
 }
 function rgba(hex, alpha) {
   const raw = String(hex || '#000000').replace('#', '');
@@ -1117,6 +1172,7 @@ function renderFlows() {
 }
 function startFlowDrag(event) {
   if (!editMode || event.button !== 0) return;
+  closeCompactMenus();
   const flow = activeSceneView()?.flows?.[event.currentTarget.dataset.flowId]; if (!flow || flow.geometryLocked) return;
   event.preventDefault(); event.stopPropagation();
   const node = event.currentTarget, start = { x:event.clientX, y:event.clientY, px:Number(flow.xPercent), py:Number(flow.yPercent) };
@@ -1846,6 +1902,7 @@ function viewportPointerDown(event) {
   // A new primary touch after an interrupted WebView gesture means every remembered pointer is stale.
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+  viewSwipe = mobileView() && !editMode && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target } : null;
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
     pinchGesture = { distance:Math.hypot(a.x-b.x,a.y-b.y), zoom:viewZoom, panX:viewPanX, panY:viewPanY, x:(a.x+b.x)/2-r.left, y:(a.y+b.y)/2-r.top };
@@ -1862,6 +1919,7 @@ function viewportPointerDown(event) {
 }
 function viewportPointerMove(event) {
   if (!viewPointers.has(event.pointerId)) return;
+  if (viewPointers.size > 1) viewSwipe = null;
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
     const [a,b] = [...viewPointers.values()], distance = Math.hypot(a.x-b.x,a.y-b.y), next = clamp(pinchGesture.zoom * distance / Math.max(1,pinchGesture.distance),minViewZoom(),4), ratio = next / pinchGesture.zoom;
@@ -1879,8 +1937,20 @@ function viewportPointerUp(event) {
     return;
   }
   viewPointers.delete(event.pointerId);
+  if (viewSwipe?.id === event.pointerId) finishViewSwipe(event);
   if (panGesture?.id === event.pointerId) panGesture = null;
   if (viewPointers.size < 2) pinchGesture = null;
+}
+// One-finger horizontal swipe switches to the neighbouring view (view mode, phone), but only
+// when the gesture was not used to pan a zoomed-in or panoramic scene.
+function finishViewSwipe(event) {
+  const swipe = viewSwipe; viewSwipe = null;
+  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
+  if (Date.now() - swipe.t > 800 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.6 || Math.abs(viewPanX - swipe.panX) > 12) return;
+  const index = model.viewOrder.indexOf(model.activeViewId), target = model.viewOrder[index + (dx < 0 ? 1 : -1)];
+  if (!target) return;
+  const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
+  switchSceneView(target);
 }
 function startDesktopPan(event) {
   if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;
@@ -1914,7 +1984,10 @@ function bindEvents() {
     model.settings ||= {}; model.settings.language = uiLanguage;
     applyLanguage(); scheduleSave(true);
   });
-  els.sceneTabs?.addEventListener('click', event => { const tab=event.target.closest('[data-scene-view]'); if(!tab)return; showMainView('overview'); switchSceneView(tab.dataset.sceneView); });
+  els.sceneTabs?.addEventListener('pointerdown', startTabDrag);
+  els.sceneTabs?.addEventListener('touchmove', event => { if (tabDrag?.active) event.preventDefault(); }, { passive:false });
+  els.sceneTabs?.addEventListener('contextmenu', event => { if (tabDrag) event.preventDefault(); });
+  els.sceneTabs?.addEventListener('click', event => { if (suppressTabClick) { suppressTabClick = false; event.preventDefault(); event.stopPropagation(); return; } const tab=event.target.closest('[data-scene-view]'); if(!tab)return; showMainView('overview'); switchSceneView(tab.dataset.sceneView); });
   els.settingsToggle?.addEventListener('click', () => { const open = !els.settingsMenu?.classList.contains('open'); closeCompactMenus(); els.settingsMenu?.classList.toggle('open', open); els.settingsToggle?.classList.toggle('active', open); });
   els.integrationsButton?.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
   els.viewManage?.addEventListener('click', () => { const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });

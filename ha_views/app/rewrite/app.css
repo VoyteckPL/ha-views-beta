@@ -537,4 +537,11 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 /* beta.175: hidden-below-threshold Flow shows only a dashed placeholder in edit mode */
 .editing .flow-marker.flow-hidden-preview{opacity:1!important;outline:1px dashed rgba(143,223,255,.55);outline-offset:2px}
 .flow-marker.flow-hidden-preview .flow-train{visibility:hidden}
+/* beta.178: view tabs drag, startup home icon, delete separated, undo toast */
+.scene-view-tab{display:inline-flex;align-items:center;gap:5px}.scene-tab-home{font-size:14px;line-height:1;opacity:.85}
+.scene-tabs .scene-view-tab.dragging{opacity:.85;outline:1px dashed rgba(143,223,255,.7);outline-offset:-3px;background:rgba(32,185,231,.14);cursor:grabbing}
+.scene-tabs.reordering{cursor:grabbing;user-select:none}.scene-tabs .scene-view-tab{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.view-management .view-delete-separated{margin-top:6px;position:relative}.view-management .view-delete-separated:before{content:"";position:absolute;left:4px;right:4px;top:-5px;border-top:1px solid rgba(139,190,216,.2)}
+.toast.with-action{display:flex;align-items:center;gap:12px;pointer-events:auto}.toast.with-action button{height:28px;padding:0 12px;font-size:12px;font-weight:800;color:#8fdfff;border-color:rgba(32,185,231,.55);background:#123b50}
+#app-confirm-message{white-space:pre-line}
 

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-177">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-178">
 </head>
 <body>
   <header class="topbar">
@@ -19,7 +19,6 @@
         <button id="view-add" class="view-action" title="Dodaj widok" aria-label="Dodaj widok"><i class="mdi mdi-plus"></i><span>Dodaj widok</span></button>
         <button id="view-rename" class="view-action" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i><span>Zmień nazwę</span></button>
         <button id="view-duplicate" class="view-action" title="Duplikuj widok" aria-label="Duplikuj widok"><i class="mdi mdi-content-duplicate"></i><span>Duplikuj widok</span></button><button id="view-default" class="view-action" title="Ustaw jako widok startowy" aria-label="Ustaw jako widok startowy"><i class="mdi mdi-home-variant-outline"></i><span>Ustaw jako widok startowy</span></button>
-        <button id="view-delete" class="view-action danger" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
         <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span></button>
         <div id="background-bar" class="background-bar">
           <select id="background-select" aria-label="Wybierz tło"></select>
@@ -37,6 +36,7 @@
           <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           <span id="background-status"></span>
         </div>
+        <button id="view-delete" class="view-action danger view-delete-separated" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
       </div></div>
     </div>
     <div class="top-actions">
@@ -183,6 +183,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-177"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-178"></script>
 </body>
 </html>

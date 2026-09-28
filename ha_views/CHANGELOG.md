@@ -1,3 +1,11 @@
+## 0.4.1-beta.178
+
+- Widoki: kolejność zakładek można zmieniać przeciąganiem (mysz: przeciągnij; telefon: przytrzymaj i przeciągnij). Strzałki w menu zostają.
+- Widoki: widok startowy ma ikonę domku na zakładce.
+- Widoki: „Usuń widok” jest na dole menu, oddzielony od reszty; potwierdzenie podaje liczbę markerów i Flow, a po usunięciu przez kilka sekund można kliknąć „Cofnij”.
+- Widoki: na telefonie (poza trybem edycji) przesunięcie palcem w lewo/prawo przełącza na sąsiedni widok. Przy przybliżonym obrazie lub panoramie przesunięcie nadal przewija obraz.
+- Poprawka: kliknięcie Flow w trybie edycji zamyka menu edycji, tak jak kliknięcie markera.
+
 ## 0.4.1-beta.177
 
 - Język: dodano ok. 150 brakujących tłumaczeń PL → EN — cały edytor Flow, opcje markerów (kolory i obrys ON/OFF, kształt ramki, pozycja ikony), okna potwierdzeń, ekran powitalny, tła, historia, wyszukiwanie encji, komunikaty błędów i etykiety ikon.
