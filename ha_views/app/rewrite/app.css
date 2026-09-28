@@ -434,3 +434,11 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .search-result{margin-bottom:6px}
 
 .view-management .view-order-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:7px;width:100%;min-width:0;height:33px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:#102b3b;color:#d8f1fa;font-size:11px;font-weight:750}.view-order-row>i{color:#62dafb;font-size:16px;text-align:center}.view-order-row>span{white-space:nowrap}.view-order-row>div{display:flex;gap:4px}.view-order-row button{display:grid;place-items:center;width:27px;height:27px;padding:0;border:1px solid rgba(99,181,216,.3);border-radius:7px;background:#0d2e3e;color:#b8eafa;font-size:15px}.view-order-row button:disabled{opacity:.3;cursor:not-allowed}.selection.geometry-locked{border-color:rgba(139,190,216,.35);box-shadow:none}.selection.geometry-locked i{display:none}
+
+/* beta.144: compact toolbar cleanup */
+.top-actions>#edit-toggle{display:grid;place-items:center;width:34px;height:34px;padding:0;border-radius:10px}
+.top-actions>#edit-toggle:not(.active){color:#d8f1fa;border-color:rgba(99,181,216,.38);background:#0d2939;box-shadow:none}
+.view-management{font-size:11px}
+.view-management .view-order-row{display:block;width:100%;height:33px;padding:0;border:0;background:transparent}
+.view-management .view-order-row>div{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;height:33px}
+.view-management .view-order-row button{width:100%;height:33px;font:inherit;font-size:15px}
