@@ -138,7 +138,7 @@ const freshMarker = (entity, integration) => ({
 });
 
 let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: .25 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
-let stateCache = {}, editMode = false, selectedId = null, styleClipboard = null, saveTimer = null;
+let stateCache = {}, editMode = false, selectedId = null, styleClipboard = null, saveTimer = null, access = { viewer: false };
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
@@ -338,6 +338,7 @@ function markerBackgroundFill(color, opacity, variant = 'none', style = {}) {
   return rgba(color, alpha);
 }
 function scheduleSave(immediate = false) {
+  if (isViewer()) return Promise.resolve();
   model.revision = (model.revision || 0) + 1; clearTimeout(saveTimer);
   if (immediate) return queueSave();
   saveTimer = setTimeout(queueSave, 200);
@@ -551,6 +552,7 @@ function updateMobilePanStart() {
   resetViewZoom(); syncBackgroundTransformControls(); scheduleSave();
 }
 async function queueSave() {
+  if (isViewer()) return;
   clearTimeout(saveTimer); savePending = true;
   if (saveRunning) return;
   saveRunning = true;
@@ -1025,7 +1027,7 @@ function onMarkerClick(event) {
   event.stopPropagation();
   const marker = model.entities[event.currentTarget.dataset.entityId];
   if (!marker) return;
-  if (!editMode) return marker.tapAction === 'toggle' && isToggleableMarker(marker) ? toggleMarker(marker) : openMoreInfo(marker.entityId);
+  if (!editMode) return isViewer() ? openMoreInfo(marker.entityId) : (marker.tapAction === 'toggle' && isToggleableMarker(marker) ? toggleMarker(marker) : openMoreInfo(marker.entityId));
   selectMarker(marker.entityId);
 }
 function focusSelectedMarkerOnMobile() {
@@ -1577,7 +1579,7 @@ function bindEvents() {
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDefault?.addEventListener('click', setDefaultSceneView); els.viewMoveLeft?.addEventListener('click', () => moveSceneView(-1)); els.viewMoveRight?.addEventListener('click', () => moveSceneView(1)); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
-  els.editToggle.addEventListener('click', () => { closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
     model.settings.snapStep = Number(button.dataset.gridStep);
@@ -1708,8 +1710,19 @@ function startResize(event) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', finish); window.addEventListener('pointercancel', finish);
 }
 
+function isViewer() { return access?.viewer === true; }
+function applyViewerMode() {
+  if (!isViewer()) return;
+  editMode = false; selectedId = null; closeEditor?.();
+  els.body.classList.remove('editing'); els.body.classList.add('viewer-mode');
+  [els.editToggle, els.viewManage, els.settingsToggle].forEach(el => { if (el) el.hidden = true; });
+}
+
 async function boot() {
-  bindEvents(); let legacyMigrated = false;
+  bindEvents();
+  try { access = await api('access'); } catch { access = { viewer: true }; }
+  applyViewerMode();
+  let legacyMigrated = false;
   try { const saved = await api('rewrite_state'); if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
   catch (error) { notify(`Nie udało się wczytać układu: ${error.message}`, true); }
   model.settings = { snapEnabled: true, snapStep: .25, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
