@@ -506,3 +506,6 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 /* beta.162: Flow visual styling */
 .flow-chevron.flow-filled{border:0!important;clip-path:polygon(18% 0,100% 50%,18% 100%,0 100%,62% 50%,0 0);transform:none}.flow-chevron.flow-filled{box-sizing:border-box}
+
+/* beta.163: SVG chevrons keep their shape at any aspect ratio */
+.flow-chevron{display:block;flex:0 0 auto;box-sizing:border-box;border:0!important;transform:none!important;overflow:visible;background:none!important;clip-path:none!important}.flow-chevron path{vector-effect:non-scaling-stroke}
