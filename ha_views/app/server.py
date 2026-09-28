@@ -504,7 +504,19 @@ async def request_is_admin(request):
     try:
         users = await ha_ws_command({"type": "config/auth/list"})
         user = next((item for item in users if str(item.get("id", "")) == user_id), None)
-        is_admin = bool(user and (user.get("is_admin") or user.get("is_owner")))
+        groups = (user or {}).get("groups") or (user or {}).get("group_ids") or []
+        group_ids = {
+            str(group.get("id", "")) if isinstance(group, dict) else str(group)
+            for group in groups
+        }
+        is_admin = bool(
+            user
+            and (
+                user.get("is_admin")
+                or user.get("is_owner")
+                or "system-admin" in group_ids
+            )
+        )
     except Exception as err:
         print(f"HA Views access lookup failed: {type(err).__name__}: {err}", flush=True)
         is_admin = False
