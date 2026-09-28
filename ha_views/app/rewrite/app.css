@@ -548,4 +548,10 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .flow-animate-flow .flow-train{animation-name:flow-stream-period}
 @keyframes flow-stream-period{from{transform:translateX(calc(var(--flow-period,0px) * -1))}to{transform:translateX(0)}}
 .flow-marker.flow-overflow{clip-path:inset(-60px 0 -60px 0)}
+/* beta.186: swipe preview of the neighbouring view */
+.scene-card{position:relative}
+.swipe-preview{position:absolute;z-index:4;overflow:hidden;pointer-events:none;will-change:transform}
+.swipe-preview .swipe-preview-scene{position:relative;width:100%;aspect-ratio:auto;min-height:0;max-height:none;overflow:hidden}
+.swipe-preview .swipe-preview-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;user-select:none;pointer-events:none}
+.swipe-preview .scene-empty{display:none}
 

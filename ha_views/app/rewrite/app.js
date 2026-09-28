@@ -1171,13 +1171,12 @@ function retimeFlowAnimations(node, duration) {
     if (Number.isFinite(progress)) animation.currentTime = progress * duration * 1000;
   }));
 }
-function renderFlows() {
-  const flows = Object.values(activeSceneView()?.flows || {}), existing = new Map($$('.flow-marker', els.markers).map(node => [node.dataset.flowId, node])), kept = new Set();
-  flows.forEach(flow => {
+// Builds the DOM node of one Flow (no listeners, no position/tempo); null when hidden.
+function buildFlowNode(flow) {
     const numericState = flowNumericState(flow.entityId), autoDirection = flow.directionMode === 'auto';
     const deadband = Math.max(0, Number(flow.deadband) || 0);
     const isActive = numericState === null || Math.abs(numericState) > deadband;
-    if (!isActive && flow.hideInactive && !editMode) return;
+    if (!isActive && flow.hideInactive && !editMode) return null;
     const previewSide = editMode && selectedFlowId === flow.id && autoDirection ? flowEditorSide : null;
     const side = previewSide || flowSideOf(flow, numericState), style = flowEffective(flow, side);
     const shape = FLOW_SHAPES.some(([key]) => key === style.shape) ? style.shape : 'chevron';
@@ -1210,16 +1209,25 @@ function renderFlows() {
     node.classList.toggle('flow-inactive', !isActive); node.classList.toggle('flow-hidden-preview', !isActive && Boolean(flow.hideInactive));
     node.classList.toggle('flow-animate-pulse', isActive && animation === 'pulse'); node.classList.toggle('flow-animate-flow', isActive && animation === 'flow');
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
+    return { node, signature: node.outerHTML, duration, durationKey: duration.toFixed(3) };
+}
+function placeFlowNode(node, flow, duration) {
+  node.style.left = Number(flow.xPercent) + '%'; node.style.top = Number(flow.yPercent) + '%';
+  node.style.setProperty('--flow-duration', duration.toFixed(3) + 's'); node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
+}
+function renderFlows() {
+  const flows = Object.values(activeSceneView()?.flows || {}), existing = new Map($$('.flow-marker', els.markers).map(node => [node.dataset.flowId, node])), kept = new Set();
+  flows.forEach(flow => {
+    const built = buildFlowNode(flow); if (!built) return;
+    const { node, signature, duration, durationKey } = built;
     // Unchanged Flow keeps its DOM node (and its running animation); only position and tempo are updated.
-    const signature = node.outerHTML, durationKey = duration.toFixed(3), previous = existing.get(flow.id);
+    const previous = existing.get(flow.id);
     if (previous && previous.dataset.signature === signature) {
       previous.style.left = Number(flow.xPercent) + '%'; previous.style.top = Number(flow.yPercent) + '%';
       if (previous.dataset.duration !== durationKey) { retimeFlowAnimations(previous, duration); previous.dataset.duration = durationKey; }
       kept.add(previous); return;
     }
-    node.dataset.signature = signature; node.dataset.duration = durationKey;
-    node.style.left = Number(flow.xPercent) + '%'; node.style.top = Number(flow.yPercent) + '%';
-    node.style.setProperty('--flow-duration', durationKey + 's'); node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
+    node.dataset.signature = signature; node.dataset.duration = durationKey; placeFlowNode(node, flow, duration);
     node.addEventListener('pointerdown', startFlowDrag);
     node.addEventListener('click', event => { event.stopPropagation(); if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; } if (editMode) openFlowEditor(flow.id); });
     if (previous) previous.replaceWith(node); else els.markers.append(node);
@@ -1899,8 +1907,14 @@ async function removeEntity(entityId) {
   if (!model.entities[entityId]) return; delete model.entities[entityId]; delete stateCache[entityId]; if (selectedId === entityId) closeEditor();
   renderMarkers(); renderIntegrations(); await queueSave(); notify('Usunięto marker i wszystkie jego ustawienia');
 }
+// Entities of every view: states of neighbouring views are kept fresh for the swipe preview.
+function allViewEntityIds() {
+  const ids = new Set(Object.keys(model.entities || {}));
+  Object.values(model.views || {}).forEach(view => { Object.keys(view.entities || {}).forEach(id => ids.add(id)); Object.values(view.flows || {}).forEach(flow => ids.add(flow.entityId)); });
+  return [...ids];
+}
 async function refreshStates() {
-  const ids = [...new Set([...Object.keys(model.entities), ...Object.values(activeSceneView()?.flows || {}).map(flow => flow.entityId)])]; if (!ids.length) return renderMarkers();
+  const ids = allViewEntityIds(); if (!ids.length) return renderMarkers();
   try {
     const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
     Object.entries(data.states || {}).forEach(([entityId, nextState]) => {
@@ -1918,7 +1932,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
@@ -1992,13 +2006,13 @@ function viewportPointerDown(event) {
     // In viewing mode a drag beginning on a marker is still a panorama; only a short tap opens More Info.
     if (canPan && (!editMode || !marker)) {
       panGesture = { id:event.pointerId, x:event.clientX, y:event.clientY, panX:viewPanX, panY:viewPanY, marker, moved:false };
-      els.scene.setPointerCapture?.(event.pointerId);
+      try { els.scene.setPointerCapture?.(event.pointerId); } catch {}
     }
   }
 }
 function viewportPointerMove(event) {
   if (!viewPointers.has(event.pointerId)) return;
-  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0); viewSwipe = null; }
+  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
@@ -2013,7 +2027,7 @@ function viewportPointerMove(event) {
 }
 function viewportPointerUp(event) {
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
-    if (viewSwipe?.tracking) settleViewSwipe(0);
+    if (viewSwipe?.tracking) settleViewSwipe(0).then(() => { removeSwipePreview(); positionSwipe(0, 1); });
     viewSwipe = null; resetViewportPointers();
     return;
   }
@@ -2024,40 +2038,69 @@ function viewportPointerUp(event) {
 }
 // One-finger horizontal swipe switches to the neighbouring view (view mode, phone), but only
 // when the gesture was not used to pan a zoomed-in or panoramic scene.
-// The scene follows the finger while swiping; the next view slides in from the opposite side.
+// Swiping between views works like a pager: the current scene follows the finger and a static
+// preview of the neighbouring view (background, markers, Flow) slides in next to it.
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+let swipePreview = null;
 function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
+function buildSwipePreview(targetId) {
+  const view = model.views[targetId]; if (!view) return null;
+  const width = els.viewport.offsetWidth || innerWidth;
+  const wrap = document.createElement('div'); wrap.className = 'swipe-preview'; wrap.setAttribute('data-no-i18n', ''); wrap.setAttribute('aria-hidden', 'true');
+  Object.assign(wrap.style, { top: els.viewport.offsetTop + 'px', left: els.viewport.offsetLeft + 'px', width: width + 'px', height: (els.viewport.offsetHeight || 0) + 'px' });
+  const scene = document.createElement('div'); scene.className = 'scene swipe-preview-scene';
+  scene.style.setProperty('--scene-scale', sceneScale);
+  scene.style.height = width / clamp(view.solidCanvasRatio || 16 / 9, .25, 4) + 'px';
+  scene.style.background = view.backgroundColor || 'linear-gradient(145deg,#0d2838,#0a1c27)';
+  if (view.background) {
+    const image = new Image(); image.className = 'swipe-preview-image'; image.draggable = false; image.alt = '';
+    const fit = () => { if (image.naturalWidth) scene.style.height = width * image.naturalHeight / image.naturalWidth + 'px'; };
+    image.addEventListener('load', fit, { once:true }); image.src = `api/background/file?name=${encodeURIComponent(view.background)}`; if (image.complete) fit();
+    scene.append(image);
+  }
+  const layer = document.createElement('div'); layer.className = 'markers';
+  Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); layer.append(node); });
+  Object.values(view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
+  scene.append(layer); wrap.append(scene); els.viewport.parentElement.append(wrap);
+  return { element: wrap, targetId };
+}
+function removeSwipePreview() { swipePreview?.element.remove(); swipePreview = null; }
+function positionSwipe(offset, direction, animate = 0) {
+  const width = els.viewport.offsetWidth || innerWidth, transition = animate ? `transform ${animate}ms ease` : 'none';
+  els.viewport.style.transition = transition; els.viewport.style.transform = offset ? `translateX(${offset}px)` : '';
+  if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transform = `translateX(${offset - direction * width}px)`; }
+}
 function trackViewSwipe(event) {
   const swipe = viewSwipe, dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
-  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; els.viewport.style.transition = 'none'; }
-  const width = els.viewport.offsetWidth || innerWidth, offset = swipeNeighbour(dx) ? dx : dx * .25;
-  els.viewport.style.transform = `translateX(${offset}px)`; els.viewport.style.opacity = String(1 - Math.min(.45, Math.abs(offset) / width * .6));
+  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; }
+  const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1;
+  if (target && swipePreview?.targetId !== target) { removeSwipePreview(); swipePreview = buildSwipePreview(target); }
+  if (!target) removeSwipePreview();
+  positionSwipe(target ? dx : dx * .25, direction);
   event.preventDefault();
 }
-function settleViewSwipe(offset, duration = 180) {
+function settleViewSwipe(offset = 0, direction = 1, duration = 200) {
   return new Promise(resolve => {
-    const viewport = els.viewport;
-    if (reducedMotion()) { viewport.style.transition = 'none'; viewport.style.transform = ''; viewport.style.opacity = ''; return resolve(); }
-    viewport.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
-    viewport.style.transform = offset ? `translateX(${offset}px)` : ''; viewport.style.opacity = offset ? '0' : '';
+    if (reducedMotion()) { positionSwipe(0, direction); removeSwipePreview(); return resolve(); }
+    positionSwipe(offset, direction, duration);
     setTimeout(resolve, duration + 20);
   });
 }
 async function finishViewSwipe(event) {
   const swipe = viewSwipe; viewSwipe = null;
-  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y, width = els.viewport.offsetWidth || innerWidth;
+  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y, width = els.viewport.offsetWidth || innerWidth, direction = dx < 0 ? -1 : 1;
   const quick = Date.now() - swipe.t <= 800 && Math.abs(dx) >= 70, far = swipe.tracking && Math.abs(dx) > width * .3;
   const valid = (quick || far) && Math.abs(dx) >= Math.abs(dy) * 1.6 && Math.abs(viewPanX - swipe.panX) <= 12;
   const target = valid ? swipeNeighbour(dx) : null;
-  if (!target) { if (swipe.tracking) settleViewSwipe(0); return; }
+  if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction); removeSwipePreview(); positionSwipe(0, direction); } return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
-  const direction = dx < 0 ? -1 : 1;
-  await settleViewSwipe(direction * width, 160);
+  if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = buildSwipePreview(target); positionSwipe(dx, direction); void els.viewport.offsetWidth; }
+  // Slide the preview fully in, then swap in the real view underneath it and fade the preview out.
+  await settleViewSwipe(direction * width, direction, Math.round(clamp(260 * (1 - Math.abs(dx) / width), 120, 260)));
+  const preview = swipePreview; swipePreview = null;
   await switchSceneView(target);
-  if (reducedMotion()) return settleViewSwipe(0);
-  els.viewport.style.transition = 'none'; els.viewport.style.transform = `translateX(${-direction * width * .35}px)`; els.viewport.style.opacity = '0';
-  void els.viewport.offsetWidth;
-  settleViewSwipe(0, 220);
+  positionSwipe(0, direction);
+  if (preview) { preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
 }
 function startDesktopPan(event) {
   if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;

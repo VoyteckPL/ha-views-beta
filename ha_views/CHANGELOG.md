@@ -1,3 +1,8 @@
+## 0.4.1-beta.186
+
+- Widoki (telefon): przy przesuwaniu palcem widok, do którego zmierzasz, pojawia się już w trakcie ruchu i wsuwa się obok bieżącego (tło, markery z aktualnymi wartościami i Flow) — jak przewijanie stron. Po puszczeniu dojeżdża do końca i zamienia się w pełny widok; za krótki ruch cofa oba widoki na miejsce.
+- Stany encji są pobierane dla wszystkich widoków, więc podgląd sąsiedniego widoku pokazuje prawdziwe wartości.
+
 ## 0.4.1-beta.185
 
 - Widoki (telefon): przesuwanie palcem między widokami ma animację — widok podąża za palcem i lekko blednie, po puszczeniu odjeżdża w bok, a następny wjeżdża z drugiej strony. Przełącza szybkie machnięcie albo przeciągnięcie ponad 30% szerokości; krótszy ruch płynnie wraca na miejsce. Na pierwszym i ostatnim widoku przesuwanie stawia wyraźny opór. Przy ustawieniu systemowym „ogranicz ruch” animacja jest pomijana.
