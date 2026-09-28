@@ -784,7 +784,10 @@ function applyMarkerStyle(node, marker) {
     const s = marker.style, flow = flowDirection(marker), color = flow.direction === 'reverse' ? s.colorReverse : flow.direction === 'forward' ? s.colorForward : s.colorIdle;
     Object.assign(node.style, { left: marker.xPercent + '%', top: marker.yPercent + '%', width: s.width + 'px', height: s.height + 'px', background:'transparent', border:'0', borderRadius:'0', transform:'translate(-50%,-50%) rotate(' + (Number(s.rotation)||0) + 'deg)', opacity: clamp(Number(s.opacity)||1,0,1), '--flow-color': color, '--flow-size': (Number(s.chevronSize)||30) + 'px', '--flow-gap': (Number(s.gap)||8) + 'px', '--flow-speed': (Math.max(.15,Number(s.speed)||1.1)) + 's', '--flow-line-width': (Number(s.lineWidth)||3) + 'px' });
     node.classList.toggle('flow-active', flow.active); node.classList.toggle('flow-idle', !flow.active);
-    const line = $('.flow-line', node); if (line) line.style.display = s.showLine ? '' : 'none';
+    const track = $('.flow-track', node), chevrons = $('.flow-chevrons', node);
+    if (track) Object.assign(track.style, {position:'absolute',inset:'0',display:'flex',alignItems:'center',justifyContent:'center'});
+    if (chevrons) { Object.assign(chevrons.style,{display:'flex',alignItems:'center',gap:(Number(s.gap)||8)+'px',position:'relative',transform:flow.direction === 'reverse' ? 'scaleX(-1)' : ''}); $('.flow-chevron', chevrons).forEach((chevron,index) => { const size=Math.max(10,Number(s.chevronSize)||30), border=Math.max(2,Math.round(size/6)); Object.assign(chevron.style,{display:'block',width:size+'px',height:size+'px',boxSizing:'border-box',borderRight:border+'px solid '+color,borderTop:border+'px solid '+color,transform:'rotate(45deg)',animation:'haFlowPulse '+(Math.max(.15,Number(s.speed)||1.1))+'s ease-in-out '+(index*.16)+'s infinite',opacity:flow.active ? '' : '.35'}); if(s.chevronStyle === 'filled') Object.assign(chevron.style,{background:color,borderColor:color,clipPath:'polygon(10% 0,100% 50%,10% 100%,34% 50%)'}); if(s.chevronStyle === 'capsule') chevrons.style.background='color-mix(in srgb,'+color+' 15%,transparent)'; }); }
+    const line = $('.flow-line', node); if (line) Object.assign(line.style,{display:s.showLine ? '' : 'none',position:'absolute',left:'2%',right:'2%',height:(Number(s.lineWidth)||3)+'px',background:color,borderRadius:'999px',opacity:'.4'});
     return;
   }
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
@@ -1277,7 +1280,7 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
     const section = $$('.editor-section', els.editorContent)[preserveSection];
     if (section) section.open = true;
   }
-  $$('[data-editor-tab]').forEach(b => b.classList.toggle('active', b.dataset.editorTab === marker.type));
+  $('[data-editor-tab]').forEach(b => { b.hidden = marker.type === 'flow'; b.classList.toggle('active', b.dataset.editorTab === marker.type); });
   $('#paste-style').disabled = !styleClipboard; els.editor.classList.add('visible'); els.editor.setAttribute('aria-hidden','false');
   bindEditorInputs(els.editorContent);
   $$('.editor-section', els.editorContent).forEach((details, index) => details.addEventListener('toggle', () => {
@@ -1341,7 +1344,7 @@ function onEditorInput(event) {
   if (input.dataset.path === 'iconMode') { const manual = $('[data-manual-icons]', els.editorContent); if (manual) manual.hidden = value !== 'manual'; }
   if (input.type === 'color') { const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
-  const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
+  const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`);
   if (input.dataset.path === 'displayName') { els.editorTitle.textContent = value; if (node) node.innerHTML = markerHtml(marker); }
   const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.') || marker.type === 'flow';
   // A range input keeps pointer capture only while its DOM node remains intact.
@@ -1364,7 +1367,7 @@ async function changeType(type) {
 
 function renderAdded() {
   const items = Object.entries(model.entities); els.addedCount.textContent = items.length;
-  els.addedList.innerHTML = items.length ? items.map(([key,m]) => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(key)}">Pokaż</button><button class="danger" data-remove="${escapeHtml(key)}">Usuń z widoku</button></div></div>`).join('') : '<div class="empty-row">Nie dodano jeszcze żadnych markerów.</div>';
+  els.addedList.innerHTML = items.length ? items.map(([key,m]) => `<div class="entity-row added-row"><div class="added-identity">${integrationIconMarkupFor(m.sourceDomain || m.entityId.split('.')[0], m.integrationName || m.sourceDomain, 'added-icon')}<div><strong>${escapeHtml(m.displayName)}</strong><small>${escapeHtml(m.entityId)} · ${escapeHtml(m.integrationName || 'Home Assistant')} · ${markerTypeLabel(m.type)}</small></div></div><div class="entity-actions"><button data-focus="${escapeHtml(key)}">Pokaż</button><button data-add-flow-existing="${escapeHtml(key)}" title="Dodaj przepływ z tej encji">↝</button><button class="danger" data-remove="${escapeHtml(key)}">Usuń z widoku</button></div></div>`).join('') : '<div class="empty-row">Nie dodano jeszcze żadnych markerów.</div>';
 }
 async function loadIntegrations(force = false) {
   if (integrations.length && !force) return renderIntegrations();
@@ -1455,6 +1458,11 @@ async function addFlow(entityId, entryId) {
   const integration = integrations.find(x => x.entry_id === entryId), entity = (integrationEntities.get(entryId) || []).find(x => x.entity_id === entityId); if (!integration || !entity) return;
   const key = 'flow_' + uid(), marker = { ...freshMarker(entity, integration), id:key, type:'flow', displayName:(entity.name || entityId) + ' — przepływ', style:flowDefaults(), flowMode:'signed', flowThreshold:20, flowReverseEntity:'', flowOnDirection:'forward', flowFixedDirection:'forward' };
   marker.xPercent = 50; marker.yPercent = 50; model.entities[key] = marker; renderMarkers(); renderAdded(); await queueSave(); await refreshStates(); notify('Dodano marker Przepływ');
+}
+async function addFlowFromMarker(markerKey) {
+  const source = model.entities[markerKey]; if (!source) return;
+  const key = 'flow_' + uid(), marker = { ...clone(source), id:key, type:'flow', displayName:(source.displayName || source.entityId) + ' — przepływ', style:flowDefaults(), flowMode:'signed', flowThreshold:20, flowReverseEntity:'', flowOnDirection:'forward', flowFixedDirection:'forward', xPercent:source.xPercent + 4, yPercent:source.yPercent + 4, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
+  model.entities[key] = marker; renderMarkers(); renderAdded(); await queueSave(); await refreshStates(); notify('Dodano marker Przepływ');
 }
 async function addEntity(entityId, entryId) {
   if (model.entities[entityId]) return;
@@ -1693,7 +1701,7 @@ function bindEvents() {
     else if (add) addEntity(add.dataset.add, add.dataset.entry);
     else if (summary) toggleIntegration(summary.closest('.integration').dataset.integration);
   });
-  els.addedList.addEventListener('click', event => { const remove = event.target.closest('[data-remove]'), focus = event.target.closest('[data-focus]'); if (remove) removeEntity(remove.dataset.remove); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
+  els.addedList.addEventListener('click', event => { const remove = event.target.closest('[data-remove]'), addFlowExisting = event.target.closest('[data-add-flow-existing]'), focus = event.target.closest('[data-focus]'); if (remove) removeEntity(remove.dataset.remove); else if (addFlowExisting) addFlowFromMarker(addFlowExisting.dataset.addFlowExisting); else if (focus) { showMainView('overview'); if (!editMode) els.editToggle.click(); selectMarker(focus.dataset.focus); } });
   $$('.selection i').forEach(handle => handle.addEventListener('pointerdown', startResize));
   els.image.addEventListener('load', () => { updateSceneGeometry(); applyBackgroundTransform(); });
   window.addEventListener('resize', () => { applyBackgroundTransform(); syncMobileOrientation(); });
@@ -1724,7 +1732,7 @@ function startResize(event) {
   const marker = model.entities[selectedId];
   if (!editMode || !marker || marker.geometryLocked || event.button !== 0 || (event.buttons & 1) !== 1) return;
   event.preventDefault(); event.stopPropagation();
-  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
+  const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`);
   if (!node) return;
   const initialRect = node.getBoundingClientRect(), fixed = { x:handle.includes('w') ? initialRect.right : initialRect.left, y:handle.includes('n') ? initialRect.bottom : initialRect.top };
   const start = { x:event.clientX, y:event.clientY, w:Number(marker.style.width), h:Number(marker.style.height), px:marker.xPercent, py:marker.yPercent }; let changed = false;
