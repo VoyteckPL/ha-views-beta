@@ -1009,7 +1009,8 @@ function renderFlows() {
     const legacyCount = flow.flowStyle === 'single' ? 1 : flow.flowStyle === 'segments' ? 4 : 3;
     const itemCount = clamp(Number(flow.flowCount) || legacyCount, 1, 8);
     const itemMarkup = flowStyle === 'segments' ? '<span class="flow-segment"></span>' : '<svg class="flow-chevron" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path></path></svg>';
-    node.innerHTML = Array.from({ length:itemCount }, () => itemMarkup).join('');
+    const flowItems = Array.from({ length:itemCount }, () => itemMarkup).join('');
+    node.innerHTML = '<div class="flow-train">' + flowItems + (flow.animation === 'flow' ? flowItems : '') + '</div>';
     const chevronSize = Math.max(10, Number(flow.chevronSize) || 22);
     const chevronWidth = Math.max(10, Number(flow.chevronWidth) || chevronSize);
     const chevronHeight = Math.max(10, Number(flow.chevronHeight) || chevronSize);
