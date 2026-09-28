@@ -1,3 +1,8 @@
+## 0.3.0-beta.143
+
+- Wycofano eksperymentalny marker Przepływ / Chevrony z beta.140–.142.
+- Przywrócono stabilny kod interfejsu z beta.139, w tym Viewer mode dla zwykłych użytkowników.
+
 ## 0.3.0-beta.142
 
 - Przepływ ma całkowicie niezależny edytor: zmiany typu, koloru, rozmiaru i animacji nie dotyczą już głównego markera tej samej encji.
