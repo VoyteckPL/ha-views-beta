@@ -1,3 +1,9 @@
+## 0.3.0-beta.144
+
+- Uproszczono pasek narzędzi: usunięto menu Ustawienia, a Integracje i wybór języka przeniesiono do menu Edytuj widok.
+- Menu Widok: strzałki kolejności są na początku, bez opisu, i zajmują pełną szerokość jednego wiersza; ujednolicono typografię z menu Edytuj widok.
+- Ikona Edytuj widok nie ma już niebieskiej obwódki poza aktywnym trybem edycji.
+
 ## 0.3.0-beta.143
 
 - Wycofano eksperymentalny marker Przepływ / Chevrony z beta.140–.142.
