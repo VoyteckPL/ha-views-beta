@@ -1,3 +1,7 @@
+## 0.4.1-beta.155
+
+- Naprawiono wizualną aktualizację rozmiaru, odstępu i koloru chevronów Flow. Wartości są teraz nakładane bezpośrednio na właściwy Flow.
+
 ## 0.4.1-beta.154
 
 - Naprawiono podpięcie kontrolek w edytorze Flow. Zmiany rozmiaru, odstępu, obrotu, szerokości, koloru i blokady są teraz zapisywane oraz od razu widoczne.
