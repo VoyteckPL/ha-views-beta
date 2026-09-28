@@ -1,3 +1,7 @@
+## 0.4.1-beta.185
+
+- Widoki (telefon): przesuwanie palcem między widokami ma animację — widok podąża za palcem i lekko blednie, po puszczeniu odjeżdża w bok, a następny wjeżdża z drugiej strony. Przełącza szybkie machnięcie albo przeciągnięcie ponad 30% szerokości; krótszy ruch płynnie wraca na miejsce. Na pierwszym i ostatnim widoku przesuwanie stawia wyraźny opór. Przy ustawieniu systemowym „ogranicz ruch” animacja jest pomijana.
+
 ## 0.4.1-beta.184
 
 - Synchronizacja między urządzeniami: otwarta aplikacja (np. w aplikacji HA na telefonie) sprawdza co 20 s i przy powrocie na ekran, czy układ zmienił się na innym urządzeniu, i wczytuje najnowszą wersję, zostając na tym samym widoku. W trybie edycji zamiast automatycznego przeładowania pojawia się przycisk „Wczytaj”.

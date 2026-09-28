@@ -1998,7 +1998,8 @@ function viewportPointerDown(event) {
 }
 function viewportPointerMove(event) {
   if (!viewPointers.has(event.pointerId)) return;
-  if (viewPointers.size > 1) viewSwipe = null;
+  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0); viewSwipe = null; }
+  if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
     const [a,b] = [...viewPointers.values()], distance = Math.hypot(a.x-b.x,a.y-b.y), next = clamp(pinchGesture.zoom * distance / Math.max(1,pinchGesture.distance),minViewZoom(),4), ratio = next / pinchGesture.zoom;
@@ -2012,7 +2013,8 @@ function viewportPointerMove(event) {
 }
 function viewportPointerUp(event) {
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
-    resetViewportPointers();
+    if (viewSwipe?.tracking) settleViewSwipe(0);
+    viewSwipe = null; resetViewportPointers();
     return;
   }
   viewPointers.delete(event.pointerId);
@@ -2022,14 +2024,40 @@ function viewportPointerUp(event) {
 }
 // One-finger horizontal swipe switches to the neighbouring view (view mode, phone), but only
 // when the gesture was not used to pan a zoomed-in or panoramic scene.
-function finishViewSwipe(event) {
+// The scene follows the finger while swiping; the next view slides in from the opposite side.
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
+function trackViewSwipe(event) {
+  const swipe = viewSwipe, dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
+  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; els.viewport.style.transition = 'none'; }
+  const width = els.viewport.offsetWidth || innerWidth, offset = swipeNeighbour(dx) ? dx : dx * .25;
+  els.viewport.style.transform = `translateX(${offset}px)`; els.viewport.style.opacity = String(1 - Math.min(.45, Math.abs(offset) / width * .6));
+  event.preventDefault();
+}
+function settleViewSwipe(offset, duration = 180) {
+  return new Promise(resolve => {
+    const viewport = els.viewport;
+    if (reducedMotion()) { viewport.style.transition = 'none'; viewport.style.transform = ''; viewport.style.opacity = ''; return resolve(); }
+    viewport.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
+    viewport.style.transform = offset ? `translateX(${offset}px)` : ''; viewport.style.opacity = offset ? '0' : '';
+    setTimeout(resolve, duration + 20);
+  });
+}
+async function finishViewSwipe(event) {
   const swipe = viewSwipe; viewSwipe = null;
-  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y;
-  if (Date.now() - swipe.t > 800 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.6 || Math.abs(viewPanX - swipe.panX) > 12) return;
-  const index = model.viewOrder.indexOf(model.activeViewId), target = model.viewOrder[index + (dx < 0 ? 1 : -1)];
-  if (!target) return;
+  const dx = event.clientX - swipe.x, dy = event.clientY - swipe.y, width = els.viewport.offsetWidth || innerWidth;
+  const quick = Date.now() - swipe.t <= 800 && Math.abs(dx) >= 70, far = swipe.tracking && Math.abs(dx) > width * .3;
+  const valid = (quick || far) && Math.abs(dx) >= Math.abs(dy) * 1.6 && Math.abs(viewPanX - swipe.panX) <= 12;
+  const target = valid ? swipeNeighbour(dx) : null;
+  if (!target) { if (swipe.tracking) settleViewSwipe(0); return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
-  switchSceneView(target);
+  const direction = dx < 0 ? -1 : 1;
+  await settleViewSwipe(direction * width, 160);
+  await switchSceneView(target);
+  if (reducedMotion()) return settleViewSwipe(0);
+  els.viewport.style.transition = 'none'; els.viewport.style.transform = `translateX(${-direction * width * .35}px)`; els.viewport.style.opacity = '0';
+  void els.viewport.offsetWidth;
+  settleViewSwipe(0, 220);
 }
 function startDesktopPan(event) {
   if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;
