@@ -1715,7 +1715,14 @@ function applyViewerMode() {
   if (!isViewer()) return;
   editMode = false; selectedId = null; closeEditor?.();
   els.body.classList.remove('editing'); els.body.classList.add('viewer-mode');
-  [els.editToggle, els.viewManage, els.settingsToggle].forEach(el => { if (el) el.hidden = true; });
+  [els.editToggle, els.viewManage, els.settingsToggle].forEach(el => {
+    if (!el) return;
+    el.hidden = true;
+    el.style.display = 'none';
+  });
+  els.editMenu?.remove();
+  els.viewSwitcher?.remove();
+  els.settingsMenu?.remove();
 }
 
 async function boot() {
