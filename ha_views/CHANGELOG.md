@@ -1,3 +1,9 @@
+## 0.4.1-beta.164
+
+- Flow: dodano automatyczne sterowanie kierunkiem na podstawie wartości dodatniej/ujemnej, z osobnymi kierunkami i kolorami dla + oraz −.
+- Flow: dodano próg martwy i opcję ukrywania w tym progu.
+- Flow: dodano animacje pulsowania i przepływu, regulację prędkości oraz opcjonalną prędkość zależną od wartości.
+
 ## 0.4.1-beta.163
 
 - Naprawiono kształt chevronów Flow: są renderowane jako wektory SVG zamiast obróconych ramek CSS.
