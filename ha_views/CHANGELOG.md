@@ -1,3 +1,8 @@
+## 0.4.1-beta.153
+
+- Naprawiono obsługę kontrolek edytora Flow: kolor, rozmiar, odstęp, obrót, szerokość i blokada działają od razu na właściwym Flow.
+- Ujednolicono wygląd panelu Flow z głównym edytorem markerów.
+
 ## 0.4.1-beta.152
 
 - Flow ma własny, niezależny edytor otwierany kliknięciem w trybie Edytuj widok.
