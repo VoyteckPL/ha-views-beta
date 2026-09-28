@@ -1104,7 +1104,7 @@ function openFlowEditor(id) {
     const item = activeSceneView()?.flows?.[selectedFlowId]; if (!item) return;
     item.rotation = 0; item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); openFlowEditor(item.id);
   });
-  els.flowEditorContent.addEventListener('click', async event => {
+  els.flowEditorContent.onclick = async event => {
     const toggle = event.target.closest('[data-flow-color-toggle]'), swatch = event.target.closest('[data-flow-palette-color]'), rgb = event.target.closest('[data-flow-rgb-color]');
     if (toggle) { const menu = toggle.parentElement.querySelector('.flow-color-menu'); els.flowEditorContent.querySelectorAll('.flow-color-menu').forEach(x => { if (x !== menu) x.classList.remove('visible'); }); menu.classList.toggle('visible'); return; }
     const picker = (swatch || rgb)?.closest('.flow-color-picker'); if (!picker) return;
@@ -1113,8 +1113,8 @@ function openFlowEditor(id) {
     if (rgb) color = await appPrompt({ title:'Własny kolor RGB', message:'Podaj kolor w formacie #RRGGBB.', value:item[prop] || '#20B9E7', confirmText:'Ustaw' });
     if (!color || !/^#[0-9a-f]{6}$/i.test(color)) return;
     item[prop] = color.toUpperCase(); item.updatedAt = new Date().toISOString(); renderMarkers(); scheduleSave(); picker.querySelector('.flow-color-current').style.background = item[prop]; picker.querySelector('.flow-color-menu')?.classList.remove('visible');
-  });
-  $('.flow-color-native', els.flowEditorContent).forEach(input => input.addEventListener('input', () => {
+  };
+  $$('.flow-color-native', els.flowEditorContent).forEach(input => input.addEventListener('input', () => {
     const picker = input.closest('.flow-color-picker'); picker?.querySelector('.flow-color-current')?.style.setProperty('background', input.value);
   }));
   $('#flow-copy-style', els.flowEditorContent)?.addEventListener('click', () => {

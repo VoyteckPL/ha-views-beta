@@ -1,3 +1,8 @@
+## 0.4.1-beta.169
+
+- Flow: naprawiono błąd `$(...).forEach` w edytorze Flow, przez który nie działały przyciski Kopiuj styl, Wklej styl i Usuń Flow.
+- Flow: palety kolorów nie dublują już obsługi kliknięć po ponownym otwarciu edytora (paleta otwiera się za każdym razem, RGB pyta tylko raz).
+
 ## 0.4.1-beta.168
 
 - Flow: odwrócono kierunek przesuwającego się strumienia, aby był zgodny z kierunkiem strzałek.
