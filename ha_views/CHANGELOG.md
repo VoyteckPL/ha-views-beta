@@ -1,3 +1,9 @@
+## 0.4.1-beta.151
+
+- Flow testowy jest teraz widoczny na scenie jako trzy statyczne chevrony.
+- Każdy Flow ma niezależnie zapisane w JSON-ie pozycję, rozmiar i obrót; w trybie Edytuj widok można go przeciągać bez wpływu na markery.
+- Nadal bez logiki kierunku, wartości encji i animacji — to wyłącznie bezpieczny test geometrii oraz zapisu.
+
 ## 0.4.1-beta.150
 
 - Etap testowy Flow: encję można dodać niezależnie jako Flow przez przycisk `↝`, także gdy ma już zwykły marker.
