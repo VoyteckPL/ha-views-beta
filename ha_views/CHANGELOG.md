@@ -1,3 +1,10 @@
+## 0.4.1-beta.173
+
+- Flow: Długość i Szerokość określają teraz rozmiar ramki. Liczba elementów i odstęp rozkładają strzałki wewnątrz ramki i nie zmieniają jej rozmiaru.
+- Flow: narożne kółka zmieniają rozmiar ramki (przeciwległy róg zostaje w miejscu).
+- Flow: kliknięcie Flow w trybie edycji na telefonie przybliża i centruje go tak samo jak Badge.
+- Istniejące Flow dostają długość ramki równą dotychczasowej, więc wyglądają tak samo po aktualizacji.
+
 ## 0.4.1-beta.172
 
 - Flow: naprawiono za małe strzałki — stara reguła CSS wymuszała 22×22 px, przez co Długość, Szerokość i narożne kółka zmieniały tylko ramkę. Ramka znów dokładnie obejmuje strzałki.
