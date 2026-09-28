@@ -442,3 +442,10 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .view-management .view-order-row{display:block;width:100%;height:33px;padding:0;border:0;background:transparent}
 .view-management .view-order-row>div{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;height:33px}
 .view-management .view-order-row button{width:100%;height:33px;font:inherit;font-size:15px}
+
+/* beta.145: quieter first-view background chooser */
+.welcome-card>p,.welcome-card>ol{display:none}
+.welcome-existing-background{display:flex;align-items:center;gap:5px;width:100%;height:34px}
+.welcome-existing-background select{min-width:0;flex:1;height:34px;padding:0 9px;border:1px solid var(--line);border-radius:8px;background:#0b202d;color:#d8f1fa;font-size:11px}
+.welcome-existing-background button{display:grid;place-items:center;width:34px;min-width:34px;height:34px;padding:0}
+@media(max-width:600px){.welcome-existing-background{grid-column:1/-1}.welcome-actions{grid-template-columns:1fr 1fr}}
