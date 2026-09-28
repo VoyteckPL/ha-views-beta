@@ -176,7 +176,7 @@ let viewSwipe = null, tabDrag = null, suppressTabClick = false;
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
-let editorDragged = false;
+let editorDragged = false, flowEditorDragged = false;
 let editorOpenSectionIndex = -1;
 let editorPreview = { entityId: '', state: '' };
 let sceneScale = 1;
@@ -548,7 +548,7 @@ function updateSceneGeometry() {
       const marker = model.entities[node.dataset.entityId];
       if (marker) applyMarkerStyle(node, marker);
     });
-    syncSelection(); positionEditor();
+    syncSelection(); positionEditor(); syncFlowSelection(); positionFlowEditor();
   });
 }
 function portraitZoomExpansion() {
@@ -1188,12 +1188,12 @@ function startFlowDrag(event) {
     node.removeEventListener('pointermove',move); node.removeEventListener('pointerup',finish); node.removeEventListener('pointercancel',finish);
     try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {}
     node.dataset.dragged = moved ? '1' : '0';
-    if (moved) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); renderAdded(); }
+    if (moved) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); renderAdded(); positionFlowEditor(); }
   };
   node.addEventListener('pointermove',move); node.addEventListener('pointerup',finish,{once:true}); node.addEventListener('pointercancel',finish,{once:true});
 }
 function closeFlowEditor() {
-  selectedFlowId = null;
+  selectedFlowId = null; flowEditorDragged = false; flowEditorOpenSectionIndex = -1;
   hideFlowSelection();
   els.flowEditor?.classList.remove('visible'); els.flowEditor?.setAttribute('aria-hidden','true');
 }
@@ -1202,7 +1202,7 @@ function flowNumericState(entityId) {
   const value = Number(String(raw ?? '').replace(',', '.'));
   return Number.isFinite(value) ? value : null;
 }
-let flowEditorOpenSectionIndex = 0, flowEditorSide = 'positive';
+let flowEditorOpenSectionIndex = -1, flowEditorSide = 'positive';
 function flowEditorMarkup(flow) {
   const dirs = { items:[['right','Prawo'],['left','Lewo'],['up','Góra'],['down','Dół']] }, refresh = { refresh:true };
   const auto = flow.directionMode === 'auto', locked = !!flow.geometryLocked, side = auto ? flowEditorSide : 'positive', s = flowEffective(flow, side);
@@ -1238,7 +1238,7 @@ function flowEditorMarkup(flow) {
 function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return closeFlowEditor();
   const newlySelected = selectedFlowId !== id;
-  if (newlySelected) { preserveSection = flowEditorOpenSectionIndex = 0; flowEditorSide = flowSideOf(flow, flowNumericState(flow.entityId)); }
+  if (newlySelected) { preserveSection = flowEditorOpenSectionIndex = -1; flowEditorSide = flowSideOf(flow, flowNumericState(flow.entityId)); }
   closeEditor(); selectedFlowId = id;
   els.flowEditorTitle.textContent = flow.displayName || flow.entityId; els.flowEditorEntity.textContent = flow.entityId; els.flowEditorIntegration.textContent = 'Flow · ' + (flow.integrationName || 'Home Assistant');
   if (els.flowEditorIcon) els.flowEditorIcon.innerHTML = integrationIconMarkupFor(flow.sourceDomain || flow.entityId.split('.')[0], flow.integrationName || flow.sourceDomain, 'editor-brand-icon');
@@ -1249,6 +1249,7 @@ function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
   sections.forEach((details, index) => details.addEventListener('toggle', () => {
     if (details.open) { flowEditorOpenSectionIndex = index; sections.forEach(other => { if (other !== details) other.removeAttribute('open'); }); }
     else if (flowEditorOpenSectionIndex === index) flowEditorOpenSectionIndex = -1;
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); keepEditorInViewport(els.flowEditor); }));
   }));
   $$('input,select', els.flowEditorContent).forEach(input => {
     if (input.type === 'checkbox' || input.tagName === 'SELECT' || input.type === 'number' || input.type === 'text') input.addEventListener('change', onFlowEditorInput);
@@ -1258,6 +1259,7 @@ function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
   $('#flow-paste-style').disabled = !flowStyleClipboard;
   els.flowEditor.classList.add('visible'); els.flowEditor.setAttribute('aria-hidden','false'); renderMarkers();
   if (newlySelected) requestAnimationFrame(() => requestAnimationFrame(() => { focusScenePointOnMobile(flow.xPercent, flow.yPercent); syncFlowSelection(); }));
+  requestAnimationFrame(positionFlowEditor);
 }
 function flowStyleTarget(flow, prop, side = flowEditorSide) {
   if (side === 'negative' && flowSeparateStyles(flow) && FLOW_STYLE_KEYS.includes(prop)) return (flow.negativeStyle ||= {});
@@ -1430,21 +1432,30 @@ function startFlowResize(event) {
   const finish = () => { window.removeEventListener('pointermove',move); window.removeEventListener('pointerup',finish); window.removeEventListener('pointercancel',finish); if (changed) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); openFlowEditor(flow.id); } };
   window.addEventListener('pointermove',move); window.addEventListener('pointerup',finish); window.addEventListener('pointercancel',finish);
 }
-function positionEditor() {
-  if (mobileView() || editorDragged || !selectedId || !els.editor.classList.contains('visible')) return;
-  const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return;
-  const r = node.getBoundingClientRect(), width = els.editor.offsetWidth || 390, height = els.editor.offsetHeight || 500, gap = 14;
+// Desktop editors open next to the edited element (markers and Flow share this placement).
+function placeEditorNear(panel, node) {
+  const r = node.getBoundingClientRect(), width = panel.offsetWidth || 390, height = panel.offsetHeight || 500, gap = 14;
   let left = r.left + r.width / 2 < innerWidth / 2 ? r.right + gap : r.left - width - gap;
   if (left + width > innerWidth - 8) left = r.left - width - gap;
   if (left < 8) left = r.right + gap;
   left = clamp(left, 8, Math.max(8, innerWidth - width - 8));
   const top = clamp(r.top - 18, 80, Math.max(80, innerHeight - height - 8));
-  Object.assign(els.editor.style, { left: `${left}px`, right: 'auto', top: `${top}px` });
+  Object.assign(panel.style, { left: `${left}px`, right: 'auto', top: `${top}px` });
 }
-function keepEditorInViewport() {
-  if (mobileView() || !els.editor.classList.contains('visible')) return;
-  const r = els.editor.getBoundingClientRect(), left = clamp(r.left, 8, Math.max(8, innerWidth - r.width - 8)), top = clamp(r.top, 8, Math.max(8, innerHeight - r.height - 8));
-  Object.assign(els.editor.style, { left: `${left}px`, right: 'auto', top: `${top}px` });
+function positionEditor() {
+  if (mobileView() || editorDragged || !selectedId || !els.editor.classList.contains('visible')) return;
+  const node = $(`.marker[data-entity-id="${CSS.escape(selectedId)}"]`); if (!node) return;
+  placeEditorNear(els.editor, node);
+}
+function positionFlowEditor() {
+  if (mobileView() || flowEditorDragged || !selectedFlowId || !els.flowEditor.classList.contains('visible')) return;
+  const node = $('.flow-marker[data-flow-id="' + CSS.escape(selectedFlowId) + '"]'); if (!node) return;
+  placeEditorNear(els.flowEditor, node);
+}
+function keepEditorInViewport(panel = els.editor) {
+  if (mobileView() || !panel.classList.contains('visible')) return;
+  const r = panel.getBoundingClientRect(), left = clamp(r.left, 8, Math.max(8, innerWidth - r.width - 8)), top = clamp(r.top, 8, Math.max(8, innerHeight - r.height - 8));
+  Object.assign(panel.style, { left: `${left}px`, right: 'auto', top: `${top}px` });
 }
 function startDrag(event) {
   if (!editMode || event.button !== 0) return;
@@ -1650,7 +1661,7 @@ function closeEditor() { selectedId = null; editorDragged = false; editorOpenSec
 function startEditorDrag(event) {
   if (mobileView() || event.button !== 0 || (event.buttons & 1) !== 1 || event.target.closest('button,input,select')) return;
   const panel = event.currentTarget?.closest?.('.editor') || els.editor;
-  event.preventDefault(); if (panel === els.editor) editorDragged = true;
+  event.preventDefault(); if (panel === els.editor) editorDragged = true; else flowEditorDragged = true;
   const r = panel.getBoundingClientRect(), startX = event.clientX, startY = event.clientY, startLeft = r.left, startTop = r.top;
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();

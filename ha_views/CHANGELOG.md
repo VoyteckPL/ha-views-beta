@@ -1,3 +1,8 @@
+## 0.4.1-beta.179
+
+- Flow: na komputerze edytor Flow otwiera się obok klikniętego Flow, tak jak edytor markerów, i przesuwa się razem z nim po przeciągnięciu (chyba że okno edytora zostało ręcznie przestawione).
+- Flow: sekcje edytora są domyślnie zwinięte; rozwinięta sekcja zostaje otwarta tylko przy zmianach w tym samym Flow.
+
 ## 0.4.1-beta.178
 
 - Widoki: kolejność zakładek można zmieniać przeciąganiem (mysz: przeciągnij; telefon: przytrzymaj i przeciągnij). Strzałki w menu zostają.
