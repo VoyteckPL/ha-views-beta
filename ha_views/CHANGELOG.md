@@ -1,3 +1,7 @@
+## 0.4.1-beta.181
+
+- Flow: nowy przycisk „Duplikuj Flow” w nagłówku edytora — tworzy niezależną kopię z tym samym stylem, lekko przesuniętą, i od razu otwiera ją do edycji. Ta sama encja może mieć dowolnie wiele Flow w różnych miejscach i z różnym stylem.
+
 ## 0.4.1-beta.180
 
 - Flow: kształt strzałek nie zmienia się przy zmianie odstępu ani liczby — odstęp zmienia tylko odległość między strzałkami, a liczba tylko ich ilość. Ramka też zostaje taka sama.
