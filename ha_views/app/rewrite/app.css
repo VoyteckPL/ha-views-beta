@@ -449,3 +449,15 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .welcome-existing-background select{min-width:0;flex:1;height:34px;padding:0 9px;border:1px solid var(--line);border-radius:8px;background:#0b202d;color:#d8f1fa;font-size:11px}
 .welcome-existing-background button{display:grid;place-items:center;width:34px;min-width:34px;height:34px;padding:0}
 @media(max-width:600px){.welcome-existing-background{grid-column:1/-1}.welcome-actions{grid-template-columns:1fr 1fr}}
+
+/* beta.146: split the first-view choices into image and colour */
+.welcome-card{width:min(680px,100%)}
+.welcome-card>.welcome-icon{display:none}
+.welcome-choice-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.welcome-choice-panel{min-width:0;padding:14px;border:1px solid rgba(99,181,216,.28);border-radius:11px;background:rgba(10,35,48,.52)}
+.welcome-choice-panel h3{margin:0 0 10px;color:#dff6ff;font-size:12px;font-weight:800}
+.welcome-choice-panel .welcome-actions{display:grid;grid-template-columns:1fr;gap:8px}
+.welcome-choice-panel .welcome-actions button{width:100%}
+.welcome-choice-panel .welcome-existing-background{width:100%}
+.welcome-colour-choice .welcome-color{justify-content:space-between;width:100%}
+@media(max-width:600px){.welcome-choice-columns{grid-template-columns:1fr;gap:9px}.welcome-choice-panel{padding:12px}.welcome-choice-panel .welcome-actions{display:grid}.welcome-existing-background{grid-column:auto}}
