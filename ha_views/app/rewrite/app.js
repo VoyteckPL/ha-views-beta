@@ -998,7 +998,11 @@ function renderFlows() {
     node.className = 'flow-marker';
     node.dataset.flowId = flow.id;
     node.innerHTML = '<span class="flow-chevron"></span><span class="flow-chevron"></span><span class="flow-chevron"></span>';
-    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Number(flow.width) + 'px', height: Number(flow.height) + 'px', transform:'translate(-50%,-50%) rotate(' + Number(flow.rotation) + 'deg)', '--flow-color':flow.color || '#20B9E7', '--flow-chevron-size':Number(flow.chevronSize || 22) + 'px', '--flow-gap':Number(flow.gap || 9) + 'px' });
+    const chevronSize = Math.max(10, Number(flow.chevronSize) || 22);
+    const chevronGap = Number.isFinite(Number(flow.gap)) ? Math.max(0, Number(flow.gap)) : 9;
+    const chevronColor = flow.color || '#20B9E7';
+    Object.assign(node.style, { left: Number(flow.xPercent) + '%', top: Number(flow.yPercent) + '%', width: Number(flow.width) + 'px', height: Number(flow.height) + 'px', gap:chevronGap + 'px', transform:'translate(-50%,-50%) rotate(' + Number(flow.rotation) + 'deg)', '--flow-color':chevronColor, '--flow-chevron-size':chevronSize + 'px', '--flow-gap':chevronGap + 'px' });
+    $('.flow-chevron', node).forEach(chevron => Object.assign(chevron.style, { width:chevronSize + 'px', height:chevronSize + 'px', borderTopWidth:(chevronSize / 4.4) + 'px', borderRightWidth:(chevronSize / 4.4) + 'px', borderColor:chevronColor }));
     node.classList.toggle('flow-locked', Boolean(flow.geometryLocked));
     node.addEventListener('pointerdown', startFlowDrag);
     node.addEventListener('click', event => { event.stopPropagation(); if (event.currentTarget.dataset.dragged === '1') { event.currentTarget.dataset.dragged = '0'; return; } if (editMode) openFlowEditor(flow.id); });
