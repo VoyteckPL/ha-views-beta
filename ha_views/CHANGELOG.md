@@ -1,3 +1,9 @@
+## 0.3.0-beta.142
+
+- Przepływ ma całkowicie niezależny edytor: zmiany typu, koloru, rozmiaru i animacji nie dotyczą już głównego markera tej samej encji.
+- Ukryto zakładki Badge/Gauge/Ikona/Podkowa podczas edycji Przepływu; domyślne chevrony są rysowane bezpośrednio na markerze.
+- Dodano przycisk `↝` przy każdym wpisie „Dodane do widoku”, aby utworzyć kolejny Przepływ z tej encji bez szukania jej w Integracjach.
+
 ## 0.3.0-beta.141
 
 - Naprawiono markery Przepływ: zachowują swój typ po F5/restartcie i po kliknięciu otwierają właściwy edytor chevronów.
