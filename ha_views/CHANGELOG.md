@@ -1,3 +1,8 @@
+## 0.4.1-beta.189
+
+- Widoki (telefon): usunięto mignięcie tuż po przesunięciu na widok z innym obrazem tła. Prawdziwy widok przez jedną klatkę miał pośrednią geometrię (dopasowanie do nowego obrazu było odkładane o klatkę), a podgląd znikał za wcześnie. Teraz obraz jest dekodowany, geometria ustawiana od razu, a podgląd zaczyna znikać dopiero, gdy prawdziwy widok jest już narysowany pod nim.
+- Widoki: przy przełączaniu zakładką geometria nowego tła ustawia się od razu po jego wczytaniu (krótszy moment pośredni).
+
 ## 0.4.1-beta.188
 
 - Widoki (telefon): usunięto mrugnięcie u dołu wjeżdżającego widoku z panoramą — podgląd ma teraz także pasek pozycji panoramy, więc ma dokładnie tę samą wysokość co prawdziwy widok.

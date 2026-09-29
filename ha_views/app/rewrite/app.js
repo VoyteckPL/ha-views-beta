@@ -369,7 +369,7 @@ async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
   closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
-  await loadBackgrounds(true); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
+  await loadBackgrounds(true); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
   prebuildSwipePreviews(60);
 }
@@ -2047,6 +2047,7 @@ function viewportPointerUp(event) {
 // ready-made preview of the neighbouring view (same geometry as the real view) slides in next to it.
 // Previews are prepared ahead of time (image decoded first, markers added afterwards), so a swipe only moves them.
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const nextFrames = (count = 1) => new Promise(resolve => { const step = left => left ? requestAnimationFrame(() => step(left - 1)) : resolve(); step(count); });
 const swipeImages = new Map(), swipePreviews = new Map();
 let swipePreview = null, swipePrebuildTimer = null, swipeBusy = false, pendingSwipe = 0;
 function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
@@ -2177,7 +2178,13 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
     // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
     preview = swipePreview; swipePreview = null; swipePreviews.delete(target);
     await switchSceneView(target);
+    // Make the real view final (decoded image, final card/scene geometry) and painted under the still opaque
+    // preview before the preview fades; otherwise one intermediate frame can blink on slower phones.
+    if (currentBackground && els.image.decode) await els.image.decode().catch(() => {});
+    applyBackgroundTransform(); updateSceneGeometry();
+    await nextFrames(2);
     positionSwipe(0, direction);
+    await nextFrames(2);
     els.sceneCard.parentElement.classList.remove('view-swiping');
   } finally { swipeBusy = false; }
   if (preview) { preview.element.classList.add('swipe-fading'); preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
