@@ -680,3 +680,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 @media(max-width:768px),(max-width:900px) and (pointer:coarse){
   body.editing .scene-card{border-color:transparent;background:transparent;box-shadow:none}
 }
+
+/* Flow spacing may be negative (arrows nested into each other): margins instead of flex gap, which cannot be negative */
+.flow-train{gap:0!important}
+.flow-train>.flow-chevron+.flow-chevron{margin-left:var(--flow-gap,9px)}

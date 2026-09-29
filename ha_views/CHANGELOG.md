@@ -1,3 +1,8 @@
+## 0.4.1-beta.221
+
+- Flow: odstęp może być ujemny — strzałki wsuwają się jedna w drugą, więc da się je ułożyć dużo gęściej (do 2 px między kolejnymi). Działa w każdej animacji i przy zmianie rozmiaru uchwytami.
+- Flow: animacja „Przepływ” dwa razy szybsza przy tym samym tempie — 1× = 150 px/s (było 75 px/s).
+
 ## 0.4.1-beta.220
 
 - Flow, animacja „Przepływ”: tempo to teraz stała prędkość strzałek (1× = 75 px/s). Nie zależy od liczby, długości strzałki, odstępu ani rozmiaru ramki — zmiana liczby nie zwalnia/nie przyspiesza animacji, a dwa Flow z tym samym tempem (np. dla tej samej encji, o różnej szerokości) jadą identycznie. Uwaga: Flow o niestandardowych rozmiarach mogą jechać trochę inaczej niż wcześniej — wystarczy poprawić Tempo.
