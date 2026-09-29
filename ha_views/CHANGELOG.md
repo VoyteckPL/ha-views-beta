@@ -1,3 +1,10 @@
+## 0.4.1-beta.200
+
+- Przełączanie widoków palcem: jeśli puszczenie palca nie dotrze do strony i karta zostanie między widokami, kolejne dotknięcie przejmuje ją z miejsca, w którym stoi (bez skoku), a bez dotknięcia strona sama kończy gest po 1,5 s (było 4 s).
+- Naprawa wyścigu: animacja powrotu po poprzednim geście nie resetuje już karty w trakcie następnego gestu ani w trakcie przejścia (mogło to dawać zatrzymanie lub mrugnięcie, także na kostce).
+- Pusty widok: przeglądarka nie przejmuje już poziomego gestu (wcześniej przerywała przesuwanie).
+- Gest rozpoczęty na wygaszanym podglądzie poprzedniego przejścia też działa.
+
 ## 0.4.1-beta.199
 
 - Naprawa: kolor Flow wracał do starego po ponownym otwarciu aplikacji. Stara migracja przy każdym starcie kopiowała dawne pole `fillColor` do koloru i zapisywała układ. Teraz stare pola `fillColor`/`chevronMode` są jednorazowo usuwane, a kolor jest brany z nich tylko dla bardzo starych Flow (sprzed wyboru kształtu).

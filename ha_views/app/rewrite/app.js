@@ -2091,10 +2091,15 @@ function viewportPointerDown(event) {
   // Desktop uses a dedicated mouse drag below. Pointer gestures are touch-only there.
   if (!sceneCameraActive() || (!mobileView() && event.pointerType === 'mouse') || (event.pointerType === 'mouse' && event.button !== 0)) return;
   // A new primary touch after an interrupted WebView gesture means every remembered pointer is stale.
+  // A gesture whose release never arrived (card left between two views) is taken over by the new finger.
+  const hanging = viewSwipe && viewSwipe.id !== event.pointerId && viewSwipe.tracking && !viewSwipe.fromPan && !swipeBusy ? viewSwipe : null;
+  if (hanging) { cancelAnimationFrame(hanging.frame); viewSwipe = null; }
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
-  if (!swipeBusy && !viewSwipe) resetStuckSwipe(false);
+  if (!swipeBusy && !viewSwipe && !hanging) resetStuckSwipe(false);
   viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target, start:performance.now(), lastMove:performance.now() } : null;
+  if (hanging && viewSwipe && swipePreview) { const carry = hanging.lastDx || 0; Object.assign(viewSwipe, { x:event.clientX - carry, tracking:true, direction:hanging.direction, lastDx:carry, maxDx:Math.abs(carry) }); swipeLog(`przejęcie zawieszonego gestu (${Math.round(carry)} px)`); }
+  else if (hanging && !viewSwipe) settleBack(hanging.direction || 1, 180);
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
     pinchGesture = { distance:Math.hypot(a.x-b.x,a.y-b.y), zoom:viewZoom, panX:viewPanX, panY:viewPanY, x:(a.x+b.x)/2-r.left, y:(a.y+b.y)/2-r.top };
@@ -2113,7 +2118,7 @@ function viewportPointerMove(event) {
   // The view swipe follows its own pointer even if the pan/pinch pointer list was reset meanwhile.
   if (viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; viewSwipe.lastMove = performance.now(); trackViewSwipe(event); return; }
   if (!viewPointers.has(event.pointerId)) return;
-  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
+  if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) { const d = viewSwipe.direction || 1; viewSwipe = null; settleBack(d); } viewSwipe = null; }
   if (viewSwipe?.id === event.pointerId) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; viewSwipe.lastMove = performance.now(); }
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
@@ -2134,8 +2139,9 @@ function viewportPointerMove(event) {
 function viewportPointerUp(event) {
   if (event.type === 'pointerup' && viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { finishViewSwipe(event); return; }
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
-    if (viewSwipe?.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); });
-    viewSwipe = null; resetViewportPointers();
+    const cancelled = viewSwipe; viewSwipe = null;
+    if (cancelled?.tracking) { cancelAnimationFrame(cancelled.frame); settleBack(cancelled.direction || 1); }
+    resetViewportPointers();
     return;
   }
   viewPointers.delete(event.pointerId);
@@ -2169,7 +2175,7 @@ function resetStuckSwipe(animate = true) {
 function swipeWatchdog() {
   // "Finger gone" is only trusted when the page really receives touch events; otherwise wait for a long idle.
   const idle = viewSwipe ? performance.now() - (viewSwipe.lastMove || viewSwipe.start || 0) : 0;
-  if (viewSwipe && !swipeBusy && ((touchEventsSeen && activeTouches === 0 && idle > 250) || idle > 4000)) {
+  if (viewSwipe && !swipeBusy && ((touchEventsSeen && activeTouches === 0 && idle > 250) || idle > (viewSwipe.tracking ? 1500 : 4000))) {
     // The finger is gone but no pointerup/cancel arrived: finish the gesture with its last known position.
     swipeLog(`STRAŻNIK: brak puszczenia (bezczynność ${Math.round(idle)} ms)`);
     const swipe = viewSwipe; viewPointers.delete(swipe.id); finishViewSwipe({ clientX: swipe.lastX ?? swipe.x, clientY: swipe.lastY ?? swipe.y });
@@ -2197,7 +2203,7 @@ function abortViewSwipe() {
   if (viewSwipe) swipeLog('ABORT (utrata dotyku / tło / fokus)');
   const swipe = viewSwipe; viewSwipe = null; if (!swipe) return;
   cancelAnimationFrame(swipe.frame);
-  if (swipe.tracking && !swipeBusy) settleViewSwipe(0, swipe.direction || 1, 180).then(() => { if (!viewSwipe) { removeSwipePreview(); positionSwipe(0, 1); } });
+  if (swipe.tracking && !swipeBusy) settleBack(swipe.direction || 1, 180);
 }
 function swipeImage(name) {
   if (!swipeImages.has(name)) {
@@ -2310,6 +2316,11 @@ function trackViewSwipe(event, forcedDx = null) {
   else swipe.frame = requestAnimationFrame(() => positionSwipe(offset, direction));
   event.preventDefault();
 }
+// Puts the cards back after a cancelled gesture. The final reset is skipped when a newer gesture or a view
+// transition has started in the meantime; resetting then would snap that gesture's cards back mid-way.
+function settleBack(direction = 1, duration = 200) {
+  return settleViewSwipe(0, direction, duration).then(() => { if (!viewSwipe?.tracking && !swipeBusy) { removeSwipePreview(); positionSwipe(0, direction); } });
+}
 function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
   return new Promise(resolve => {
     if (reducedMotion()) { positionSwipe(offset, direction); return resolve(); }
@@ -2337,7 +2348,7 @@ async function finishViewSwipe(event) {
   lastSwipeDecision = { dx: Math.round(dx), dy: Math.round(dy), velocity: +velocity.toFixed(2), pulledBack, horizontal, go };
   swipeLog(`decyzja dx=${Math.round(dx)} dy=${Math.round(dy)} v=${velocity.toFixed(2)}${pulledBack ? ' cofnięty' : ''}${horizontal ? '' : ' nie-poziomy'} → ${go && horizontal ? 'PRZEŁĄCZ' : 'ZOSTAŃ'}`);
   const target = go && horizontal ? swipeNeighbour(dx) : null;
-  if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction, 200); removeSwipePreview(); positionSwipe(0, direction); } return; }
+  if (!target) { if (swipe.tracking) await settleBack(direction, 200); return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
   await completeViewSwipe(target, direction, dx, velocity);
 }
@@ -2534,7 +2545,8 @@ function bindEvents() {
   // Touch gestures and desktop mouse dragging are deliberately separate.
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
-  els.scene?.addEventListener('pointerdown', viewportPointerDown); els.scene?.addEventListener('pointermove', viewportPointerMove);
+  els.scene?.addEventListener('pointerdown', viewportPointerDown);
+  els.sceneCard?.parentElement?.addEventListener('pointerdown', event => { if (event.target.closest?.('.swipe-preview')) viewportPointerDown(event); }); els.scene?.addEventListener('pointermove', viewportPointerMove);
   els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp); els.scene?.addEventListener('lostpointercapture', viewportPointerUp);
   window.addEventListener('pointermove', viewportPointerMove); window.addEventListener('pointerup', viewportPointerUp); window.addEventListener('pointercancel', viewportPointerUp);
   document.addEventListener('pointerdown', event => {

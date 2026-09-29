@@ -32,6 +32,8 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
   main{width:calc(100% - 12px);margin:8px auto 24px}
   .scene-card{border-radius:12px}
   .scene-viewport{touch-action:none;overscroll-behavior:contain}
+  /* Scrollable or overlaying parts of the scene must not let the browser take a horizontal drag (it cancels the view swipe). */
+  .scene-viewport .scene-empty{touch-action:pan-y}.swipe-preview{touch-action:none}
   /* Zoomed background may use the full screen width, just like before. */
   .scene-card.portrait-zoom-expanded,.scene-viewport.portrait-zoom-expanded{overflow:visible}
   /* The positioning grid belongs to the fitted canvas only.  Once the
