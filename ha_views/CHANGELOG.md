@@ -1,3 +1,9 @@
+## 0.4.1-beta.194
+
+- Widoki (telefon): poprawka z 193 mogła kończyć gest w połowie, gdy palec zatrzymał się na chwilę podczas przesuwania (jeśli strona nie dostawała zdarzeń dotyku) — widok wracał i trzeba było przeciągać drugi raz. Teraz „palec oderwany” jest rozpoznawany tylko na podstawie prawdziwych zdarzeń dotyku; bez nich strażnik czeka 4 s bez ruchu.
+- Widoki (telefon): przesunięcie rozpoczęte, zanim skończyło się poprzednie przejście, zachowuje całą swoją długość (wcześniej część ruchu przepadała i gest wychodził za krótki). Kilka szybkich przesunięć pod rząd przełącza tyle widoków, ile razy przesunięto.
+- Widoki (telefon): decyzja po puszczeniu palca jest odporniejsza — drgnięcie przy odrywaniu i łuk kciuka nie cofają przejścia; anuluje je dopiero wyraźne cofnięcie palca.
+
 ## 0.4.1-beta.193
 
 - Widoki (telefon): przesuwanie i kostka nie zatrzymują się już w połowie między ekranami.

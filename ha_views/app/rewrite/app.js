@@ -178,7 +178,7 @@ const freshMarker = (entity, integration) => ({
 
 let model = { version: 2, revision: 0, settings: { snapEnabled: true, snapStep: .25 }, activeViewId: '', viewOrder: [], views: {}, entities: {} };
 let stateCache = {}, editMode = false, selectedId = null, selectedFlowId = null, styleClipboard = null, flowStyleClipboard = null, saveTimer = null, access = { viewer: false };
-let viewSwipe = null, tabDrag = null, suppressTabClick = false;
+let viewSwipe = null, tabDrag = null, suppressTabClick = false, lastSwipeDecision = null;
 let saveRunning = false, savePending = false, integrations = [], integrationEntities = new Map(), openIntegrations = new Set();
 let unusedIntegrationsOpen = false, entityEvents = null, resumeTimer = null;
 let integrationSearchText = '', integrationSearchTimer = null, integrationSearchLoading = false, integrationSearchRequest = 0;
@@ -2027,7 +2027,7 @@ function viewportPointerDown(event) {
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (!swipeBusy && !viewSwipe) resetStuckSwipe(false);
-  viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target } : null;
+  viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target, start:performance.now(), lastMove:performance.now() } : null;
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
     pinchGesture = { distance:Math.hypot(a.x-b.x,a.y-b.y), zoom:viewZoom, panX:viewPanX, panY:viewPanY, x:(a.x+b.x)/2-r.left, y:(a.y+b.y)/2-r.top };
@@ -2092,7 +2092,7 @@ function swipePageDistance() { if (viewTransitionMode() === 'cube') return els.s
 const withTimeout = (promise, ms) => Promise.race([Promise.resolve(promise).catch(() => {}), new Promise(resolve => setTimeout(resolve, ms))]);
 // Cancels a swipe in progress (lost touch, app sent to background) and puts both cards back.
 // Safety net: cards may never stay between two views without a gesture or an animation running.
-let activeTouches = 0;
+let activeTouches = 0, touchEventsSeen = false;
 function swipeStuck() { return Boolean(swipePreview && !swipePreview.element.hidden) || Boolean(els.sceneCard?.style.transform); }
 function resetStuckSwipe(animate = true) {
   if (swipeBusy || viewSwipe || !swipeStuck()) return;
@@ -2100,7 +2100,9 @@ function resetStuckSwipe(animate = true) {
   settleViewSwipe(0, 1, 180).then(() => { if (!viewSwipe && !swipeBusy) { removeSwipePreview(); positionSwipe(0, 1); } });
 }
 function swipeWatchdog() {
-  if (viewSwipe && !swipeBusy && activeTouches === 0 && performance.now() - (viewSwipe.lastMove || 0) > 250) {
+  // "Finger gone" is only trusted when the page really receives touch events; otherwise wait for a long idle.
+  const idle = viewSwipe ? performance.now() - (viewSwipe.lastMove || viewSwipe.start || 0) : 0;
+  if (viewSwipe && !swipeBusy && ((touchEventsSeen && activeTouches === 0 && idle > 250) || idle > 4000)) {
     // The finger is gone but no pointerup/cancel arrived: finish the gesture with its last known position.
     const swipe = viewSwipe; viewPointers.delete(swipe.id); finishViewSwipe({ clientX: swipe.lastX ?? swipe.x, clientY: swipe.lastY ?? swipe.y });
     return;
@@ -2205,10 +2207,10 @@ function positionSwipe(offset, direction, animate = 0) {
 function trackViewSwipe(event, forcedDx = null) {
   const swipe = viewSwipe;
   // While the previous page is still settling, remember the gesture; once it is done, continue from the finger's current position.
-  if (swipeBusy) { swipe.busyDx = event.clientX - swipe.x; swipe.rebase = true; return; }
-  if (swipe.rebase && forcedDx === null) { swipe.rebase = false; swipe.x = event.clientX; swipe.y = event.clientY; swipe.t = Date.now(); swipe.samples = []; swipe.panX = viewPanX; return; }
+  // While the previous page is still settling, only remember the gesture; afterwards it continues with its full distance.
+  if (swipeBusy) { swipe.busyDx = event.clientX - swipe.x; swipe.caughtUp = false; swipe.panX = viewPanX; return; }
   const dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
-  swipe.lastDx = dx;
+  swipe.lastDx = dx; swipe.maxDx = Math.max(swipe.maxDx || 0, Math.abs(dx));
   swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]).slice(-6);
   if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
   if (swipe.fromPan && Math.abs(dx) < .5) { removeSwipePreview(); positionSwipe(0, swipe.direction || 1); return; }
@@ -2218,7 +2220,10 @@ function trackViewSwipe(event, forcedDx = null) {
     if (target) { swipePreview = swipePreviews.get(target) || null; if (!swipePreview) { swipePreview = buildSwipePreview(target); if (swipePreview) swipePreviews.set(target, swipePreview); } if (swipePreview) { swipePreview.element.hidden = false; setSwipeClip(true); } }
   }
   const offset = target ? dx : dx * .25;
-  cancelAnimationFrame(swipe.frame); swipe.frame = requestAnimationFrame(() => positionSwipe(offset, direction));
+  cancelAnimationFrame(swipe.frame);
+  // First frame after catching up with a busy transition glides to the finger instead of jumping.
+  if (swipe.caughtUp === false) { swipe.caughtUp = true; positionSwipe(offset, direction, 90); }
+  else swipe.frame = requestAnimationFrame(() => positionSwipe(offset, direction));
   event.preventDefault();
 }
 function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
@@ -2232,14 +2237,20 @@ async function finishViewSwipe(event) {
   const swipe = viewSwipe; viewSwipe = null; if (!swipe) return; cancelAnimationFrame(swipe.frame); swipeWatchdog.lastEnd = performance.now();
   if (swipeBusy) { const queued = swipe.busyDx ?? event.clientX - swipe.x; if (Math.abs(queued) >= 40) pendingSwipe = Math.sign(queued); return; }
   const dx = swipe.fromPan ? (swipe.lastDx || 0) : event.clientX - swipe.x, dy = swipe.fromPan ? 0 : event.clientY - swipe.y, distance = swipePageDistance(), direction = dx < 0 ? -1 : 1;
-  // Gallery-like decision: the finger's speed at release wins (moving back = stay), otherwise past 40 % of the width.
+  // Gallery-like decision. The finger's recent speed (last ~100 ms, ignoring the few pixels of jitter when it is
+  // lifted) projects where the page is heading; only a clear pull-back of the finger cancels the switch.
   if (!swipe.fromPan) swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]);
-  const samples = (swipe.samples || []).filter(([, t]) => performance.now() - t < 120), first = samples[0], last = samples[samples.length - 1];
-  const velocity = first && last && last[1] - first[1] >= 8 ? (last[0] - first[0]) / (last[1] - first[1]) : 0;
-  const horizontal = Math.abs(dx) >= Math.abs(dy) * 1.3 && (swipe.fromPan || Math.abs(viewPanX - swipe.panX) <= 12);
-  let go = Math.abs(velocity) > .3 ? Math.sign(velocity) === Math.sign(dx) && Math.abs(dx) > 40 : Math.abs(dx) > distance * .4;
-  // A short, quick flick (few move events) also counts, unless the finger was clearly moving back.
-  if (!swipe.fromPan && Date.now() - swipe.t <= 300 && Math.abs(dx) >= 50 && !(Math.abs(velocity) > .3 && Math.sign(velocity) !== Math.sign(dx))) go = true;
+  const samples = (swipe.samples || []).filter(([, t]) => performance.now() - t < 100), first = samples[0], last = samples[samples.length - 1];
+  let velocity = first && last && last[1] - first[1] >= 8 ? (last[0] - first[0]) / (last[1] - first[1]) : 0;
+  if (Math.sign(velocity) !== Math.sign(dx) && Math.abs(velocity) < .35) velocity = 0;
+  const pulledBack = (swipe.maxDx || Math.abs(dx)) - Math.abs(dx) > Math.max(30, distance * .08) && Math.sign(velocity) !== Math.sign(dx);
+  const horizontal = Math.abs(dx) >= Math.abs(dy) * (swipe.tracking ? .7 : 1.3) && (swipe.fromPan || Math.abs(viewPanX - swipe.panX) <= 12);
+  const projected = dx + velocity * 200;
+  let go = !pulledBack && (Math.abs(projected) > distance * .5 || (Math.abs(velocity) > .25 && Math.abs(dx) > 30) || Math.abs(dx) > distance * .4);
+  if (pulledBack && Math.abs(dx) > distance * .6) go = true;
+  // A short, quick flick (few move events) also counts.
+  if (!swipe.fromPan && !pulledBack && Date.now() - swipe.t <= 300 && Math.abs(dx) >= 50 && !(Math.abs(velocity) > .35 && Math.sign(velocity) !== Math.sign(dx))) go = true;
+  lastSwipeDecision = { dx: Math.round(dx), dy: Math.round(dy), velocity: +velocity.toFixed(2), pulledBack, horizontal, go };
   const target = go && horizontal ? swipeNeighbour(dx) : null;
   if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction, 200); removeSwipePreview(); positionSwipe(0, direction); } return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
@@ -2450,7 +2461,7 @@ function bindEvents() {
   // Fallback if the WebView swallows pointerup/pointercancel of a swipe.
   window.addEventListener('touchend', event => { if (viewSwipe && !event.touches.length) { viewPointers.delete(viewSwipe.id); finishViewSwipe({ clientX: viewSwipe.lastX ?? viewSwipe.x, clientY: viewSwipe.lastY ?? viewSwipe.y }); } }, { passive:true });
   window.addEventListener('touchcancel', event => { activeTouches = event.touches.length; if (viewSwipe) { abortViewSwipe(); resetViewportPointers(); } }, { passive:true });
-  window.addEventListener('touchstart', event => { activeTouches = event.touches.length; }, { passive:true, capture:true });
+  window.addEventListener('touchstart', event => { touchEventsSeen = true; activeTouches = event.touches.length; }, { passive:true, capture:true });
   window.addEventListener('touchend', event => { activeTouches = event.touches.length; }, { passive:true, capture:true });
   setInterval(swipeWatchdog, 300);
   document.addEventListener('visibilitychange', resumeApp);
