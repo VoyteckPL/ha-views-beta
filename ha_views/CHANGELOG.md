@@ -1,3 +1,8 @@
+## 0.4.1-beta.190
+
+- Widoki (telefon): właściwa poprawka mignięcia dołu ekranu po przesunięciu na widok z innym tłem. Podczas przesuwania kontener widoku przycinał zawartość także w pionie, a gdy prawdziwa karta na moment (w trakcie wczytywania nowego obrazu) stawała się niższa, kontener ucinał od dołu podgląd, który zasłaniał ekran. Teraz przycinanie działa tylko w poziomie, a wysokość kontenera jest na czas przesuwania zablokowana.
+- Widoki: gdy obraz nowego tła jeszcze się wczytuje, karta zachowuje dotychczasowy rozmiar zamiast chwilowo przechodzić na rozmiar zastępczy (dotyczy też przełączania zakładkami).
+
 ## 0.4.1-beta.189
 
 - Widoki (telefon): usunięto mignięcie tuż po przesunięciu na widok z innym obrazem tła. Prawdziwy widok przez jedną klatkę miał pośrednią geometrię (dopasowanie do nowego obrazu było odkładane o klatkę), a podgląd znikał za wcześnie. Teraz obraz jest dekodowany, geometria ustawiana od razu, a podgląd zaczyna znikać dopiero, gdy prawdziwy widok jest już narysowany pod nim.

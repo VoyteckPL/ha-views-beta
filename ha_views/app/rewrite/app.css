@@ -549,7 +549,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 @keyframes flow-stream-period{from{transform:translateX(calc(var(--flow-period,0px) * -1))}to{transform:translateX(0)}}
 .flow-marker.flow-overflow{clip-path:inset(-60px 0 -60px 0)}
 /* beta.187: gallery-like swipe between views (preview card next to the real scene card) */
-#view-overview{position:relative}#view-overview.view-swiping{overflow:hidden;overflow:clip}
+#view-overview{position:relative}#view-overview.view-swiping{overflow-x:clip;overflow-y:visible}
 .swipe-preview{position:absolute;z-index:4;margin:0;pointer-events:none;will-change:transform}
 .swipe-preview[hidden]{display:none}
 .swipe-preview .swipe-preview-viewport{position:relative;overflow:hidden}

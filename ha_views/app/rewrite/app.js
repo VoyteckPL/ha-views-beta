@@ -546,6 +546,8 @@ function updateMobileMarkerLayout(renderedWidth, renderedHeight) {
 }
 function updateSceneGeometry() {
   const hasImage = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0;
+  // A new background is still loading: keep the current geometry instead of briefly collapsing to the colour ratio.
+  if (!hasImage && currentBackground && !els.image.hidden && !els.image.complete) return;
   const solidRatio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4);
   const width = hasImage ? els.image.naturalWidth : solidRatio * 100, height = hasImage ? els.image.naturalHeight : 100, ratio = width / height;
   const panorama = mobileWidePanorama();
@@ -2119,7 +2121,13 @@ function prebuildSwipePreviews(delay = 400) {
     [model.viewOrder[index - 1], model.viewOrder[index + 1]].filter(Boolean).forEach(id => { const preview = buildSwipePreview(id); if (preview) swipePreviews.set(id, preview); });
   }, delay);
 }
-function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = true; swipePreview = null; els.sceneCard?.parentElement?.classList.remove('view-swiping'); }
+function setSwipeClip(on) {
+  const section = els.sceneCard?.parentElement; if (!section) return;
+  if (on && !section.classList.contains('view-swiping')) section.style.minHeight = `${Math.max(section.offsetHeight, ...[...swipePreviews.values()].map(preview => preview.element.offsetTop + preview.element.offsetHeight))}px`;
+  if (!on) section.style.minHeight = '';
+  section.classList.toggle('view-swiping', on);
+}
+function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = true; swipePreview = null; setSwipeClip(false); }
 function positionSwipe(offset, direction, animate = 0) {
   const distance = swipePageDistance(), transition = animate ? `transform ${animate}ms cubic-bezier(.22,.61,.36,1)` : 'none';
   if (els.sceneCard) { els.sceneCard.style.transition = transition; els.sceneCard.style.transform = offset ? `translateX(${offset}px)` : ''; }
@@ -2138,7 +2146,7 @@ function trackViewSwipe(event, forcedDx = null) {
   const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1; swipe.direction = direction;
   if (swipePreview?.targetId !== target) {
     removeSwipePreview();
-    if (target) { swipePreview = swipePreviews.get(target) || null; if (!swipePreview) { swipePreview = buildSwipePreview(target); if (swipePreview) swipePreviews.set(target, swipePreview); } if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); } }
+    if (target) { swipePreview = swipePreviews.get(target) || null; if (!swipePreview) { swipePreview = buildSwipePreview(target); if (swipePreview) swipePreviews.set(target, swipePreview); } if (swipePreview) { swipePreview.element.hidden = false; setSwipeClip(true); } }
   }
   const offset = target ? dx : dx * .25;
   cancelAnimationFrame(swipe.frame); swipe.frame = requestAnimationFrame(() => positionSwipe(offset, direction));
@@ -2170,7 +2178,7 @@ async function finishViewSwipe(event) {
 }
 async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
   const distance = swipePageDistance();
-  if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = swipePreviews.get(target) || buildSwipePreview(target); if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); positionSwipe(dx, direction); void els.sceneCard.offsetWidth; } }
+  if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = swipePreviews.get(target) || buildSwipePreview(target); if (swipePreview) { swipePreview.element.hidden = false; setSwipeClip(true); positionSwipe(dx, direction); void els.sceneCard.offsetWidth; } }
   const remaining = Math.max(0, distance - Math.abs(dx)), speed = Math.max(Math.abs(velocity), 1.4);
   swipeBusy = true; let preview = null;
   try {
@@ -2185,13 +2193,13 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
     await nextFrames(2);
     positionSwipe(0, direction);
     await nextFrames(2);
-    els.sceneCard.parentElement.classList.remove('view-swiping');
+    setSwipeClip(false);
   } finally { swipeBusy = false; }
   if (preview) { preview.element.classList.add('swipe-fading'); preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
   // A flick made during this transition continues straight to the next view.
   if (pendingSwipe && !viewSwipe?.tracking) {
     const queued = pendingSwipe, next = swipeNeighbour(queued); pendingSwipe = 0;
-    if (next) { removeSwipePreview(); swipePreview = swipePreviews.get(next) || buildSwipePreview(next); if (swipePreview) { swipePreview.element.hidden = false; els.sceneCard.parentElement.classList.add('view-swiping'); positionSwipe(0, queued < 0 ? -1 : 1); void els.sceneCard.offsetWidth; } await completeViewSwipe(next, queued < 0 ? -1 : 1, 0, 1.6); }
+    if (next) { removeSwipePreview(); swipePreview = swipePreviews.get(next) || buildSwipePreview(next); if (swipePreview) { swipePreview.element.hidden = false; setSwipeClip(true); positionSwipe(0, queued < 0 ? -1 : 1); void els.sceneCard.offsetWidth; } await completeViewSwipe(next, queued < 0 ? -1 : 1, 0, 1.6); }
   }
   pendingSwipe = 0;
 }
