@@ -1,3 +1,7 @@
+## 0.4.1-beta.218
+
+- Telefon, tryb edycji: przy przeciąganiu markera (gdy popup chowa się na czas ruchu) pod tłem nie widać już ramki karty — karta sceny w trybie edycji na telefonie nie ma obramowania, tła ani cienia, więc odsłonięty pas to zwykłe tło aplikacji.
+
 ## 0.4.1-beta.217
 
 - Telefon, tryb edycji: widok nie wyjeżdża już poza dolną krawędź tła, pokazując pustą ramkę. Przesunięcie poza tło jest dozwolone tylko o tyle, ile zasłania popup na dole — puste miejsce zawsze chowa się pod popupem, a marker/Flow/pomieszczenie nisko na tle nadal ląduje nad popupem. Po zamknięciu popupu widok wraca do krawędzi tła.

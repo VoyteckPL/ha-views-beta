@@ -674,3 +674,9 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 .room-icon-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .room-icon-actions button{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px}
+/* Phone edit mode: the view can move past the lower edge of the background (the bottom editor needs room).
+   The card behind the background stays invisible, so what shows below the background is just the page
+   background, not a bare frame — also while the editor is hidden during a drag. */
+@media(max-width:768px),(max-width:900px) and (pointer:coarse){
+  body.editing .scene-card{border-color:transparent;background:transparent;box-shadow:none}
+}
