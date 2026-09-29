@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-208">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-209">
 </head>
 <body>
   <header class="topbar">
@@ -124,7 +124,7 @@
       </div>
       <div class="editor-quick-actions">
         <button id="default-style" class="editor-icon-button" title="Ustaw domyślny" aria-label="Ustaw domyślny"><i class="mdi mdi-restore"></i></button>
-        <button id="preview-state-toggle" class="editor-icon-button" title="Testuj stan ON/OFF" aria-label="Testuj stan ON/OFF"><i class="mdi mdi-toggle-switch-off-outline"></i></button>
+        <button id="geometry-lock" class="editor-icon-button" title="Zablokuj geometrię" aria-label="Zablokuj geometrię"><i class="mdi mdi-lock-open-variant-outline"></i></button>
         <button id="copy-style" class="editor-icon-button" title="Kopiuj styl" aria-label="Kopiuj styl"><i class="mdi mdi-content-copy"></i></button>
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
@@ -151,6 +151,7 @@
       </div>
       <div class="editor-quick-actions">
         <button id="flow-default-style" class="editor-icon-button" title="Ustaw domyślny" aria-label="Ustaw domyślny"><i class="mdi mdi-restore"></i></button>
+        <button id="flow-geometry-lock" class="editor-icon-button" title="Zablokuj geometrię" aria-label="Zablokuj geometrię"><i class="mdi mdi-lock-open-variant-outline"></i></button>
         <button id="flow-duplicate" class="editor-icon-button" title="Duplikuj Flow" aria-label="Duplikuj Flow"><i class="mdi mdi-content-duplicate"></i></button>
         <button id="flow-copy-style" class="editor-icon-button" title="Kopiuj styl Flow" aria-label="Kopiuj styl Flow"><i class="mdi mdi-content-copy"></i></button>
         <button id="flow-paste-style" class="editor-icon-button" title="Wklej styl Flow" aria-label="Wklej styl Flow"><i class="mdi mdi-content-paste"></i></button>
@@ -163,12 +164,18 @@
 
   <aside id="room-editor" class="editor flow-editor room-editor" aria-hidden="true">
     <div class="editor-head">
-      <div class="editor-integration-icon"><i class="mdi mdi-floor-plan"></i></div>
+      <div class="editor-integration-icon"><span class="integration-icon room-editor-icon"><i class="mdi mdi-floor-plan"></i></span></div>
       <div class="editor-title-block">
         <h2 id="room-editor-title" data-no-i18n>Pomieszczenie</h2>
+        <code id="room-editor-entities" data-no-i18n></code>
         <div class="editor-meta"><code>Pomieszczenie</code></div>
       </div>
       <div class="editor-quick-actions">
+        <button id="room-default-style" class="editor-icon-button" title="Ustaw domyślny" aria-label="Ustaw domyślny"><i class="mdi mdi-restore"></i></button>
+        <button id="room-geometry-lock" class="editor-icon-button" title="Zablokuj geometrię" aria-label="Zablokuj geometrię"><i class="mdi mdi-lock-open-variant-outline"></i></button>
+        <button id="room-duplicate" class="editor-icon-button" title="Duplikuj pomieszczenie" aria-label="Duplikuj pomieszczenie"><i class="mdi mdi-content-duplicate"></i></button>
+        <button id="room-copy-style" class="editor-icon-button" title="Kopiuj styl pomieszczenia" aria-label="Kopiuj styl pomieszczenia"><i class="mdi mdi-content-copy"></i></button>
+        <button id="room-paste-style" class="editor-icon-button" title="Wklej styl pomieszczenia" aria-label="Wklej styl pomieszczenia"><i class="mdi mdi-content-paste"></i></button>
         <button id="room-remove" class="editor-icon-button danger" title="Usuń pomieszczenie" aria-label="Usuń pomieszczenie"><i class="mdi mdi-delete-outline"></i></button>
         <button id="room-editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
       </div>
@@ -213,6 +220,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-208"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-209"></script>
 </body>
 </html>

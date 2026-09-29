@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
-    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Naprawiono błędny domyślny panel HA — ustaw go ponownie w menu widoku":"Fixed an invalid HA default panel — set it again in the view menu","Domyślny panel Home Assistant":"Home Assistant default panel","Bez zmian (ustawienia HA)":"Unchanged (HA settings)","HA Views — moje konto":"HA Views — my account","HA Views — tylko to urządzenie":"HA Views — this device only","HA Views jest teraz domyślnym panelem na Twoim koncie":"HA Views is now the default panel for your account","HA Views jest domyślnym panelem na tym urządzeniu":"HA Views is the default panel on this device","Przywrócono domyślny panel z ustawień Home Assistant":"Restored the default panel from Home Assistant settings","Otwieraj HA Views po starcie Home Assistant (to urządzenie)":"Open HA Views when Home Assistant starts (this device)","Ta opcja działa tylko w HA Views otwartym z panelu Home Assistant":"This option only works when HA Views is opened from the Home Assistant sidebar","HA Views będzie otwierać się po starcie Home Assistant na tym urządzeniu":"HA Views will open when Home Assistant starts on this device","Po starcie Home Assistant znów otworzy się domyślny dashboard":"Home Assistant will open its default dashboard again","Brak akcji":"No action","Przełącz światło":"Toggle the light","Nic":"Nothing","To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji":"This room has no entities yet — choose them in edit mode","Błąd przełączania: ":"Toggle error: ","Pomieszczenie":"Room","Dodaj pomieszczenie":"Add room","Klikaj kolejne narożniki pomieszczenia":"Click the corners of the room one by one","Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt":"Click the first point or “Done” to close the shape","Cofnij punkt":"Undo point","Gotowe":"Done","Usuń pomieszczenie":"Delete room","Dodano pomieszczenie — wybierz encje, które je zapalają":"Room added — choose the entities that light it up","Pomieszczenie musi mieć co najmniej 3 narożniki":"A room needs at least 3 corners","Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.":"This view has no entities yet — add e.g. a light via Integrations or type an entity below.","Brak encji":"No entities","Zapalają je encje":"Lit by entities","Inne encje":"Other entities","Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).":"The room lights up when any of the selected entities is on (light, plug, motion, open door…).","Wygląd":"Appearance","Efekt":"Effect","Poświata kolorem":"Colour glow","Zapalony obraz":"Lit image","Obraz zapalony":"Lit image","— wybierz —":"— choose —","Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.":"Upload a second version of the plan as a background (e.g. a render with the lights on) and choose it here — the room reveals it only inside its shape. The image should have the same framing as the plan.","Kolor ze światła":"Colour from the light","Mieszanie":"Blending","Rozjaśnij":"Lighten","Miękkie światło":"Soft light","Nakładka":"Overlay","Zwykłe":"Normal","Jasność ze światła":"Brightness from the light","Intensywność":"Intensity","Miękkość krawędzi":"Edge softness","Podgląd włączonego":"Preview as on","Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).":"Drag a corner to move it. The small dot on an edge adds a corner. Double-click a corner to remove it. Drag the inside to move the whole room. Corners snap to the walls of other rooms (Alt disables).","Usunąć pomieszczenie?":"Delete room?","Usunięto pomieszczenie":"Room deleted","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Geometria zablokowana — kliknij, aby odblokować":"Geometry locked — click to unlock","Zablokuj geometrię":"Lock geometry","Zablokowano geometrię":"Geometry locked","Odblokowano geometrię":"Geometry unlocked","Podgląd":"Preview","Rzeczywisty stan":"Actual state","Włączony":"On","Wyłączony":"Off","Usuń z pomieszczenia":"Remove from room","Dodaj do pomieszczenia":"Add to room","Z tego widoku":"From this view","Wpisz co najmniej 2 znaki.":"Type at least 2 characters.","Wyszukiwanie encji…":"Searching entities…","Brak — wyszukaj encję poniżej.":"None — search for an entity below.","Szukaj nazwy lub encji…":"Search name or entity…","Geometria jest zablokowana (kłódka u góry).":"The geometry is locked (padlock at the top).","Duplikuj pomieszczenie":"Duplicate room","Kopiuj styl pomieszczenia":"Copy room style","Wklej styl pomieszczenia":"Paste room style","Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu":"Room style copied — paste it into another room","Wklejono styl pomieszczenia":"Room style pasted","Przywrócić domyślny wygląd?":"Restore the default look?","Wygląd i akcja dotknięcia pomieszczenia wrócą do domyślnych. Kształt, nazwa i encje zostaną.":"The room look and tap action return to defaults. Shape, name and entities stay.","Przywrócono domyślny wygląd pomieszczenia":"Room look restored to default","kopia":"copy","Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce":"Room copied — drag it where you want it","Naprawiono błędny domyślny panel HA — ustaw go ponownie w menu widoku":"Fixed an invalid HA default panel — set it again in the view menu","Domyślny panel Home Assistant":"Home Assistant default panel","Bez zmian (ustawienia HA)":"Unchanged (HA settings)","HA Views — moje konto":"HA Views — my account","HA Views — tylko to urządzenie":"HA Views — this device only","HA Views jest teraz domyślnym panelem na Twoim koncie":"HA Views is now the default panel for your account","HA Views jest domyślnym panelem na tym urządzeniu":"HA Views is the default panel on this device","Przywrócono domyślny panel z ustawień Home Assistant":"Restored the default panel from Home Assistant settings","Otwieraj HA Views po starcie Home Assistant (to urządzenie)":"Open HA Views when Home Assistant starts (this device)","Ta opcja działa tylko w HA Views otwartym z panelu Home Assistant":"This option only works when HA Views is opened from the Home Assistant sidebar","HA Views będzie otwierać się po starcie Home Assistant na tym urządzeniu":"HA Views will open when Home Assistant starts on this device","Po starcie Home Assistant znów otworzy się domyślny dashboard":"Home Assistant will open its default dashboard again","Brak akcji":"No action","Przełącz światło":"Toggle the light","Nic":"Nothing","To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji":"This room has no entities yet — choose them in edit mode","Błąd przełączania: ":"Toggle error: ","Pomieszczenie":"Room","Dodaj pomieszczenie":"Add room","Klikaj kolejne narożniki pomieszczenia":"Click the corners of the room one by one","Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt":"Click the first point or “Done” to close the shape","Cofnij punkt":"Undo point","Gotowe":"Done","Usuń pomieszczenie":"Delete room","Dodano pomieszczenie — wybierz encje, które je zapalają":"Room added — choose the entities that light it up","Pomieszczenie musi mieć co najmniej 3 narożniki":"A room needs at least 3 corners","Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.":"This view has no entities yet — add e.g. a light via Integrations or type an entity below.","Brak encji":"No entities","Zapalają je encje":"Lit by entities","Inne encje":"Other entities","Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).":"The room lights up when any of the selected entities is on (light, plug, motion, open door…).","Wygląd":"Appearance","Efekt":"Effect","Poświata kolorem":"Colour glow","Zapalony obraz":"Lit image","Obraz zapalony":"Lit image","— wybierz —":"— choose —","Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.":"Upload a second version of the plan as a background (e.g. a render with the lights on) and choose it here — the room reveals it only inside its shape. The image should have the same framing as the plan.","Kolor ze światła":"Colour from the light","Mieszanie":"Blending","Rozjaśnij":"Lighten","Miękkie światło":"Soft light","Nakładka":"Overlay","Zwykłe":"Normal","Jasność ze światła":"Brightness from the light","Intensywność":"Intensity","Miękkość krawędzi":"Edge softness","Podgląd włączonego":"Preview as on","Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).":"Drag a corner to move it. The small dot on an edge adds a corner. Double-click a corner to remove it. Drag the inside to move the whole room. Corners snap to the walls of other rooms (Alt disables).","Usunąć pomieszczenie?":"Delete room?","Usunięto pomieszczenie":"Room deleted","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
     "Diagnostyka przesuwania":"Swipe diagnostics"
@@ -556,7 +556,8 @@ function tapActionControl(value, canToggle) {
 }
 const ROOM_DEFAULTS = Object.freeze({ name:'Pomieszczenie', points:[], entityIds:[], tapAction:'toggle', mode:'glow', color:'#FFD27A', useLightColor:true, useBrightness:true, opacity:.45, feather:14, blend:'screen', litImage:'' });
 const ROOM_ON_STATES = new Set(['on','open','opening','home','playing','heat','heating','cool','cooling','detected','unlocked','active','true']);
-let selectedRoomId = null, roomDraft = null, roomPreviewOn = false, roomEditorOpenSectionIndex = -1;
+let selectedRoomId = null, roomDraft = null, roomPreviewOn = '', roomEditorOpenSectionIndex = -1, roomStyleClipboard = null, allEntitiesCache = null, allEntitiesLoading = null;
+const ROOM_STYLE_KEYS = ['tapAction','mode','color','useLightColor','useBrightness','opacity','feather','blend','litImage'];
 function roomsOf(view = activeSceneView()) { return view?.rooms || {}; }
 function roomOf(id) { const room = roomsOf()[id]; return room ? { ...ROOM_DEFAULTS, ...room } : null; }
 function roomLight(room) {
@@ -572,8 +573,8 @@ function roomLight(room) {
 function roomPointsAttr(points) { return (points || []).map(([x, y]) => `${Math.round(x * 1000) / 1000},${Math.round(y * 1000) / 1000}`).join(' '); }
 function roomBackgroundUrl(name) { return `api/background/file?name=${encodeURIComponent(name)}`; }
 // One <svg> per room so each can blend with the plan (mix-blend-mode) on its own.
-function roomLayerMarkup(room, prefix, width, height, forceOn = false) {
-  const r = { ...ROOM_DEFAULTS, ...room }, light = roomLight(r), on = light.on || forceOn, level = light.on ? light.level : 1;
+function roomLayerMarkup(room, prefix, width, height, preview = '') {
+  const r = { ...ROOM_DEFAULTS, ...room }, light = roomLight(r), on = preview ? preview === 'on' : light.on, level = light.on ? light.level : 1;
   const id = `${prefix}-${String(r.id).replace(/[^a-z0-9_-]/gi, '')}`, fx = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, width), fy = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, height);
   const blur = `<filter id="${id}-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${fx.toFixed(3)} ${fy.toFixed(3)}"/></filter>`;
   const opacity = on ? clamp(Number(r.opacity) || 0, 0, 1) * level : 0, points = roomPointsAttr(r.points);
@@ -589,7 +590,7 @@ function renderRooms() {
   const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3);
   const width = els.scene.offsetWidth || 1, height = els.scene.offsetHeight || 1, kept = new Set();
   rooms.forEach(room => {
-    const preview = editMode && roomPreviewOn && room.id === selectedRoomId, built = roomLayerMarkup(room, 'room', width, height, preview);
+    const preview = editMode && room.id === selectedRoomId ? roomPreviewOn : '', built = roomLayerMarkup(room, 'room', width, height, preview);
     let node = layer.querySelector(`.room-layer[data-room-id="${CSS.escape(room.id)}"]`);
     // Unchanged geometry keeps its node, so switching the light on/off fades (CSS transition on opacity).
     if (node && node.dataset.signature === built.signature) { node.style.opacity = built.opacity.toFixed(3); const fill = node.querySelector('.room-fill'); if (fill) fill.setAttribute('fill', built.color); }
@@ -611,7 +612,7 @@ function renderRoomEditLayer() {
   }
   let handles = '';
   const room = selectedRoomId && roomsOf()[selectedRoomId];
-  if (room && !roomDraft) {
+  if (room && !roomDraft && !room.geometryLocked) {
     const pts = room.points || [];
     handles += pts.map(([x, y], index) => `<i class="room-handle" data-room-point="${index}" style="left:${x}%;top:${y}%"></i>`).join('');
     handles += pts.map(([x, y], index) => { const [nx, ny] = pts[(index + 1) % pts.length]; return `<i class="room-handle mid" data-room-mid="${index}" style="left:${(x + nx) / 2}%;top:${(y + ny) / 2}%"></i>`; }).join('');
@@ -695,7 +696,7 @@ function removeRoomPoint(event) {
 }
 function startRoomMove(event) {
   if (!editMode || roomDraft || event.button > 0 || !selectedRoomId || (event.target !== els.markers && event.target !== els.scene && event.target !== els.image)) return false;
-  const room = roomsOf()[selectedRoomId], start = scenePercentAt(event); if (!room || !pointInPolygon(start, room.points)) return false;
+  const room = roomsOf()[selectedRoomId], start = scenePercentAt(event); if (!room || room.geometryLocked || !pointInPolygon(start, room.points)) return false;
   const original = clone(room.points); let moved = false;
   const move = e => {
     if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e); let dx = x - start[0], dy = y - start[1];
@@ -709,43 +710,73 @@ function startRoomMove(event) {
   return true;
 }
 // ---- Room editor panel
-function roomEntityChoices(room) {
-  const view = activeSceneView(), items = new Map();
-  Object.values(view?.entities || {}).forEach(marker => items.set(marker.entityId, marker.displayName || marker.entityId));
-  Object.values(view?.flows || {}).forEach(flow => { if (!items.has(flow.entityId)) items.set(flow.entityId, flow.displayName || flow.entityId); });
-  (room.entityIds || []).forEach(id => { if (!items.has(id)) items.set(id, id); });
-  const rank = id => /^(light|switch)\./.test(id) ? 0 : /^binary_sensor\./.test(id) ? 1 : 2;
-  return [...items.entries()].sort((a, b) => rank(a[0]) - rank(b[0]) || String(a[1]).localeCompare(String(b[1])));
+// ---- Room entities: added list + dynamic search over all HA entities (like Integrations)
+async function loadAllEntities() {
+  if (allEntitiesCache) return allEntitiesCache;
+  allEntitiesLoading ||= (async () => {
+    if (!integrations.length) { try { const data = await api('integrations'); integrations = data.integrations || []; } catch {} }
+    const titles = new Map(integrations.map(item => [item.entry_id, item.title || item.domain || '']));
+    let list = [];
+    try { const data = await api('integration_entities_all'); Object.entries(data.entities_by_entry || {}).forEach(([entry, entities]) => (entities || []).forEach(entity => list.push({ id: entity.entity_id, name: entity.name || entity.entity_id, integration: titles.get(entry) || '', enabled: entity.enabled !== false }))); } catch {}
+    const seen = new Set(); allEntitiesCache = list.filter(entity => entity.id && !seen.has(entity.id) && seen.add(entity.id));
+    return allEntitiesCache;
+  })();
+  return allEntitiesLoading;
+}
+function roomEntityName(id) {
+  const view = activeSceneView(), marker = view?.entities?.[id], flow = Object.values(view?.flows || {}).find(item => item.entityId === id);
+  return marker?.displayName || flow?.displayName || allEntitiesCache?.find(entity => entity.id === id)?.name || stateCache[id]?.attributes?.friendly_name || id;
+}
+function roomEntityRank(id) { return /^(light|switch)\./.test(id) ? 0 : /^(binary_sensor|input_boolean|fan)\./.test(id) ? 1 : 2; }
+function roomEntityRow(id, action) {
+  const state = String(stateCache[id]?.state ?? '');
+  const button = action === 'remove' ? `<button type="button" class="room-entity-action" data-room-remove="${escapeHtml(id)}" title="${escapeHtml(translateValue('Usuń z pomieszczenia'))}"><i class="mdi mdi-close"></i></button>` : `<button type="button" class="room-entity-action add" data-room-add="${escapeHtml(id)}" title="${escapeHtml(translateValue('Dodaj do pomieszczenia'))}"><i class="mdi mdi-plus"></i></button>`;
+  return `<div class="room-entity${action === 'remove' ? ' added' : ''}"${action === 'add' ? ` data-room-add="${escapeHtml(id)}"` : ''}><div><strong data-no-i18n>${escapeHtml(roomEntityName(id))}</strong><code data-no-i18n>${escapeHtml(id)}${state ? ' · ' + escapeHtml(state) : ''}</code></div>${button}</div>`;
+}
+function renderRoomEntityResults() {
+  const box = $('#room-entity-results'), input = $('#room-entity-search'), room = roomsOf()[selectedRoomId]; if (!box || !input || !room) return;
+  const query = searchText(input.value), added = new Set(room.entityIds || []);
+  if (!query) {
+    const view = activeSceneView(), local = [...new Set([...Object.keys(view?.entities || {}), ...Object.values(view?.flows || {}).map(flow => flow.entityId)])].filter(id => !added.has(id)).sort((a, b) => roomEntityRank(a) - roomEntityRank(b));
+    box.innerHTML = local.length ? `<div class="room-entity-heading">${escapeHtml(translateValue('Z tego widoku'))}</div>` + local.slice(0, 12).map(id => roomEntityRow(id, 'add')).join('') : '';
+    return;
+  }
+  if (query.length < 2) { box.innerHTML = `<div class="room-entity-heading">${escapeHtml(translateValue('Wpisz co najmniej 2 znaki.'))}</div>`; return; }
+  if (!allEntitiesCache) { box.innerHTML = `<div class="room-entity-heading">${escapeHtml(translateValue('Wyszukiwanie encji…'))}</div>`; loadAllEntities().then(() => { if ($('#room-entity-search') === input) renderRoomEntityResults(); }); return; }
+  const matches = allEntitiesCache.filter(entity => !added.has(entity.id) && (searchText(entity.id).includes(query) || searchText(entity.name).includes(query) || searchText(entity.integration).includes(query)))
+    .sort((a, b) => roomEntityRank(a.id) - roomEntityRank(b.id) || Number(b.enabled) - Number(a.enabled) || a.name.localeCompare(b.name)).slice(0, 40);
+  box.innerHTML = matches.length ? matches.map(entity => roomEntityRow(entity.id, 'add')).join('') : `<div class="room-entity-heading">${escapeHtml(translateValue('Brak pasujących encji.'))}</div>`;
 }
 function roomEditorMarkup(room) {
   const r = { ...ROOM_DEFAULTS, ...room }, light = roomLight(r), refresh = { refresh:true };
   const backgrounds = [...(els.bgSelect?.options || [])].map(option => option.value).filter(Boolean);
-  const choices = roomEntityChoices(r), note = text => `<p class="flow-section-note">${text}</p>`;
-  const entityList = choices.length ? `<div class="room-entity-list">${choices.map(([id, name]) => `<label class="room-entity"><input type="checkbox" data-room-entity="${escapeHtml(id)}" ${r.entityIds.includes(id) ? 'checked' : ''}><span>${escapeHtml(name)}</span><code data-no-i18n>${escapeHtml(id)}</code></label>`).join('')}</div>` : note('Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.');
-  const other = r.entityIds.filter(id => !choices.some(([choice]) => choice === id)).join(', ');
+  const note = text => `<p class="flow-section-note">${text}</p>`, canToggle = r.entityIds.some(id => isToggleableMarker({ entityId:id }));
+  const addedList = r.entityIds.length ? r.entityIds.map(id => roomEntityRow(id, 'remove')).join('') : `<div class="room-entity-heading">${escapeHtml(translateValue('Brak — wyszukaj encję poniżej.'))}</div>`;
   const entities = section('Pomieszczenie', control('Nazwa','name','text',r.name)
     + `<div class="control"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`
-    + `<div class="control room-entities-control"><label>Zapalają je encje</label>${entityList}<span></span></div>`
-    + tapActionControl(r.entityIds.some(id => isToggleableMarker({ entityId:id })) ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), r.entityIds.some(id => isToggleableMarker({ entityId:id })))
-    + control('Inne encje','otherEntities','text',other,{}).replace('data-path="otherEntities"', 'data-path="otherEntities" placeholder="light.salon, binary_sensor.ruch"')
+    + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
+    + `<div class="control room-entities-control"><label>Zapalają je encje</label><div class="room-entity-list">${addedList}</div>`
+    + `<label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="room-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="room-entity-results" class="room-entity-list room-entity-results"></div></div>`
     + note('Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).'));
   const imageMode = r.mode === 'image';
-  const look = section('Wygląd', control('Efekt','mode','select',imageMode ? 'image' : 'glow',{ items:[['glow','Poświata kolorem'],['image','Zapalony obraz']], refresh:true })
+  const look = section('Wygląd', control('Podgląd','previewOn','select',roomPreviewOn,{ items:[['','Rzeczywisty stan'],['on','Włączony'],['off','Wyłączony']] })
+    + control('Efekt','mode','select',imageMode ? 'image' : 'glow',{ items:[['glow','Poświata kolorem'],['image','Zapalony obraz']], refresh:true })
     + (imageMode
       ? (backgrounds.length ? control('Obraz zapalony','litImage','select',r.litImage,{ items:[['','— wybierz —'], ...backgrounds.map(name => [name, name])], refresh:true }) : '') + note('Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.')
       : control('Kolor','color','color',r.color) + control('Kolor ze światła','useLightColor','checkbox',r.useLightColor) + control('Mieszanie','blend','select',r.blend,{ items:[['screen','Rozjaśnij'],['soft-light','Miękkie światło'],['overlay','Nakładka'],['normal','Zwykłe']] }))
     + control('Jasność ze światła','useBrightness','checkbox',r.useBrightness)
     + control('Intensywność','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true })
-    + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
-    + control('Podgląd włączonego','previewOn','checkbox',roomPreviewOn,refresh));
-  const shape = section('Kształt', note('Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).'));
+    + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true }));
+  const shape = section('Kształt', note(r.geometryLocked ? 'Geometria jest zablokowana (kłódka u góry).' : 'Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).'));
   return entities + look + shape;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
-  if (selectedRoomId !== id) { preserveSection = roomEditorOpenSectionIndex = 0; roomPreviewOn = false; }
+  if (selectedRoomId !== id) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue('Pomieszczenie');
+  const entityInfo = $('#room-editor-entities'); if (entityInfo) entityInfo.textContent = (room.entityIds || []).join(', ') || '—';
+  syncLockButton($('#room-geometry-lock'), room.geometryLocked); const paste = $('#room-paste-style'); if (paste) paste.disabled = !roomStyleClipboard;
   const content = $('#room-editor-content'), scroll = content.scrollTop;
   content.innerHTML = roomEditorMarkup(room);
   const sections = $$('.editor-section', content);
@@ -756,32 +787,25 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
   }));
   $$('input,select', content).forEach(input => {
     if (input.type === 'range' || input.type === 'color') { input.addEventListener('input', onRoomEditorInput); input.addEventListener('change', onRoomEditorInput); }
-    else input.addEventListener('change', onRoomEditorInput);
+    else if (input.id !== 'room-entity-search') input.addEventListener('change', onRoomEditorInput);
   });
+  $('#room-entity-search')?.addEventListener('input', renderRoomEntityResults); renderRoomEntityResults();
   content.scrollTop = scroll;
   panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
   requestAnimationFrame(() => { const outline = $('#room-edit-layer .room-outline.selected'); if (outline && !mobileView() && !panel.dataset.dragged) placeEditorNear(panel, outline); });
 }
 function closeRoomEditor() {
   const panel = $('#room-editor'); if (!panel) return;
-  const had = selectedRoomId; selectedRoomId = null; roomPreviewOn = false; delete panel.dataset.dragged;
+  const had = selectedRoomId; selectedRoomId = null; roomPreviewOn = ''; delete panel.dataset.dragged;
   panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
 }
 function onRoomEditorInput(event) {
   const room = roomsOf()[selectedRoomId], input = event.target; if (!room) return;
-  if (input.dataset.roomEntity !== undefined) {
-    const id = input.dataset.roomEntity, ids = new Set(room.entityIds || []); if (input.checked) ids.add(id); else ids.delete(id);
-    room.entityIds = [...ids]; room.updatedAt = new Date().toISOString(); refreshStates(); openRoomEditor(room.id); scheduleSave(true); return;
-  }
   const path = input.dataset.path; if (!path) return;
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
-  if (path === 'previewOn') { roomPreviewOn = value; renderRooms(); return; }
-  if (path === 'otherEntities') {
-    const listed = roomEntityChoices({ entityIds: [] }).map(([id]) => id), typed = String(value).split(/[\s,;]+/).map(id => id.trim()).filter(id => /^[a-z_]+\.[a-z0-9_]+$/i.test(id));
-    room.entityIds = [...new Set([...(room.entityIds || []).filter(id => listed.includes(id)), ...typed])]; room.updatedAt = new Date().toISOString(); refreshStates(); openRoomEditor(room.id); scheduleSave(true); return;
-  }
+  if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
   if (path === 'opacity') value = clamp(value / 100, .05, 1);
   if (path === 'name') { value = String(value).trim() || translateValue('Pomieszczenie'); $('#room-editor-title').textContent = value; }
   room[path] = value; room.updatedAt = new Date().toISOString();
@@ -791,6 +815,15 @@ function onRoomEditorInput(event) {
   scheduleSave(event.type === 'change');
 }
 function onRoomEditorClick(event) {
+  const addId = event.target.closest('[data-room-add]')?.dataset.roomAdd, removeId = event.target.closest('[data-room-remove]')?.dataset.roomRemove;
+  if (addId || removeId) {
+    event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
+    const ids = new Set(room.entityIds || []); if (addId) ids.add(addId); if (removeId) ids.delete(removeId);
+    room.entityIds = [...ids]; room.updatedAt = new Date().toISOString();
+    const query = $('#room-entity-search')?.value || ''; refreshStates(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
+    const search = $('#room-entity-search'); if (search && addId && query) { search.value = query; renderRoomEntityResults(); }
+    return;
+  }
   const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]'), content = $('#room-editor-content');
   const reset = event.target.closest('[data-reset-path]');
   if (reset) { event.preventDefault(); const input = content.querySelector(`input[data-path="${CSS.escape(reset.dataset.resetPath)}"]`), defaults = { opacity: ROOM_DEFAULTS.opacity * 100, feather: ROOM_DEFAULTS.feather }; if (input && reset.dataset.resetPath in defaults) { input.value = defaults[reset.dataset.resetPath]; input.dispatchEvent(new Event('change', { bubbles:true })); } return; }
@@ -820,6 +853,17 @@ async function onRoomTap(room) {
   try { await Promise.all(toggleable.map(id => api('control', jsonOptions({ entity_id:id, action: expected === 'on' ? 'turn_on' : 'turn_off' })))); }
   catch (error) { notify(`Błąd przełączania: ${error.message}`, true); }
   finally { await delay(700); toggleable.forEach(id => pendingToggleStates.delete(id)); roomTogglesInFlight.delete(r.id); refreshStates(); }
+}
+function toggleRoomLock() { const room = roomsOf()[selectedRoomId]; if (!room) return; room.geometryLocked = !room.geometryLocked; room.updatedAt = new Date().toISOString(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); notify(room.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); }
+function copyRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room) return; roomStyleClipboard = Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in room).map(key => [key, clone(room[key])])); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
+function pasteRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room || !roomStyleClipboard) return; ROOM_STYLE_KEYS.forEach(key => delete room[key]); Object.assign(room, clone(roomStyleClipboard), { updatedAt:new Date().toISOString() }); renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia'); }
+async function resetRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room || !await appConfirm({ title:'Przywrócić domyślny wygląd?', message:'Wygląd i akcja dotknięcia pomieszczenia wrócą do domyślnych. Kształt, nazwa i encje zostaną.', confirmText:'Przywróć', danger:true })) return; ROOM_STYLE_KEYS.forEach(key => delete room[key]); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Przywrócono domyślny wygląd pomieszczenia'); }
+function duplicateRoom() {
+  const view = activeSceneView(), room = view?.rooms?.[selectedRoomId]; if (!room) return;
+  const id = 'room_' + uid(), now = new Date().toISOString(), copy = clone(room), xs = room.points.map(p => p[0]), ys = room.points.map(p => p[1]);
+  const dx = Math.max(...xs) + 3 <= 100 ? 3 : -3, dy = Math.max(...ys) + 3 <= 100 ? 3 : -3;
+  Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, points: room.points.map(([x, y]) => [clamp(x + dx, 0, 100), clamp(y + dy, 0, 100)]), geometryLocked:false, createdAt:now, updatedAt:now });
+  view.rooms[id] = copy; renderRooms(); openRoomEditor(id); scheduleSave(true); notify('Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce');
 }
 function roomUsesEntity(entityId) { return Object.values(roomsOf()).some(room => (room.entityIds || []).includes(entityId)); }
 // ---- HA default panel -------------------------------------------------------------------
@@ -1782,7 +1826,7 @@ function flowEditorMarkup(flow) {
   const shapeKey = FLOW_SHAPES.some(([key]) => key === s.shape) ? s.shape : 'chevron';
   const shape = section('Kształt', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true }) + (shapeKey === 'segment' ? '' : control('Ostrość','shapeSharpness','range',clamp(Number(s.shapeSharpness) || 100,10,100),{ min:10, max:100, step:1, suffix:'%', integer:true })) + control('Liczba','flowCount','range',clamp(Number(s.flowCount) || 3,1,FLOW_LIMITS.count),{ min:1, max:FLOW_LIMITS.count, step:1, integer:true })
     + (shapeKey === 'chevron' || shapeKey === 'arrow' ? control(shapeKey === 'arrow' ? 'Grubość trzonu' : 'Grubość','chevronThickness','range',Number(s.chevronThickness) || 5,{ min:1, max:FLOW_LIMITS.thickness, step:1, suffix:'px', integer:true }) : ''));
-  const size = section('Rozmiar i pozycja', note(styleNote) + control('Blokada geometrii','geometryLocked','checkbox',locked,refresh)
+  const size = section('Rozmiar i pozycja', note(styleNote)
     + control('Długość ramki','flowLength','range',Number(s.flowLength) || 84,{ min:8, max:FLOW_LIMITS.length, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Długość elementu','chevronWidth','range',Number(s.chevronWidth) || 22,{ min:2, max:FLOW_LIMITS.size, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Szerokość','chevronHeight','range',Number(s.chevronHeight) || 22,{ min:FLOW_LIMITS.min, max:FLOW_LIMITS.size, step:1, suffix:'px', integer:true, disabled:locked })
@@ -1821,7 +1865,7 @@ function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
     else { input.addEventListener('input', onFlowEditorInput); input.addEventListener('change', onFlowEditorInput); }
   });
   els.flowEditorContent.scrollTop = scroll;
-  $('#flow-paste-style').disabled = !flowStyleClipboard;
+  $('#flow-paste-style').disabled = !flowStyleClipboard; syncLockButton($('#flow-geometry-lock'), flow.geometryLocked);
   els.flowEditor.classList.add('visible'); els.flowEditor.setAttribute('aria-hidden','false'); renderMarkers();
   if (newlySelected) requestAnimationFrame(() => requestAnimationFrame(() => { focusScenePointOnMobile(flow.xPercent, flow.yPercent); syncFlowSelection(); }));
   requestAnimationFrame(positionFlowEditor);
@@ -2094,7 +2138,7 @@ function iconEditorMarkup(marker) {
   const refresh = { refresh:true };
   const tapAction = tapActionControl(marker.tapAction || 'more_info', isToggleableMarker(marker));
   const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + tapAction);
-  const size = section('Rozmiar', control('Blokada geometrii','geometryLocked','checkbox',!!marker.geometryLocked,{refresh:true}) + control('Szerokość','style.width','range',s.width,{min:24,max:2400,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:24,max:1800,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}));
+  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:24,max:2400,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:24,max:1800,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${iconChoiceLabel(label)}</option>`).join('')}</datalist>`;
   const manual = marker.iconMode === 'manual';
   const integrationLogo = marker.iconMode === 'integration';
@@ -2107,7 +2151,7 @@ function iconEditorMarkup(marker) {
   const background = section('Tło', bgBody);
   const borderBody = control('Pokaż','style.showBorder','checkbox',s.showBorder,refresh) + (s.showBorder ? control('Kształt','style.shape','select',s.shape,{items:[['rounded','Zaokrąglony'],['circle','Koło / owal']],...refresh}) + (s.shape === 'rounded' ? control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}) : '') + (s.borderStateEnabled ? control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezroczystość ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezroczystość OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}) : control('Kolor','style.borderColor','color',s.borderColor) + control('Przezroczystość','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'})) + control('Ramka zależna ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled,refresh) : '');
   const border = section('Ramka', borderBody);
-  return entity + size + icon + valueRulesSection(marker) + background + border;
+  return withStatePreview(entity + size + icon + valueRulesSection(marker) + background + border, marker, ['Encja','Ikona','Tło','Ramka']);
 }
 
 
@@ -2167,7 +2211,7 @@ function editorMarkup(marker) {
   const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = isGaugeType(marker.type) ? { width: 44, height: 28 } : marker.type === 'icon' ? { width: 24, height: 24 } : { width: 36, height: 24 };
   const maximumSize = { width: 2400, height: 1800 };
-  const size = section('Rozmiar', control('Blokada geometrii','geometryLocked','checkbox',!!marker.geometryLocked,{refresh:true}) + control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
+  const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
   const background = section('Tło', control('Pokaż','style.showBackground','checkbox',s.showBackground) + backgroundGradientControls(s) + control('Kolor','style.backgroundColor','color',s.backgroundColor) + control('Przezrocz.','style.backgroundOpacity','range',s.backgroundOpacity,{min:0,max:1,step:.01}) + control('Zależne ON/OFF','style.backgroundStateEnabled','checkbox',s.backgroundStateEnabled) + control('Kolor ON','style.backgroundOnColor','color',s.backgroundOnColor) + control('Kolor OFF','style.backgroundOffColor','color',s.backgroundOffColor) + control('Przezrocz. ON','style.backgroundOnOpacity','range',s.backgroundOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.backgroundOffOpacity','range',s.backgroundOffOpacity,{min:0,max:1,step:.01}));
   const border = section('Ramka', control('Kształt','style.shape','select',s.shape,{items:[['square','Prostokąt'],['rounded','Zaokrąglony'],['circle','Koło / owal']]}) + control('Pokaż','style.showBorder','checkbox',s.showBorder) + control('Kolor','style.borderColor','color',s.borderColor) + control('Przezrocz.','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}) + control('Zależne ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled) + control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezrocz. ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezrocz. OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}));
   const mdiList = `<datalist id="mdi-icon-list">${ICON_CHOICES.slice(1).map(([name,label]) => `<option value="${name}">${iconChoiceLabel(label)}</option>`).join('')}</datalist>`;
@@ -2185,7 +2229,7 @@ function editorMarkup(marker) {
     const percent = gaugeSubsection('Procent', control('Pokaż','style.showPercent','checkbox',s.showPercent) + control('Kolor','style.percentColor','color',s.percentColor) + control('Przezrocz.','style.percentOpacity','range',s.percentOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.percentScale','range',s.percentScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.percentY','range',s.percentY,{min:-100,max:100,step:1,suffix:'px'}));
     gauge = section(marker.type === 'horseshoe' ? 'Podkowa' : 'Gauge', range + geometry + ticks + tickLabels + gradient + percent);
   }
-  return entity + size + value + label + icon + gauge + valueRulesSection(marker) + background + border;
+  return withStatePreview(entity + size + value + label + icon + gauge + valueRulesSection(marker) + background + border, marker, ['Encja','Stan','Ikona','Tło','Ramka']);
 }
 function bindEditorInputs(root) {
   $$('input,select', root).forEach(input => {
@@ -2230,7 +2274,25 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
     if (details.open) $$('.gauge-subsection', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); });
     requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); });
   }));
-  syncPreviewStateButton(); requestAnimationFrame(positionEditor);
+  syncPreviewStateButton(); syncLockButton($('#geometry-lock'), marker.geometryLocked); requestAnimationFrame(positionEditor);
+}
+// Geometry lock lives in every popup's header (marker, Flow, room), next to "Set default".
+function syncLockButton(button, locked) {
+  if (!button) return; button.classList.toggle('active', !!locked);
+  const icon = button.querySelector('i'); if (icon) icon.className = `mdi ${locked ? 'mdi-lock' : 'mdi-lock-open-variant-outline'}`;
+  const label = translateValue(locked ? 'Geometria zablokowana — kliknij, aby odblokować' : 'Zablokuj geometrię'); button.title = label; button.setAttribute('aria-label', label);
+}
+function openSectionIndex(content, fallback) { const index = $$('.editor-section', content).findIndex(section => section.open); return index >= 0 ? index : fallback; }
+// ON/OFF preview inside the sections whose look depends on the state (instead of a header button).
+function markerHasOnOff(marker) { const raw = String(stateCache[marker.entityId]?.state || '').toLowerCase(); return isToggleableMarker(marker) || ['on','off','open','closed','opened','close','active','inactive','true','false'].includes(raw); }
+function previewControl(marker) {
+  const value = editorPreview.entityId === marker.entityId ? editorPreview.state : '';
+  return control('Podgląd','__preview','select',value,{ items:[['','Rzeczywisty stan'],['on','Włączony'],['off','Wyłączony']] });
+}
+function withStatePreview(markup, marker, titles) {
+  if (!markerHasOnOff(marker)) return markup;
+  titles.forEach(title => { markup = markup.replace(`<summary>${title}</summary><div class="editor-section-body">`, `<summary>${title}</summary><div class="editor-section-body">${previewControl(marker)}`); });
+  return markup;
 }
 function syncPreviewStateButton() {
   const button = $('#preview-state-toggle'), marker = model.entities[selectedId]; if (!button) return;
@@ -2272,6 +2334,7 @@ function resetEditorRange(path) {
 }
 function onEditorInput(event) {
   const marker = model.entities[selectedId], input = event.target; if (!marker || !input.dataset.path) return;
+  if (input.dataset.path === '__preview') { editorPreview = input.value ? { entityId: marker.entityId, state: input.value } : { entityId:'', state:'' }; renderMarkers(); openEditor(openSectionIndex(els.editorContent, editorOpenSectionIndex)); return; }
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') value = Number(value); if (input.dataset.integer === 'true') value = Math.round(value);
   setPath(marker, input.dataset.path, value); marker.updatedAt = new Date().toISOString();
@@ -2887,7 +2950,7 @@ function bindEvents() {
   $('#room-draw-undo')?.addEventListener('click', () => { if (!roomDraft) return; roomDraft.points.pop(); roomDraft.cursor = null; updateRoomDrawBar(); renderRoomEditLayer(); });
   $('#room-draw-cancel')?.addEventListener('click', cancelRoomDrawing);
   $('#room-editor-close')?.addEventListener('click', closeRoomEditor);
-  $('#room-remove')?.addEventListener('click', removeRoom);
+  $('#room-remove')?.addEventListener('click', removeRoom); $('#room-geometry-lock')?.addEventListener('click', toggleRoomLock); $('#room-copy-style')?.addEventListener('click', copyRoomStyle); $('#room-paste-style')?.addEventListener('click', pasteRoomStyle); $('#room-default-style')?.addEventListener('click', resetRoomStyle); $('#room-duplicate')?.addEventListener('click', duplicateRoom);
   $('#room-editor-content')?.addEventListener('click', onRoomEditorClick);
   $('.room-editor .editor-head')?.addEventListener('pointerdown', event => { const panel = $('#room-editor'); if (panel) panel.dataset.dragged = '1'; startEditorDrag(event); });
   $('#editor-close').addEventListener('click', closeEditor); document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (els.confirmBox.classList.contains('visible')) closeAppConfirm(false); else if (els.moreInfo.classList.contains('visible')) closeMoreInfo(); else if (roomDraft) cancelRoomDrawing(); else { closeEditor(); closeFlowEditor(); closeRoomEditor(); } });
@@ -2903,6 +2966,8 @@ function bindEvents() {
     onColorPickerClick(event);
   });
   $$('[data-editor-tab]').forEach(button => button.addEventListener('click', () => changeType(button.dataset.editorTab)));
+  $('#geometry-lock')?.addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; m.geometryLocked = !m.geometryLocked; m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(openSectionIndex(els.editorContent, editorOpenSectionIndex)); scheduleSave(true); notify(m.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); });
+  $('#flow-geometry-lock')?.addEventListener('click', () => { const flow = activeSceneView()?.flows?.[selectedFlowId]; if (!flow) return; flow.geometryLocked = !flow.geometryLocked; flow.updatedAt = new Date().toISOString(); renderMarkers(); openFlowEditor(flow.id, openSectionIndex(els.flowEditorContent, flowEditorOpenSectionIndex)); scheduleSave(true); notify(flow.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); });
   $('#preview-state-toggle')?.addEventListener('click', () => {
     const marker = model.entities[selectedId]; if (!marker || !editMode) return;
     const current = previewStateFor(marker) || stateKind(marker);

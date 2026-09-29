@@ -1,3 +1,12 @@
+## 0.4.1-beta.209
+
+- Siatka w trybie edycji jest dużo rzadsza i delikatniejsza (linie co 10%) — precyzyjne wyrównanie robią teraz linie pomocnicze. Przyciąganie do siatki działa jak wcześniej.
+- Blokada geometrii przeniesiona na górę każdego popupu (marker, Flow, pomieszczenie) jako kłódka obok „Ustaw domyślny”.
+- Badge / ikona: podgląd stanu ON/OFF jest teraz w każdej sekcji, której wygląd zależy od stanu (Encja, Stan, Ikona, Tło, Ramka) jako „Podgląd: Rzeczywisty stan / Włączony / Wyłączony” zamiast przycisku u góry.
+- Popup pomieszczenia jak pozostałe: sekcje domyślnie zwinięte, ten sam nagłówek (Ustaw domyślny, Blokada, Duplikuj, Kopiuj styl, Wklej styl, Usuń, Zamknij).
+- Encje pomieszczenia: lista dodanych encji na górze (z usuwaniem) i dynamiczna wyszukiwarka wszystkich encji HA jak w Integracjach; bez wpisywania podpowiada encje z bieżącego widoku.
+- „Podgląd” w pomieszczeniu też ma trzy stany: Rzeczywisty stan / Włączony / Wyłączony.
+
 ## 0.4.1-beta.208
 
 - Naprawa „Domyślny panel Home Assistant”: w nowym HA panele dodatków mają adres /app/<slug>, a 207 zapisywało „app” zamiast nazwy panelu HA Views, przez co HA po starcie kręcił kółkiem. Panel jest teraz brany z listy paneli HA (panel dodatku, config.addon), a nie z adresu; gdy nie da się go ustalić, opcja jest ukryta.
