@@ -1,3 +1,7 @@
+## 0.4.1-beta.199
+
+- Naprawa: kolor Flow wracał do starego po ponownym otwarciu aplikacji. Stara migracja przy każdym starcie kopiowała dawne pole `fillColor` do koloru i zapisywała układ. Teraz stare pola `fillColor`/`chevronMode` są jednorazowo usuwane, a kolor jest brany z nich tylko dla bardzo starych Flow (sprzed wyboru kształtu).
+
 ## 0.4.1-beta.198
 
 - Beta zapisuje układ we własnym pliku `/config/ha_views/rewrite_state_beta.json` (przy pierwszym starcie kopiuje obecny `rewrite_state.json`). Stabilny dodatek HA Views zapisywał ten sam plik bez sprawdzania wersji, więc otwarta strona wersji stabilnej potrafiła cofnąć zmiany zrobione w becie na wszystkich urządzeniach.

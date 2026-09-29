@@ -348,7 +348,12 @@ function ensureMultiViewModel() {
       flow.geometryLocked ??= false;
       if (flow.outlineCustom === undefined) { flow.outlineCustom = Boolean(flow.outlineColor) && String(flow.outlineColor).toUpperCase() !== String(flow.color).toUpperCase(); migrated = true; }
       if (flow.glowCustom === undefined) { flow.glowCustom = Boolean(flow.glowColor) && String(flow.glowColor).toUpperCase() !== String(flow.color).toUpperCase(); migrated = true; }
-      if (flow.directionMode !== 'auto' && flow.fillColor && String(flow.fillColor).toUpperCase() !== String(flow.color).toUpperCase() && flow.chevronMode === 'filled') { flow.color = flow.fillColor; migrated = true; }
+      // Old Flow versions kept the fill colour in fillColor/chevronMode. Take it over once (only for flows
+      // from before shapes existed) and drop the old keys — otherwise every start overwrote the colour.
+      if (flow.fillColor !== undefined || flow.chevronMode !== undefined) {
+        if (!flow.shape && flow.directionMode !== 'auto' && flow.fillColor && flow.chevronMode === 'filled') flow.color = flow.fillColor;
+        delete flow.fillColor; delete flow.chevronMode; migrated = true;
+      }
       if (!flow.shape) {
         flow.shape = flow.flowStyle === 'segments' ? 'segment' : ['arrow','bar'].includes(flow.chevronVariant) ? 'arrow' : 'chevron';
         if (flow.shape === 'segment') { flow.chevronWidth = Math.max(8, Math.round((Number(flow.chevronWidth) || 22) * .9)); flow.chevronHeight = Math.max(4, Math.round((Number(flow.chevronHeight) || 22) * .32)); }
