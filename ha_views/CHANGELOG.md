@@ -1,3 +1,8 @@
+## 0.4.1-beta.204
+
+- Pomieszczenia: dotknięcie pomieszczenia w widoku przełącza jego światła/gniazdka (gdy któreś świeci — gasi wszystkie, inaczej zapala). Zmiana jest widoczna od razu, bez czekania na HA. W ustawieniach pomieszczenia „Dotknięcie w widoku”: Przełącz światło / Więcej informacji / Nic.
+- Widok, który ma tylko pomieszczenia (bez markerów), nie pokazuje już komunikatu „Dodaj pierwszą encję” zasłaniającego plan.
+
 ## 0.4.1-beta.203
 
 - Nowość: pomieszczenia. W trybie edycji menu → „Pomieszczenie”: klikasz kolejne narożniki (dowolny kształt — L, schody, skosy), zamykasz klikając pierwszy punkt albo „Gotowe”. Narożniki przyciągają się do ścian innych pomieszczeń i do siatki (Alt wyłącza).
