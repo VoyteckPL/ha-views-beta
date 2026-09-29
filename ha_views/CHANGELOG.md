@@ -1,3 +1,7 @@
+## 0.4.1-beta.206
+
+- Nowa opcja w menu widoku: „Otwieraj HA Views po starcie Home Assistant (to urządzenie)”. Ustawia HA Views jako stronę startową HA na tym urządzeniu (przeglądarka / aplikacja HA), czego nie da się wybrać w ustawieniach HA, bo lista pokazuje tylko dashboardy. Gdy w HA jest ustawiony domyślny dashboard użytkownika lub systemu (ma pierwszeństwo), aplikacja o tym ostrzega.
+
 ## 0.4.1-beta.205
 
 - „Dotknięcie w widoku” ujednolicone dla markerów i pomieszczeń: te same nazwy i kolejność — Więcej informacji / Przełącz ON/OFF / Brak akcji. „Przełącz ON/OFF” pojawia się tylko tam, gdzie jest co przełączyć.
