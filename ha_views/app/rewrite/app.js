@@ -776,7 +776,8 @@ function roomEditorMarkup(room) {
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
-  if (selectedRoomId !== id) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
+  const newlySelected = selectedRoomId !== id;
+  if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue('Pomieszczenie');
   const entityInfo = $('#room-editor-entities'); if (entityInfo) entityInfo.textContent = (room.entityIds || []).join(', ') || '—';
@@ -796,6 +797,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
   $('#room-entity-search')?.addEventListener('input', renderRoomEntityResults); renderRoomEntityResults();
   content.scrollTop = scroll;
   panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
+  if (newlySelected) requestAnimationFrame(() => requestAnimationFrame(() => { focusSceneBoxOnMobile(room.points || []); renderRoomEditLayer(); }));
   requestAnimationFrame(() => { const outline = $('#room-edit-layer .room-outline.selected'); if (outline && !mobileView() && !panel.dataset.dragged) placeEditorNear(panel, outline); });
 }
 function closeRoomEditor() {
@@ -2040,6 +2042,20 @@ function focusSelectedMarkerOnMobile() {
   if (!mobileView() || !editMode || !selectedId) return;
   const marker = model.entities[selectedId]; if (!marker) return;
   focusScenePointOnMobile(marker.xPercent, marker.yPercent);
+}
+// Like a marker, a selected room is brought into view on phones: zoomed so the whole room fits above the
+// bottom editor (never closer than a marker gets), centred at the same spot.
+function focusSceneBoxOnMobile(points) {
+  if (!mobileView() || !editMode || !points.length) return;
+  const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
+  const xs = points.map(p => Number(p[0]) / 100 * sceneWidth), ys = points.map(p => Number(p[1]) / 100 * sceneHeight);
+  const boxW = Math.max(1, Math.max(...xs) - Math.min(...xs)), boxH = Math.max(1, Math.max(...ys) - Math.min(...ys));
+  const viewW = els.viewport.clientWidth || 1, viewH = els.viewport.clientHeight || 1;
+  const nextZoom = clamp(Math.min(viewW * .86 / boxW, viewH * .42 / boxH), minViewZoom(), 2.35);
+  const centreX = (Math.min(...xs) + Math.max(...xs)) / 2, centreY = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const targetY = Math.max(74 + boxH * nextZoom / 2, viewH * .27);
+  viewZoom = nextZoom; viewPanX = viewW / 2 - centreX * nextZoom; viewPanY = targetY - centreY * nextZoom;
+  applyViewTransform();
 }
 function focusScenePointOnMobile(xPercent, yPercent) {
   if (!mobileView() || !editMode) return;

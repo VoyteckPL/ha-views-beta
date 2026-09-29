@@ -1,3 +1,7 @@
+## 0.4.1-beta.216
+
+- Telefon, tryb edycji: kliknięcie pomieszczenia centruje je i przybliża tak jak marker i Flow — całe pomieszczenie mieści się nad popupem (małe są przybliżane, duże zostają w całości widoczne).
+
 ## 0.4.1-beta.215
 
 - Naprawa dla dużych instalacji HA: lista integracji/encji nie ładowała się z błędem „Błąd encji: Received message 258: WebSocketError(MESSAGE_TOO_BIG) … exceeds limit 4194304”. Rejestry encji/urządzeń większe niż 4 MB przekraczały domyślny limit wiadomości WebSocket w serwerze dodatku; limit podniesiony do 128 MB.
