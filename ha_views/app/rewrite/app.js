@@ -25,7 +25,8 @@ const TRANSLATIONS = {
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
-    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device"
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
+    "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview"
   }
 };
 function translateValue(value) {
@@ -249,7 +250,31 @@ function updateEmptyState() {
   els.empty.classList.toggle('solid-background', Boolean(solid));
   els.empty.style.setProperty('--solid-background', solid || 'transparent');
 }
+// The background panel is the second page of the view menu (a bottom sheet on phones).
+// On phones the view menu is a bottom sheet. The top bar uses backdrop-filter, which would make it the
+// containing block of a fixed child, so the sheet is moved to <body> there and back to its anchor on desktop.
+function placeViewSheet() {
+  const sheet = els.viewSwitcher, anchor = els.viewManage?.parentElement; if (!sheet || !anchor) return;
+  if (mobileView()) { if (sheet.parentElement !== document.body) document.body.append(sheet); }
+  else if (sheet.parentElement !== anchor) els.viewManage.after(sheet);
+}
+function setBackgroundPage(open) {
+  els.viewSwitcher?.classList.toggle('bg-mode', open);
+  const title = $('#view-sheet-title'); if (title) title.textContent = translateValue(open ? 'Tło widoku' : 'Zarządzaj widokiem');
+  const name = $('#view-sheet-name'); if (name) name.textContent = activeSceneView()?.name || '';
+  if (!open) hideBackgroundPreview(true);
+}
+function hideBackgroundPreview(resetSelect = false) {
+  const wrap = $('#background-preview-wrap'); if (wrap) wrap.hidden = true;
+  if (resetSelect && els.bgSelect) els.bgSelect.value = currentBackground || '';
+}
+function showBackgroundPreview(name) {
+  const wrap = $('#background-preview-wrap'), image = $('#background-preview'); if (!wrap || !image) return;
+  image.src = `api/background/file?name=${encodeURIComponent(name)}`; wrap.hidden = false;
+  requestAnimationFrame(() => wrap.scrollIntoView({ block:'nearest' }));
+}
 function openBackgroundMenu(hint = '') {
+  setBackgroundPage(true);
   els.backgroundBar.classList.add('open');
   els.bgManage.classList.add('active');
   els.backgroundBar.classList.toggle('onboarding', Boolean(hint));
@@ -358,6 +383,7 @@ function showMainView(name) {
 }
 function renderViewSelector() {
   if (!els.sceneTabs) return;
+  const sheetName = $('#view-sheet-name'); if (sheetName) sheetName.textContent = activeSceneView()?.name || '';
   els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${model.settings?.defaultViewId === id ? '<i class="mdi mdi-home-variant-outline scene-tab-home" title="Widok startowy" aria-label="Widok startowy"></i>' : ''}<span data-no-i18n>${escapeHtml(model.views[id].name)}</span></button>`).join('');
   els.viewDelete.disabled = model.viewOrder.length <= 1;
   const index = model.viewOrder.indexOf(model.activeViewId);
@@ -493,7 +519,7 @@ function applySnapUi() {
 }
 function closeCompactMenus() {
   els.settingsMenu?.classList.remove('open'); els.settingsToggle?.classList.remove('active');
-  els.editMenu?.classList.remove('open'); els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active');
+  els.editMenu?.classList.remove('open'); els.viewSwitcher?.classList.remove('open'); els.viewManage?.classList.remove('active'); setBackgroundPage(false);
   els.backgroundBar?.classList.remove('open','onboarding'); els.bgManage?.classList.remove('active');
 }
 // Keeps a stored position inside the scene (0–100 %); returns true when it had to be corrected.
@@ -2241,7 +2267,7 @@ function bindEvents() {
   els.sceneTabs?.addEventListener('click', event => { if (suppressTabClick) { suppressTabClick = false; event.preventDefault(); event.stopPropagation(); return; } const tab=event.target.closest('[data-scene-view]'); if(!tab)return; showMainView('overview'); switchSceneView(tab.dataset.sceneView); });
   els.settingsToggle?.addEventListener('click', () => { const open = !els.settingsMenu?.classList.contains('open'); closeCompactMenus(); els.settingsMenu?.classList.toggle('open', open); els.settingsToggle?.classList.toggle('active', open); });
   els.integrationsButton?.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
-  els.viewManage?.addEventListener('click', () => { const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });
+  els.viewManage?.addEventListener('click', () => { placeViewSheet(); const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDefault?.addEventListener('click', setDefaultSceneView); els.viewMoveLeft?.addEventListener('click', () => moveSceneView(-1)); els.viewMoveRight?.addEventListener('click', () => moveSceneView(1)); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
@@ -2257,7 +2283,11 @@ function bindEvents() {
     applySnapUi(); scheduleSave(true);
   }));
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });
-  els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; } });
+  els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; setBackgroundPage(false); } });
+  $('#view-sheet-back')?.addEventListener('click', () => { els.backgroundBar.classList.remove('open','onboarding'); els.bgManage.classList.remove('active'); els.bgStatus.textContent = ''; setBackgroundPage(false); });
+  $('#view-sheet-close')?.addEventListener('click', closeCompactMenus);
+  $('#background-preview-cancel')?.addEventListener('click', () => hideBackgroundPreview(true));
+  $('#background-preview-apply')?.addEventListener('click', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; hideBackgroundPreview(); await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
   [els.bgScale].forEach(control => { control?.addEventListener('input', updateBackgroundTransform); control?.addEventListener('change', updateBackgroundTransform); });
   els.mobilePanStart?.addEventListener('change', updateMobilePanStart);
@@ -2324,7 +2354,11 @@ function bindEvents() {
   });
   els.emptyColorStart?.addEventListener('click', () => setBackgroundColour(els.emptyColor.value));
   els.emptyOpenIntegrations?.addEventListener('click', () => els.integrationsButton.click());
-  els.bgSelect.addEventListener('change', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
+  els.bgSelect.addEventListener('change', async () => {
+    if (els.bgSelect.value && els.bgSelect.value !== currentBackground) { showBackgroundPreview(els.bgSelect.value); return; }
+    hideBackgroundPreview();
+    try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); }
+  });
   els.bgDownload.addEventListener('click', () => { const name = els.bgSelect.value; if (!name) return; const link = document.createElement('a'); link.href = `api/background/download?name=${encodeURIComponent(name)}`; link.download = name; document.body.appendChild(link); link.click(); link.remove(); });
   els.bgDelete.addEventListener('click', async () => { const name = els.bgSelect.value; if (!name || !await appConfirm({ title: 'Usunąć tło?', message: `Tło „${name}” zostanie trwale usunięte ze wszystkich widoków.`, confirmText: 'Usuń', danger: true })) return; try { await api('background/delete', jsonOptions({ name })); Object.values(model.views).forEach(view => { if (view.background === name) view.background = ''; if (view.backgroundTransforms) delete view.backgroundTransforms[name]; }); currentBackground = ''; scheduleSave(true); await loadBackgrounds(); notify('Usunięto tło'); } catch (error) { notify(error.message, true); } });
   $('#reload-integrations').addEventListener('click', () => { integrations = []; integrationEntities.clear(); openIntegrations.clear(); loadIntegrations(true); });
@@ -2465,7 +2499,7 @@ async function boot() {
   connectEvents();
   try { const message = sessionStorage.getItem(RELOAD_MESSAGE_KEY); sessionStorage.removeItem(RELOAD_MESSAGE_KEY); if (message) notify(message); } catch {}
   setInterval(checkRemoteLayout, 20000);
-  prebuildSwipePreviews(); window.addEventListener('resize', prebuildSwipePreviews);
+  prebuildSwipePreviews(); window.addEventListener('resize', prebuildSwipePreviews); window.addEventListener('resize', placeViewSheet); placeViewSheet();
 }
 
 boot();

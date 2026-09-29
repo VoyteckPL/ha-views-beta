@@ -1,3 +1,9 @@
+## 0.4.1-beta.191
+
+- Widoki (telefon): menu „Zarządzaj widokiem” wysuwa się od dołu ekranu jak edytor markera — z nagłówkiem (nazwa widoku) i przyciskiem zamknięcia, z większymi przyciskami.
+- Widoki (telefon): „Tło” otwiera się jako druga strona tego samego menu (ze strzałką powrotu), więc nie zasłania już przycisków menu widoków.
+- Tło: wybór obrazu z listy pokazuje najpierw podgląd w pełnych proporcjach z przyciskami „Anuluj” i „Ustaw tło” (jak przy tworzeniu nowego widoku); tło zmienia się dopiero po zatwierdzeniu. Dotyczy telefonu i komputera.
+
 ## 0.4.1-beta.190
 
 - Widoki (telefon): właściwa poprawka mignięcia dołu ekranu po przesunięciu na widok z innym tłem. Podczas przesuwania kontener widoku przycinał zawartość także w pionie, a gdy prawdziwa karta na moment (w trakcie wczytywania nowego obrazu) stawała się niższa, kontener ucinał od dołu podgląd, który zasłaniał ekran. Teraz przycinanie działa tylko w poziomie, a wysokość kontenera jest na czas przesuwania zablokowana.

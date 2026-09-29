@@ -556,3 +556,35 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .swipe-preview .swipe-preview-scene{position:relative;aspect-ratio:auto;min-height:0;max-height:none;overflow:hidden;transform-origin:0 0}
 .swipe-preview .swipe-preview-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;user-select:none;pointer-events:none}
 
+/* beta.191: view menu = bottom sheet on phones, background = its second page, background preview */
+.view-sheet-head{display:none}
+.background-preview-wrap{display:grid;gap:8px;grid-column:1/-1;width:100%}
+.background-preview-wrap[hidden]{display:none!important}
+.background-preview-wrap img{display:block;width:100%;height:auto;max-height:200px;object-fit:contain;border:1px solid rgba(99,181,216,.42);border-radius:8px;background:#081c27}
+.background-preview-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.background-preview-actions button{height:34px;font-size:12px;font-weight:800}
+@media(max-width:768px), (max-width:900px) and (pointer:coarse){
+  #view-switcher.view-management{position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;width:auto!important;max-height:min(80dvh,660px);overflow-y:auto;overscroll-behavior:contain;padding:10px 12px calc(14px + env(safe-area-inset-bottom))!important;border:1px solid rgba(99,181,216,.35)!important;border-bottom:0!important;border-radius:18px 18px 0 0!important;background:rgba(7,25,36,.98)!important;box-shadow:0 -18px 50px rgba(0,0,0,.55)!important;z-index:120;transform:none!important}
+  #view-switcher.view-management.open{display:grid!important;gap:6px}
+  #view-switcher .view-sheet-head{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;gap:6px;padding:0 0 8px;margin-bottom:2px;border-bottom:1px solid var(--line)}
+  #view-switcher .view-sheet-head button{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:20px}
+  #view-switcher .view-sheet-back{visibility:hidden}
+  #view-switcher.bg-mode .view-sheet-back{visibility:visible}
+  #view-switcher .view-sheet-title{min-width:0;text-align:center}
+  #view-switcher .view-sheet-title strong{display:block;font-size:14px}
+  #view-switcher .view-sheet-title small{display:block;margin-top:2px;color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #view-switcher .view-action{height:44px;font-size:13px}
+  #view-switcher.bg-mode > :not(.view-sheet-head):not(#background-bar){display:none!important}
+  #view-switcher.bg-mode #background-bar.open{position:static!important;display:grid!important;width:auto!important;height:auto!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;transform:none!important;margin:0!important;padding:2px 0 0!important;border:0!important;box-shadow:none!important;background:transparent!important;gap:10px}
+  #view-switcher.bg-mode #background-bar select{height:42px!important;font-size:13px}
+  #view-switcher.bg-mode .background-preview-wrap img{max-height:38dvh}
+  #view-switcher.bg-mode .background-preview-actions button{height:42px;font-size:13px}
+  #view-switcher.bg-mode .solid-canvas-row{display:flex!important;align-items:center;justify-content:space-between;gap:10px}
+  #view-switcher.bg-mode .solid-canvas-row span{min-width:0;margin-right:auto;color:#c6d8e1;font-size:12px}
+  #view-switcher.bg-mode .solid-canvas-row select{width:110px!important;height:40px!important}
+  #view-switcher.bg-mode .background-colour-picker .color-current{width:100%;height:40px;border-radius:9px}
+  #view-switcher.bg-mode .background-tools{display:flex!important;gap:8px}
+  #view-switcher.bg-mode .background-tools button{width:auto!important;flex:1;height:44px!important;font-size:18px}
+  #view-switcher.bg-mode #background-status:empty{display:none}
+}
+

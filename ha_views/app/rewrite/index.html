@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-190">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-191">
 </head>
 <body>
   <header class="topbar">
@@ -15,6 +15,7 @@
       <nav id="scene-tabs" class="tabs scene-tabs" aria-label="Widoki"></nav>
       <div class="view-manage-anchor"><button id="view-manage" class="icon-action" title="Zarządzaj widokami" aria-label="Zarządzaj widokami"><i class="mdi mdi-view-dashboard-edit-outline"></i></button>
       <div id="view-switcher" class="view-switcher view-management">
+        <div class="view-sheet-head"><button id="view-sheet-back" class="view-sheet-back" type="button" title="Wstecz" aria-label="Wstecz"><i class="mdi mdi-arrow-left"></i></button><div class="view-sheet-title"><strong id="view-sheet-title">Zarządzaj widokiem</strong><small id="view-sheet-name" data-no-i18n></small></div><button id="view-sheet-close" class="view-sheet-close" type="button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button></div>
         <div class="view-order-row"><div><button id="view-move-left" type="button" title="Przesuń widok w lewo" aria-label="Przesuń widok w lewo"><i class="mdi mdi-arrow-left"></i></button><button id="view-move-right" type="button" title="Przesuń widok w prawo" aria-label="Przesuń widok w prawo"><i class="mdi mdi-arrow-right"></i></button></div></div>
         <button id="view-add" class="view-action" title="Dodaj widok" aria-label="Dodaj widok"><i class="mdi mdi-plus"></i><span>Dodaj widok</span></button>
         <button id="view-rename" class="view-action" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i><span>Zmień nazwę</span></button>
@@ -22,6 +23,7 @@
         <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span></button>
         <div id="background-bar" class="background-bar">
           <select id="background-select" aria-label="Wybierz tło"></select>
+          <div id="background-preview-wrap" class="background-preview-wrap" hidden><img id="background-preview" alt="Podgląd wybranego tła"><div class="background-preview-actions"><button id="background-preview-cancel" type="button">Anuluj</button><button id="background-preview-apply" type="button" class="primary">Ustaw tło</button></div></div>
           <div class="solid-canvas-row"><i class="mdi mdi-aspect-ratio"></i><span>Format koloru</span><select id="solid-canvas-ratio" aria-label="Format kolorowego tła"><option value="1.7777777778">16:9</option><option value="1.3333333333">4:3</option><option value="1">1:1</option><option value="0.5625">9:16</option></select></div>
           <div class="background-colour-picker color-picker">
             <button id="background-color-toggle" type="button" class="color-current" data-bg-color-toggle style="background:#0d2838" aria-label="Wybierz kolor tła"></button>
@@ -184,6 +186,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-190"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-191"></script>
 </body>
 </html>
