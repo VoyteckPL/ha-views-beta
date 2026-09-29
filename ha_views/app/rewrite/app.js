@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
-    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Pomieszczenie":"Room","Dodaj pomieszczenie":"Add room","Klikaj kolejne narożniki pomieszczenia":"Click the corners of the room one by one","Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt":"Click the first point or “Done” to close the shape","Cofnij punkt":"Undo point","Gotowe":"Done","Usuń pomieszczenie":"Delete room","Dodano pomieszczenie — wybierz encje, które je zapalają":"Room added — choose the entities that light it up","Pomieszczenie musi mieć co najmniej 3 narożniki":"A room needs at least 3 corners","Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.":"This view has no entities yet — add e.g. a light via Integrations or type an entity below.","Brak encji":"No entities","Zapalają je encje":"Lit by entities","Inne encje":"Other entities","Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).":"The room lights up when any of the selected entities is on (light, plug, motion, open door…).","Wygląd":"Appearance","Efekt":"Effect","Poświata kolorem":"Colour glow","Zapalony obraz":"Lit image","Obraz zapalony":"Lit image","— wybierz —":"— choose —","Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.":"Upload a second version of the plan as a background (e.g. a render with the lights on) and choose it here — the room reveals it only inside its shape. The image should have the same framing as the plan.","Kolor ze światła":"Colour from the light","Mieszanie":"Blending","Rozjaśnij":"Lighten","Miękkie światło":"Soft light","Nakładka":"Overlay","Zwykłe":"Normal","Jasność ze światła":"Brightness from the light","Intensywność":"Intensity","Miękkość krawędzi":"Edge softness","Podgląd włączonego":"Preview as on","Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).":"Drag a corner to move it. The small dot on an edge adds a corner. Double-click a corner to remove it. Drag the inside to move the whole room. Corners snap to the walls of other rooms (Alt disables).","Usunąć pomieszczenie?":"Delete room?","Usunięto pomieszczenie":"Room deleted","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
     "Diagnostyka przesuwania":"Swipe diagnostics"
@@ -402,7 +402,7 @@ function renderViewSelector() {
 }
 async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
-  closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
+  closeCompactMenus(); closeEditor(); closeMoreInfo(); closeRoomEditor(); cancelRoomDrawing(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
   await loadBackgrounds(true, false, null, 2500); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
@@ -544,6 +544,259 @@ function snapPercent(value) {
   const step = Number(model.settings?.snapStep) || .25;
   return clamp(Math.round(value / step) * step, 0, 100);
 }
+// ---- Rooms: polygons on the plan that light up with their entities -------------------
+// A room is a polygon in scene percent coordinates (any shape: L-shapes, stairs, slanted walls). It lights
+// up when one of its entities is on: either a soft coloured glow blended over the plan, or a second "lit"
+// image revealed only inside the polygon. Light colour and brightness can follow the light entity.
+const ROOM_DEFAULTS = Object.freeze({ name:'Pomieszczenie', points:[], entityIds:[], mode:'glow', color:'#FFD27A', useLightColor:true, useBrightness:true, opacity:.45, feather:14, blend:'screen', litImage:'' });
+const ROOM_ON_STATES = new Set(['on','open','opening','home','playing','heat','heating','cool','cooling','detected','unlocked','active','true']);
+let selectedRoomId = null, roomDraft = null, roomPreviewOn = false, roomEditorOpenSectionIndex = -1;
+function roomsOf(view = activeSceneView()) { return view?.rooms || {}; }
+function roomOf(id) { const room = roomsOf()[id]; return room ? { ...ROOM_DEFAULTS, ...room } : null; }
+function roomLight(room) {
+  let on = false, color = '', level = 0;
+  (room.entityIds || []).forEach(id => {
+    const st = stateCache[id], state = String(st?.state ?? '').toLowerCase(); if (!ROOM_ON_STATES.has(state)) return;
+    on = true; const attrs = st?.attributes || {};
+    if (!color && room.useLightColor && Array.isArray(attrs.rgb_color) && attrs.rgb_color.length === 3) color = '#' + attrs.rgb_color.map(v => clamp(Math.round(Number(v) || 0), 0, 255).toString(16).padStart(2, '0')).join('').toUpperCase();
+    const brightness = Number(attrs.brightness); level = Math.max(level, room.useBrightness && Number.isFinite(brightness) ? clamp(brightness / 255, .15, 1) : 1);
+  });
+  return { on, color: color || room.color, level: on ? level || 1 : 0 };
+}
+function roomPointsAttr(points) { return (points || []).map(([x, y]) => `${Math.round(x * 1000) / 1000},${Math.round(y * 1000) / 1000}`).join(' '); }
+function roomBackgroundUrl(name) { return `api/background/file?name=${encodeURIComponent(name)}`; }
+// One <svg> per room so each can blend with the plan (mix-blend-mode) on its own.
+function roomLayerMarkup(room, prefix, width, height, forceOn = false) {
+  const r = { ...ROOM_DEFAULTS, ...room }, light = roomLight(r), on = light.on || forceOn, level = light.on ? light.level : 1;
+  const id = `${prefix}-${String(r.id).replace(/[^a-z0-9_-]/gi, '')}`, fx = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, width), fy = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, height);
+  const blur = `<filter id="${id}-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${fx.toFixed(3)} ${fy.toFixed(3)}"/></filter>`;
+  const opacity = on ? clamp(Number(r.opacity) || 0, 0, 1) * level : 0, points = roomPointsAttr(r.points);
+  const image = r.mode === 'image' && r.litImage;
+  const body = image
+    ? `<defs>${blur}<mask id="${id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><polygon points="${points}" fill="#fff" filter="url(#${id}-blur)"/></mask></defs><image href="${escapeHtml(roomBackgroundUrl(r.litImage))}" x="0" y="0" width="100" height="100" preserveAspectRatio="none" mask="url(#${id}-mask)"/>`
+    : `<defs>${blur}</defs><polygon class="room-fill" points="${points}" fill="${escapeHtml(light.on ? light.color : r.color)}" filter="url(#${id}-blur)"/>`;
+  return { html: `<svg class="room-layer" data-room-id="${escapeHtml(r.id)}" viewBox="0 0 100 100" preserveAspectRatio="none" style="opacity:${opacity.toFixed(3)};mix-blend-mode:${image ? 'normal' : escapeHtml(r.blend)}">${body}</svg>`,
+    signature: [r.mode, r.litImage, r.blend, r.feather, points, width, height].join('|'), opacity, color: light.on ? light.color : r.color };
+}
+function renderRooms() {
+  const layer = $('#rooms'); if (!layer) return;
+  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3);
+  const width = els.scene.offsetWidth || 1, height = els.scene.offsetHeight || 1, kept = new Set();
+  rooms.forEach(room => {
+    const preview = editMode && roomPreviewOn && room.id === selectedRoomId, built = roomLayerMarkup(room, 'room', width, height, preview);
+    let node = layer.querySelector(`.room-layer[data-room-id="${CSS.escape(room.id)}"]`);
+    // Unchanged geometry keeps its node, so switching the light on/off fades (CSS transition on opacity).
+    if (node && node.dataset.signature === built.signature) { node.style.opacity = built.opacity.toFixed(3); const fill = node.querySelector('.room-fill'); if (fill) fill.setAttribute('fill', built.color); }
+    else { const holder = document.createElement('div'); holder.innerHTML = built.html; const fresh = holder.firstElementChild; fresh.dataset.signature = built.signature; if (node) node.replaceWith(fresh); else layer.append(fresh); node = fresh; }
+    kept.add(room.id);
+  });
+  $$('.room-layer', layer).forEach(node => { if (!kept.has(node.dataset.roomId)) node.remove(); });
+  renderRoomEditLayer();
+}
+// Outlines, vertex handles and the drawing preview (edit mode only), above the markers.
+function renderRoomEditLayer() {
+  const layer = $('#room-edit-layer'); if (!layer) return;
+  if (!editMode) { layer.innerHTML = ''; return; }
+  const rooms = Object.values(roomsOf()).filter(room => (room.points || []).length >= 3);
+  let svg = rooms.map(room => `<polygon class="room-outline${room.id === selectedRoomId ? ' selected' : ''}" points="${roomPointsAttr(room.points)}"/>`).join('');
+  if (roomDraft?.points.length) {
+    const pts = roomDraft.cursor ? [...roomDraft.points, roomDraft.cursor] : roomDraft.points;
+    svg += `<polyline class="room-draft" points="${roomPointsAttr(pts)}"/>`;
+  }
+  let handles = '';
+  const room = selectedRoomId && roomsOf()[selectedRoomId];
+  if (room && !roomDraft) {
+    const pts = room.points || [];
+    handles += pts.map(([x, y], index) => `<i class="room-handle" data-room-point="${index}" style="left:${x}%;top:${y}%"></i>`).join('');
+    handles += pts.map(([x, y], index) => { const [nx, ny] = pts[(index + 1) % pts.length]; return `<i class="room-handle mid" data-room-mid="${index}" style="left:${(x + nx) / 2}%;top:${(y + ny) / 2}%"></i>`; }).join('');
+  }
+  if (roomDraft) handles += roomDraft.points.map(([x, y], index) => `<i class="room-handle draft${index === 0 && roomDraft.points.length >= 3 ? ' closable' : ''}" style="left:${x}%;top:${y}%"></i>`).join('');
+  layer.innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none">${svg}</svg>${handles}`;
+}
+function scenePercentAt(event) {
+  const r = els.scene.getBoundingClientRect();
+  return [clamp((event.clientX - r.left) / Math.max(1, r.width) * 100, 0, 100), clamp((event.clientY - r.top) / Math.max(1, r.height) * 100, 0, 100)];
+}
+// Snaps a point to the corners/axes of the room outlines (walls line up), otherwise to the grid.
+function snapRoomPoint([x, y], skip = null, event = null) {
+  if (event?.altKey) return [x, y];
+  const r = els.scene.getBoundingClientRect(), tx = 7 / Math.max(1, r.width) * 100, ty = 7 / Math.max(1, r.height) * 100;
+  const others = [];
+  Object.values(roomsOf()).forEach(room => (room.points || []).forEach((p, index) => { if (!(skip && skip.roomId === room.id && skip.index === index)) others.push(p); }));
+  (roomDraft?.points || []).forEach(p => others.push(p));
+  let bx = null, by = null;
+  others.forEach(([ox, oy]) => { if (Math.abs(ox - x) <= tx && (bx === null || Math.abs(ox - x) < Math.abs(bx - x))) bx = ox; if (Math.abs(oy - y) <= ty && (by === null || Math.abs(oy - y) < Math.abs(by - y))) by = oy; });
+  return [bx ?? snapPercent(x), by ?? snapPercent(y)];
+}
+function pointInPolygon([x, y], points) {
+  let inside = false;
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const [xi, yi] = points[i], [xj, yj] = points[j];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / ((yj - yi) || 1e-9) + xi) inside = !inside;
+  }
+  return inside;
+}
+function roomAt(point) { return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); }
+// ---- Drawing a new room
+function startRoomDrawing() {
+  if (!editMode) return;
+  closeCompactMenus(); closeEditor(); closeFlowEditor(); closeRoomEditor();
+  roomDraft = { points: [], cursor: null }; els.body.classList.add('room-drawing'); $('#room-draw-bar')?.classList.add('visible');
+  updateRoomDrawBar(); renderRoomEditLayer();
+}
+function updateRoomDrawBar() {
+  const count = roomDraft?.points.length || 0, text = $('#room-draw-text');
+  if (text) text.textContent = translateValue(count < 3 ? 'Klikaj kolejne narożniki pomieszczenia' : 'Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt');
+  const done = $('#room-draw-done'), undo = $('#room-draw-undo'); if (done) done.disabled = count < 3; if (undo) undo.disabled = !count;
+}
+function cancelRoomDrawing() { roomDraft = null; els.body.classList.remove('room-drawing'); $('#room-draw-bar')?.classList.remove('visible'); renderRoomEditLayer(); }
+function finishRoomDrawing() {
+  if (!roomDraft || roomDraft.points.length < 3) return;
+  const view = activeSceneView(); if (!view) return cancelRoomDrawing();
+  view.rooms ||= {};
+  const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.keys(view.rooms).length + 1;
+  view.rooms[id] = { ...clone(ROOM_DEFAULTS), id, name: `${translateValue('Pomieszczenie')} ${count}`, points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
+  cancelRoomDrawing(); renderRooms(); openRoomEditor(id); scheduleSave(true); notify('Dodano pomieszczenie — wybierz encje, które je zapalają');
+}
+function onRoomDrawClick(event) {
+  if (!roomDraft) return;
+  event.preventDefault(); event.stopPropagation();
+  const r = els.scene.getBoundingClientRect(), point = snapRoomPoint(scenePercentAt(event), null, event), first = roomDraft.points[0];
+  if (first && roomDraft.points.length >= 3 && Math.hypot((first[0] - point[0]) / 100 * r.width, (first[1] - point[1]) / 100 * r.height) <= 14) return finishRoomDrawing();
+  roomDraft.points.push(point); roomDraft.cursor = null; updateRoomDrawBar(); renderRoomEditLayer();
+}
+function onRoomDrawMove(event) {
+  if (!roomDraft?.points.length || event.pointerType !== 'mouse') return;
+  roomDraft.cursor = snapRoomPoint(scenePercentAt(event), null, event); renderRoomEditLayer();
+}
+// ---- Editing the shape (vertex drag, insert on an edge midpoint, double-click removes, drag inside moves)
+function startRoomHandleDrag(event) {
+  const handle = event.target.closest('.room-handle'); if (!handle || !editMode || !selectedRoomId || roomDraft) return;
+  const room = roomsOf()[selectedRoomId]; if (!room) return;
+  event.preventDefault(); event.stopPropagation();
+  let index = Number(handle.dataset.roomPoint);
+  if (handle.dataset.roomMid !== undefined) { const at = Number(handle.dataset.roomMid), [x, y] = room.points[at], [nx, ny] = room.points[(at + 1) % room.points.length]; room.points.splice(at + 1, 0, [(x + nx) / 2, (y + ny) / 2]); index = at + 1; renderRoomEditLayer(); }
+  let moved = false;
+  const move = e => { if (e.pointerId !== event.pointerId) return; moved = true; room.points[index] = snapRoomPoint(scenePercentAt(e), { roomId: room.id, index }, e); renderRooms(); };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (!moved && handle.dataset.roomMid === undefined) return; room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); renderRooms(); };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
+function removeRoomPoint(event) {
+  const handle = event.target.closest('.room-handle[data-room-point]'), room = selectedRoomId && roomsOf()[selectedRoomId]; if (!handle || !room || !editMode) return;
+  event.preventDefault(); event.stopPropagation();
+  if (room.points.length <= 3) return notify('Pomieszczenie musi mieć co najmniej 3 narożniki');
+  room.points.splice(Number(handle.dataset.roomPoint), 1); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true);
+}
+function startRoomMove(event) {
+  if (!editMode || roomDraft || event.button > 0 || !selectedRoomId || (event.target !== els.markers && event.target !== els.scene && event.target !== els.image)) return false;
+  const room = roomsOf()[selectedRoomId], start = scenePercentAt(event); if (!room || !pointInPolygon(start, room.points)) return false;
+  const original = clone(room.points); let moved = false;
+  const move = e => {
+    if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e); let dx = x - start[0], dy = y - start[1];
+    if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true;
+    const minX = Math.min(...original.map(p => p[0])), maxX = Math.max(...original.map(p => p[0])), minY = Math.min(...original.map(p => p[1])), maxY = Math.max(...original.map(p => p[1]));
+    dx = clamp(dx, -minX, 100 - maxX); dy = clamp(dy, -minY, 100 - maxY);
+    room.points = original.map(([px, py]) => [px + dx, py + dy]); renderRooms();
+  };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (moved) { room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); els.markers.dataset.roomMoved = '1'; } };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  return true;
+}
+// ---- Room editor panel
+function roomEntityChoices(room) {
+  const view = activeSceneView(), items = new Map();
+  Object.values(view?.entities || {}).forEach(marker => items.set(marker.entityId, marker.displayName || marker.entityId));
+  Object.values(view?.flows || {}).forEach(flow => { if (!items.has(flow.entityId)) items.set(flow.entityId, flow.displayName || flow.entityId); });
+  (room.entityIds || []).forEach(id => { if (!items.has(id)) items.set(id, id); });
+  const rank = id => /^(light|switch)\./.test(id) ? 0 : /^binary_sensor\./.test(id) ? 1 : 2;
+  return [...items.entries()].sort((a, b) => rank(a[0]) - rank(b[0]) || String(a[1]).localeCompare(String(b[1])));
+}
+function roomEditorMarkup(room) {
+  const r = { ...ROOM_DEFAULTS, ...room }, light = roomLight(r), refresh = { refresh:true };
+  const backgrounds = [...(els.bgSelect?.options || [])].map(option => option.value).filter(Boolean);
+  const choices = roomEntityChoices(r), note = text => `<p class="flow-section-note">${text}</p>`;
+  const entityList = choices.length ? `<div class="room-entity-list">${choices.map(([id, name]) => `<label class="room-entity"><input type="checkbox" data-room-entity="${escapeHtml(id)}" ${r.entityIds.includes(id) ? 'checked' : ''}><span>${escapeHtml(name)}</span><code data-no-i18n>${escapeHtml(id)}</code></label>`).join('')}</div>` : note('Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.');
+  const other = r.entityIds.filter(id => !choices.some(([choice]) => choice === id)).join(', ');
+  const entities = section('Pomieszczenie', control('Nazwa','name','text',r.name)
+    + `<div class="control"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`
+    + `<div class="control room-entities-control"><label>Zapalają je encje</label>${entityList}<span></span></div>`
+    + control('Inne encje','otherEntities','text',other,{}).replace('data-path="otherEntities"', 'data-path="otherEntities" placeholder="light.salon, binary_sensor.ruch"')
+    + note('Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).'));
+  const imageMode = r.mode === 'image';
+  const look = section('Wygląd', control('Efekt','mode','select',imageMode ? 'image' : 'glow',{ items:[['glow','Poświata kolorem'],['image','Zapalony obraz']], refresh:true })
+    + (imageMode
+      ? (backgrounds.length ? control('Obraz zapalony','litImage','select',r.litImage,{ items:[['','— wybierz —'], ...backgrounds.map(name => [name, name])], refresh:true }) : '') + note('Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.')
+      : control('Kolor','color','color',r.color) + control('Kolor ze światła','useLightColor','checkbox',r.useLightColor) + control('Mieszanie','blend','select',r.blend,{ items:[['screen','Rozjaśnij'],['soft-light','Miękkie światło'],['overlay','Nakładka'],['normal','Zwykłe']] }))
+    + control('Jasność ze światła','useBrightness','checkbox',r.useBrightness)
+    + control('Intensywność','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true })
+    + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
+    + control('Podgląd włączonego','previewOn','checkbox',roomPreviewOn,refresh));
+  const shape = section('Kształt', note('Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).'));
+  return entities + look + shape;
+}
+function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
+  const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
+  if (selectedRoomId !== id) { preserveSection = roomEditorOpenSectionIndex = 0; roomPreviewOn = false; }
+  closeEditor(); closeFlowEditor(); selectedRoomId = id;
+  $('#room-editor-title').textContent = room.name || translateValue('Pomieszczenie');
+  const content = $('#room-editor-content'), scroll = content.scrollTop;
+  content.innerHTML = roomEditorMarkup(room);
+  const sections = $$('.editor-section', content);
+  if (Number.isInteger(preserveSection) && preserveSection >= 0 && sections[preserveSection]) sections[preserveSection].open = true;
+  sections.forEach((details, index) => details.addEventListener('toggle', () => {
+    if (details.open) { roomEditorOpenSectionIndex = index; sections.forEach(other => { if (other !== details) other.removeAttribute('open'); }); }
+    else if (roomEditorOpenSectionIndex === index) roomEditorOpenSectionIndex = -1;
+  }));
+  $$('input,select', content).forEach(input => {
+    if (input.type === 'range' || input.type === 'color') { input.addEventListener('input', onRoomEditorInput); input.addEventListener('change', onRoomEditorInput); }
+    else input.addEventListener('change', onRoomEditorInput);
+  });
+  content.scrollTop = scroll;
+  panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
+  requestAnimationFrame(() => { const outline = $('#room-edit-layer .room-outline.selected'); if (outline && !mobileView() && !panel.dataset.dragged) placeEditorNear(panel, outline); });
+}
+function closeRoomEditor() {
+  const panel = $('#room-editor'); if (!panel) return;
+  const had = selectedRoomId; selectedRoomId = null; roomPreviewOn = false; delete panel.dataset.dragged;
+  panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
+}
+function onRoomEditorInput(event) {
+  const room = roomsOf()[selectedRoomId], input = event.target; if (!room) return;
+  if (input.dataset.roomEntity !== undefined) {
+    const id = input.dataset.roomEntity, ids = new Set(room.entityIds || []); if (input.checked) ids.add(id); else ids.delete(id);
+    room.entityIds = [...ids]; room.updatedAt = new Date().toISOString(); refreshStates(); openRoomEditor(room.id); scheduleSave(true); return;
+  }
+  const path = input.dataset.path; if (!path) return;
+  let value = input.type === 'checkbox' ? input.checked : input.value;
+  if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
+  if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
+  if (path === 'previewOn') { roomPreviewOn = value; renderRooms(); return; }
+  if (path === 'otherEntities') {
+    const listed = roomEntityChoices({ entityIds: [] }).map(([id]) => id), typed = String(value).split(/[\s,;]+/).map(id => id.trim()).filter(id => /^[a-z_]+\.[a-z0-9_]+$/i.test(id));
+    room.entityIds = [...new Set([...(room.entityIds || []).filter(id => listed.includes(id)), ...typed])]; room.updatedAt = new Date().toISOString(); refreshStates(); openRoomEditor(room.id); scheduleSave(true); return;
+  }
+  if (path === 'opacity') value = clamp(value / 100, .05, 1);
+  if (path === 'name') { value = String(value).trim() || translateValue('Pomieszczenie'); $('#room-editor-title').textContent = value; }
+  room[path] = value; room.updatedAt = new Date().toISOString();
+  const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
+  renderRooms();
+  if (input.dataset.editorRefresh === 'true') { openRoomEditor(room.id); scheduleSave(true); return; }
+  scheduleSave(event.type === 'change');
+}
+function onRoomEditorClick(event) {
+  const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]'), content = $('#room-editor-content');
+  const reset = event.target.closest('[data-reset-path]');
+  if (reset) { event.preventDefault(); const input = content.querySelector(`input[data-path="${CSS.escape(reset.dataset.resetPath)}"]`), defaults = { opacity: ROOM_DEFAULTS.opacity * 100, feather: ROOM_DEFAULTS.feather }; if (input && reset.dataset.resetPath in defaults) { input.value = defaults[reset.dataset.resetPath]; input.dispatchEvent(new Event('change', { bubbles:true })); } return; }
+  if (toggle) { event.preventDefault(); const menu = toggle.closest('.color-picker').querySelector('.color-menu'), open = menu.classList.contains('visible'); $$('.color-menu', content).forEach(x => x.classList.remove('visible')); menu.classList.toggle('visible', !open); return; }
+  if (swatch) { event.preventDefault(); const picker = swatch.closest('.color-picker'), input = $('.color-native', picker); input.value = swatch.dataset.paletteColor; $('.color-current', picker).style.background = input.value; $('.color-menu', picker).classList.remove('visible'); input.dispatchEvent(new Event('change', { bubbles:true })); return; }
+  if (rgb) { event.preventDefault(); rgb.closest('.color-picker').querySelector('.color-native').click(); }
+}
+async function removeRoom() {
+  const view = activeSceneView(), room = view?.rooms?.[selectedRoomId]; if (!room) return;
+  if (!await appConfirm({ title:'Usunąć pomieszczenie?', message:`Pomieszczenie „${room.name}” zostanie usunięte z tego widoku. Encje i markery zostają.`, confirmText:'Usuń', danger:true })) return;
+  delete view.rooms[room.id]; closeRoomEditor(); renderRooms(); scheduleSave(true); notify('Usunięto pomieszczenie');
+}
+function roomUsesEntity(entityId) { return Object.values(roomsOf()).some(room => (room.entityIds || []).includes(entityId)); }
 // ---- Alignment guides while dragging (edit mode) --------------------------------------
 // The dragged marker/Flow snaps to the edges and centres of the other elements of the view; a blue line
 // shows what it is aligned with. Holding Alt (desktop) drags freely.
@@ -640,7 +893,7 @@ function updateSceneGeometry() {
       const marker = model.entities[node.dataset.entityId];
       if (marker) applyMarkerStyle(node, marker);
     });
-    syncSelection(); positionEditor(); syncFlowSelection(); positionFlowEditor();
+    syncSelection(); positionEditor(); syncFlowSelection(); positionFlowEditor(); renderRooms();
   });
 }
 function portraitZoomExpansion() {
@@ -1299,7 +1552,8 @@ function renderMarkers() {
   renderFlows();
   if (previous && model.entities[previous]) syncSelection(); else hideSelection();
   if (selectedFlowId && activeSceneView()?.flows?.[selectedFlowId]) syncFlowSelection(); else hideFlowSelection();
-  updateEmptyState(); renderAdded();
+  if (selectedRoomId && !roomsOf()[selectedRoomId]) closeRoomEditor();
+  updateEmptyState(); renderAdded(); renderRooms();
 }
 function flowSideOf(flow, numericState) { return flow.directionMode === 'auto' && numericState !== null && numericState < 0 ? 'negative' : 'positive'; }
 function flowSeparateStyles(flow) { return flow.directionMode === 'auto' && Boolean(flow.negativeStyleEnabled); }
@@ -2087,7 +2341,7 @@ async function removeEntity(entityId) {
 // Entities of every view: states of neighbouring views are kept fresh for the swipe preview.
 function allViewEntityIds() {
   const ids = new Set(Object.keys(model.entities || {}));
-  Object.values(model.views || {}).forEach(view => { Object.keys(view.entities || {}).forEach(id => ids.add(id)); Object.values(view.flows || {}).forEach(flow => ids.add(flow.entityId)); });
+  Object.values(model.views || {}).forEach(view => { Object.keys(view.entities || {}).forEach(id => ids.add(id)); Object.values(view.flows || {}).forEach(flow => ids.add(flow.entityId)); Object.values(view.rooms || {}).forEach(room => (room.entityIds || []).forEach(id => ids.add(id))); });
   return [...ids];
 }
 async function refreshStates() {
@@ -2110,7 +2364,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { if (touchGestureActive()) deferredFlows = true; else { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { if (touchGestureActive()) deferredFlows = true; else { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } if (roomUsesEntity(data.entity_id)) renderRooms(); } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
@@ -2336,6 +2590,8 @@ function buildSwipePreview(targetId) {
     const layer = document.createElement('div'); layer.className = 'markers';
     Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); layer.append(node); });
     Object.values(view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
+    const rooms = Object.values(view.rooms || {}).filter(room => (room.points || []).length >= 3);
+    if (rooms.length) { const roomLayer = document.createElement('div'); roomLayer.className = 'rooms'; roomLayer.innerHTML = rooms.map(room => roomLayerMarkup(room, `pv-${targetId}`, preview.geometry?.sceneWidth || 1, preview.geometry?.sceneHeight || 1).html).join(''); scene.append(roomLayer); }
     scene.append(layer);
   };
   if (imageEntry) {
@@ -2512,7 +2768,7 @@ function bindEvents() {
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
-  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeFlowEditor(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); els.editMenu?.classList.add('open'); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
     model.settings.snapStep = Number(button.dataset.gridStep);
@@ -2530,8 +2786,27 @@ function bindEvents() {
   els.mobilePanStart?.addEventListener('change', updateMobilePanStart);
   els.bgTransformPanel?.addEventListener('click', event => { const x = event.target.closest('[data-bg-align-x]'); if (!currentBackground || !x) return; const t = currentBackgroundTransform(); t.x = Number(x.dataset.bgAlignX); applyBackgroundTransform(); syncBackgroundTransformControls(); scheduleSave(true); });
   $('#background-transform-reset')?.addEventListener('click', async () => { if (!currentBackground || !await appConfirm({ title:'Zresetować dopasowanie tła?', message:'Skala, pozycja i tryb dopasowania tego tła wrócą do wartości domyślnych.', confirmText:'Resetuj', danger:true })) return; activeSceneView().backgroundTransforms[currentBackground] = defaultBackgroundTransform(); applyBackgroundTransform(); syncBackgroundTransformControls(); scheduleSave(true); notify('Przywrócono domyślne dopasowanie tła'); });
-  els.scene.addEventListener('click', event => { if (event.target === els.scene || event.target === els.markers || event.target === els.image) { closeEditor(); closeFlowEditor(); closeMoreInfo(); } });
-  $('#editor-close').addEventListener('click', closeEditor); document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (els.confirmBox.classList.contains('visible')) closeAppConfirm(false); else if (els.moreInfo.classList.contains('visible')) closeMoreInfo(); else { closeEditor(); closeFlowEditor(); } });
+  els.scene.addEventListener('click', onRoomDrawClick, true);
+  els.scene.addEventListener('pointermove', onRoomDrawMove);
+  els.scene.addEventListener('pointerdown', event => { if (startRoomMove(event)) { event.preventDefault(); event.stopImmediatePropagation(); } });
+  els.scene.addEventListener('click', event => {
+    if (!(event.target === els.scene || event.target === els.markers || event.target === els.image)) return;
+    if (els.markers.dataset.roomMoved === '1') { els.markers.dataset.roomMoved = '0'; return; }
+    const room = editMode ? roomAt(scenePercentAt(event)) : null;
+    closeEditor(); closeFlowEditor(); closeMoreInfo();
+    if (room) openRoomEditor(room.id); else closeRoomEditor();
+  });
+  $('#room-edit-layer')?.addEventListener('pointerdown', startRoomHandleDrag);
+  $('#room-edit-layer')?.addEventListener('dblclick', removeRoomPoint);
+  $('#room-add')?.addEventListener('click', startRoomDrawing);
+  $('#room-draw-done')?.addEventListener('click', finishRoomDrawing);
+  $('#room-draw-undo')?.addEventListener('click', () => { if (!roomDraft) return; roomDraft.points.pop(); roomDraft.cursor = null; updateRoomDrawBar(); renderRoomEditLayer(); });
+  $('#room-draw-cancel')?.addEventListener('click', cancelRoomDrawing);
+  $('#room-editor-close')?.addEventListener('click', closeRoomEditor);
+  $('#room-remove')?.addEventListener('click', removeRoom);
+  $('#room-editor-content')?.addEventListener('click', onRoomEditorClick);
+  $('.room-editor .editor-head')?.addEventListener('pointerdown', event => { const panel = $('#room-editor'); if (panel) panel.dataset.dragged = '1'; startEditorDrag(event); });
+  $('#editor-close').addEventListener('click', closeEditor); document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (els.confirmBox.classList.contains('visible')) closeAppConfirm(false); else if (els.moreInfo.classList.contains('visible')) closeMoreInfo(); else if (roomDraft) cancelRoomDrawing(); else { closeEditor(); closeFlowEditor(); closeRoomEditor(); } });
   els.confirmCancel.addEventListener('click', () => closeAppConfirm(false)); els.confirmOk.addEventListener('click', () => closeAppConfirm(true));
   els.confirmBox.addEventListener('click', event => { if (event.target === els.confirmBox) closeAppConfirm(false); });
   $('#more-info-close')?.addEventListener('click', closeMoreInfo); els.moreInfoBackdrop?.addEventListener('click', closeMoreInfo);

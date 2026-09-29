@@ -621,3 +621,29 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .align-guide{position:absolute;background:#20b9e7;box-shadow:0 0 0 1px rgba(3,16,26,.55),0 0 6px rgba(32,185,231,.8)}
 .align-guide.vertical{top:0;bottom:0;width:1px;transform:translateX(-.5px)}
 .align-guide.horizontal{left:0;right:0;height:1px;transform:translateY(-.5px)}
+
+/* Rooms: light polygons under the markers; outlines and handles above them in edit mode */
+.rooms{position:absolute;inset:0;z-index:0;pointer-events:none}
+.room-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transition:opacity .45s ease}
+.room-edit-layer{position:absolute;inset:0;z-index:30;pointer-events:none}
+.room-edit-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.room-outline{fill:rgba(32,185,231,.06);stroke:rgba(143,223,255,.75);stroke-width:1.5;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
+.room-outline.selected{fill:rgba(32,185,231,.12);stroke:#20b9e7;stroke-width:2;stroke-dasharray:none}
+.room-draft{fill:rgba(32,185,231,.10);stroke:#20b9e7;stroke-width:2;vector-effect:non-scaling-stroke}
+.room-handle{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#20b9e7;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.5);pointer-events:auto;cursor:grab;touch-action:none}
+.room-handle.mid{width:10px;height:10px;margin:-5px 0 0 -5px;background:rgba(255,255,255,.85);border-color:#20b9e7;cursor:copy}
+.room-handle.draft{pointer-events:none;background:#fff;border-color:#20b9e7}
+.room-handle.draft.closable{width:18px;height:18px;margin:-9px 0 0 -9px;background:#35d07f}
+@media(pointer:coarse){.room-handle{width:22px;height:22px;margin:-11px 0 0 -11px}.room-handle.mid{width:16px;height:16px;margin:-8px 0 0 -8px}}
+.room-drawing .scene{cursor:crosshair}
+.room-drawing .markers{pointer-events:none}
+.room-draw-bar{position:fixed;left:50%;bottom:18px;z-index:120;display:none;align-items:center;gap:8px;max-width:calc(100% - 24px);padding:8px 10px;border:1px solid rgba(119,211,245,.4);border-radius:14px;background:rgba(7,27,39,.95);box-shadow:0 12px 40px rgba(0,0,0,.45);transform:translateX(-50%);color:#dce8ef;font-size:13px}
+.room-draw-bar.visible{display:flex;flex-wrap:wrap;justify-content:center}
+.room-draw-bar button{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 10px;border:1px solid rgba(119,211,245,.35);border-radius:9px;background:rgba(16,42,58,.9);color:#dce8ef;cursor:pointer}
+.room-draw-bar button.primary{background:#20b9e7;border-color:#20b9e7;color:#03101a;font-weight:600}
+.room-draw-bar button:disabled{opacity:.45;cursor:default}
+.room-entity-list{display:flex;flex-direction:column;gap:4px;max-height:210px;overflow:auto;grid-column:1/-1}
+.room-entity{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 8px;padding:6px 8px;border:1px solid rgba(119,211,245,.18);border-radius:9px;background:rgba(16,42,58,.55);cursor:pointer}
+.room-entity code{grid-column:2;font-size:10px;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-entities-control{display:block!important}
+.room-entities-control>label{display:block;margin-bottom:6px}

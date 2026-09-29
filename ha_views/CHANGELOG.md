@@ -1,3 +1,12 @@
+## 0.4.1-beta.203
+
+- Nowość: pomieszczenia. W trybie edycji menu → „Pomieszczenie”: klikasz kolejne narożniki (dowolny kształt — L, schody, skosy), zamykasz klikając pierwszy punkt albo „Gotowe”. Narożniki przyciągają się do ścian innych pomieszczeń i do siatki (Alt wyłącza).
+  - Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, drzwi…); płynnie się zapala i gaśnie.
+  - Efekt „Poświata kolorem”: kolor (lub kolor ze światła RGB), intensywność, jasność ze światła, miękkość krawędzi, tryb mieszania (Rozjaśnij / Miękkie światło / Nakładka / Zwykłe).
+  - Efekt „Zapalony obraz”: odsłania w kształcie pomieszczenia drugą wersję planu (np. render z włączonymi światłami) wgraną jako tło.
+  - Edycja kształtu: przeciąganie narożników, dodawanie punktu na krawędzi, dwuklik usuwa narożnik, przeciągnięcie wnętrza przesuwa całe pomieszczenie. „Podgląd włączonego” pokazuje efekt w edycji.
+  - Pomieszczenia są też widoczne w podglądzie przy przesuwaniu palcem między widokami.
+
 ## 0.4.1-beta.202
 
 - Linie pomocnicze przy przeciąganiu w trybie edycji: marker lub Flow przyciąga się do krawędzi i środków innych elementów widoku (próg 6 px), a niebieska linia pokazuje wyrównanie. Na komputerze przytrzymanie Alt wyłącza przyciąganie.

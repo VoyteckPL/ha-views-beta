@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-202">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-203">
 </head>
 <body>
   <header class="topbar">
@@ -46,6 +46,7 @@
     <div class="top-actions">
       <div id="edit-menu" class="compact-menu edit-menu">
         <button id="integrations-button" class="menu-action" title="Integracje" aria-label="Integracje"><i class="mdi mdi-puzzle-outline"></i><span>Integracje</span></button>
+        <button id="room-add" class="menu-action" title="Dodaj pomieszczenie" aria-label="Dodaj pomieszczenie"><i class="mdi mdi-vector-polygon"></i><span>Pomieszczenie</span></button>
         <div class="menu-divider"></div>
         <button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large" title="Wielkość siatki" aria-label="Wielkość siatki"></i><div class="grid-presets" role="group" aria-label="Wielkość siatki"><button type="button" class="grid-preset active" data-grid-step="0.25">S</button><button type="button" class="grid-preset" data-grid-step="1">M</button><button type="button" class="grid-preset" data-grid-step="4">L</button></div></div>
         <div class="menu-divider"></div>
@@ -61,6 +62,7 @@
         <div id="scene-viewport" class="scene-viewport">
           <div id="scene" class="scene">
             <img id="scene-image" alt="Tło widoku HA Views" draggable="false">
+            <div id="rooms" class="rooms" aria-hidden="true"></div>
             <div id="scene-empty" class="scene-empty"><div id="background-upload-progress" class="background-upload-progress" aria-live="polite"><i class="mdi mdi-loading"></i><span>Wgrywanie tła…</span></div>
               <div class="welcome-card">
                 <h2 data-i18n="Wybierz tło widoku">Wybierz tło widoku</h2>
@@ -88,6 +90,7 @@
               </div>
             </div>
             <div id="markers" class="markers"></div>
+            <div id="room-edit-layer" class="room-edit-layer"></div>
             <div id="selection" class="selection"><i data-handle="nw"></i><i data-handle="ne"></i><i data-handle="sw"></i><i data-handle="se"></i></div><div id="flow-selection" class="flow-selection"><i data-flow-handle="nw"></i><i data-flow-handle="ne"></i><i data-flow-handle="sw"></i><i data-flow-handle="se"></i></div>
           </div>
         </div>
@@ -157,6 +160,27 @@
     <div id="flow-editor-content" class="editor-content flow-editor-content"></div>
   </aside>
 
+  <aside id="room-editor" class="editor flow-editor room-editor" aria-hidden="true">
+    <div class="editor-head">
+      <div class="editor-integration-icon"><i class="mdi mdi-floor-plan"></i></div>
+      <div class="editor-title-block">
+        <h2 id="room-editor-title" data-no-i18n>Pomieszczenie</h2>
+        <div class="editor-meta"><code>Pomieszczenie</code></div>
+      </div>
+      <div class="editor-quick-actions">
+        <button id="room-remove" class="editor-icon-button danger" title="Usuń pomieszczenie" aria-label="Usuń pomieszczenie"><i class="mdi mdi-delete-outline"></i></button>
+        <button id="room-editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
+      </div>
+    </div>
+    <div id="room-editor-content" class="editor-content flow-editor-content"></div>
+  </aside>
+  <div id="room-draw-bar" class="room-draw-bar" role="toolbar">
+    <span id="room-draw-text">Klikaj kolejne narożniki pomieszczenia</span>
+    <button id="room-draw-undo" type="button"><i class="mdi mdi-undo"></i><span>Cofnij punkt</span></button>
+    <button id="room-draw-cancel" type="button"><i class="mdi mdi-close"></i><span>Anuluj</span></button>
+    <button id="room-draw-done" type="button" class="primary"><i class="mdi mdi-check"></i><span>Gotowe</span></button>
+  </div>
+
   <div id="more-info-backdrop" class="more-info-backdrop" aria-hidden="true"></div>
   <aside id="more-info" class="more-info" aria-hidden="true">
     <div class="more-info-head">
@@ -188,6 +212,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-202"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-203"></script>
 </body>
 </html>
