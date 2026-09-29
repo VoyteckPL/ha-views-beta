@@ -1,3 +1,7 @@
+## 0.4.1-beta.213
+
+- Telefon: HA Views chowa biały pasek Home Assistant („☰ HA Views Beta”) nad widokiem i zajmuje jego miejsce. Boczne menu HA otwiera się teraz przyciskiem ☰ po lewej stronie górnego paska HA Views. Można to wyłączyć w menu widoku: „Ukryj pasek Home Assistant nad widokiem (telefon)” (ustawienie na urządzenie, domyślnie włączone).
+
 ## 0.4.1-beta.212
 
 - Ikona pomieszczenia: w popupie pomieszczenia nowa sekcja „Ikona” → „Dodaj ikonę”. Ikona to zwykły marker typu Ikona z pełnym edytorem (kolory ON/OFF, obrys, tło, ramka, rozmiar, kolory wg wartości, kopiuj/wklej styl, blokada), przeciąganiem i liniami pomocniczymi. Pojawia się na środku pomieszczenia.
