@@ -1,3 +1,8 @@
+## 0.4.1-beta.202
+
+- Linie pomocnicze przy przeciąganiu w trybie edycji: marker lub Flow przyciąga się do krawędzi i środków innych elementów widoku (próg 6 px), a niebieska linia pokazuje wyrównanie. Na komputerze przytrzymanie Alt wyłącza przyciąganie.
+- Nowa sekcja markera „Kolory wg wartości” (opcjonalna): dwa progi dzielą wartość na trzy zakresy z własnym kolorem, opcjonalnie płynne przejście. Można kolorować ikonę, wartość, tło, ramkę i łuk Gauge/Podkowy oraz ustawić osobną ikonę dla każdego zakresu. Kopiuj/wklej styl przenosi też te ustawienia.
+
 ## 0.4.1-beta.201
 
 - Naprawa losowego zatrzymywania przesuwania między widokami. Przyczyna (z diagnostyki): aktualizacja stanu z HA przebudowywała marker pod palcem, a przeglądarka wysyłała resztę dotyku do usuniętego elementu — strona nie widziała już ruchu ani puszczenia palca.

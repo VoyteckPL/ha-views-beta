@@ -615,3 +615,9 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
   .compact-menu{top:48px!important}
   .background-transform-panel{top:50px}
 }
+
+/* Alignment guides while dragging in edit mode */
+#align-guides{position:absolute;inset:0;z-index:40;pointer-events:none}
+.align-guide{position:absolute;background:#20b9e7;box-shadow:0 0 0 1px rgba(3,16,26,.55),0 0 6px rgba(32,185,231,.8)}
+.align-guide.vertical{top:0;bottom:0;width:1px;transform:translateX(-.5px)}
+.align-guide.horizontal{left:0;right:0;height:1px;transform:translateY(-.5px)}

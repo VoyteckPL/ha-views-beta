@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
-    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
     "Diagnostyka przesuwania":"Swipe diagnostics"
@@ -544,6 +544,33 @@ function snapPercent(value) {
   const step = Number(model.settings?.snapStep) || .25;
   return clamp(Math.round(value / step) * step, 0, 100);
 }
+// ---- Alignment guides while dragging (edit mode) --------------------------------------
+// The dragged marker/Flow snaps to the edges and centres of the other elements of the view; a blue line
+// shows what it is aligned with. Holding Alt (desktop) drags freely.
+function alignmentContext(node) {
+  const scene = els.scene.getBoundingClientRect(), own = node.getBoundingClientRect();
+  const targets = $$('.marker, .flow-marker', els.markers).filter(other => other !== node && other.offsetParent !== null).map(other => other.getBoundingClientRect());
+  return { scene, halfW: own.width / 2, halfH: own.height / 2, xs: targets.flatMap(r => [r.left, (r.left + r.right) / 2, r.right].map(v => v - scene.left)), ys: targets.flatMap(r => [r.top, (r.top + r.bottom) / 2, r.bottom].map(v => v - scene.top)) };
+}
+function alignToGuides(context, xPercent, yPercent, event) {
+  if (!context || event?.altKey || !context.scene.width || !context.scene.height) { showAlignGuides([], []); return { xPercent, yPercent }; }
+  const threshold = 6, match = (centre, half, values) => {
+    let best = null;
+    [0, -half, half].forEach(offset => values.forEach(value => { const distance = Math.abs(centre + offset - value); if (distance <= threshold && (!best || distance < best.distance)) best = { distance, centre: value - offset, line: value }; }));
+    return best;
+  };
+  const { width, height } = context.scene, bx = match(xPercent / 100 * width, context.halfW, context.xs), by = match(yPercent / 100 * height, context.halfH, context.ys);
+  if (bx) xPercent = clamp(bx.centre / width * 100, 0, 100);
+  if (by) yPercent = clamp(by.centre / height * 100, 0, 100);
+  showAlignGuides(bx ? [bx.line / width * 100] : [], by ? [by.line / height * 100] : []);
+  return { xPercent, yPercent };
+}
+function showAlignGuides(vertical, horizontal) {
+  let layer = $('#align-guides');
+  if (!vertical.length && !horizontal.length) { if (layer) layer.innerHTML = ''; return; }
+  if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
+  layer.innerHTML = vertical.map(x => `<span class="align-guide vertical" style="left:${x}%"></span>`).join('') + horizontal.map(y => `<span class="align-guide horizontal" style="top:${y}%"></span>`).join('');
+}
 function mobileView() { return matchMedia('(max-width: 900px) and (pointer: coarse), (max-width: 768px)').matches; }
 function sceneCameraActive() { return mobileView() || editMode || viewZoom > 1.001; }
 function mobileWidePanorama() {
@@ -933,7 +960,44 @@ function automaticIcon(marker) {
   if (byDevice[dc]) return byDevice[dc];
   return ({ binary_sensor: active ? 'mdi:checkbox-marked-circle' : 'mdi:checkbox-blank-circle-outline', sensor: 'mdi:gauge', switch: active ? 'mdi:toggle-switch' : 'mdi:toggle-switch-off', light: 'mdi:lightbulb', climate: 'mdi:thermostat', fan: 'mdi:fan', water_heater: 'mdi:water-boiler', sun: 'mdi:weather-sunny' })[domain] || 'mdi:cube-outline';
 }
+// ---- Colours / icons by value (optional per marker) -------------------------------
+// Two thresholds split the numeric state into three bands (below / between / above); each band has a colour
+// and optionally its own icon. "Smooth" blends the colours across the range instead of hard steps.
+const VALUE_RULE_DEFAULTS = Object.freeze({ enabled:false, low:20, high:25, colorLow:'#20B9E7', colorMid:'#35D07F', colorHigh:'#FF6374', smooth:false, icon:true, value:false, background:false, border:false, arc:true, iconLow:'', iconMid:'', iconHigh:'' });
+function valueRulesOf(marker) { return { ...VALUE_RULE_DEFAULTS, ...(marker.valueRules || {}) }; }
+function mixHex(a, b, t) {
+  const p = hex => { const h = String(hex || '#000000').replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) || 0); };
+  const x = p(a), y = p(b); return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * clamp(t, 0, 1)).toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+function valueRuleResult(marker) {
+  const rules = marker.valueRules; if (!rules?.enabled) return null;
+  const r = valueRulesOf(marker), n = Number(String(stateCache[marker.entityId]?.state ?? '').replace(',', '.'));
+  if (!Number.isFinite(n)) return null;
+  const low = Math.min(Number(r.low), Number(r.high)), high = Math.max(Number(r.low), Number(r.high));
+  const band = n < low ? 'Low' : n >= high ? 'High' : 'Mid';
+  let color = r['color' + band];
+  if (r.smooth) { const mid = (low + high) / 2; color = n <= mid ? mixHex(r.colorLow, r.colorMid, (n - low) / Math.max(1e-9, mid - low)) : mixHex(r.colorMid, r.colorHigh, (n - mid) / Math.max(1e-9, high - mid)); }
+  return { band, color, icon: r['icon' + band] || '', apply: { icon:!!r.icon, value:!!r.value, background:!!r.background, border:!!r.border, arc:!!r.arc } };
+}
+function valueRulesSection(marker) {
+  const r = valueRulesOf(marker), refresh = { refresh:true }, result = valueRuleResult(marker);
+  const bandName = { Low:'Teraz: poniżej dolnego progu.', Mid:'Teraz: pomiędzy progami.', High:'Teraz: od górnego progu.' };
+  let body = control('Włącz','valueRules.enabled','checkbox',r.enabled,refresh);
+  if (r.enabled) {
+    body += (result ? `<p class="flow-section-note">${bandName[result.band]}</p>` : '<p class="flow-section-note">Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.</p>')
+      + control('Dolny próg','valueRules.low','number',r.low,{ valueType:'number' }) + control('Górny próg','valueRules.high','number',r.high,{ valueType:'number' })
+      + control('Kolor poniżej','valueRules.colorLow','color',r.colorLow) + control('Kolor pomiędzy','valueRules.colorMid','color',r.colorMid) + control('Kolor od górnego','valueRules.colorHigh','color',r.colorHigh)
+      + control('Płynne przejście','valueRules.smooth','checkbox',r.smooth)
+      + (marker.type === 'icon' || marker.style?.showIcon ? control('Koloruj ikonę','valueRules.icon','checkbox',r.icon) : '')
+      + (marker.type !== 'icon' ? control('Koloruj wartość','valueRules.value','checkbox',r.value) : '')
+      + (isGaugeType(marker.type) ? control('Koloruj łuk','valueRules.arc','checkbox',r.arc) : '')
+      + control('Koloruj tło','valueRules.background','checkbox',r.background) + control('Koloruj ramkę','valueRules.border','checkbox',r.border)
+      + (marker.iconMode !== 'integration' ? mdiControl('Ikona poniżej','valueRules.iconLow',r.iconLow) + mdiControl('Ikona pomiędzy','valueRules.iconMid',r.iconMid) + mdiControl('Ikona od górnego','valueRules.iconHigh',r.iconHigh) + '<p class="flow-section-note">Puste pole ikony = zwykła ikona markera.</p>' : '');
+  }
+  return section('Kolory wg wartości', body);
+}
 function resolvedIcon(marker) {
+  const ruleIcon = valueRuleResult(marker)?.icon; if (ruleIcon) return ruleIcon;
   if (marker.iconMode !== 'manual') return automaticIcon(marker);
   if (marker.iconVariantEnabled) {
     const kind = stateKind(marker);
@@ -1020,10 +1084,10 @@ function enabledIcon(enabled) {
 }
 function applyMarkerStyle(node, marker) {
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
-  const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '';
-  const backgroundColor = s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Color`] : s.backgroundColor;
+  const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '', rule = valueRuleResult(marker);
+  const backgroundColor = rule?.apply.background ? rule.color : s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Color`] : s.backgroundColor;
   const backgroundOpacity = s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Opacity`] : s.backgroundOpacity;
-  const borderColor = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Color`] : s.borderColor;
+  const borderColor = rule?.apply.border ? rule.color : s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Color`] : s.borderColor;
   const borderOpacity = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Opacity`] : s.borderOpacity;
   const borderWidth = s.borderStateEnabled && stateSuffix ? s[`border${stateSuffix}Width`] : s.borderWidth;
   Object.assign(node.style, {
@@ -1037,14 +1101,14 @@ function applyMarkerStyle(node, marker) {
   if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
   const label = $('.label', node), value = $('.value', node);
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
-  if (value) Object.assign(value.style, { color: s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
+  if (value) Object.assign(value.style, { color: rule?.apply.value ? rule.color : s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
   if (marker.type === 'badge' || marker.type === 'icon') {
     if (label) label.style.transform = `translateY(${s.labelY * contentScale}px)`;
     if (value) value.style.transform = `translateY(${s.valueY * contentScale}px)`;
   }
   const icon = $('.marker-icon', node);
   if (icon) {
-    const iconColor = kind === 'unavailable' ? s.iconUnavailableColor : s.iconStateEnabled !== false && stateSuffix ? s[`icon${stateSuffix}Color`] : s.iconColor;
+    const iconColor = kind === 'unavailable' ? s.iconUnavailableColor : rule?.apply.icon ? rule.color : s.iconStateEnabled !== false && stateSuffix ? s[`icon${stateSuffix}Color`] : s.iconColor;
     const iconOpacity = s.iconOpacityStateEnabled && stateSuffix ? s[`icon${stateSuffix}Opacity`] : s.iconOpacity;
     const outlineColor = s.iconOutlineStateEnabled && stateSuffix ? s[`iconOutline${stateSuffix}Color`] : s.iconOutlineColor;
     const outlineOpacity = s.iconOutlineStateEnabled && stateSuffix ? s[`iconOutline${stateSuffix}Opacity`] : s.iconOutlineOpacity;
@@ -1066,7 +1130,7 @@ function applyMarkerStyle(node, marker) {
     const pct = Number.isFinite(n) ? clamp(((n - Number(s.min)) / span) * 100, 0, 100) : 0;
     const gradientId = `gauge-gradient-${String(marker.id).replace(/[^a-z0-9_-]/gi, '')}`;
     Object.assign(track.style, { stroke: s.trackColor, strokeWidth: s.thickness });
-    Object.assign(progress.style, { stroke: s.useGradient ? `url(#${gradientId})` : s.progressColor, strokeWidth: s.thickness, strokeDasharray: `${pct} 100` });
+    Object.assign(progress.style, { stroke: rule?.apply.arc ? rule.color : s.useGradient ? `url(#${gradientId})` : s.progressColor, strokeWidth: s.thickness, strokeDasharray: `${pct} 100` });
     $$('.gauge-tick', node).forEach(tick => Object.assign(tick.style, { stroke: rgba(s.tickColor, s.tickOpacity), strokeWidth: s.tickWidth }));
     $$('.gauge-tick-label', node).forEach(text => Object.assign(text.style, { fill: s.tickLabelColor, fontSize: `${s.tickFontSize}px`, fontFamily: s.tickFontFamily }));
   }
@@ -1339,16 +1403,17 @@ function startFlowDrag(event) {
   const flow = activeSceneView()?.flows?.[event.currentTarget.dataset.flowId]; if (!flow || flow.geometryLocked) return;
   event.preventDefault(); event.stopPropagation();
   const node = event.currentTarget, start = { x:event.clientX, y:event.clientY, px:Number(flow.xPercent), py:Number(flow.yPercent) };
-  let moved = false; node.setPointerCapture(event.pointerId);
+  let moved = false, guides = null; node.setPointerCapture(event.pointerId);
   const move = current => {
     const rect = els.scene.getBoundingClientRect(), dx=current.clientX-start.x, dy=current.clientY-start.y;
     if (Math.hypot(dx,dy) > 3) moved = true;
     if (!moved) return;
-    flow.xPercent = snapPercent(start.px + dx / rect.width * 100); flow.yPercent = snapPercent(start.py + dy / rect.height * 100);
+    guides ||= alignmentContext(node);
+    ({ xPercent: flow.xPercent, yPercent: flow.yPercent } = alignToGuides(guides, snapPercent(start.px + dx / rect.width * 100), snapPercent(start.py + dy / rect.height * 100), current));
     node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%'; if (selectedFlowId === flow.id) syncFlowSelection();
   };
   const finish = () => {
-    node.removeEventListener('pointermove',move); node.removeEventListener('pointerup',finish); node.removeEventListener('pointercancel',finish);
+    node.removeEventListener('pointermove',move); node.removeEventListener('pointerup',finish); node.removeEventListener('pointercancel',finish); showAlignGuides([], []);
     try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {}
     node.dataset.dragged = moved ? '1' : '0';
     if (moved) { flow.updatedAt = new Date().toISOString(); scheduleSave(true); renderAdded(); positionFlowEditor(); }
@@ -1646,17 +1711,18 @@ function startDrag(event) {
   if (!editMode || event.button !== 0) return;
   event.preventDefault(); const node = event.currentTarget, entityId = node.dataset.entityId, marker = model.entities[entityId];
   if (marker?.geometryLocked) return;
-  const start = { x: event.clientX, y: event.clientY, px: marker.xPercent, py: marker.yPercent }; let moved = false;
+  const start = { x: event.clientX, y: event.clientY, px: marker.xPercent, py: marker.yPercent }; let moved = false, guides = null;
   node.setPointerCapture(event.pointerId);
   const move = e => {
     const r = els.scene.getBoundingClientRect(), dx = e.clientX - start.x, dy = e.clientY - start.y;
     if (Math.hypot(dx, dy) > 3 && !moved) { moved = true; els.editor.classList.add('marker-moving'); }
     if (!moved) return;
-    marker.xPercent = snapPercent(start.px + dx / r.width * 100); marker.yPercent = snapPercent(start.py + dy / r.height * 100);
+    guides ||= alignmentContext(node);
+    ({ xPercent: marker.xPercent, yPercent: marker.yPercent } = alignToGuides(guides, snapPercent(start.px + dx / r.width * 100), snapPercent(start.py + dy / r.height * 100), e));
     const live = node.isConnected ? node : $(`.marker[data-entity-id="${CSS.escape(entityId)}"]`);
     if (live) { live.style.left = `${marker.xPercent}%`; live.style.top = `${marker.yPercent}%`; } if (selectedId === entityId) syncSelection();
   };
-  const up = () => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up); try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {} els.editor.classList.remove('marker-moving'); node.dataset.dragged = moved ? '1' : '0'; if (moved) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); positionEditor(); } };
+  const up = () => { node.removeEventListener('pointermove', move); node.removeEventListener('pointerup', up); node.removeEventListener('pointercancel', up); try { if (node.hasPointerCapture?.(event.pointerId)) node.releasePointerCapture(event.pointerId); } catch {} els.editor.classList.remove('marker-moving'); showAlignGuides([], []); node.dataset.dragged = moved ? '1' : '0'; if (moved) { marker.updatedAt = new Date().toISOString(); scheduleSave(true); positionEditor(); } };
   node.addEventListener('pointermove', move); node.addEventListener('pointerup', up, { once: true }); node.addEventListener('pointercancel', up, { once: true });
 }
 
@@ -1705,7 +1771,7 @@ function iconEditorMarkup(marker) {
   const background = section('Tło', bgBody);
   const borderBody = control('Pokaż','style.showBorder','checkbox',s.showBorder,refresh) + (s.showBorder ? control('Kształt','style.shape','select',s.shape,{items:[['rounded','Zaokrąglony'],['circle','Koło / owal']],...refresh}) + (s.shape === 'rounded' ? control('Zaokrąglenie','style.radius','range',s.radius,{min:0,max:100,step:1,suffix:'px'}) : '') + (s.borderStateEnabled ? control('Kolor ON','style.borderOnColor','color',s.borderOnColor) + control('Kolor OFF','style.borderOffColor','color',s.borderOffColor) + control('Przezroczystość ON','style.borderOnOpacity','range',s.borderOnOpacity,{min:0,max:1,step:.01}) + control('Przezroczystość OFF','style.borderOffOpacity','range',s.borderOffOpacity,{min:0,max:1,step:.01}) + control('Grubość ON','style.borderOnWidth','range',s.borderOnWidth,{min:0,max:12,step:1,suffix:'px'}) + control('Grubość OFF','style.borderOffWidth','range',s.borderOffWidth,{min:0,max:12,step:1,suffix:'px'}) : control('Kolor','style.borderColor','color',s.borderColor) + control('Przezroczystość','style.borderOpacity','range',s.borderOpacity,{min:0,max:1,step:.01}) + control('Grubość','style.borderWidth','range',s.borderWidth,{min:0,max:12,step:1,suffix:'px'})) + control('Ramka zależna ON/OFF','style.borderStateEnabled','checkbox',s.borderStateEnabled,refresh) : '');
   const border = section('Ramka', borderBody);
-  return entity + size + icon + background + border;
+  return entity + size + icon + valueRulesSection(marker) + background + border;
 }
 
 
@@ -1783,7 +1849,7 @@ function editorMarkup(marker) {
     const percent = gaugeSubsection('Procent', control('Pokaż','style.showPercent','checkbox',s.showPercent) + control('Kolor','style.percentColor','color',s.percentColor) + control('Przezrocz.','style.percentOpacity','range',s.percentOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.percentScale','range',s.percentScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.percentY','range',s.percentY,{min:-100,max:100,step:1,suffix:'px'}));
     gauge = section(marker.type === 'horseshoe' ? 'Podkowa' : 'Gauge', range + geometry + ticks + tickLabels + gradient + percent);
   }
-  return entity + size + value + label + icon + gauge + background + border;
+  return entity + size + value + label + icon + gauge + valueRulesSection(marker) + background + border;
 }
 function bindEditorInputs(root) {
   $$('input,select', root).forEach(input => {
@@ -1858,7 +1924,7 @@ function startEditorDrag(event) {
   const finish = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', finish); window.removeEventListener('pointercancel', finish); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', finish); window.addEventListener('pointercancel', finish);
 }
-function setPath(object, path, value) { const parts = path.split('.'); let target = object; while (parts.length > 1) target = target[parts.shift()]; target[parts[0]] = value; }
+function setPath(object, path, value) { const parts = path.split('.'); let target = object; while (parts.length > 1) { const key = parts.shift(); if (target[key] === undefined || target[key] === null) target[key] = key === 'valueRules' ? { ...VALUE_RULE_DEFAULTS } : {}; target = target[key]; } target[parts[0]] = value; }
 function resetEditorRange(path) {
   const marker = model.entities[selectedId]; if (!marker || !path.startsWith('style.')) return;
   const defaults = markerStyleDefaults(marker.type), key = path.slice('style.'.length);
@@ -1884,7 +1950,7 @@ function onEditorInput(event) {
   const output = input.parentElement.querySelector('output'); if (output) output.textContent = `${value}${output.dataset.suffix || ''}`;
   const node = $(`.marker[data-entity-id="${CSS.escape(marker.entityId)}"]`);
   if (input.dataset.path === 'displayName') { els.editorTitle.textContent = value; if (node) node.innerHTML = markerHtml(marker); }
-  const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.');
+  const needsMarkup = input.dataset.path === 'unitOverride' || input.dataset.path === 'decimals' || input.dataset.path === 'stateOnLabel' || input.dataset.path === 'stateOffLabel' || input.dataset.path.startsWith('icon') || input.dataset.path.startsWith('valueRules.') || input.dataset.path.startsWith('style.show') || isGaugeType(marker.type) && input.dataset.path.startsWith('style.');
   // A range input keeps pointer capture only while its DOM node remains intact.
   // Rebuild Gauge/Horseshoe SVG after the finger is released, never while dragging.
   if (needsMarkup && (input.type !== 'range' || event.type === 'change')) { if (node) node.innerHTML = markerHtml(marker); }
@@ -2485,8 +2551,8 @@ function bindEvents() {
     renderMarkers(); syncPreviewStateButton();
   });
   $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
-  $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style) }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
-  $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
+  $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style), valueRules: m.valueRules ? clone(m.valueRules) : null }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
+  $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); if (styleClipboard.valueRules) m.valueRules = clone(styleClipboard.valueRules); else delete m.valueRules; m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeEntity(m.entityId); });
   $('#background-upload').addEventListener('click', () => els.bgFile.click()); $('#empty-upload').addEventListener('click', () => els.bgFile.click()); els.bgFile.addEventListener('change', () => uploadBackground(els.bgFile.files[0]));
   els.emptyBackgroundSelect?.addEventListener('change', () => {
