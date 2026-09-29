@@ -1,3 +1,10 @@
+## 0.4.1-beta.212
+
+- Ikona pomieszczenia: w popupie pomieszczenia nowa sekcja „Ikona” → „Dodaj ikonę”. Ikona to zwykły marker typu Ikona z pełnym edytorem (kolory ON/OFF, obrys, tło, ramka, rozmiar, kolory wg wartości, kopiuj/wklej styl, blokada), przeciąganiem i liniami pomocniczymi. Pojawia się na środku pomieszczenia.
+  - Świeci (stan ON), gdy pomieszczenie jest zapalone — czyli gdy dowolna z jego encji jest włączona; domyślnie ikona „grupa świateł” / „grupa świateł zgaszona”.
+  - Dotknięcie ikony wykonuje akcję pomieszczenia (Przełącz ON/OFF przełącza wszystkie jego światła/gniazdka, Więcej informacji, Brak akcji).
+  - Zmiana nazwy pomieszczenia zmienia nazwę ikony; usunięcie pomieszczenia usuwa też ikonę. „Edytuj ikonę” / „Usuń ikonę” w tej samej sekcji.
+
 ## 0.4.1-beta.211
 
 - Integracje mają własny przycisk w górnym pasku (ikona puzzla obok ołówka) zamiast pozycji w menu edycji; ponowne kliknięcie wraca do widoku.

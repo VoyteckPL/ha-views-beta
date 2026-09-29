@@ -671,3 +671,6 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .added-group-title{display:flex;align-items:center;justify-content:space-between;padding:2px 4px;color:#8fb3c4;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .added-group-title b{min-width:20px;padding:1px 6px;border-radius:9px;background:rgba(32,185,231,.16);color:#80e9ff;text-align:center;font-size:10px}
 .added-kind-icon{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:8px;background:rgba(32,185,231,.14);color:#80e9ff;font-size:18px}
+
+.room-icon-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.room-icon-actions button{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px}
