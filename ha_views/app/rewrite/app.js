@@ -27,7 +27,8 @@ const TRANSLATIONS = {
     "Ostrość":"Sharpness",
     "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
-    "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved"
+    "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
+    "Diagnostyka przesuwania":"Swipe diagnostics"
   }
 };
 function translateValue(value) {
@@ -386,6 +387,7 @@ function renderViewSelector() {
   if (!els.sceneTabs) return;
   const sheetName = $('#view-sheet-name'); if (sheetName) sheetName.textContent = activeSceneView()?.name || '';
   const transition = $('#view-transition'); if (transition) transition.value = viewTransitionMode();
+  els.sceneCard?.parentElement?.classList.toggle('swipe-mode-cube', viewTransitionMode() === 'cube' && mobileView());
   els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${model.settings?.defaultViewId === id ? '<i class="mdi mdi-home-variant-outline scene-tab-home" title="Widok startowy" aria-label="Widok startowy"></i>' : ''}<span data-no-i18n>${escapeHtml(model.views[id].name)}</span></button>`).join('');
   els.viewDelete.disabled = model.viewOrder.length <= 1;
   const index = model.viewOrder.indexOf(model.activeViewId);
@@ -2104,12 +2106,30 @@ function swipeWatchdog() {
   const idle = viewSwipe ? performance.now() - (viewSwipe.lastMove || viewSwipe.start || 0) : 0;
   if (viewSwipe && !swipeBusy && ((touchEventsSeen && activeTouches === 0 && idle > 250) || idle > 4000)) {
     // The finger is gone but no pointerup/cancel arrived: finish the gesture with its last known position.
+    swipeLog(`STRAŻNIK: brak puszczenia (bezczynność ${Math.round(idle)} ms)`);
     const swipe = viewSwipe; viewPointers.delete(swipe.id); finishViewSwipe({ clientX: swipe.lastX ?? swipe.x, clientY: swipe.lastY ?? swipe.y });
     return;
   }
-  if (!viewSwipe && !swipeBusy && swipeStuck() && performance.now() - (swipeWatchdog.lastEnd || 0) > 600) resetStuckSwipe(true);
+  if (!viewSwipe && !swipeBusy && swipeStuck() && performance.now() - (swipeWatchdog.lastEnd || 0) > 600) { swipeLog('STRAŻNIK: karty w połowie → powrót'); resetStuckSwipe(true); }
+}
+// Optional on-screen swipe diagnostics (per device): shows what the page receives during a swipe.
+const SWIPE_DEBUG_KEY = 'ha-views:swipe-debug';
+let swipeDebug = false, swipeDebugLines = [], swipeDebugT0 = 0;
+try { swipeDebug = localStorage.getItem(SWIPE_DEBUG_KEY) === '1'; } catch {}
+function swipeLog(text) {
+  if (!swipeDebug) return;
+  const now = performance.now(); if (!swipeDebugT0 || now - swipeDebugT0 > 4000) swipeDebugT0 = now;
+  swipeDebugLines.push(`${String(Math.round(now - swipeDebugT0)).padStart(5)} ${text}`); swipeDebugLines = swipeDebugLines.slice(-14);
+  let box = $('#swipe-debug');
+  if (!box) { box = document.createElement('pre'); box.id = 'swipe-debug'; box.setAttribute('data-no-i18n', ''); document.body.append(box); }
+  box.textContent = swipeDebugLines.join('\n') + `\n— busy:${swipeBusy ? 1 : 0} swipe:${viewSwipe ? (viewSwipe.tracking ? 'track' : 'wait') : '-'} touches:${activeTouches}${touchEventsSeen ? '' : '?'} card:${els.sceneCard?.style.transform ? 'moved' : 'home'}`;
+}
+function setSwipeDebug(on) {
+  swipeDebug = on; try { localStorage.setItem(SWIPE_DEBUG_KEY, on ? '1' : '0'); } catch {}
+  if (!on) { $('#swipe-debug')?.remove(); swipeDebugLines = []; } else swipeLog('diagnostyka włączona');
 }
 function abortViewSwipe() {
+  if (viewSwipe) swipeLog('ABORT (utrata dotyku / tło / fokus)');
   const swipe = viewSwipe; viewSwipe = null; if (!swipe) return;
   cancelAnimationFrame(swipe.frame);
   if (swipe.tracking && !swipeBusy) settleViewSwipe(0, swipe.direction || 1, 180).then(() => { if (!viewSwipe) { removeSwipePreview(); positionSwipe(0, 1); } });
@@ -2191,7 +2211,6 @@ function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = 
 function positionSwipe(offset, direction, animate = 0) {
   const distance = swipePageDistance(), transition = animate ? `transform ${animate}ms cubic-bezier(.22,.61,.36,1)` : 'none';
   const cube = viewTransitionMode() === 'cube', section = els.sceneCard?.parentElement;
-  section?.classList.toggle('swipe-cube', cube && Boolean(offset || swipePreview));
   if (cube) {
     // Two faces of one cube rotating about the cube's centre: the current view turns away, the next one turns in.
     const progress = clamp(offset / distance, -1, 1), angle = 90 * progress, half = distance / 2;
@@ -2212,7 +2231,7 @@ function trackViewSwipe(event, forcedDx = null) {
   const dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
   swipe.lastDx = dx; swipe.maxDx = Math.max(swipe.maxDx || 0, Math.abs(dx));
   swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]).slice(-6);
-  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
+  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; swipeLog(`śledzenie start${swipe.fromPan ? ' (z panoramy)' : ''}`); $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
   if (swipe.fromPan && Math.abs(dx) < .5) { removeSwipePreview(); positionSwipe(0, swipe.direction || 1); return; }
   const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1; swipe.direction = direction;
   if (swipePreview?.targetId !== target) {
@@ -2234,7 +2253,7 @@ function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
   });
 }
 async function finishViewSwipe(event) {
-  const swipe = viewSwipe; viewSwipe = null; if (!swipe) return; cancelAnimationFrame(swipe.frame); swipeWatchdog.lastEnd = performance.now();
+  const swipe = viewSwipe; viewSwipe = null; if (!swipe) return; swipeLog(`koniec gestu${event?.type ? ' (' + event.type + ')' : ' (awaryjny)'}${swipeBusy ? ' w trakcie przejścia → kolejka' : ''}`); cancelAnimationFrame(swipe.frame); swipeWatchdog.lastEnd = performance.now();
   if (swipeBusy) { const queued = swipe.busyDx ?? event.clientX - swipe.x; if (Math.abs(queued) >= 40) pendingSwipe = Math.sign(queued); return; }
   const dx = swipe.fromPan ? (swipe.lastDx || 0) : event.clientX - swipe.x, dy = swipe.fromPan ? 0 : event.clientY - swipe.y, distance = swipePageDistance(), direction = dx < 0 ? -1 : 1;
   // Gallery-like decision. The finger's recent speed (last ~100 ms, ignoring the few pixels of jitter when it is
@@ -2251,6 +2270,7 @@ async function finishViewSwipe(event) {
   // A short, quick flick (few move events) also counts.
   if (!swipe.fromPan && !pulledBack && Date.now() - swipe.t <= 300 && Math.abs(dx) >= 50 && !(Math.abs(velocity) > .35 && Math.sign(velocity) !== Math.sign(dx))) go = true;
   lastSwipeDecision = { dx: Math.round(dx), dy: Math.round(dy), velocity: +velocity.toFixed(2), pulledBack, horizontal, go };
+  swipeLog(`decyzja dx=${Math.round(dx)} dy=${Math.round(dy)} v=${velocity.toFixed(2)}${pulledBack ? ' cofnięty' : ''}${horizontal ? '' : ' nie-poziomy'} → ${go && horizontal ? 'PRZEŁĄCZ' : 'ZOSTAŃ'}`);
   const target = go && horizontal ? swipeNeighbour(dx) : null;
   if (!target) { if (swipe.tracking) { await settleViewSwipe(0, direction, 200); removeSwipePreview(); positionSwipe(0, direction); } return; }
   const marker = swipe.target?.closest?.('.marker,.flow-marker'); if (marker) marker.dataset.dragged = '1';
@@ -2260,7 +2280,7 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
   const distance = swipePageDistance();
   if (!swipePreview || swipePreview.targetId !== target) { removeSwipePreview(); swipePreview = swipePreviews.get(target) || buildSwipePreview(target); if (swipePreview) { swipePreview.element.hidden = false; setSwipeClip(true); positionSwipe(dx, direction); void els.sceneCard.offsetWidth; } }
   const remaining = Math.max(0, distance - Math.abs(dx)), speed = Math.max(Math.abs(velocity), 1.4);
-  swipeBusy = true; let preview = null;
+  swipeBusy = true; let preview = null; swipeLog('przejście…');
   try {
     await settleViewSwipe(direction * distance, direction, Math.round(clamp(remaining / speed, 110, 240)));
     // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
@@ -2277,7 +2297,7 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
   } catch (error) {
     // Never leave the cards between two views, whatever failed.
     console.warn('HA Views swipe', error); removeSwipePreview(); positionSwipe(0, direction);
-  } finally { swipeBusy = false; swipeWatchdog.lastEnd = performance.now(); }
+  } finally { swipeBusy = false; swipeWatchdog.lastEnd = performance.now(); swipeLog('przejście gotowe'); }
   if (preview) { preview.element.classList.add('swipe-fading'); preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
   // A flick made during this transition continues straight to the next view.
   if (pendingSwipe && !viewSwipe?.tracking) {
@@ -2343,7 +2363,7 @@ function bindEvents() {
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; setBackgroundPage(false); } });
   $('#view-sheet-back')?.addEventListener('click', () => { els.backgroundBar.classList.remove('open','onboarding'); els.bgManage.classList.remove('active'); els.bgStatus.textContent = ''; setBackgroundPage(false); });
   $('#view-sheet-close')?.addEventListener('click', closeCompactMenus);
-  $('#view-transition')?.addEventListener('change', event => { model.settings ||= {}; model.settings.viewTransition = event.target.value; prebuildSwipePreviews(60); scheduleSave(true); notify('Zapisano sposób przełączania widoków'); });
+  $('#view-transition')?.addEventListener('change', event => { model.settings ||= {}; model.settings.viewTransition = event.target.value; renderViewSelector(); prebuildSwipePreviews(60); scheduleSave(true); notify('Zapisano sposób przełączania widoków'); });
   $('#background-preview-cancel')?.addEventListener('click', () => hideBackgroundPreview(true));
   $('#background-preview-apply')?.addEventListener('click', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; hideBackgroundPreview(); await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
@@ -2464,6 +2484,13 @@ function bindEvents() {
   window.addEventListener('touchstart', event => { touchEventsSeen = true; activeTouches = event.touches.length; }, { passive:true, capture:true });
   window.addEventListener('touchend', event => { activeTouches = event.touches.length; }, { passive:true, capture:true });
   setInterval(swipeWatchdog, 300);
+  ['pointerdown','pointerup','pointercancel','lostpointercapture'].forEach(type => window.addEventListener(type, event => { if (swipeDebug && event.pointerType !== 'mouse') swipeLog(`${type} #${event.pointerId}${viewSwipe?.id === event.pointerId ? ' (gest)' : ''}`); }, { capture:true, passive:true }));
+  ['touchstart','touchend','touchcancel'].forEach(type => window.addEventListener(type, event => { if (swipeDebug) swipeLog(`${type} palce=${event.touches.length}`); }, { capture:true, passive:true }));
+  ['focus','blur','pageshow'].forEach(type => window.addEventListener(type, () => { if (swipeDebug) swipeLog(`okno: ${type}`); }));
+  document.addEventListener('visibilitychange', () => { if (swipeDebug) swipeLog(`widoczność: ${document.visibilityState}`); });
+  $('#swipe-debug-toggle')?.addEventListener('change', event => setSwipeDebug(event.target.checked));
+  if ($('#swipe-debug-toggle')) $('#swipe-debug-toggle').checked = swipeDebug;
+  if (swipeDebug) swipeLog('diagnostyka włączona');
   document.addEventListener('visibilitychange', resumeApp);
   window.addEventListener('pageshow', resumeApp); window.addEventListener('focus', resumeApp); window.addEventListener('blur', () => { abortViewSwipe(); resetViewportPointers(); });
 }

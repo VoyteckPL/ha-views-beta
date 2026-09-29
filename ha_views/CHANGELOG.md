@@ -1,3 +1,8 @@
+## 0.4.1-beta.195
+
+- Widoki (telefon, kostka): efekty 3D kostki (perspektywa, ukrywanie tylnej ściany) są włączone przez cały czas trybu „Kostka” zamiast przełączać się w chwili podmiany widoku — przebudowa warstw graficznych w tym momencie mogła dać mignięcie.
+- Nowa opcja w menu widoku: „Diagnostyka przesuwania” (zapamiętywana tylko na danym urządzeniu). Pokazuje w rogu ekranu na żywo, co strona dostaje podczas przesuwania (dotknięcie, ruch, puszczenie, przerwanie gestu, fokus, widoczność) oraz decyzję po puszczeniu — pomaga ustalić, dlaczego przesuwanie czasem się zatrzymuje.
+
 ## 0.4.1-beta.194
 
 - Widoki (telefon): poprawka z 193 mogła kończyć gest w połowie, gdy palec zatrzymał się na chwilę podczas przesuwania (jeśli strona nie dostawała zdarzeń dotyku) — widok wracał i trzeba było przeciągać drugi raz. Teraz „palec oderwany” jest rozpoznawany tylko na podstawie prawdziwych zdarzeń dotyku; bez nich strażnik czeka 4 s bez ruchu.
