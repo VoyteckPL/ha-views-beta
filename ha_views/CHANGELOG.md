@@ -1,3 +1,9 @@
+## 0.4.1-beta.201
+
+- Naprawa losowego zatrzymywania przesuwania między widokami. Przyczyna (z diagnostyki): aktualizacja stanu z HA przebudowywała marker pod palcem, a przeglądarka wysyłała resztę dotyku do usuniętego elementu — strona nie widziała już ruchu ani puszczenia palca.
+  - Podczas gestu markery i Flow nie są przebudowywane; zaległe aktualizacje rysują się zaraz po puszczeniu palca.
+  - Po starcie przesuwania gest jest przechwytywany przez scenę, więc nie zależy od elementu, na którym zaczął się dotyk.
+
 ## 0.4.1-beta.200
 
 - Przełączanie widoków palcem: jeśli puszczenie palca nie dotrze do strony i karta zostanie między widokami, kolejne dotknięcie przejmuje ją z miejsca, w którym stoi (bez skoku), a bez dotknięcia strona sama kończy gest po 1,5 s (było 4 s).

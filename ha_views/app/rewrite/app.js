@@ -1492,9 +1492,22 @@ function isToggleableMarker(marker) {
   return ['switch', 'light', 'fan', 'input_boolean'].includes(String(marker?.entityId || '').split('.', 1)[0]);
 }
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+// While a finger is on the scene, marker/Flow nodes are not rebuilt: replacing the node under the finger
+// makes the browser send the rest of that touch to the removed node, so the page never sees it move or
+// lift (the view swipe then stops half-way). Deferred updates are drawn right after the gesture.
+const deferredMarkerIds = new Set(); let deferredFlows = false, deferredFullRender = false, lastPointerActivity = 0;
+function touchGestureActive() { return Boolean(viewSwipe) || swipeBusy || (viewPointers.size > 0 && performance.now() - lastPointerActivity < 3000); }
+function flushDeferredRenders() {
+  if (touchGestureActive() || (!deferredMarkerIds.size && !deferredFlows && !deferredFullRender)) return;
+  if (deferredFullRender) { deferredFullRender = false; deferredFlows = false; deferredMarkerIds.clear(); renderMarkers(); if (selectedFlowId) syncFlowSelection(); return; }
+  const ids = [...deferredMarkerIds]; deferredMarkerIds.clear();
+  ids.forEach(entityId => { const marker = model.entities[entityId], node = marker && $(`.marker[data-entity-id="${CSS.escape(entityId)}"]`); if (marker && node) { node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); } });
+  if (deferredFlows) { deferredFlows = false; renderFlows(); if (selectedFlowId) syncFlowSelection(); }
+}
 function renderMarkerState(entityId, nextState) {
   if (!nextState) return;
   stateCache[entityId] = { ...stateCache[entityId], ...nextState };
+  if (touchGestureActive()) { deferredMarkerIds.add(entityId); if (moreInfoEntityId === entityId) refreshMoreInfoState(); return; }
   const marker = model.entities[entityId], node = marker && $(`.marker[data-entity-id="${CSS.escape(entityId)}"]`);
   if (marker && node) { node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); }
   if (moreInfoEntityId === entityId) refreshMoreInfoState();
@@ -2022,7 +2035,8 @@ async function refreshStates() {
       if (expected) pendingToggleStates.delete(entityId);
       stateCache[entityId] = { ...stateCache[entityId], ...nextState };
     });
-    renderMarkers(); prebuildSwipePreviews();
+    if (touchGestureActive()) deferredFullRender = true; else renderMarkers();
+    prebuildSwipePreviews();
     if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; }
   } catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
 }
@@ -2030,7 +2044,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = model.entities[data.entity_id], flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { if (touchGestureActive()) deferredFlows = true; else { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
@@ -2095,7 +2109,7 @@ function viewportPointerDown(event) {
   const hanging = viewSwipe && viewSwipe.id !== event.pointerId && viewSwipe.tracking && !viewSwipe.fromPan && !swipeBusy ? viewSwipe : null;
   if (hanging) { cancelAnimationFrame(hanging.frame); viewSwipe = null; }
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
-  viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+  viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY }); lastPointerActivity = performance.now();
   if (!swipeBusy && !viewSwipe && !hanging) resetStuckSwipe(false);
   viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target, start:performance.now(), lastMove:performance.now() } : null;
   if (hanging && viewSwipe && swipePreview) { const carry = hanging.lastDx || 0; Object.assign(viewSwipe, { x:event.clientX - carry, tracking:true, direction:hanging.direction, lastDx:carry, maxDx:Math.abs(carry) }); swipeLog(`przejęcie zawieszonego gestu (${Math.round(carry)} px)`); }
@@ -2115,6 +2129,7 @@ function viewportPointerDown(event) {
   }
 }
 function viewportPointerMove(event) {
+  lastPointerActivity = performance.now();
   // The view swipe follows its own pointer even if the pan/pinch pointer list was reset meanwhile.
   if (viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; viewSwipe.lastMove = performance.now(); trackViewSwipe(event); return; }
   if (!viewPointers.has(event.pointerId)) return;
@@ -2138,6 +2153,7 @@ function viewportPointerMove(event) {
 }
 function viewportPointerUp(event) {
   if (event.type === 'pointerup' && viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { finishViewSwipe(event); return; }
+  if (event.type === 'lostpointercapture' && event.target !== els.scene) return;
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
     const cancelled = viewSwipe; viewSwipe = null;
     if (cancelled?.tracking) { cancelAnimationFrame(cancelled.frame); settleBack(cancelled.direction || 1); }
@@ -2173,6 +2189,7 @@ function resetStuckSwipe(animate = true) {
   settleViewSwipe(0, 1, 180).then(() => { if (!viewSwipe && !swipeBusy) { removeSwipePreview(); positionSwipe(0, 1); } });
 }
 function swipeWatchdog() {
+  flushDeferredRenders();
   // "Finger gone" is only trusted when the page really receives touch events; otherwise wait for a long idle.
   const idle = viewSwipe ? performance.now() - (viewSwipe.lastMove || viewSwipe.start || 0) : 0;
   if (viewSwipe && !swipeBusy && ((touchEventsSeen && activeTouches === 0 && idle > 250) || idle > (viewSwipe.tracking ? 1500 : 4000))) {
@@ -2302,7 +2319,7 @@ function trackViewSwipe(event, forcedDx = null) {
   const dx = forcedDx ?? event.clientX - swipe.x, dy = forcedDx === null ? event.clientY - swipe.y : 0;
   swipe.lastDx = dx; swipe.maxDx = Math.max(swipe.maxDx || 0, Math.abs(dx));
   swipe.samples = (swipe.samples || []).concat([[event.clientX, performance.now()]]).slice(-6);
-  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; swipeLog(`śledzenie start${swipe.fromPan ? ' (z panoramy)' : ''}`); $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
+  if (!swipe.tracking) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.3) return; swipe.tracking = true; swipeLog(`śledzenie start${swipe.fromPan ? ' (z panoramy)' : ''}`); try { if (!els.scene.hasPointerCapture(swipe.id)) els.scene.setPointerCapture(swipe.id); } catch {} $$('.swipe-preview.swipe-fading').forEach(node => node.remove()); }
   if (swipe.fromPan && Math.abs(dx) < .5) { removeSwipePreview(); positionSwipe(0, swipe.direction || 1); return; }
   const target = swipeNeighbour(dx), direction = dx < 0 ? -1 : 1; swipe.direction = direction;
   if (swipePreview?.targetId !== target) {
