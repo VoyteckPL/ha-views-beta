@@ -1476,9 +1476,26 @@ async def api_marker_styles_save(request):
 
 
 # ===== HA Views CLEAN REWRITE STATE =====
-REWRITE_STATE_FILE = "/config/ha_views/rewrite_state.json"
+# The beta keeps its own layout file. The stable add-on (same /config) writes rewrite_state.json without
+# any revision check, so sharing that file let an open stable page silently roll back beta changes.
+# On the first start the beta copies the shared layout once and from then on uses only its own file.
+REWRITE_STATE_FILE = "/config/ha_views/rewrite_state_beta.json"
+SHARED_REWRITE_STATE_FILE = "/config/ha_views/rewrite_state.json"
+
+def _ensure_beta_state_file():
+    if os.path.exists(REWRITE_STATE_FILE):
+        return
+    shared = _read_json(SHARED_REWRITE_STATE_FILE, None)
+    if isinstance(shared, dict):
+        _atomic_json(REWRITE_STATE_FILE, shared)
+
+try:
+    _ensure_beta_state_file()
+except Exception as error:
+    print(f"HA Views Beta: could not copy the shared layout: {error}", flush=True)
 
 async def api_rewrite_state_get(request):
+    _ensure_beta_state_file()
     data = _read_json(REWRITE_STATE_FILE, None)
     return web.json_response({
         "ok": True,

@@ -1,3 +1,7 @@
+## 0.4.1-beta.198
+
+- Beta zapisuje układ we własnym pliku `/config/ha_views/rewrite_state_beta.json` (przy pierwszym starcie kopiuje obecny `rewrite_state.json`). Stabilny dodatek HA Views zapisywał ten sam plik bez sprawdzania wersji, więc otwarta strona wersji stabilnej potrafiła cofnąć zmiany zrobione w becie na wszystkich urządzeniach.
+
 ## 0.4.1-beta.197
 
 - Synchronizacja między urządzeniami: gdy inne urządzenie zapisało układ w międzyczasie, zmiany są łączone pole po polu zamiast odrzucania zmiany z tego urządzenia (np. kolor Flow ustawiony na telefonie nie wraca już do poprzedniego).
