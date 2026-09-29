@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-218">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-219">
 </head>
 <body>
   <header class="topbar">
@@ -49,6 +49,7 @@
         <button id="room-add" class="menu-action" title="Dodaj pomieszczenie" aria-label="Dodaj pomieszczenie"><i class="mdi mdi-vector-polygon"></i><span>Pomieszczenie</span></button>
         <div class="menu-divider"></div>
         <button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large" title="Wielkość siatki" aria-label="Wielkość siatki"></i><div class="grid-presets" role="group" aria-label="Wielkość siatki"><button type="button" class="grid-preset active" data-grid-step="0.25">S</button><button type="button" class="grid-preset" data-grid-step="1">M</button><button type="button" class="grid-preset" data-grid-step="4">L</button></div></div>
+        <button id="bounds-toggle" class="menu-action" title="Elementy nie wychodzą poza tło" aria-label="Elementy nie wychodzą poza tło"><i class="mdi mdi-border-inside"></i><span>Granice tła</span><b id="bounds-status">ON</b></button>
         <div class="menu-divider"></div>
         <div class="language-row"><i class="mdi mdi-translate"></i><span>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">EN</option><option value="pl">PL</option></select></div>
       </div>
@@ -220,6 +221,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-218"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-219"></script>
 </body>
 </html>

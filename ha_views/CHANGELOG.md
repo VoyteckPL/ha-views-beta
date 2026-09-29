@@ -1,3 +1,7 @@
+## 0.4.1-beta.219
+
+- Nowa opcja w menu edycji: „Granice tła” (domyślnie włączona). Marker i Flow nie dają się wyciągnąć poza tło — cały element (nie tylko jego środek) zatrzymuje się na krawędzi obrazu przy przeciąganiu i przy zmianie rozmiaru. Pomieszczenia i tak nie mogą wyjść poza tło. Wyłączenie opcji przywraca swobodne przesuwanie.
+
 ## 0.4.1-beta.218
 
 - Telefon, tryb edycji: przy przeciąganiu markera (gdy popup chowa się na czas ruchu) pod tłem nie widać już ramki karty — karta sceny w trybie edycji na telefonie nie ma obramowania, tła ani cienia, więc odsłonięty pas to zwykłe tło aplikacji.
