@@ -1,3 +1,8 @@
+## 0.4.1-beta.208
+
+- Naprawa „Domyślny panel Home Assistant”: w nowym HA panele dodatków mają adres /app/<slug>, a 207 zapisywało „app” zamiast nazwy panelu HA Views, przez co HA po starcie kręcił kółkiem. Panel jest teraz brany z listy paneli HA (panel dodatku, config.addon), a nie z adresu; gdy nie da się go ustalić, opcja jest ukryta.
+- Automatyczna naprawa: jeśli w koncie zapisany jest domyślny panel, który nie istnieje, HA Views usuwa go przy otwarciu.
+
 ## 0.4.1-beta.207
 
 - „Domyślny panel Home Assistant” w menu widoku (zamiast przełącznika z 206): Bez zmian / HA Views — moje konto / HA Views — tylko to urządzenie. „Moje konto” zapisuje HA Views jako Panel w preferencjach użytkownika HA (to samo ustawienie co Profil → Panel, działa na wszystkich urządzeniach tego konta), choć lista HA pokazuje tylko dashboardy. „Bez zmian” przywraca Auto (ustawienia systemowe).
