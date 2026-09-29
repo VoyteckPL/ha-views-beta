@@ -1,3 +1,8 @@
+## 0.4.1-beta.196
+
+- Górny pasek jest niższy (44 px zamiast 56 px), więc widok ma więcej miejsca. Menu edycji, menu widoku i panel More Info otwierają się tuż pod nowym paskiem.
+- Usunięto niebieski pasek pod aktywną zakładką widoku — aktywny widok wyróżnia biała, pogrubiona nazwa.
+
 ## 0.4.1-beta.195
 
 - Widoki (telefon, kostka): efekty 3D kostki (perspektywa, ukrywanie tylnej ściany) są włączone przez cały czas trybu „Kostka” zamiast przełączać się w chwili podmiany widoku — przebudowa warstw graficznych w tym momencie mogła dać mignięcie.

@@ -603,3 +603,13 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 #swipe-debug{position:fixed;left:6px;bottom:6px;z-index:300;max-width:calc(100vw - 12px);margin:0;padding:6px 8px;border:1px solid rgba(143,223,255,.4);border-radius:8px;background:rgba(0,0,0,.78);color:#bdf0ff;font:10px/1.35 ui-monospace,monospace;white-space:pre-wrap;pointer-events:none}
 @media(max-width:768px), (max-width:900px) and (pointer:coarse){ #view-switcher .view-debug-row{font-size:12px;padding:6px 2px} #view-switcher.bg-mode .view-debug-row{display:none!important} }
 
+/* beta.196: slimmer top bar, no active-tab underline (active tab stays bold white) */
+.topbar{height:44px!important}
+.tabs .tab.active:after{display:none!important}
+.compact-menu{top:48px!important}
+.view-manage-anchor .view-management{top:47px!important}
+.more-info{top:52px}
+@media(max-width:768px), (max-width:900px) and (pointer:coarse){
+  .compact-menu{top:48px!important}
+  .background-transform-panel{top:50px}
+}
