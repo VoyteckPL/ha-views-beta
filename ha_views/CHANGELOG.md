@@ -1,3 +1,8 @@
+## 0.4.1-beta.205
+
+- „Dotknięcie w widoku” ujednolicone dla markerów i pomieszczeń: te same nazwy i kolejność — Więcej informacji / Przełącz ON/OFF / Brak akcji. „Przełącz ON/OFF” pojawia się tylko tam, gdzie jest co przełączyć.
+- Markery: nowa opcja „Brak akcji” (dotknięcie nic nie robi). Wybór akcji jest teraz dostępny dla każdego markera, także czujników (Więcej informacji / Brak akcji).
+
 ## 0.4.1-beta.204
 
 - Pomieszczenia: dotknięcie pomieszczenia w widoku przełącza jego światła/gniazdka (gdy któreś świeci — gasi wszystkie, inaczej zapala). Zmiana jest widoczna od razu, bez czekania na HA. W ustawieniach pomieszczenia „Dotknięcie w widoku”: Przełącz światło / Więcej informacji / Nic.
