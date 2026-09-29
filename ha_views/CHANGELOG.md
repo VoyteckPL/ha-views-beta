@@ -1,3 +1,7 @@
+## 0.4.1-beta.207
+
+- „Domyślny panel Home Assistant” w menu widoku (zamiast przełącznika z 206): Bez zmian / HA Views — moje konto / HA Views — tylko to urządzenie. „Moje konto” zapisuje HA Views jako Panel w preferencjach użytkownika HA (to samo ustawienie co Profil → Panel, działa na wszystkich urządzeniach tego konta), choć lista HA pokazuje tylko dashboardy. „Bez zmian” przywraca Auto (ustawienia systemowe).
+
 ## 0.4.1-beta.206
 
 - Nowa opcja w menu widoku: „Otwieraj HA Views po starcie Home Assistant (to urządzenie)”. Ustawia HA Views jako stronę startową HA na tym urządzeniu (przeglądarka / aplikacja HA), czego nie da się wybrać w ustawieniach HA, bo lista pokazuje tylko dashboardy. Gdy w HA jest ustawiony domyślny dashboard użytkownika lub systemu (ma pierwszeństwo), aplikacja o tym ostrzega.

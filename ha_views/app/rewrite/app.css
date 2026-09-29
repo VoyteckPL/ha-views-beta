@@ -647,3 +647,4 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .room-entity code{grid-column:2;font-size:10px;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .room-entities-control{display:block!important}
 .room-entities-control>label{display:block;margin-bottom:6px}
+#ha-start-row[hidden]{display:none!important}
