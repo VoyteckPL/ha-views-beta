@@ -623,7 +623,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .align-guide.horizontal{left:0;right:0;height:1px;transform:translateY(-.5px)}
 
 /* Rooms: light polygons under the markers; outlines and handles above them in edit mode */
-.rooms{position:absolute;inset:0;z-index:0;pointer-events:none}
+.rooms{position:absolute;inset:0;pointer-events:none}
 .room-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transition:opacity .45s ease}
 .room-edit-layer{position:absolute;inset:0;z-index:30;pointer-events:none}
 .room-edit-layer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}

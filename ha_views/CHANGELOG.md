@@ -1,3 +1,10 @@
+## 0.4.1-beta.210
+
+- Pomieszczenia: usunięty efekt „Zapalony obraz” — zostaje tylko poświata kolorem (pomieszczenia ustawione wcześniej na obraz świecą teraz kolorem).
+- Naprawa „Mieszanie”: tryby nie działały (warstwa pomieszczeń mieszała się tylko sama ze sobą, nie z planem). Teraz Rozjaśnij / Miękkie światło / Nakładka / Zwykłe dają wyraźnie różny efekt, a pod wyborem jest opis, co robi wybrany tryb.
+- Otwarcie popupu markera lub Flow zamyka popup pomieszczenia.
+- Kliknięcie ikon w nagłówku popupu pomieszczenia nie blokuje już jego ustawiania obok pomieszczenia.
+
 ## 0.4.1-beta.209
 
 - Siatka w trybie edycji jest dużo rzadsza i delikatniejsza (linie co 10%) — precyzyjne wyrównanie robią teraz linie pomocnicze. Przyciąganie do siatki działa jak wcześniej.
