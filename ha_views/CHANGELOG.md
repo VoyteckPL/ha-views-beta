@@ -1,3 +1,9 @@
+## 0.4.1-beta.192
+
+- Widoki (telefon): przesuwanie nie zamraża się już w połowie. Aplikacja HA potrafi zgłosić „fokus okna” zaraz po dotknięciu ekranu, co kasowało śledzenie palca — teraz fokus nie przerywa gestu, a utrata dotyku lub zejście aplikacji w tło płynnie cofa przesunięcie.
+- Widoki (telefon): przesuwanie nie przestaje działać na stałe. Czekanie na wczytanie/dekodowanie obrazu tła ma teraz limity czasu, więc gest nigdy nie zostaje zablokowany (wcześniej trzeba było ubić aplikację HA). Dodano też awaryjne zakończenie gestu, gdy przeglądarka zgubi zdarzenie puszczenia palca.
+- Widoki: nowe ustawienie „Przełączanie palcem” w menu widoku: Wyłączone (tylko zakładki), Przesunięcie, Kostka. Kostka to obrót 3D obu widoków wokół wspólnego środka, liczony przez kartę graficzną. Ustawienie jest wspólne dla wszystkich urządzeń.
+
 ## 0.4.1-beta.191
 
 - Widoki (telefon): menu „Zarządzaj widokiem” wysuwa się od dołu ekranu jak edytor markera — z nagłówkiem (nazwa widoku) i przyciskiem zamknięcia, z większymi przyciskami.

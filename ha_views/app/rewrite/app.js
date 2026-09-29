@@ -26,7 +26,8 @@ const TRANSLATIONS = {
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
     "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
-    "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview"
+    "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
+    "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved"
   }
 };
 function translateValue(value) {
@@ -384,6 +385,7 @@ function showMainView(name) {
 function renderViewSelector() {
   if (!els.sceneTabs) return;
   const sheetName = $('#view-sheet-name'); if (sheetName) sheetName.textContent = activeSceneView()?.name || '';
+  const transition = $('#view-transition'); if (transition) transition.value = viewTransitionMode();
   els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${model.settings?.defaultViewId === id ? '<i class="mdi mdi-home-variant-outline scene-tab-home" title="Widok startowy" aria-label="Widok startowy"></i>' : ''}<span data-no-i18n>${escapeHtml(model.views[id].name)}</span></button>`).join('');
   els.viewDelete.disabled = model.viewOrder.length <= 1;
   const index = model.viewOrder.indexOf(model.activeViewId);
@@ -395,7 +397,7 @@ async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
   closeCompactMenus(); closeEditor(); closeMoreInfo(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
-  await loadBackgrounds(true); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
+  await loadBackgrounds(true, false, null, 2500); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
   prebuildSwipePreviews(60);
 }
@@ -2024,7 +2026,7 @@ function viewportPointerDown(event) {
   // A new primary touch after an interrupted WebView gesture means every remembered pointer is stale.
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
-  viewSwipe = mobileView() && !editMode && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target } : null;
+  viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target } : null;
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
     pinchGesture = { distance:Math.hypot(a.x-b.x,a.y-b.y), zoom:viewZoom, panX:viewPanX, panY:viewPanY, x:(a.x+b.x)/2-r.left, y:(a.y+b.y)/2-r.top };
@@ -2042,6 +2044,7 @@ function viewportPointerDown(event) {
 function viewportPointerMove(event) {
   if (!viewPointers.has(event.pointerId)) return;
   if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
+  if (viewSwipe?.id === event.pointerId) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; }
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
@@ -2079,7 +2082,16 @@ const nextFrames = (count = 1) => new Promise(resolve => { const step = left => 
 const swipeImages = new Map(), swipePreviews = new Map();
 let swipePreview = null, swipePrebuildTimer = null, swipeBusy = false, pendingSwipe = 0;
 function swipeNeighbour(dx) { const index = model.viewOrder.indexOf(model.activeViewId); return model.viewOrder[index + (dx < 0 ? 1 : -1)]; }
-function swipePageDistance() { return (els.sceneCard?.parentElement?.clientWidth || innerWidth) + 16; }
+// Transition between views on phones: 'off' (tabs only), 'slide' (pager) or 'cube' (3D cube).
+function viewTransitionMode() { const mode = model.settings?.viewTransition; return mode === 'off' || mode === 'cube' ? mode : 'slide'; }
+function swipePageDistance() { if (viewTransitionMode() === 'cube') return els.sceneCard?.offsetWidth || innerWidth; return (els.sceneCard?.parentElement?.clientWidth || innerWidth) + 16; }
+const withTimeout = (promise, ms) => Promise.race([Promise.resolve(promise).catch(() => {}), new Promise(resolve => setTimeout(resolve, ms))]);
+// Cancels a swipe in progress (lost touch, app sent to background) and puts both cards back.
+function abortViewSwipe() {
+  const swipe = viewSwipe; viewSwipe = null; if (!swipe) return;
+  cancelAnimationFrame(swipe.frame);
+  if (swipe.tracking && !swipeBusy) settleViewSwipe(0, swipe.direction || 1, 180).then(() => { if (!viewSwipe) { removeSwipePreview(); positionSwipe(0, 1); } });
+}
 function swipeImage(name) {
   if (!swipeImages.has(name)) {
     const image = new Image(); image.decoding = 'async'; image.src = `api/background/file?name=${encodeURIComponent(name)}`;
@@ -2156,8 +2168,19 @@ function setSwipeClip(on) {
 function removeSwipePreview() { if (swipePreview) swipePreview.element.hidden = true; swipePreview = null; setSwipeClip(false); }
 function positionSwipe(offset, direction, animate = 0) {
   const distance = swipePageDistance(), transition = animate ? `transform ${animate}ms cubic-bezier(.22,.61,.36,1)` : 'none';
-  if (els.sceneCard) { els.sceneCard.style.transition = transition; els.sceneCard.style.transform = offset ? `translateX(${offset}px)` : ''; }
-  if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transform = `translateX(${offset - direction * distance}px)`; }
+  const cube = viewTransitionMode() === 'cube', section = els.sceneCard?.parentElement;
+  section?.classList.toggle('swipe-cube', cube && Boolean(offset || swipePreview));
+  if (cube) {
+    // Two faces of one cube rotating about the cube's centre: the current view turns away, the next one turns in.
+    const progress = clamp(offset / distance, -1, 1), angle = 90 * progress, half = distance / 2;
+    const face = a => `translateZ(${-half}px) rotateY(${a}deg) translateZ(${half}px)`;
+    if (els.sceneCard) Object.assign(els.sceneCard.style, { transition, transformOrigin: '50% 50%', transform: offset ? face(angle) : '' });
+    if (swipePreview) Object.assign(swipePreview.element.style, { transition, transformOrigin: '50% 50%', transform: face(angle - direction * 90) });
+    if (!offset && els.sceneCard) els.sceneCard.style.transformOrigin = '';
+    return;
+  }
+  if (els.sceneCard) { els.sceneCard.style.transition = transition; els.sceneCard.style.transformOrigin = ''; els.sceneCard.style.transform = offset ? `translateX(${offset}px)` : ''; }
+  if (swipePreview) { swipePreview.element.style.transition = transition; swipePreview.element.style.transformOrigin = ''; swipePreview.element.style.transform = `translateX(${offset - direction * distance}px)`; }
 }
 function trackViewSwipe(event, forcedDx = null) {
   const swipe = viewSwipe;
@@ -2211,10 +2234,10 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
     await settleViewSwipe(direction * distance, direction, Math.round(clamp(remaining / speed, 110, 240)));
     // The preview now sits exactly where the real view will be: swap the real view in underneath and fade it out.
     preview = swipePreview; swipePreview = null; swipePreviews.delete(target);
-    await switchSceneView(target);
+    await withTimeout(switchSceneView(target), 4000);
     // Make the real view final (decoded image, final card/scene geometry) and painted under the still opaque
     // preview before the preview fades; otherwise one intermediate frame can blink on slower phones.
-    if (currentBackground && els.image.decode) await els.image.decode().catch(() => {});
+    if (currentBackground && els.image.decode) await withTimeout(els.image.decode(), 800);
     applyBackgroundTransform(); updateSceneGeometry();
     await nextFrames(2);
     positionSwipe(0, direction);
@@ -2286,6 +2309,7 @@ function bindEvents() {
   els.bgManage.addEventListener('click', () => { const open = !els.backgroundBar.classList.contains('open'); if (open) { closeEditor(); closeMoreInfo(); } els.backgroundBar.classList.toggle('open', open); els.bgManage.classList.toggle('active', open); if (open) openBackgroundMenu(); else { els.backgroundBar.classList.remove('onboarding'); els.bgStatus.textContent = ''; setBackgroundPage(false); } });
   $('#view-sheet-back')?.addEventListener('click', () => { els.backgroundBar.classList.remove('open','onboarding'); els.bgManage.classList.remove('active'); els.bgStatus.textContent = ''; setBackgroundPage(false); });
   $('#view-sheet-close')?.addEventListener('click', closeCompactMenus);
+  $('#view-transition')?.addEventListener('change', event => { model.settings ||= {}; model.settings.viewTransition = event.target.value; prebuildSwipePreviews(60); scheduleSave(true); notify('Zapisano sposób przełączania widoków'); });
   $('#background-preview-cancel')?.addEventListener('click', () => hideBackgroundPreview(true));
   $('#background-preview-apply')?.addEventListener('click', async () => { try { const view = activeSceneView(); view.background = els.bgSelect.value; if (view.background) view.onboardingDone = true; hideBackgroundPreview(); await loadBackgrounds(); scheduleSave(true); } catch (error) { notify(error.message, true); } });
   els.bgTransformToggle?.addEventListener('click', () => { els.bgTransformPanel.classList.toggle('open'); els.bgTransformToggle.classList.toggle('active', els.bgTransformPanel.classList.contains('open')); syncBackgroundTransformControls(); });
@@ -2398,9 +2422,13 @@ function bindEvents() {
     if (event.target.closest('.compact-menu,.view-management,#settings-toggle,#edit-toggle,#view-manage,.editor,.app-confirm-card')) return;
     closeCompactMenus();
   });
-  const resumeApp = () => { resetViewportPointers(); resumeLiveConnection(); };
+  // Only a real return to the page resets gestures; a window 'focus' can arrive right after touching the screen in the HA app.
+  const resumeApp = event => { if (event?.type !== 'focus') { abortViewSwipe(); resetViewportPointers(); } resumeLiveConnection(); };
+  // Fallback if the WebView swallows pointerup/pointercancel of a swipe.
+  window.addEventListener('touchend', event => { if (viewSwipe && !event.touches.length) { viewPointers.delete(viewSwipe.id); finishViewSwipe({ clientX: viewSwipe.lastX ?? viewSwipe.x, clientY: viewSwipe.lastY ?? viewSwipe.y }); } }, { passive:true });
+  window.addEventListener('touchcancel', () => { if (viewSwipe) { abortViewSwipe(); resetViewportPointers(); } }, { passive:true });
   document.addEventListener('visibilitychange', resumeApp);
-  window.addEventListener('pageshow', resumeApp); window.addEventListener('focus', resumeApp); window.addEventListener('blur', resetViewportPointers);
+  window.addEventListener('pageshow', resumeApp); window.addEventListener('focus', resumeApp); window.addEventListener('blur', () => { abortViewSwipe(); resetViewportPointers(); });
 }
 function startResize(event) {
   const marker = model.entities[selectedId];
