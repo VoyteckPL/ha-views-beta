@@ -1,3 +1,9 @@
+## 0.4.1-beta.220
+
+- Flow, animacja „Przepływ”: tempo to teraz stała prędkość strzałek (1× = 75 px/s). Nie zależy od liczby, długości strzałki, odstępu ani rozmiaru ramki — zmiana liczby nie zwalnia/nie przyspiesza animacji, a dwa Flow z tym samym tempem (np. dla tej samej encji, o różnej szerokości) jadą identycznie. Uwaga: Flow o niestandardowych rozmiarach mogą jechać trochę inaczej niż wcześniej — wystarczy poprawić Tempo.
+- W sekcji Animacja nowy przycisk „Ustaw tę animację w pozostałych Flow tej encji (N)” — kopiuje typ, tempo i tempo od wartości do innych Flow tej samej encji.
+- Edytor Flow uporządkowany: „Ramka i pozycja” (długość ramki, szerokość ramki, korekta obrotu) oraz „Strzałki” (rodzaj, ostrość, grubość, długość strzałki, odstęp, liczba). W animacji „Przepływ” suwak liczby jest ukryty, bo strzałki i tak wypełniają całą ramkę.
+
 ## 0.4.1-beta.219
 
 - Nowa opcja w menu edycji: „Granice tła” (domyślnie włączona). Marker i Flow nie dają się wyciągnąć poza tło — cały element (nie tylko jego środek) zatrzymuje się na krawędzi obrazu przy przeciąganiu i przy zmianie rozmiaru. Pomieszczenia i tak nie mogą wyjść poza tło. Wyłączenie opcji przywraca swobodne przesuwanie.
