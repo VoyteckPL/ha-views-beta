@@ -1,3 +1,8 @@
+## 0.4.1-beta.211
+
+- Integracje mają własny przycisk w górnym pasku (ikona puzzla obok ołówka) zamiast pozycji w menu edycji; ponowne kliknięcie wraca do widoku.
+- „Dodane do widoku” podzielone na grupy: Markery, Flow i Pomieszczenia (z licznikami). Każdy element ma „Pokaż” (przechodzi do widoku, włącza edycję i otwiera jego popup) oraz „Usuń z widoku” z potwierdzeniem.
+
 ## 0.4.1-beta.210
 
 - Pomieszczenia: usunięty efekt „Zapalony obraz” — zostaje tylko poświata kolorem (pomieszczenia ustawione wcześniej na obraz świecą teraz kolorem).

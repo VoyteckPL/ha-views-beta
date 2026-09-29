@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-210">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-211">
 </head>
 <body>
   <header class="topbar">
@@ -46,13 +46,13 @@
     </div>
     <div class="top-actions">
       <div id="edit-menu" class="compact-menu edit-menu">
-        <button id="integrations-button" class="menu-action" title="Integracje" aria-label="Integracje"><i class="mdi mdi-puzzle-outline"></i><span>Integracje</span></button>
         <button id="room-add" class="menu-action" title="Dodaj pomieszczenie" aria-label="Dodaj pomieszczenie"><i class="mdi mdi-vector-polygon"></i><span>Pomieszczenie</span></button>
         <div class="menu-divider"></div>
         <button id="snap-toggle" class="menu-action" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><span>Siatka</span><b id="grid-status">ON</b></button><div class="grid-size-row"><i class="mdi mdi-grid-large" title="Wielkość siatki" aria-label="Wielkość siatki"></i><div class="grid-presets" role="group" aria-label="Wielkość siatki"><button type="button" class="grid-preset active" data-grid-step="0.25">S</button><button type="button" class="grid-preset" data-grid-step="1">M</button><button type="button" class="grid-preset" data-grid-step="4">L</button></div></div>
         <div class="menu-divider"></div>
         <div class="language-row"><i class="mdi mdi-translate"></i><span>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">EN</option><option value="pl">PL</option></select></div>
       </div>
+      <button id="integrations-button" class="icon-action" title="Integracje" aria-label="Integracje"><i class="mdi mdi-puzzle-outline"></i></button>
       <button id="edit-toggle" class="icon-action" title="Edytuj widok" aria-label="Edytuj widok"><i class="mdi mdi-pencil-outline"></i></button>
     </div>
   </header>
@@ -102,7 +102,7 @@
     <section id="view-integrations" class="view">
       <div class="integrations-layout">
         <article class="panel">
-          <div class="panel-head"><div><h2>Dodane do widoku</h2><p>Encje widoczne na scenie</p></div><span id="added-count" class="count">0</span></div>
+          <div class="panel-head"><div><h2>Dodane do widoku</h2><p>Markery, Flow i pomieszczenia tego widoku</p></div><span id="added-count" class="count">0</span></div>
           <div id="added-list" class="entity-list"></div>
         </article>
         <article class="panel">
@@ -220,6 +220,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-210"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-211"></script>
 </body>
 </html>
