@@ -1,3 +1,7 @@
+## 0.4.1-beta.217
+
+- Telefon, tryb edycji: widok nie wyjeżdża już poza dolną krawędź tła, pokazując pustą ramkę. Przesunięcie poza tło jest dozwolone tylko o tyle, ile zasłania popup na dole — puste miejsce zawsze chowa się pod popupem, a marker/Flow/pomieszczenie nisko na tle nadal ląduje nad popupem. Po zamknięciu popupu widok wraca do krawędzi tła.
+
 ## 0.4.1-beta.216
 
 - Telefon, tryb edycji: kliknięcie pomieszczenia centruje je i przybliża tak jak marker i Flow — całe pomieszczenie mieści się nad popupem (małe są przybliżane, duże zostają w całości widoczne).

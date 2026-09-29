@@ -802,6 +802,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
 }
 function closeRoomEditor() {
   const panel = $('#room-editor'); if (!panel) return;
+  if (mobileView() && editMode && panel.classList.contains('visible')) requestAnimationFrame(applyViewTransform);
   const had = selectedRoomId; selectedRoomId = null; roomPreviewOn = ''; delete panel.dataset.dragged;
   panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
 }
@@ -1067,15 +1068,23 @@ function minViewZoom() {
   if (!mobileWidePanorama()) return 1;
   return clamp(els.viewport.clientWidth / Math.max(1, els.scene.offsetWidth), .08, 1);
 }
+function editSheetCover() {
+  if (!mobileView() || !editMode) return 0;
+  const sheets = [els.editor, els.flowEditor, $('#room-editor')].filter(panel => panel?.classList.contains('visible'));
+  if (!sheets.length) return 0;
+  // offsetHeight ignores the slide-in transform, so the value is final even while the sheet animates.
+  const sheetTop = Math.min(...sheets.map(panel => innerHeight - panel.offsetHeight)), viewportBottom = els.viewport.getBoundingClientRect().bottom;
+  return Math.max(0, viewportBottom - sheetTop);
+}
 function clampViewPan() {
   if (!sceneCameraActive()) { viewPanX = 0; viewPanY = 0; return; }
   const panorama = mobileWidePanorama();
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
   const maxX = Math.max(0, els.scene.offsetWidth * viewZoom - els.viewport.clientWidth);
   const maxY = Math.max(0, els.scene.offsetHeight * viewZoom - els.viewport.clientHeight);
-  // While editing on a phone, allow the camera beyond the lower scene edge.
-  // This keeps a marker near the bottom visible above the bottom editor.
-  const editBottomAllowance = mobileView() && editMode ? els.viewport.clientHeight * .78 : 0;
+  // While editing on a phone, the camera may go past the lower scene edge only by the part of the viewport
+  // the bottom editor covers: the empty area then stays hidden under the editor, never shown as a bare frame.
+  const editBottomAllowance = editSheetCover();
   viewPanX = clamp(viewPanX, -maxX, 0); viewPanY = clamp(viewPanY, -(maxY + editBottomAllowance), 0);
 }
 function updatePanoramaIndicator() {
@@ -1839,6 +1848,7 @@ function startFlowDrag(event) {
   node.addEventListener('pointermove',move); node.addEventListener('pointerup',finish,{once:true}); node.addEventListener('pointercancel',finish,{once:true});
 }
 function closeFlowEditor() {
+  if (mobileView() && editMode) requestAnimationFrame(applyViewTransform);
   selectedFlowId = null; flowEditorDragged = false; flowEditorOpenSectionIndex = -1;
   hideFlowSelection();
   els.flowEditor?.classList.remove('visible'); els.flowEditor?.setAttribute('aria-hidden','true');
@@ -2362,7 +2372,7 @@ function onColorPickerClick(event) {
   if (swatch) { event.preventDefault(); const picker = swatch.closest('.color-picker'), input = $('.color-native', picker); input.value = swatch.dataset.paletteColor; $('.color-current', picker).style.background = input.value; input.dispatchEvent(new Event('input', { bubbles: true })); $('.color-menu', picker).classList.remove('visible'); return; }
   if (rgb) { event.preventDefault(); rgb.closest('.color-picker').querySelector('.color-native').click(); }
 }
-function closeEditor() { selectedId = null; editorDragged = false; editorOpenSectionIndex = -1; els.editor.classList.remove('visible'); els.editor.setAttribute('aria-hidden','true'); hideSelection(); $$('.marker.selected').forEach(n => n.classList.remove('selected')); }
+function closeEditor() { if (mobileView() && editMode) requestAnimationFrame(applyViewTransform); selectedId = null; editorDragged = false; editorOpenSectionIndex = -1; els.editor.classList.remove('visible'); els.editor.setAttribute('aria-hidden','true'); hideSelection(); $$('.marker.selected').forEach(n => n.classList.remove('selected')); }
 function startEditorDrag(event) {
   if (mobileView() || event.button !== 0 || (event.buttons & 1) !== 1 || event.target.closest('button,input,select')) return;
   const panel = event.currentTarget?.closest?.('.editor') || els.editor;
