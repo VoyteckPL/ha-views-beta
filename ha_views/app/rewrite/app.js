@@ -2026,6 +2026,7 @@ function viewportPointerDown(event) {
   // A new primary touch after an interrupted WebView gesture means every remembered pointer is stale.
   if ((event.pointerType === 'mouse') || (event.pointerType === 'touch' && event.isPrimary && viewPointers.size && !viewPointers.has(event.pointerId))) resetViewportPointers();
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+  if (!swipeBusy && !viewSwipe) resetStuckSwipe(false);
   viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target } : null;
   if (viewPointers.size === 2) {
     const [a,b] = [...viewPointers.values()], r = els.viewport.getBoundingClientRect();
@@ -2042,9 +2043,11 @@ function viewportPointerDown(event) {
   }
 }
 function viewportPointerMove(event) {
+  // The view swipe follows its own pointer even if the pan/pinch pointer list was reset meanwhile.
+  if (viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; viewSwipe.lastMove = performance.now(); trackViewSwipe(event); return; }
   if (!viewPointers.has(event.pointerId)) return;
   if (viewPointers.size > 1 && viewSwipe) { if (viewSwipe.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); }); viewSwipe = null; }
-  if (viewSwipe?.id === event.pointerId) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; }
+  if (viewSwipe?.id === event.pointerId) { viewSwipe.lastX = event.clientX; viewSwipe.lastY = event.clientY; viewSwipe.lastMove = performance.now(); }
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
@@ -2062,6 +2065,7 @@ function viewportPointerMove(event) {
   }
 }
 function viewportPointerUp(event) {
+  if (event.type === 'pointerup' && viewSwipe?.id === event.pointerId && !viewPointers.has(event.pointerId)) { finishViewSwipe(event); return; }
   if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
     if (viewSwipe?.tracking) settleViewSwipe(0, viewSwipe.direction || 1).then(() => { removeSwipePreview(); positionSwipe(0, 1); });
     viewSwipe = null; resetViewportPointers();
@@ -2087,6 +2091,22 @@ function viewTransitionMode() { const mode = model.settings?.viewTransition; ret
 function swipePageDistance() { if (viewTransitionMode() === 'cube') return els.sceneCard?.offsetWidth || innerWidth; return (els.sceneCard?.parentElement?.clientWidth || innerWidth) + 16; }
 const withTimeout = (promise, ms) => Promise.race([Promise.resolve(promise).catch(() => {}), new Promise(resolve => setTimeout(resolve, ms))]);
 // Cancels a swipe in progress (lost touch, app sent to background) and puts both cards back.
+// Safety net: cards may never stay between two views without a gesture or an animation running.
+let activeTouches = 0;
+function swipeStuck() { return Boolean(swipePreview && !swipePreview.element.hidden) || Boolean(els.sceneCard?.style.transform); }
+function resetStuckSwipe(animate = true) {
+  if (swipeBusy || viewSwipe || !swipeStuck()) return;
+  if (!animate) { removeSwipePreview(); positionSwipe(0, 1); return; }
+  settleViewSwipe(0, 1, 180).then(() => { if (!viewSwipe && !swipeBusy) { removeSwipePreview(); positionSwipe(0, 1); } });
+}
+function swipeWatchdog() {
+  if (viewSwipe && !swipeBusy && activeTouches === 0 && performance.now() - (viewSwipe.lastMove || 0) > 250) {
+    // The finger is gone but no pointerup/cancel arrived: finish the gesture with its last known position.
+    const swipe = viewSwipe; viewPointers.delete(swipe.id); finishViewSwipe({ clientX: swipe.lastX ?? swipe.x, clientY: swipe.lastY ?? swipe.y });
+    return;
+  }
+  if (!viewSwipe && !swipeBusy && swipeStuck() && performance.now() - (swipeWatchdog.lastEnd || 0) > 600) resetStuckSwipe(true);
+}
 function abortViewSwipe() {
   const swipe = viewSwipe; viewSwipe = null; if (!swipe) return;
   cancelAnimationFrame(swipe.frame);
@@ -2209,7 +2229,7 @@ function settleViewSwipe(offset = 0, direction = 1, duration = 220) {
   });
 }
 async function finishViewSwipe(event) {
-  const swipe = viewSwipe; viewSwipe = null; cancelAnimationFrame(swipe.frame);
+  const swipe = viewSwipe; viewSwipe = null; if (!swipe) return; cancelAnimationFrame(swipe.frame); swipeWatchdog.lastEnd = performance.now();
   if (swipeBusy) { const queued = swipe.busyDx ?? event.clientX - swipe.x; if (Math.abs(queued) >= 40) pendingSwipe = Math.sign(queued); return; }
   const dx = swipe.fromPan ? (swipe.lastDx || 0) : event.clientX - swipe.x, dy = swipe.fromPan ? 0 : event.clientY - swipe.y, distance = swipePageDistance(), direction = dx < 0 ? -1 : 1;
   // Gallery-like decision: the finger's speed at release wins (moving back = stay), otherwise past 40 % of the width.
@@ -2243,7 +2263,10 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
     positionSwipe(0, direction);
     await nextFrames(2);
     setSwipeClip(false);
-  } finally { swipeBusy = false; }
+  } catch (error) {
+    // Never leave the cards between two views, whatever failed.
+    console.warn('HA Views swipe', error); removeSwipePreview(); positionSwipe(0, direction);
+  } finally { swipeBusy = false; swipeWatchdog.lastEnd = performance.now(); }
   if (preview) { preview.element.classList.add('swipe-fading'); preview.element.style.transition = 'opacity 140ms ease'; preview.element.style.opacity = '0'; setTimeout(() => preview.element.remove(), 170); }
   // A flick made during this transition continues straight to the next view.
   if (pendingSwipe && !viewSwipe?.tracking) {
@@ -2426,7 +2449,10 @@ function bindEvents() {
   const resumeApp = event => { if (event?.type !== 'focus') { abortViewSwipe(); resetViewportPointers(); } resumeLiveConnection(); };
   // Fallback if the WebView swallows pointerup/pointercancel of a swipe.
   window.addEventListener('touchend', event => { if (viewSwipe && !event.touches.length) { viewPointers.delete(viewSwipe.id); finishViewSwipe({ clientX: viewSwipe.lastX ?? viewSwipe.x, clientY: viewSwipe.lastY ?? viewSwipe.y }); } }, { passive:true });
-  window.addEventListener('touchcancel', () => { if (viewSwipe) { abortViewSwipe(); resetViewportPointers(); } }, { passive:true });
+  window.addEventListener('touchcancel', event => { activeTouches = event.touches.length; if (viewSwipe) { abortViewSwipe(); resetViewportPointers(); } }, { passive:true });
+  window.addEventListener('touchstart', event => { activeTouches = event.touches.length; }, { passive:true, capture:true });
+  window.addEventListener('touchend', event => { activeTouches = event.touches.length; }, { passive:true, capture:true });
+  setInterval(swipeWatchdog, 300);
   document.addEventListener('visibilitychange', resumeApp);
   window.addEventListener('pageshow', resumeApp); window.addEventListener('focus', resumeApp); window.addEventListener('blur', () => { abortViewSwipe(); resetViewportPointers(); });
 }

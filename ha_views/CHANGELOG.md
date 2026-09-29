@@ -1,3 +1,11 @@
+## 0.4.1-beta.193
+
+- Widoki (telefon): przesuwanie i kostka nie zatrzymują się już w połowie między ekranami.
+  - Śledzenie palca nie zależy od wewnętrznej listy wskaźników, którą niektóre zdarzenia systemowe czyściły w trakcie ruchu (wtedy widok przestawał podążać za palcem).
+  - Jeśli przeglądarka zgubi zakończenie gestu, strażnik (sprawdzanie co 0,3 s na podstawie liczby palców na ekranie) domyka przejście do najbliższego widoku.
+  - Karty, które zostały między ekranami bez aktywnego gestu, wracają na miejsce, a nowe dotknięcie zawsze zaczyna od czystego stanu.
+  - Błąd w trakcie przejścia nie zostawia już kart w połowie.
+
 ## 0.4.1-beta.192
 
 - Widoki (telefon): przesuwanie nie zamraża się już w połowie. Aplikacja HA potrafi zgłosić „fokus okna” zaraz po dotknięciu ekranu, co kasowało śledzenie palca — teraz fokus nie przerywa gestu, a utrata dotyku lub zejście aplikacji w tło płynnie cofa przesunięcie.
