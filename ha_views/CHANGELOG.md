@@ -1,3 +1,7 @@
+## 0.4.1-beta.214
+
+- Cofnięto zmianę z 0.4.1-beta.213 (ukrywanie paska Home Assistant nad widokiem na telefonie i własny przycisk ☰) — nie działała w aplikacji HA. Pasek HA jest znów widoczny jak wcześniej.
+
 ## 0.4.1-beta.213
 
 - Telefon: HA Views chowa biały pasek Home Assistant („☰ HA Views Beta”) nad widokiem i zajmuje jego miejsce. Boczne menu HA otwiera się teraz przyciskiem ☰ po lewej stronie górnego paska HA Views. Można to wyłączyć w menu widoku: „Ukryj pasek Home Assistant nad widokiem (telefon)” (ustawienie na urządzenie, domyślnie włączone).

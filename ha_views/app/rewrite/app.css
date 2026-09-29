@@ -674,8 +674,3 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 
 .room-icon-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .room-icon-actions button{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px}
-
-/* Our ☰ (opens the HA sidebar) when HA's own bar above the panel is hidden */
-.topbar>.ha-menu-button{flex:0 0 auto;margin-right:4px}
-.topbar>.ha-menu-button[hidden]{display:none!important}
-.ha-header-hidden .view-tabs-group{max-width:calc(100% - 134px)}
