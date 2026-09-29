@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
     "Duplikuj Flow":"Duplicate Flow","Utworzono kopię Flow — przeciągnij ją w wybrane miejsce":"Flow copy created — drag it where you want",
     "Ostrość":"Sharpness",
-    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
+    "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
     "Diagnostyka przesuwania":"Swipe diagnostics"
@@ -721,9 +721,56 @@ function updateMobilePanStart() {
 }
 // ---- Layout sync between devices -------------------------------------------------
 // The layout is stored on the server with a revision. Saves send the revision they are based on
-// (the server rejects stale ones), and an open page checks for newer revisions and reloads.
-let serverRevision = 0, lastLocalChangeAt = 0;
+// (the server rejects stale ones), and an open page checks for newer revisions.
+// syncBase is the layout as the server holds it at serverRevision. When another device saved in
+// between, the changes are merged per field: what this device changed since syncBase wins, everything
+// else comes from the server — so a colour set on the phone and a move made on the PC both survive.
+let serverRevision = 0, lastLocalChangeAt = 0, syncBase = null;
 const RELOAD_VIEW_KEY = 'ha-views:reload-view', RELOAD_MESSAGE_KEY = 'ha-views:reload-message';
+const SYNC_LOCAL_KEYS = new Set(['entities', 'revision', 'baseRevision']);
+function layoutSnapshot(source) { const data = clone(source || {}); SYNC_LOCAL_KEYS.forEach(key => delete data[key]); return data; }
+const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+function layoutDiff(before, after, path = [], ops = []) {
+  if (isPlainObject(before) && isPlainObject(after)) {
+    new Set([...Object.keys(before), ...Object.keys(after)]).forEach(key => {
+      if (!(key in after)) ops.push({ path:[...path, key], remove:true });
+      else if (!(key in before)) ops.push({ path:[...path, key], value:after[key] });
+      else layoutDiff(before[key], after[key], [...path, key], ops);
+    });
+  } else if (JSON.stringify(before) !== JSON.stringify(after)) ops.push({ path, value:after });
+  return ops;
+}
+function applyLayoutOps(target, ops) {
+  ops.forEach(({ path, value, remove }) => {
+    let node = target;
+    for (const key of path.slice(0, -1)) { if (!isPlainObject(node[key])) node[key] = {}; node = node[key]; }
+    const last = path[path.length - 1];
+    if (remove) delete node[last]; else node[last] = clone(value);
+  });
+}
+const pathsOverlap = (a, b) => a.slice(0, Math.min(a.length, b.length)).every((key, index) => key === b[index]);
+// Pulls the newest server layout into the open page without a reload; returns false when it cannot merge.
+async function mergeRemoteLayout() {
+  if (!syncBase) return false;
+  const latest = await api('rewrite_state'), server = latest?.data;
+  if (!latest?.exists || !isPlainObject(server) || !isPlainObject(server.views)) return false;
+  const serverData = layoutSnapshot(server), local = layoutDiff(syncBase, layoutSnapshot(model));
+  // The open view is chosen per device, so another device's activeViewId is not taken over.
+  const remote = layoutDiff(syncBase, serverData).filter(op => op.path[0] !== 'activeViewId' && !local.some(mine => pathsOverlap(mine.path, op.path)));
+  const activeId = model.activeViewId, backgroundKeys = ['background','backgroundColor','backgroundTransforms','solidCanvasRatio'];
+  const backgroundChanged = remote.some(op => op.path[0] === 'views' && op.path[1] === activeId && (op.path.length === 2 || backgroundKeys.includes(op.path[2])));
+  applyLayoutOps(model, remote);
+  syncBase = serverData; serverRevision = model.revision = Number(server.revision) || 0;
+  if (!model.views[model.activeViewId]) model.activeViewId = model.viewOrder.find(id => model.views[id]) || Object.keys(model.views)[0];
+  model.viewOrder = (model.viewOrder || []).filter(id => model.views[id]); Object.keys(model.views).forEach(id => { if (!model.viewOrder.includes(id)) model.viewOrder.push(id); });
+  attachActiveEntities(); renderViewSelector();
+  if (backgroundChanged || model.activeViewId !== activeId) { currentBackground = ''; await loadBackgrounds(true, false, null, 2500); if (currentBackground) applyBackgroundTransform(); }
+  updateSceneGeometry(); renderMarkers(); renderAdded();
+  if (selectedFlowId) { if (activeSceneView()?.flows?.[selectedFlowId] && els.flowEditor.classList.contains('visible')) openFlowEditor(selectedFlowId); else if (!activeSceneView()?.flows?.[selectedFlowId]) closeFlowEditor(); }
+  if (selectedId) { if (!model.entities[selectedId]) closeEditor(); else if (els.editor.classList.contains('visible')) openEditor(); }
+  prebuildSwipePreviews(60);
+  return { remote:remote.length, local:local.length };
+}
 function reloadLayout(message = '') {
   try { sessionStorage.setItem(RELOAD_VIEW_KEY, model.activeViewId || ''); if (message) sessionStorage.setItem(RELOAD_MESSAGE_KEY, message); } catch {}
   location.reload();
@@ -735,20 +782,33 @@ async function checkRemoteLayout() {
   try {
     const { revision } = await api('rewrite_state_revision');
     if (!(Number(revision) > serverRevision) || saveRunning || savePending) return;
-    if (editMode) { notifyWithAction('Układ zmieniono na innym urządzeniu', 'Wczytaj', () => reloadLayout(), 15000); return; }
-    reloadLayout('Wczytano zmiany z innego urządzenia');
+    if (!editMode) return reloadLayout('Wczytano zmiany z innego urządzenia');
+    // In edit mode the page stays open: the newer layout is merged in place.
+    const merged = await mergeRemoteLayout().catch(() => false);
+    if (!merged) { notifyWithAction('Układ zmieniono na innym urządzeniu', 'Wczytaj', () => reloadLayout(), 15000); return; }
+    if (merged.local) scheduleSave(true);
+    notify('Wczytano zmiany z innego urządzenia');
   } catch {} finally { remoteCheckRunning = false; }
 }
 async function queueSave() {
   if (isViewer()) return;
   clearTimeout(saveTimer); savePending = true;
   if (saveRunning) return;
-  saveRunning = true;
+  saveRunning = true; let conflicts = 0;
   while (savePending) {
     savePending = false; const snapshot = clone(model); delete snapshot.entities; snapshot.baseRevision = serverRevision;
-    try { const result = await api('rewrite_state', jsonOptions(snapshot)); if (Number.isFinite(Number(result?.revision))) serverRevision = model.revision = Number(result.revision); els.editorStatus.textContent = 'Zapisano'; }
+    try {
+      const result = await api('rewrite_state', jsonOptions(snapshot));
+      if (Number.isFinite(Number(result?.revision))) { serverRevision = model.revision = Number(result.revision); snapshot.revision = serverRevision; syncBase = layoutSnapshot(snapshot); }
+      els.editorStatus.textContent = 'Zapisano';
+    }
     catch (error) {
-      if (error.status === 409) { savePending = false; saveRunning = false; reloadLayout('Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.'); return; }
+      if (error.status === 409) {
+        // Another device saved first: merge its layout with this device's changes and save again.
+        const merged = ++conflicts <= 3 ? await mergeRemoteLayout().catch(() => false) : false;
+        if (merged) { if (merged.local) savePending = true; notify('Połączono z nowszymi zmianami z innego urządzenia'); continue; }
+        savePending = false; saveRunning = false; reloadLayout('Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.'); return;
+      }
       savePending = true; els.editorStatus.textContent = 'Błąd zapisu'; notify(`Błąd zapisu: ${error.message}`, true); await new Promise(r => setTimeout(r, 900)); }
   }
   saveRunning = false;
@@ -2564,7 +2624,7 @@ async function boot() {
   access = await accessRequest;
   applyViewerMode();
   let legacyMigrated = false;
-  try { const layout = await layoutRequest; if (layout.error) throw layout.error; const saved = layout.data; if (saved.exists && (saved.data?.entities || saved.data?.views)) model = saved.data; else legacyMigrated = await migrateLegacy(); }
+  try { const layout = await layoutRequest; if (layout.error) throw layout.error; const saved = layout.data; if (saved.exists && (saved.data?.entities || saved.data?.views)) { model = saved.data; if (saved.data.views) syncBase = layoutSnapshot(saved.data); } else legacyMigrated = await migrateLegacy(); }
   catch (error) { notify(`Nie udało się wczytać układu: ${error.message}`, true); }
   model.settings = { snapEnabled: true, snapStep: .25, designWidth: DESIGN_WIDTH, language: 'en', ...(model.settings || {}) };
   serverRevision = model.revision = Number(model.revision) || 0;

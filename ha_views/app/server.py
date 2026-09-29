@@ -1508,6 +1508,9 @@ async def api_rewrite_state_save(request):
     base_revision = data.pop("baseRevision", None)
     current = _read_json(REWRITE_STATE_FILE, None)
     current_revision = _layout_revision(current)
+    # A page without baseRevision is an old cached app version; it must not overwrite the layout.
+    if base_revision is None and isinstance(current, dict) and current_revision > 0:
+        base_revision = -1
     if base_revision is not None:
         try:
             base_revision = int(base_revision)

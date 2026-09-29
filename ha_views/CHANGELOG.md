@@ -1,3 +1,9 @@
+## 0.4.1-beta.197
+
+- Synchronizacja między urządzeniami: gdy inne urządzenie zapisało układ w międzyczasie, zmiany są łączone pole po polu zamiast odrzucania zmiany z tego urządzenia (np. kolor Flow ustawiony na telefonie nie wraca już do poprzedniego).
+- W trybie edycji nowsze zmiany z innego urządzenia są wczytywane na miejscu, bez przeładowania strony i bez wychodzenia z edycji.
+- Serwer odrzuca zapis ze starej, zbuforowanej wersji aplikacji (bez numeru rewizji), żeby nie nadpisała nowszego układu.
+
 ## 0.4.1-beta.196
 
 - Górny pasek jest niższy (44 px zamiast 56 px), więc widok ma więcej miejsca. Menu edycji, menu widoku i panel More Info otwierają się tuż pod nowym paskiem.
