@@ -418,6 +418,9 @@ async def api_layout_save(request):
 # ============================================================
 
 HA_WS = "ws://supervisor/core/websocket"
+# Registry lists (entities, devices) of large installations exceed aiohttp's default 4 MB WebSocket message
+# limit ("Message size … exceeds limit 4194304"). Allow up to 128 MB.
+HA_WS_MAX_MSG_SIZE = 128 * 1024 * 1024
 
 
 async def ha_ws_command(command):
@@ -432,6 +435,7 @@ async def ha_ws_command(command):
             HA_WS,
             headers=headers(),
             heartbeat=30,
+            max_msg_size=HA_WS_MAX_MSG_SIZE,
         ) as ws:
 
             first = await ws.receive_json()
@@ -1223,6 +1227,7 @@ async def api_entity_events(request):
                 HA_WS,
                 headers=headers(),
                 heartbeat=30,
+                max_msg_size=HA_WS_MAX_MSG_SIZE,
             ) as ws:
 
                 first = await ws.receive_json()
