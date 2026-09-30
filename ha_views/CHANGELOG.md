@@ -1,3 +1,7 @@
+## 0.4.1-beta.227
+
+- Kopiuj / wklej styl markera przenosi też wybór ikony (źródło, własna ikona MDI, ikony ON/OFF) oraz „Dotknięcie w widoku”. Jeśli skopiowana akcja to „Przełącz ON/OFF”, a docelowej encji nie da się przełączyć, ustawia się „Więcej informacji”.
+
 ## 0.4.1-beta.226
 
 - Flow: „Ostrość” strzałek do 300% (było do 100%). Powyżej 100% szpic jest głębszy niż długość strzałki i wychodzi poza jej pole (nie jest obcinany) — rozmiar ramki, odstęp i liczba się nie zmieniają.

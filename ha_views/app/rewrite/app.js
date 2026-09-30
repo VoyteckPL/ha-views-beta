@@ -553,6 +553,8 @@ function snapPercent(value) {
 // up when one of its entities is on: either a soft coloured glow blended over the plan, or a second "lit"
 // image revealed only inside the polygon. Light colour and brightness can follow the light entity.
 // One set of tap actions (same names and order) for markers and rooms; "toggle" only where something can be switched.
+// Copy / paste style also carries the icon choice (source, own MDI icon, ON/OFF icons) and the tap action.
+const MARKER_ICON_KEYS = ['iconMode','iconName','iconOn','iconOff','iconVariantEnabled'];
 const TAP_ACTIONS = [['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF'],['none','Brak akcji']];
 function tapActionControl(value, canToggle) {
   const items = TAP_ACTIONS.filter(([key]) => key !== 'toggle' || canToggle), current = items.some(([key]) => key === value) ? value : 'more_info';
@@ -3165,8 +3167,10 @@ function bindEvents() {
     renderMarkers(); syncPreviewStateButton();
   });
   $('#default-style').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Przywrócić styl domyślny?', message: 'Obecne ustawienia wyglądu markera zostaną zastąpione.', confirmText: 'Przywróć', danger: true })) return; m.style = markerStyleDefaults(m.type); renderMarkers(); openEditor(); scheduleSave(true); notify('Przywrócono styl domyślny'); });
-  $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style), valueRules: m.valueRules ? clone(m.valueRules) : null }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
-  $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); if (styleClipboard.valueRules) m.valueRules = clone(styleClipboard.valueRules); else delete m.valueRules; m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
+  $('#copy-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m) return; styleClipboard = { type: m.type, style: clone(m.style), valueRules: m.valueRules ? clone(m.valueRules) : null, icon: Object.fromEntries(MARKER_ICON_KEYS.map(key => [key, clone(m[key] ?? '')])), tapAction: m.tapAction || 'more_info' }; $('#paste-style').disabled = false; notify(`Skopiowano styl ${markerTypeLabel(m.type)}`); });
+  $('#paste-style').addEventListener('click', () => { const m = model.entities[selectedId]; if (!m || !styleClipboard) return; m.type = styleClipboard.type; m.style = clone(styleClipboard.style); if (styleClipboard.valueRules) m.valueRules = clone(styleClipboard.valueRules); else delete m.valueRules;
+    if (styleClipboard.icon) Object.assign(m, clone(styleClipboard.icon));
+    if (styleClipboard.tapAction) m.tapAction = styleClipboard.tapAction === 'toggle' && !isToggleableMarker(m) ? 'more_info' : styleClipboard.tapAction; m.updatedAt = new Date().toISOString(); renderMarkers(); openEditor(); scheduleSave(true); notify('Wklejono kompletny styl 1:1'); });
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeEntity(m.entityId); });
   $('#background-upload').addEventListener('click', () => els.bgFile.click()); $('#empty-upload').addEventListener('click', () => els.bgFile.click()); els.bgFile.addEventListener('change', () => uploadBackground(els.bgFile.files[0]));
   els.emptyBackgroundSelect?.addEventListener('change', () => {
