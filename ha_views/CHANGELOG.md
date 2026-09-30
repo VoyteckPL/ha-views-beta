@@ -1,3 +1,7 @@
+## 0.4.1-beta.237
+
+- Przygotowanie wydania stabilnego 0.5.0: beta i wersja stabilna mają teraz ten sam kod, różniący się jednym ustawieniem kanału. Każda wersja zapisuje swój plik układu. „Pliki tła” chronią tła drugiej wersji i podają, której (w becie „Stabilna”, w wersji stabilnej „Beta”). Dla bety nic się nie zmienia.
+
 ## 0.4.1-beta.236
 
 - Jasność tła: w menu Tło jest suwak jasności osobno dla obrazu dziennego i nocnego (30–200%, przycisk przywraca 100%). Zmiana działa na żywo i zapisuje się dla widoku. To filtr na samym obrazie tła, więc markery, Flow i animacje nie zwalniają, a przy 100% nie ma żadnego filtra. Podgląd przy przesuwaniu między widokami też ma ustawioną jasność.

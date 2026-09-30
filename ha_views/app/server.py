@@ -1453,10 +1453,10 @@ async def api_background_select(request):
     _atomic_json(BACKGROUND_META, {"current": name})
     return web.json_response({"ok": True, "current": name})
 
-def _stable_background_usage():
-    """Backgrounds used by the stable add-on (it shares /config/ha_views/backgrounds): {name: [view names]}."""
+def _other_background_usage():
+    """Backgrounds used by the other add-on (stable <-> beta share /config/ha_views/backgrounds): {name: [view names]}."""
     usage = {}
-    data = _read_json(SHARED_REWRITE_STATE_FILE, None)
+    data = _read_json(OTHER_REWRITE_STATE_FILE, None)
     views = data.get("views") if isinstance(data, dict) else None
     for view_id, view in (views or {}).items():
         if not isinstance(view, dict):
@@ -1470,8 +1470,12 @@ def _stable_background_usage():
                     usage[name].append(label)
     return usage
 
+def _other_usage_error():
+    return "Tło jest używane w " + ("stabilnej wersji HA Views" if OTHER_CHANNEL == "stable" else "HA Views Beta")
+
 async def api_background_usage(request):
-    return web.json_response({"ok": True, "stable": _stable_background_usage()})
+    usage = _other_background_usage()
+    return web.json_response({"ok": True, "other": usage, "otherChannel": OTHER_CHANNEL, "stable": usage})
 
 async def api_background_rename(request):
     denial = await editor_denial(request)
@@ -1494,8 +1498,8 @@ async def api_background_rename(request):
     if os.path.exists(os.path.join(BACKGROUND_DIR, new_name)):
         return web.json_response({"ok": False, "error": "Plik o tej nazwie już istnieje"}, status=409)
     # Renaming a file the stable add-on uses leaves its view without a background: only on a confirmed request.
-    if name in _stable_background_usage() and body.get("force") is not True:
-        return web.json_response({"ok": False, "error": "Tło jest używane w stabilnej wersji HA Views", "stable": True}, status=409)
+    if name in _other_background_usage() and body.get("force") is not True:
+        return web.json_response({"ok": False, "error": _other_usage_error(), "stable": True}, status=409)
     os.rename(path, os.path.join(BACKGROUND_DIR, new_name))
     meta = _read_json(BACKGROUND_META, {})
     if meta.get("current") == name:
@@ -1513,8 +1517,8 @@ async def api_background_delete(request):
     if not name or not os.path.isfile(path):
         return web.json_response({"ok": False, "error": "Nie znaleziono tła"}, status=404)
     # A file the stable add-on uses is removed only on an explicit, confirmed request (force).
-    if name in _stable_background_usage() and body.get("force") is not True:
-        return web.json_response({"ok": False, "error": "Tło jest używane w stabilnej wersji HA Views"}, status=409)
+    if name in _other_background_usage() and body.get("force") is not True:
+        return web.json_response({"ok": False, "error": _other_usage_error()}, status=409)
     os.remove(path)
     meta = _read_json(BACKGROUND_META, {})
     if meta.get("current") == name:
@@ -1542,14 +1546,20 @@ async def api_marker_styles_save(request):
 
 
 # ===== HA Views CLEAN REWRITE STATE =====
-# The beta keeps its own layout file. The stable add-on (same /config) writes rewrite_state.json without
-# any revision check, so sharing that file let an open stable page silently roll back beta changes.
-# On the first start the beta copies the shared layout once and from then on uses only its own file.
-REWRITE_STATE_FILE = "/config/ha_views/rewrite_state_beta.json"
-SHARED_REWRITE_STATE_FILE = "/config/ha_views/rewrite_state.json"
+# One code base, two add-ons. HA Views (stable) and HA Views Beta share /config/ha_views (backgrounds too), but each
+# keeps its own layout file: sharing one let an open page of one add-on silently roll back changes of the other.
+# The stable add-on sets ADDON_CHANNEL = "stable". On its first start the beta copies the stable layout once.
+ADDON_CHANNEL = "beta"
+STABLE_STATE_FILE = "/config/ha_views/rewrite_state.json"
+BETA_STATE_FILE = "/config/ha_views/rewrite_state_beta.json"
+REWRITE_STATE_FILE = BETA_STATE_FILE if ADDON_CHANNEL == "beta" else STABLE_STATE_FILE
+# The other add-on's layout: its backgrounds are protected in the background manager.
+OTHER_CHANNEL = "stable" if ADDON_CHANNEL == "beta" else "beta"
+OTHER_REWRITE_STATE_FILE = STABLE_STATE_FILE if ADDON_CHANNEL == "beta" else BETA_STATE_FILE
+SHARED_REWRITE_STATE_FILE = STABLE_STATE_FILE
 
 def _ensure_beta_state_file():
-    if os.path.exists(REWRITE_STATE_FILE):
+    if ADDON_CHANNEL != "beta" or os.path.exists(REWRITE_STATE_FILE):
         return
     shared = _read_json(SHARED_REWRITE_STATE_FILE, None)
     if isinstance(shared, dict):
