@@ -1,3 +1,13 @@
+## 0.4.1-beta.225
+
+- Nowe menu „Przyciąganie i siatka” (ikona magnesu obok ołówka, widoczna w trybie edycji), przeniesione z menu edycji i rozbudowane, na ikonach:
+  - Siatka (z rozmiarem S/M/L) i Granice tła.
+  - Linie pomocnicze włącz/wyłącz.
+  - Przyciągaj do: markerów, Flow, pomieszczeń, tła (środek i krawędzie tła — zielone linie).
+  - Punkty: środki i/lub krawędzie elementów.
+  - Wyrównaj zaznaczony element (marker, Flow, pomieszczenie) do tła: do lewej/prawej/górnej/dolnej krawędzi albo wyśrodkuj w poziomie/pionie.
+- Flow dodaje się teraz jak pomieszczenie: menu edycji → „Flow”. Może być bez encji; encję wybiera się (albo zmienia/usuwa) w popupie Flow, w sekcji „Encja i kierunek”, wyszukiwarką. Przyciski dodawania Flow zniknęły z Integracji.
+
 ## 0.4.1-beta.224
 
 - Tryb edycji: przerywane linie elementów, których akurat nie edytujesz, też mają kolor swojego rodzaju — obrysy pomieszczeń bursztynowe, ramki ukrytych Flow (i zablokowanych) fioletowe; słabsze niż przy zaznaczeniu.
