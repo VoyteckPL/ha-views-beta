@@ -733,4 +733,19 @@ svg.flow-chevron{overflow:visible}
 .night-bg-entity{display:grid;gap:3px}.night-bg-entity small{color:#9fbfcf;font-size:10px}.night-bg-entity input{height:31px;box-sizing:border-box;width:100%;padding:0 8px;border:1px solid rgba(99,181,216,.3);border-radius:7px;background:#0d2e3e;color:#dff6ff;font:11px ui-monospace,monospace}
 .night-preview{display:grid;grid-template-columns:1fr 1fr;gap:6px}.night-preview button{display:flex;align-items:center;justify-content:center;gap:5px;height:30px;border:1px solid rgba(99,181,216,.3);border-radius:7px;background:#0d2e3e;color:#b8eafa;font-size:11px}.night-preview button em{font-style:normal}.night-preview button.active{border-color:#20b9e7;background:rgba(32,185,231,.2);color:#80e9ff}.night-preview button:disabled,.night-bg-block.off .night-preview button{opacity:.4}
 .night-status{min-width:0!important;color:#9fbfcf!important;font-size:10px}
+.night-mode{grid-template-columns:1fr 1fr 1fr!important}.night-mode button{padding:0 4px;font-size:10px;white-space:nowrap}
+.background-tools .background-files{grid-column:1/-1;gap:6px;font-size:10px}.background-tools .background-files span{min-width:0!important;color:inherit!important;font-size:inherit!important}
+.bg-manager{z-index:240}
+.bg-manager-card{display:grid;grid-template-rows:auto auto minmax(0,1fr);width:min(620px,100%);max-height:min(82vh,760px);padding:14px;border:1px solid rgba(99,181,216,.42);border-radius:14px;background:#081d29;box-shadow:0 24px 70px rgba(0,0,0,.65);box-sizing:border-box}
+.bg-manager-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.bg-manager-head h3{margin:0;color:#f4fbff;font-size:15px}.bg-manager-head button{display:grid;place-items:center;width:32px;height:32px;padding:0;font-size:18px}
+.bg-manager-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 10px}.bg-manager-bar small{color:#9fbfcf;font-size:11px}.bg-manager-bar button{display:flex;align-items:center;gap:5px;height:32px;padding:0 10px;font-size:11px;color:#ff9aa6}.bg-manager-bar button:disabled{opacity:.4}
+.bg-manager-list{display:grid;gap:7px;overflow:auto;min-height:0;padding-right:2px}
+.bg-file{display:grid;grid-template-columns:84px minmax(0,1fr) 36px;align-items:center;gap:10px;padding:7px;border:1px solid rgba(99,181,216,.2);border-radius:10px;background:#0b2533}
+.bg-file.unused{border-style:dashed}
+.bg-file img{width:84px;height:54px;object-fit:cover;border-radius:6px;background:#04121b}
+.bg-file strong{display:block;overflow:hidden;color:#e8f6fc;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.bg-file small{color:#8fa9b7;font-size:10px}
+.bg-uses{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.bg-uses span{padding:2px 6px;border-radius:999px;background:rgba(32,185,231,.14);color:#8fe3fb;font-size:10px}.bg-uses span.night{background:rgba(157,183,255,.16);color:#c3d2ff}.bg-uses span.stable{background:rgba(255,181,71,.15);color:#ffd08a}.bg-uses span.none{background:rgba(255,99,116,.12);color:#ff9aa6}
+.bg-file button{display:grid;place-items:center;width:34px;height:34px;padding:0;color:#ff9aa6;font-size:17px}.bg-file button:disabled{opacity:.3}
 
+.night-bg-entity.muted{opacity:.5}

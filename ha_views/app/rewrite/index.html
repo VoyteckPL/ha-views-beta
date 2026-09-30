@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-232">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-233">
 </head>
 <body>
   <header class="topbar">
@@ -34,14 +34,14 @@
               <button type="button" data-bg-colour="#FF6374" style="background:#FF6374"></button><button type="button" data-bg-colour="#E63946" style="background:#E63946"></button><button type="button" data-bg-colour="#B66DFF" style="background:#B66DFF"></button><button type="button" data-bg-colour="#7C4DFF" style="background:#7C4DFF"></button><button type="button" data-bg-colour="#EC4899" style="background:#EC4899"></button><button type="button" data-bg-colour="#8B5E3C" style="background:#8B5E3C"></button>
             </div><button id="background-rgb-open" type="button" class="rgb-button">Własny kolor RGB…</button></div>
           </div>
-          <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i></button><button id="background-download" class="background-icon" title="Pobierz tło" aria-label="Pobierz tło"><i class="mdi mdi-download-outline"></i></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i></button></div>
+          <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i></button><button id="background-download" class="background-icon" title="Pobierz tło" aria-label="Pobierz tło"><i class="mdi mdi-download-outline"></i></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i></button><button id="background-files" class="background-icon background-files" title="Pliki tła" aria-label="Pliki tła"><i class="mdi mdi-folder-multiple-image"></i><span>Pliki tła</span></button></div>
           <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           <span id="background-status"></span>
           <div class="night-bg-block">
             <div class="night-bg-title"><i class="mdi mdi-weather-night"></i><b>Tło nocne</b></div>
             <div class="night-bg-row"><select id="night-background-select" aria-label="Tło nocne"></select><button id="night-background-upload" type="button" class="background-icon" title="Wgraj tło nocne" aria-label="Wgraj tło nocne"><i class="mdi mdi-image-plus-outline"></i></button></div>
             <label class="night-bg-entity"><small>Przełącza encja</small><input id="night-entity" type="text" autocomplete="off" spellcheck="false" placeholder="sun.sun" aria-label="Encja przełączająca tło nocne"></label>
-            <div class="night-preview" role="group" aria-label="Podgląd tła"><button type="button" data-night-preview="day" title="Podgląd: dzień"><i class="mdi mdi-white-balance-sunny"></i><em>Dzień</em></button><button type="button" data-night-preview="night" title="Podgląd: noc"><i class="mdi mdi-weather-night"></i><em>Noc</em></button></div>
+            <div class="night-preview night-mode" role="group" aria-label="Tryb tła"><button type="button" data-night-mode="auto" title="Automatycznie wg encji"><i class="mdi mdi-theme-light-dark"></i><em>Auto</em></button><button type="button" data-night-mode="day" title="Zawsze dzień"><i class="mdi mdi-white-balance-sunny"></i><em>Zawsze dzień</em></button><button type="button" data-night-mode="night" title="Zawsze noc"><i class="mdi mdi-weather-night"></i><em>Zawsze noc</em></button></div>
             <small id="night-status" class="night-status"></small>
             <input id="night-background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           </div>
@@ -251,6 +251,13 @@
     </div>
   </aside>
 
+  <div id="bg-manager" class="app-confirm bg-manager" aria-hidden="true">
+    <div class="bg-manager-card" role="dialog" aria-modal="true" aria-labelledby="bg-manager-title">
+      <div class="bg-manager-head"><h3 id="bg-manager-title">Pliki tła</h3><button id="bg-manager-close" type="button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button></div>
+      <div class="bg-manager-bar"><small id="bg-manager-summary"></small><button id="bg-manager-clean" type="button" class="danger"><i class="mdi mdi-broom"></i><span>Usuń nieużywane</span></button></div>
+      <div id="bg-manager-list" class="bg-manager-list"></div>
+    </div>
+  </div>
   <div id="app-confirm" class="app-confirm" aria-hidden="true">
     <div class="app-confirm-card" role="dialog" aria-modal="true" aria-labelledby="app-confirm-title">
       <div class="app-confirm-icon"><i class="mdi mdi-alert-outline"></i></div>
@@ -265,6 +272,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-232"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-233"></script>
 </body>
 </html>

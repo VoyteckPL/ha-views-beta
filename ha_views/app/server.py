@@ -5,7 +5,7 @@ import re
 import shutil
 import time
 from datetime import datetime, timedelta, timezone
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 import aiohttp
 from aiohttp import web
@@ -1404,12 +1404,18 @@ async def api_background_upload(request):
     field = await reader.next()
     if field is None or field.name != "file":
         return web.json_response({"ok": False, "error": "Brak pliku"}, status=400)
-    original = _background_name(field.filename)
+    original = _background_name(unquote(field.filename or ""))
     ext = os.path.splitext(original or "")[1].lower()
     if ext not in ALLOWED_BACKGROUND_EXT:
         return web.json_response({"ok": False, "error": "Dozwolone: PNG, JPG, JPEG, WEBP"}, status=400)
-    stem = re.sub(r"[^A-Za-z0-9._-]+", "_", os.path.splitext(original)[0]).strip("._") or "background"
-    name = stem + "_" + str(int(time.time())) + ext
+    # Keep the original file name (Polish letters and spaces included). Only characters that are not allowed
+    # in file names are replaced. A name that is already taken gets " (2)", " (3)" …, never overwrites:
+    # the same file may be used by the stable add-on, and images are cached by name.
+    stem = re.sub(r'[\x00-\x1f<>:"/\\|?*]+', "_", os.path.splitext(original)[0]).strip(" .") or "background"
+    name, counter = stem + ext, 2
+    while os.path.exists(os.path.join(BACKGROUND_DIR, name)):
+        name = f"{stem} ({counter}){ext}"
+        counter += 1
     final_path = os.path.join(BACKGROUND_DIR, name)
     tmp_path = final_path + ".upload"
     size = 0
@@ -1444,6 +1450,26 @@ async def api_background_select(request):
     _atomic_json(BACKGROUND_META, {"current": name})
     return web.json_response({"ok": True, "current": name})
 
+def _stable_background_usage():
+    """Backgrounds used by the stable add-on (it shares /config/ha_views/backgrounds): {name: [view names]}."""
+    usage = {}
+    data = _read_json(SHARED_REWRITE_STATE_FILE, None)
+    views = data.get("views") if isinstance(data, dict) else None
+    for view_id, view in (views or {}).items():
+        if not isinstance(view, dict):
+            continue
+        label = str(view.get("name") or view_id)
+        for key in ("background", "nightBackground"):
+            name = view.get(key)
+            if isinstance(name, str) and name:
+                usage.setdefault(name, [])
+                if label not in usage[name]:
+                    usage[name].append(label)
+    return usage
+
+async def api_background_usage(request):
+    return web.json_response({"ok": True, "stable": _stable_background_usage()})
+
 async def api_background_delete(request):
     denial = await editor_denial(request)
     if denial:
@@ -1454,6 +1480,8 @@ async def api_background_delete(request):
     path = os.path.join(BACKGROUND_DIR, name) if name else ""
     if not name or not os.path.isfile(path):
         return web.json_response({"ok": False, "error": "Nie znaleziono tła"}, status=404)
+    if name in _stable_background_usage():
+        return web.json_response({"ok": False, "error": "Tło jest używane w stabilnej wersji HA Views"}, status=409)
     os.remove(path)
     meta = _read_json(BACKGROUND_META, {})
     if meta.get("current") == name:
@@ -1662,6 +1690,7 @@ app.router.add_post("/api/layout", api_layout_save)
 # HA Views BACKGROUNDS + MARKER STYLES V16
 app.router.add_get("/api/backgrounds", api_backgrounds_list)
 app.router.add_get("/api/background/current", api_background_current)
+app.router.add_get("/api/background/usage", api_background_usage)
 app.router.add_get("/api/background/file", api_background_file)
 app.router.add_get("/api/background/download", api_background_download)
 app.router.add_post("/api/background/upload", api_background_upload)

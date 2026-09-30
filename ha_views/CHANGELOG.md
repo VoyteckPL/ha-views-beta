@@ -1,3 +1,9 @@
+## 0.4.1-beta.233
+
+- Tło nocne: zamiast podglądu Dzień / Noc jest tryb zapisywany dla widoku: „Auto” (wg encji), „Zawsze dzień”, „Zawsze noc”.
+- Nowe okno „Pliki tła” (w panelu Tło): lista wszystkich wgranych obrazów z miniaturą, rozmiarem i miejscem użycia (widok · dzień / noc, wersja stabilna). Pojedyncze pliki można usuwać, a „Usuń nieużywane” czyści wszystkie nieużyte naraz. Pliki używane przez stabilną wersję HA Views (wspólny folder) są zablokowane, serwer też odmawia ich usunięcia.
+- Wgrywane tło zachowuje oryginalną nazwę pliku (z polskimi znakami i spacjami), bez dopisywania cyferek. Gdy nazwa jest zajęta, dopisuje się „(2)”, „(3)”…, więc istniejący plik nigdy nie jest nadpisywany.
+
 ## 0.4.1-beta.232
 
 - Tło nocne dla widoku (opcjonalne). W „Zarządzaj widokiem → Tło” jest nowa sekcja „Tło nocne”: wybierz obraz z listy albo wgraj nowy. Obraz nocny powinien mieć ten sam rozmiar co dzienny, bo leży dokładnie na nim, a markery, Flow i pomieszczenia zostają na swoich miejscach.
