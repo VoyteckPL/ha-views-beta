@@ -1,3 +1,8 @@
+## 0.4.1-beta.231
+
+- Pomieszczenia: w sekcji „Wygląd” jest „Kolor zależny ON/OFF”, tak jak w markerach. Po zaznaczeniu pojawiają się „Kolor ON”, „Kolor OFF”, „Intensywność ON” i „Intensywność OFF”, więc wyłączone pomieszczenie może mieć własny kolor zamiast znikać. Podgląd ON/OFF pokazuje oba stany, a kopiuj / wklej styl przenosi też te ustawienia.
+- Bez zaznaczenia wszystko działa jak dotąd (wyłączone pomieszczenie jest niewidoczne).
+
 ## 0.4.1-beta.230
 
 - Linie przyciągania działają tak samo dla markerów, Flow i pomieszczeń. Przeciągany element przyciąga się do wszystkich pomieszczeń na widoku (krawędzie, środek i narożniki nieregularnych ścian), a nie tylko do tego, w którym stał na początku przeciągania.
