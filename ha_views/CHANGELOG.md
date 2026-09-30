@@ -1,3 +1,8 @@
+## 0.4.1-beta.239
+
+- Tryb podglądu (użytkownik HA bez uprawnień administratora) może teraz przełączać światła i gniazdka, tak jak ustawił administrator. Działa dotknięcie markera z akcją „Przełącz ON/OFF” oraz pomieszczenia (lub jego ikony) z tą akcją. Serwer pozwala takiemu użytkownikowi przełączać wyłącznie encje ustawione na widoku z tą akcją, nic innego w Home Assistant. Edycja nadal jest zablokowana.
+- Naprawa: nazwa ostatniego widoku na pasku zakładek była ucinana (widoczne w trybie podglądu, szczególnie w Firefoksie). Pasek zakładek zajmuje tyle miejsca, ile potrzebuje, a przewija się dopiero, gdy naprawdę się nie mieści.
+
 ## 0.4.1-beta.238
 
 - Nowy element **Tekst / przycisk** (menu edycji). Nie jest powiązany z żadną encją.

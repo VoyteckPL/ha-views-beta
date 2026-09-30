@@ -107,11 +107,32 @@ async def api_selected_states(request):
 
 
 
+def _viewer_toggle_entities():
+    """Entities a non-admin user may switch: those an admin placed on a view with the tap action "Toggle ON/OFF"
+    (markers, and the lights/sockets of rooms whose tap action is toggle). Nothing else can be controlled."""
+    allowed = set()
+    data = _read_json(REWRITE_STATE_FILE, None)
+    views = data.get("views") if isinstance(data, dict) else None
+    for view in (views or {}).values():
+        if not isinstance(view, dict):
+            continue
+        rooms = view.get("rooms") if isinstance(view.get("rooms"), dict) else {}
+        for room in rooms.values():
+            if isinstance(room, dict) and room.get("tapAction", "toggle") == "toggle":
+                allowed.update(str(e) for e in (room.get("entityIds") or []))
+        for marker in (view.get("entities") or {}).values():
+            if not isinstance(marker, dict) or marker.get("tapAction") != "toggle":
+                continue
+            room_id = marker.get("roomId")
+            if room_id and isinstance(rooms.get(room_id), dict):
+                allowed.update(str(e) for e in (rooms[room_id].get("entityIds") or []))
+            elif marker.get("entityId"):
+                allowed.add(str(marker.get("entityId")))
+    return allowed
+
 # Generic optional control endpoint. It never contains user-specific entity IDs.
 async def api_control(request):
-    denial = await editor_denial(request)
-    if denial:
-        return denial
+    is_admin = await request_is_admin(request)
     try:
         body = await request.json()
     except Exception:
@@ -121,6 +142,8 @@ async def api_control(request):
     action = str(body.get("action", "")).strip()
     if not re.fullmatch(r"[a-z_]+\.[a-zA-Z0-9_]+", entity_id):
         return web.json_response({"ok": False, "error": "Invalid entity ID"}, status=400)
+    if not is_admin and (action not in ("turn_on", "turn_off") or entity_id not in _viewer_toggle_entities()):
+        return web.json_response({"ok": False, "error": "HA Views is view-only for this user"}, status=403)
 
     domain = entity_id.split(".", 1)[0]
     payload = {"entity_id": entity_id}

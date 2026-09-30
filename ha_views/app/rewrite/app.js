@@ -878,7 +878,7 @@ async function onRoomTap(room, action = null) {
   if (!ids.length) { if (!isViewer()) notify('To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji'); return; }
   const toggleable = ids.filter(id => isToggleableMarker({ entityId: id }));
   if (r.tapAction === 'none') return;
-  if (r.tapAction === 'more_info' || isViewer() || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
+  if (r.tapAction === 'more_info' || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
   if (roomTogglesInFlight.has(r.id)) return;
   const anyOn = toggleable.some(id => String(stateCache[id]?.state || '').toLowerCase() === 'on'), expected = anyOn ? 'off' : 'on';
   roomTogglesInFlight.add(r.id);
@@ -2248,7 +2248,7 @@ function onMarkerClick(event) {
   if (!marker) return;
   if (!editMode && isTextId(marker.entityId)) return runLinkAction(marker);
   if (!editMode && marker.roomId) { const room = roomsOf()[marker.roomId]; if (marker.tapAction === 'none' || !room) return; return onRoomTap(room, marker.tapAction); }
-  if (!editMode) { if (marker.tapAction === 'none') return; return isViewer() ? openMoreInfo(marker.entityId) : (marker.tapAction === 'toggle' && isToggleableMarker(marker) ? toggleMarker(marker) : openMoreInfo(marker.entityId)); }
+  if (!editMode) { if (marker.tapAction === 'none') return; return (marker.tapAction === 'toggle' && isToggleableMarker(marker) ? toggleMarker(marker) : openMoreInfo(marker.entityId)); }
   selectMarker(marker.entityId);
 }
 function focusSelectedMarkerOnMobile() {
