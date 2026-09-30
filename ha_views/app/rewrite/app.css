@@ -684,3 +684,8 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 /* Flow spacing may be negative (arrows nested into each other): margins instead of flex gap, which cannot be negative */
 .flow-train{gap:0!important}
 .flow-train>.flow-chevron+.flow-chevron{margin-left:var(--flow-gap,9px)}
+
+/* Room guides (centre / edges of the room the element is in) use their own colour */
+.align-guide.room{background:#ffb547;box-shadow:0 0 0 1px rgba(3,16,26,.55),0 0 6px rgba(255,181,71,.85)}
+/* Bigger touch target for room corners on phones */
+@media(pointer:coarse){.room-handle::before{content:'';position:absolute;inset:-12px;border-radius:50%}}

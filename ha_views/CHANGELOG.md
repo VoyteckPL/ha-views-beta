@@ -1,3 +1,9 @@
+## 0.4.1-beta.222
+
+- Telefon: narożniki pomieszczeń dają się złapać palcem i płynnie przesuwać. Uchwyt był przerysowywany przy każdym ruchu, przez co telefon gubił palec; teraz palec trzyma scena. Większy obszar dotyku kropek.
+- Popup pomieszczenia uproszczony: zostały sekcje „Pomieszczenie” i „Wygląd” (podgląd, kolor, intensywność, miękkość krawędzi). Usunięte: sekcje „Kształt” i „Ikona”, kolor i jasność ze światła, mieszanie (poświata zawsze „rozjaśnia”). Istniejące ikony pomieszczeń działają dalej jak zwykłe markery.
+- Linie pomocnicze pomieszczeń: przeciągany marker, Flow lub ikona wewnątrz pomieszczenia przyciąga się też do środka i krawędzi tego pomieszczenia — te linie są bursztynowe, żeby odróżnić je od niebieskich (względem innych elementów).
+
 ## 0.4.1-beta.221
 
 - Flow: odstęp może być ujemny — strzałki wsuwają się jedna w drugą, więc da się je ułożyć dużo gęściej (do 2 px między kolejnymi). Działa w każdej animacji i przy zmianie rozmiaru uchwytami.

@@ -561,7 +561,7 @@ function tapActionControl(value, canToggle) {
 const ROOM_DEFAULTS = Object.freeze({ name:'Pomieszczenie', points:[], entityIds:[], tapAction:'toggle', mode:'glow', color:'#FFD27A', useLightColor:true, useBrightness:true, opacity:.45, feather:14, blend:'screen', litImage:'' });
 const ROOM_ON_STATES = new Set(['on','open','opening','home','playing','heat','heating','cool','cooling','detected','unlocked','active','true']);
 let selectedRoomId = null, roomDraft = null, roomPreviewOn = '', roomEditorOpenSectionIndex = -1, roomStyleClipboard = null, allEntitiesCache = null, allEntitiesLoading = null;
-const ROOM_STYLE_KEYS = ['tapAction','color','useLightColor','useBrightness','opacity','feather','blend'];
+const ROOM_STYLE_KEYS = ['tapAction','color','opacity','feather'];
 function roomsOf(view = activeSceneView()) { return view?.rooms || {}; }
 function roomOf(id) { const room = roomsOf()[id]; return room ? { ...ROOM_DEFAULTS, ...room } : null; }
 function roomLight(room) {
@@ -569,8 +569,7 @@ function roomLight(room) {
   (room.entityIds || []).forEach(id => {
     const st = stateCache[id], state = String(st?.state ?? '').toLowerCase(); if (!ROOM_ON_STATES.has(state)) return;
     on = true; const attrs = st?.attributes || {};
-    if (!color && room.useLightColor && Array.isArray(attrs.rgb_color) && attrs.rgb_color.length === 3) color = '#' + attrs.rgb_color.map(v => clamp(Math.round(Number(v) || 0), 0, 255).toString(16).padStart(2, '0')).join('').toUpperCase();
-    const brightness = Number(attrs.brightness); level = Math.max(level, room.useBrightness && Number.isFinite(brightness) ? clamp(brightness / 255, .15, 1) : 1);
+    level = 1;
   });
   return { on, color: color || room.color, level: on ? level || 1 : 0 };
 }
@@ -586,7 +585,7 @@ function roomLayerMarkup(room, prefix, width, height, preview = '') {
   const body = image
     ? `<defs>${blur}<mask id="${id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><polygon points="${points}" fill="#fff" filter="url(#${id}-blur)"/></mask></defs><image href="${escapeHtml(roomBackgroundUrl(r.litImage))}" x="0" y="0" width="100" height="100" preserveAspectRatio="none" mask="url(#${id}-mask)"/>`
     : `<defs>${blur}</defs><polygon class="room-fill" points="${points}" fill="${escapeHtml(light.on ? light.color : r.color)}" filter="url(#${id}-blur)"/>`;
-  return { html: `<svg class="room-layer" data-room-id="${escapeHtml(r.id)}" viewBox="0 0 100 100" preserveAspectRatio="none" style="opacity:${opacity.toFixed(3)};mix-blend-mode:${image ? 'normal' : escapeHtml(r.blend)}">${body}</svg>`,
+  return { html: `<svg class="room-layer" data-room-id="${escapeHtml(r.id)}" viewBox="0 0 100 100" preserveAspectRatio="none" style="opacity:${opacity.toFixed(3)};mix-blend-mode:screen">${body}</svg>`,
     signature: [r.mode, r.litImage, r.blend, r.feather, points, width, height].join('|'), opacity, color: light.on ? light.color : r.color };
 }
 function renderRooms() {
@@ -687,6 +686,8 @@ function startRoomHandleDrag(event) {
   const handle = event.target.closest('.room-handle'); if (!handle || !editMode || !selectedRoomId || roomDraft) return;
   const room = roomsOf()[selectedRoomId]; if (!room) return;
   event.preventDefault(); event.stopPropagation();
+  // The handle is redrawn on every move; the finger is captured by the scene, which stays, so the drag never stalls.
+  try { els.scene.setPointerCapture(event.pointerId); } catch {}
   let index = Number(handle.dataset.roomPoint);
   if (handle.dataset.roomMid !== undefined) { const at = Number(handle.dataset.roomMid), [x, y] = room.points[at], [nx, ny] = room.points[(at + 1) % room.points.length]; room.points.splice(at + 1, 0, [(x + nx) / 2, (y + ny) / 2]); index = at + 1; renderRoomEditLayer(); }
   let moved = false;
@@ -704,6 +705,7 @@ function startRoomMove(event) {
   if (!editMode || roomDraft || event.button > 0 || !selectedRoomId || (event.target !== els.markers && event.target !== els.scene && event.target !== els.image)) return false;
   const room = roomsOf()[selectedRoomId], start = scenePercentAt(event); if (!room || room.geometryLocked || !pointInPolygon(start, room.points)) return false;
   const original = clone(room.points); let moved = false;
+  try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const move = e => {
     if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e); let dx = x - start[0], dy = y - start[1];
     if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true;
@@ -763,20 +765,11 @@ function roomEditorMarkup(room) {
     + `<div class="control room-entities-control"><label>Zapalają je encje</label><div class="room-entity-list">${addedList}</div>`
     + `<label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="room-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="room-entity-results" class="room-entity-list room-entity-results"></div></div>`
     + note('Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).'));
-  const blendNotes = { screen:'Rozjaśnij — jak światło lampy: plan jaśnieje w kolorze poświaty, ciemne miejsca najmocniej.', 'soft-light':'Miękkie światło — delikatne ocieplenie, plan zachowuje swoje kolory i kontrast.', overlay:'Nakładka — mocniejszy efekt: jasne miejsca jaśnieją, ciemne ciemnieją, kolor jest wyraźny.', normal:'Zwykłe — płaski, półprzezroczysty kolor położony na plan.' };
   const look = section('Wygląd', control('Podgląd','previewOn','select',roomPreviewOn,{ items:[['','Rzeczywisty stan'],['on','Włączony'],['off','Wyłączony']] })
-    + control('Kolor','color','color',r.color) + control('Kolor ze światła','useLightColor','checkbox',r.useLightColor)
-    + control('Mieszanie','blend','select',r.blend,{ items:[['screen','Rozjaśnij'],['soft-light','Miękkie światło'],['overlay','Nakładka'],['normal','Zwykłe']], refresh:true }) + note(blendNotes[r.blend] || blendNotes.screen)
-    + control('Jasność ze światła','useBrightness','checkbox',r.useBrightness)
+    + control('Kolor','color','color',r.color)
     + control('Intensywność','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true })
     + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true }));
-  const hasIcon = !!model.entities[roomIconId(r.id)];
-  const iconSection = section('Ikona', (hasIcon
-      ? `<div class="room-icon-actions"><button type="button" data-room-icon="edit"><i class="mdi mdi-pencil-outline"></i><span>${escapeHtml(translateValue('Edytuj ikonę'))}</span></button><button type="button" class="danger" data-room-icon="remove"><i class="mdi mdi-delete-outline"></i><span>${escapeHtml(translateValue('Usuń ikonę'))}</span></button></div>`
-      : `<div class="room-icon-actions"><button type="button" data-room-icon="add"><i class="mdi mdi-plus"></i><span>${escapeHtml(translateValue('Dodaj ikonę'))}</span></button></div>`)
-    + note('Ikona pomieszczenia to zwykły marker typu Ikona z pełnym edytorem (kolory ON/OFF, obrys, tło, ramka, rozmiar, kolory wg wartości). Świeci, gdy pomieszczenie jest zapalone, a dotknięcie wykonuje akcję pomieszczenia.'));
-  const shape = section('Kształt', note(r.geometryLocked ? 'Geometria jest zablokowana (kłódka u góry).' : 'Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).'));
-  return entities + look + iconSection + shape;
+  return entities + look;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -969,29 +962,40 @@ async function setHaStart(mode) {
 // ---- Alignment guides while dragging (edit mode) --------------------------------------
 // The dragged marker/Flow snaps to the edges and centres of the other elements of the view; a blue line
 // shows what it is aligned with. Holding Alt (desktop) drags freely.
+// Rooms add their own guides (centre and edges of the room's bounding box) in a different colour, for the
+// room the dragged element sits in (and the room of a room icon), e.g. to put an icon right in the middle.
 function alignmentContext(node) {
   const scene = els.scene.getBoundingClientRect(), own = node.getBoundingClientRect();
   const targets = $$('.marker, .flow-marker', els.markers).filter(other => other !== node && other.offsetParent !== null).map(other => other.getBoundingClientRect());
-  return { scene, halfW: own.width / 2, halfH: own.height / 2, xs: targets.flatMap(r => [r.left, (r.left + r.right) / 2, r.right].map(v => v - scene.left)), ys: targets.flatMap(r => [r.top, (r.top + r.bottom) / 2, r.bottom].map(v => v - scene.top)) };
+  const xs = targets.flatMap(r => [r.left, (r.left + r.right) / 2, r.right].map(v => ({ v: v - scene.left, room:false })));
+  const ys = targets.flatMap(r => [r.top, (r.top + r.bottom) / 2, r.bottom].map(v => ({ v: v - scene.top, room:false })));
+  const centre = [((own.left + own.right) / 2 - scene.left) / Math.max(1, scene.width) * 100, ((own.top + own.bottom) / 2 - scene.top) / Math.max(1, scene.height) * 100];
+  const iconRoom = model.entities[node.dataset?.entityId]?.roomId;
+  Object.values(roomsOf()).filter(room => (room.points || []).length >= 3 && (room.id === iconRoom || pointInPolygon(centre, room.points))).forEach(room => {
+    const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
+    const [minX, maxX, minY, maxY] = [Math.min(...px), Math.max(...px), Math.min(...py), Math.max(...py)];
+    xs.push(...[minX, (minX + maxX) / 2, maxX].map(v => ({ v, room:true }))); ys.push(...[minY, (minY + maxY) / 2, maxY].map(v => ({ v, room:true })));
+  });
+  return { scene, halfW: own.width / 2, halfH: own.height / 2, xs, ys };
 }
 function alignToGuides(context, xPercent, yPercent, event) {
   if (!context || event?.altKey || !context.scene.width || !context.scene.height) { showAlignGuides([], []); return { xPercent, yPercent }; }
   const threshold = 6, match = (centre, half, values) => {
     let best = null;
-    [0, -half, half].forEach(offset => values.forEach(value => { const distance = Math.abs(centre + offset - value); if (distance <= threshold && (!best || distance < best.distance)) best = { distance, centre: value - offset, line: value }; }));
+    [0, -half, half].forEach(offset => values.forEach(({ v, room }) => { const distance = Math.abs(centre + offset - v); if (distance <= threshold && (!best || distance < best.distance - .01 || (Math.abs(distance - best.distance) <= .01 && room && !best.room))) best = { distance, centre: v - offset, line: v, room }; }));
     return best;
   };
   const { width, height } = context.scene, bx = match(xPercent / 100 * width, context.halfW, context.xs), by = match(yPercent / 100 * height, context.halfH, context.ys);
   if (bx) xPercent = clamp(bx.centre / width * 100, 0, 100);
   if (by) yPercent = clamp(by.centre / height * 100, 0, 100);
-  showAlignGuides(bx ? [bx.line / width * 100] : [], by ? [by.line / height * 100] : []);
+  showAlignGuides(bx ? [{ at: bx.line / width * 100, room: bx.room }] : [], by ? [{ at: by.line / height * 100, room: by.room }] : []);
   return { xPercent, yPercent };
 }
 function showAlignGuides(vertical, horizontal) {
   let layer = $('#align-guides');
   if (!vertical.length && !horizontal.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
-  layer.innerHTML = vertical.map(x => `<span class="align-guide vertical" style="left:${x}%"></span>`).join('') + horizontal.map(y => `<span class="align-guide horizontal" style="top:${y}%"></span>`).join('');
+  layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${g.room ? ' room' : ''}" style="left:${g.at}%"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${g.room ? ' room' : ''}" style="top:${g.at}%"></span>`).join('');
 }
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------
 // Markers and Flows are kept with their whole box inside the scene while dragging or resizing
