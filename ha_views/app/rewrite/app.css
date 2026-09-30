@@ -749,3 +749,4 @@ svg.flow-chevron{overflow:visible}
 .bg-file button{display:grid;place-items:center;width:34px;height:34px;padding:0;color:#ff9aa6;font-size:17px}.bg-file button:disabled{opacity:.3}
 
 .night-bg-entity.muted{opacity:.5}
+.bg-file button.stable-delete{color:#ffb547}

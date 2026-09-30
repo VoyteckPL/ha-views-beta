@@ -1,3 +1,7 @@
+## 0.4.1-beta.234
+
+- „Pliki tła”: tło używane przez stabilną wersję HA Views można teraz usunąć (pomarańczowy kosz). Najpierw pojawia się ostrzeżenie z nazwami widoków stabilnej wersji, które zostaną bez tła, i przycisk „Usuń mimo to”. „Usuń nieużywane” nadal nie rusza takich plików.
+
 ## 0.4.1-beta.233
 
 - Tło nocne: zamiast podglądu Dzień / Noc jest tryb zapisywany dla widoku: „Auto” (wg encji), „Zawsze dzień”, „Zawsze noc”.

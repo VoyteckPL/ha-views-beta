@@ -1480,7 +1480,8 @@ async def api_background_delete(request):
     path = os.path.join(BACKGROUND_DIR, name) if name else ""
     if not name or not os.path.isfile(path):
         return web.json_response({"ok": False, "error": "Nie znaleziono tła"}, status=404)
-    if name in _stable_background_usage():
+    # A file the stable add-on uses is removed only on an explicit, confirmed request (force).
+    if name in _stable_background_usage() and body.get("force") is not True:
         return web.json_response({"ok": False, "error": "Tło jest używane w stabilnej wersji HA Views"}, status=409)
     os.remove(path)
     meta = _read_json(BACKGROUND_META, {})
