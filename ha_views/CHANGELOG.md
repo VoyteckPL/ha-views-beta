@@ -1,3 +1,7 @@
+## 0.4.1-beta.236
+
+- Jasność tła: w menu Tło jest suwak jasności osobno dla obrazu dziennego i nocnego (30–200%, przycisk przywraca 100%). Zmiana działa na żywo i zapisuje się dla widoku. To filtr na samym obrazie tła, więc markery, Flow i animacje nie zwalniają, a przy 100% nie ma żadnego filtra. Podgląd przy przesuwaniu między widokami też ma ustawioną jasność.
+
 ## 0.4.1-beta.235
 
 - Nowe menu widoku, dopasowane do telefonu (dolny panel) i PC (rozwijane okno):

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-235">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-236">
 </head>
 <body>
   <header class="topbar">
@@ -39,6 +39,7 @@
               <button id="background-rename" class="vm-icon" type="button" title="Zmień nazwę pliku tła" aria-label="Zmień nazwę pliku tła"><i class="mdi mdi-rename-outline"></i></button>
               <button id="background-files" class="vm-icon" type="button" title="Pliki tła" aria-label="Pliki tła"><i class="mdi mdi-folder-multiple-image"></i></button>
             </div>
+            <div class="vm-range"><i class="mdi mdi-brightness-6" title="Jasność" aria-hidden="true"></i><input id="background-brightness" type="range" min="30" max="200" step="5" value="100" data-brightness="backgroundBrightness" aria-label="Jasność"><output>100%</output><button type="button" class="vm-range-reset" data-brightness-reset="backgroundBrightness" title="Przywróć 100%" aria-label="Przywróć 100%"><i class="mdi mdi-restore"></i></button></div>
             <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           </section>
           <section class="vm-zone night-bg-block">
@@ -50,6 +51,7 @@
               <button class="vm-icon" type="button" data-night-mode="day" title="Zawsze dzień" aria-label="Zawsze dzień"><i class="mdi mdi-white-balance-sunny"></i></button>
               <button class="vm-icon" type="button" data-night-mode="night" title="Zawsze noc" aria-label="Zawsze noc"><i class="mdi mdi-weather-night"></i></button>
             </div>
+            <div class="vm-range"><i class="mdi mdi-brightness-6" title="Jasność" aria-hidden="true"></i><input id="night-brightness" type="range" min="30" max="200" step="5" value="100" data-brightness="nightBrightness" aria-label="Jasność"><output>100%</output><button type="button" class="vm-range-reset" data-brightness-reset="nightBrightness" title="Przywróć 100%" aria-label="Przywróć 100%"><i class="mdi mdi-restore"></i></button></div>
             <label class="night-bg-entity vm-field"><span>Przełącza encja</span><input id="night-entity" type="text" autocomplete="off" spellcheck="false" placeholder="sun.sun" aria-label="Encja przełączająca tło nocne"></label>
             <small id="night-status" class="vm-status"></small>
             <input id="night-background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
@@ -309,6 +311,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-235"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-236"></script>
 </body>
 </html>

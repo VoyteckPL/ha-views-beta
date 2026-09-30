@@ -801,3 +801,5 @@ svg.flow-chevron{overflow:visible}
 .canvas-resizing .scene-card{overflow:visible}
 .canvas-resize-bar b{color:#80e9ff;font-size:13px}
 .canvas-resize-bar{top:calc(env(safe-area-inset-top) + 56px);bottom:auto}
+.vm-range{display:grid;grid-template-columns:20px minmax(0,1fr) 44px 32px;align-items:center;gap:7px}.vm-range>i{font-size:17px;color:#8fe3fb}.vm-range input{width:100%;accent-color:var(--cyan,#20b9e7)}.vm-range output{color:#8fe3fb;font-size:11px;text-align:right}.vm-range-reset{display:grid;place-items:center;width:32px;height:30px;padding:0;font-size:15px}.vm-range.disabled{opacity:.4}
+.scene>img{transition:filter .15s linear}.scene>img.scene-night{transition:opacity 1.2s ease,filter .15s linear}
