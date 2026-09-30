@@ -1,3 +1,7 @@
+## 0.4.1-beta.224
+
+- Tryb edycji: przerywane linie elementów, których akurat nie edytujesz, też mają kolor swojego rodzaju — obrysy pomieszczeń bursztynowe, ramki ukrytych Flow (i zablokowanych) fioletowe; słabsze niż przy zaznaczeniu.
+
 ## 0.4.1-beta.223
 
 - Kolory zaznaczenia w trybie edycji zależne od rodzaju elementu: marker — niebieski, Flow — fioletowy, pomieszczenie — bursztynowy (ramka i uchwyty).

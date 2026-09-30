@@ -704,3 +704,7 @@ main{width:min(1600px,calc(100% - 32px));margin:20px auto 40px}.view{display:non
 .room-handle{background:#ffb547!important}
 .room-handle.mid{background:rgba(255,255,255,.9)!important;border-color:#ffb547!important}
 .room-handle.draft.closable{background:#35d07f!important}
+/* Unselected elements in edit mode use their type colour too (fainter than when selected) */
+.room-outline:not(.selected){stroke:rgba(255,181,71,.7)!important;fill:rgba(255,181,71,.05)!important}
+.editing .flow-marker.flow-hidden-preview{outline-color:rgba(176,124,255,.65)!important}
+.editing .flow-marker.flow-locked{outline-color:rgba(176,124,255,.4)!important}
