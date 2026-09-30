@@ -1,3 +1,13 @@
+## 0.4.1-beta.238
+
+- Nowy element **Tekst / przycisk** (menu edycji). Nie jest powiązany z żadną encją.
+  - Służy do napisów, etykiet i opisów na planie, zmienianych bez ruszania obrazu tła, oraz do przycisków nawigacji.
+  - Ma pełny styl Badge albo Ikony: tekst, podpis, ikona, tło, ramka, obrót, linie pomocnicze.
+  - „Dotknięcie w widoku”: Brak akcji, Przejdź do widoku (HA Views), Otwórz stronę Home Assistant (np. `/lovelace/energy`, `/config/areas`) albo Otwórz link (http/https, opcjonalnie w nowej karcie). Działa też w trybie podglądu.
+- **Link do widoku**:
+  - adres HA Views z `?view=<nazwa widoku>` (np. `…/app/<slug>?view=parter`) otwiera od razu ten widok. Działa z zakładki w przeglądarce, z bezpośredniego linku i z akcji „navigate” w innych dashboardach HA;
+  - w menu widoku → Opcje jest „Kopiuj link do widoku”.
+
 ## 0.4.1-beta.237
 
 - Przygotowanie wydania stabilnego 0.5.0: beta i wersja stabilna mają teraz ten sam kod, różniący się jednym ustawieniem kanału. Każda wersja zapisuje swój plik układu. „Pliki tła” chronią tła drugiej wersji i podają, której (w becie „Stabilna”, w wersji stabilnej „Beta”). Dla bety nic się nie zmienia.
