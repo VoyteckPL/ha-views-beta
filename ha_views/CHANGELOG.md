@@ -1,3 +1,9 @@
+## 0.4.1-beta.230
+
+- Linie przyciągania działają tak samo dla markerów, Flow i pomieszczeń. Przeciągany element przyciąga się do wszystkich pomieszczeń na widoku (krawędzie, środek i narożniki nieregularnych ścian), a nie tylko do tego, w którym stał na początku przeciągania.
+- Przesuwane pomieszczenie przyciąga się do markerów, Flow, innych pomieszczeń i tła, z liniami pomocniczymi.
+- Przeciągane narożniki pomieszczenia (i rysowanie nowego) przyciągają się też do markerów, Flow i tła, z liniami pomocniczymi.
+
 ## 0.4.1-beta.229
 
 - Obrót markerów i Flow. W menu magnesu jest nowa grupa „Obróć zaznaczony”: ikonki obracają o 90° i 15° w lewo / prawo, ikonka przywracania ustawia 0°, a suwak obraca płynnie co 1° (−180…180°).

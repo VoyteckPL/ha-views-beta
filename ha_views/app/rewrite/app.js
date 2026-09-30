@@ -638,8 +638,15 @@ function snapRoomPoint([x, y], skip = null, event = null) {
   const others = [];
   Object.values(roomsOf()).forEach(room => (room.points || []).forEach((p, index) => { if (!(skip && skip.roomId === room.id && skip.index === index)) others.push(p); }));
   (roomDraft?.points || []).forEach(p => others.push(p));
-  let bx = null, by = null;
-  others.forEach(([ox, oy]) => { if (Math.abs(ox - x) <= tx && (bx === null || Math.abs(ox - x) < Math.abs(bx - x))) bx = ox; if (Math.abs(oy - y) <= ty && (by === null || Math.abs(oy - y) < Math.abs(by - y))) by = oy; });
+  let bx = null, by = null, gx = null, gy = null;
+  others.forEach(([ox, oy]) => { if (Math.abs(ox - x) <= tx && (bx === null || Math.abs(ox - x) < Math.abs(bx - x))) { bx = ox; gx = { room:true }; } if (Math.abs(oy - y) <= ty && (by === null || Math.abs(oy - y) < Math.abs(by - y))) { by = oy; gy = { room:true }; } });
+  // Corners also line up with markers, Flows and the background (same targets as dragging an element).
+  if (snapTargets().guides) {
+    const g = guideTargets({ roomId: skip?.roomId || '__draft' });
+    g.xs.forEach(c => { const v = c.v / Math.max(1, r.width) * 100; if (Math.abs(v - x) <= tx && (bx === null || Math.abs(v - x) < Math.abs(bx - x) - .01)) { bx = v; gx = c; } });
+    g.ys.forEach(c => { const v = c.v / Math.max(1, r.height) * 100; if (Math.abs(v - y) <= ty && (by === null || Math.abs(v - y) < Math.abs(by - y) - .01)) { by = v; gy = c; } });
+    showAlignGuides(bx !== null ? [{ at: bx, room: gx.room, bg: gx.bg }] : [], by !== null ? [{ at: by, room: gy.room, bg: gy.bg }] : []);
+  }
   return [bx ?? snapPercent(x), by ?? snapPercent(y)];
 }
 function pointInPolygon([x, y], points) {
@@ -663,7 +670,7 @@ function updateRoomDrawBar() {
   if (text) text.textContent = translateValue(count < 3 ? 'Klikaj kolejne narożniki pomieszczenia' : 'Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt');
   const done = $('#room-draw-done'), undo = $('#room-draw-undo'); if (done) done.disabled = count < 3; if (undo) undo.disabled = !count;
 }
-function cancelRoomDrawing() { roomDraft = null; els.body.classList.remove('room-drawing'); $('#room-draw-bar')?.classList.remove('visible'); renderRoomEditLayer(); }
+function cancelRoomDrawing() { showAlignGuides([], []); roomDraft = null; els.body.classList.remove('room-drawing'); $('#room-draw-bar')?.classList.remove('visible'); renderRoomEditLayer(); }
 function finishRoomDrawing() {
   if (!roomDraft || roomDraft.points.length < 3) return;
   const view = activeSceneView(); if (!view) return cancelRoomDrawing();
@@ -677,7 +684,7 @@ function onRoomDrawClick(event) {
   event.preventDefault(); event.stopPropagation();
   const r = els.scene.getBoundingClientRect(), point = snapRoomPoint(scenePercentAt(event), null, event), first = roomDraft.points[0];
   if (first && roomDraft.points.length >= 3 && Math.hypot((first[0] - point[0]) / 100 * r.width, (first[1] - point[1]) / 100 * r.height) <= 14) return finishRoomDrawing();
-  roomDraft.points.push(point); roomDraft.cursor = null; updateRoomDrawBar(); renderRoomEditLayer();
+  roomDraft.points.push(point); roomDraft.cursor = null; if (event.pointerType !== 'mouse') showAlignGuides([], []); updateRoomDrawBar(); renderRoomEditLayer();
 }
 function onRoomDrawMove(event) {
   if (!roomDraft?.points.length || event.pointerType !== 'mouse') return;
@@ -694,7 +701,7 @@ function startRoomHandleDrag(event) {
   if (handle.dataset.roomMid !== undefined) { const at = Number(handle.dataset.roomMid), [x, y] = room.points[at], [nx, ny] = room.points[(at + 1) % room.points.length]; room.points.splice(at + 1, 0, [(x + nx) / 2, (y + ny) / 2]); index = at + 1; renderRoomEditLayer(); }
   let moved = false;
   const move = e => { if (e.pointerId !== event.pointerId) return; moved = true; room.points[index] = snapRoomPoint(scenePercentAt(e), { roomId: room.id, index }, e); renderRooms(); };
-  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (!moved && handle.dataset.roomMid === undefined) return; room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); renderRooms(); };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); if (!moved && handle.dataset.roomMid === undefined) return; room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); renderRooms(); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 function removeRoomPoint(event) {
@@ -706,16 +713,20 @@ function removeRoomPoint(event) {
 function startRoomMove(event) {
   if (!editMode || roomDraft || event.button > 0 || !selectedRoomId || (event.target !== els.markers && event.target !== els.scene && event.target !== els.image)) return false;
   const room = roomsOf()[selectedRoomId], start = scenePercentAt(event); if (!room || room.geometryLocked || !pointInPolygon(start, room.points)) return false;
-  const original = clone(room.points); let moved = false;
+  const original = clone(room.points); let moved = false, guides = null;
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const move = e => {
     if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e); let dx = x - start[0], dy = y - start[1];
     if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true;
     const minX = Math.min(...original.map(p => p[0])), maxX = Math.max(...original.map(p => p[0])), minY = Math.min(...original.map(p => p[1])), maxY = Math.max(...original.map(p => p[1]));
+    guides ||= guideTargets({ roomId: room.id });
+    const w = guides.scene.width || 1, h = guides.scene.height || 1;
+    const snapped = alignToGuides({ ...guides, halfW: (maxX - minX) / 200 * w, halfH: (maxY - minY) / 200 * h }, (minX + maxX) / 2 + dx, (minY + maxY) / 2 + dy, e);
+    dx = snapped.xPercent - (minX + maxX) / 2; dy = snapped.yPercent - (minY + maxY) / 2;
     dx = clamp(dx, -minX, 100 - maxX); dy = clamp(dy, -minY, 100 - maxY);
     room.points = original.map(([px, py]) => [px + dx, py + dy]); renderRooms();
   };
-  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (moved) { room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); els.markers.dataset.roomMoved = '1'; } };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); if (moved) { room.points = room.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); room.updatedAt = new Date().toISOString(); scheduleSave(true); els.markers.dataset.roomMoved = '1'; } };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   return true;
 }
@@ -1011,22 +1022,27 @@ function alignSelectedToBackground(where) {
   item.xPercent = clamp(Number(item.xPercent) + d.x / s.width * 100, 0, 100); item.yPercent = clamp(Number(item.yPercent) + d.y / s.height * 100, 0, 100); item.updatedAt = new Date().toISOString();
   renderMarkers(); if (selectedId) syncSelection(); else syncFlowSelection(); scheduleSave(true);
 }
-function alignmentContext(node) {
-  const scene = els.scene.getBoundingClientRect(), own = node.getBoundingClientRect();
+// Snap targets shared by markers, Flows and rooms: every other marker / Flow, every room (its bounding box and
+// its corners, so irregular walls line up too) and the background. Nothing depends on where the drag starts.
+function guideTargets({ node = null, roomId = '' } = {}) {
+  const scene = els.scene.getBoundingClientRect();
   const t = snapTargets(), points = (a, b) => [...(t.edges ? [a, b] : []), ...(t.centers ? [(a + b) / 2] : [])];
   const selector = [t.markers ? '.marker' : '', t.flows ? '.flow-marker' : ''].filter(Boolean).join(', ');
-  const targets = selector ? $$(selector, els.markers).filter(other => other !== node && other.offsetParent !== null).map(other => other.getBoundingClientRect()) : [];
+  const targets = selector ? $$(selector, els.markers).filter(other => other !== node && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.entityId]?.roomId === roomId)).map(other => other.getBoundingClientRect()) : [];
   const xs = targets.flatMap(r => points(r.left, r.right).map(v => ({ v: v - scene.left, room:false })));
   const ys = targets.flatMap(r => points(r.top, r.bottom).map(v => ({ v: v - scene.top, room:false })));
   if (t.background) { xs.push(...points(0, scene.width).map(v => ({ v, bg:true }))); ys.push(...points(0, scene.height).map(v => ({ v, bg:true }))); }
-  const centre = [((own.left + own.right) / 2 - scene.left) / Math.max(1, scene.width) * 100, ((own.top + own.bottom) / 2 - scene.top) / Math.max(1, scene.height) * 100];
-  const iconRoom = model.entities[node.dataset?.entityId]?.roomId;
-  if (t.rooms) Object.values(roomsOf()).filter(room => (room.points || []).length >= 3 && (room.id === iconRoom || pointInPolygon(centre, room.points))).forEach(room => {
+  if (t.rooms) Object.values(roomsOf()).filter(room => room.id !== roomId && (room.points || []).length >= 3).forEach(room => {
     const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
     const [minX, maxX, minY, maxY] = [Math.min(...px), Math.max(...px), Math.min(...py), Math.max(...py)];
     xs.push(...points(minX, maxX).map(v => ({ v, room:true }))); ys.push(...points(minY, maxY).map(v => ({ v, room:true })));
+    if (t.edges) { px.forEach(v => { if (v > minX + .5 && v < maxX - .5) xs.push({ v, room:true }); }); py.forEach(v => { if (v > minY + .5 && v < maxY - .5) ys.push({ v, room:true }); }); }
   });
-  return { scene, halfW: own.width / 2, halfH: own.height / 2, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
+  return { scene, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
+}
+function alignmentContext(node) {
+  const own = node.getBoundingClientRect();
+  return { ...guideTargets({ node }), halfW: own.width / 2, halfH: own.height / 2 };
 }
 function alignToGuides(context, xPercent, yPercent, event) {
   if (!context || event?.altKey || !snapTargets().guides || !context.scene.width || !context.scene.height) { showAlignGuides([], []); return { xPercent, yPercent }; }
