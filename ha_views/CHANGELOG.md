@@ -1,3 +1,8 @@
+## 0.4.1-beta.241
+
+- Pomieszczenia: narożnik usuwa się podwójnym stuknięciem (telefon) albo dwuklikiem (komputer). Od bety 222 nie działało to nigdzie, bo narożnik przekazuje palec/kursor scenie, żeby płynnie się przesuwał, a wtedy przeglądarka nie wysyła dwukliku do kropki. Edytor pomieszczenia zostaje otwarty po usunięciu narożnika.
+- Kropki narożników są mniejsze i mają stały rozmiar na ekranie niezależnie od przybliżenia (wcześniej na telefonie po przybliżeniu rosły nawet do ok. 50 px). Obszar dotyku wokół nich pozostał duży.
+
 ## 0.4.1-beta.240
 
 - Tło nocne: przy wejściu na widok, gdy jest noc (przesunięciem palcem, zakładką albo przy starcie), nie widać już przez chwilę tła dziennego. Obraz nocny pokazuje się od razu, a przełączenie czeka, aż będzie gotowy. Płynne przenikanie zostało tylko dla zmiany dzień ↔ noc na otwartym widoku.
