@@ -1,3 +1,8 @@
+## 0.4.1-beta.240
+
+- Tło nocne: przy wejściu na widok, gdy jest noc (przesunięciem palcem, zakładką albo przy starcie), nie widać już przez chwilę tła dziennego. Obraz nocny pokazuje się od razu, a przełączenie czeka, aż będzie gotowy. Płynne przenikanie zostało tylko dla zmiany dzień ↔ noc na otwartym widoku.
+- Okno szczegółów po angielsku: „Last changed” z datą w formacie angielskim oraz „7 days”.
+
 ## 0.4.1-beta.239
 
 - Tryb podglądu (użytkownik HA bez uprawnień administratora) może teraz przełączać światła i gniazdka, tak jak ustawił administrator. Działa dotknięcie markera z akcją „Przełącz ON/OFF” oraz pomieszczenia (lub jego ikony) z tą akcją. Serwer pozwala takiemu użytkownikowi przełączać wyłącznie encje ustawione na widoku z tą akcją, nic innego w Home Assistant. Edycja nadal jest zablokowana.
