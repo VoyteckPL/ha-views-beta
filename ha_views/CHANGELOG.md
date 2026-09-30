@@ -1,3 +1,7 @@
+## 0.4.1-beta.228
+
+- Badge, Ikona, Gauge i Podkowa: tekst „Nazwa” i „Stan” można przesuwać także w lewo / prawo. Suwaki nazywają się teraz „Lewo / prawo” i „Góra / dół”, tak jak w sekcji Ikona. Istniejące widoki wyglądają bez zmian.
+
 ## 0.4.1-beta.227
 
 - Kopiuj / wklej styl markera przenosi też wybór ikony (źródło, własna ikona MDI, ikony ON/OFF) oraz „Dotknięcie w widoku”. Jeśli skopiowana akcja to „Przełącz ON/OFF”, a docelowej encji nie da się przełączyć, ustawia się „Więcej informacji”.

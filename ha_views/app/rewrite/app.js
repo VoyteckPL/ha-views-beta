@@ -129,8 +129,8 @@ const els = {
 
 const badgeDefaults = () => ({
   width: 247, height: 137, contentScale: 1, baseContentScale: 2.2, showLabel: true, showValue: true, showBackground: true, showBorder: true,
-  labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
-  valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
+  labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelX: 0, labelY: 0,
+  valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueX: 0, valueY: 0,
   backgroundColor: '#03101A', backgroundOpacity: .76, backgroundGradient: 'none', backgroundGradientX: 50, backgroundGradientY: 50, backgroundGradientSpread: .65, backgroundGradientFill: .15, backgroundGradientDirection: 'left', backgroundStateEnabled: false, backgroundOnColor: '#03101A', backgroundOffColor: '#03101A', backgroundOnOpacity: .76, backgroundOffOpacity: .76,
   borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 10, shape: 'rounded', borderStateEnabled: false, borderOnColor: '#607D8B', borderOffColor: '#607D8B', borderOnOpacity: .55, borderOffOpacity: .55, borderOnWidth: 1, borderOffWidth: 1,
   showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOpacityStateEnabled: false, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineOpacity: 1, iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnOpacity: 1, iconOutlineOffOpacity: 1, iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
@@ -144,8 +144,8 @@ const gaugeDefaults = () => ({
   useGradient: false, gradientStart: '#21BCEB', gradientEnd: '#F59E0B',
   showBackground: true, backgroundColor: '#03101A', backgroundOpacity: .76, backgroundGradient: 'none', backgroundGradientX: 50, backgroundGradientY: 50, backgroundGradientSpread: .65, backgroundGradientFill: .15, backgroundGradientDirection: 'left', backgroundStateEnabled: false, backgroundOnColor: '#03101A', backgroundOffColor: '#03101A', backgroundOnOpacity: .76, backgroundOffOpacity: .76,
   showBorder: true, borderColor: '#607D8B', borderOpacity: .55, borderWidth: 1, radius: 16, shape: 'rounded', borderStateEnabled: false, borderOnColor: '#607D8B', borderOffColor: '#607D8B', borderOnOpacity: .55, borderOffOpacity: .55, borderOnWidth: 1, borderOffWidth: 1,
-  showLabel: true, labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelY: 0,
-  showValue: true, valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueY: 0,
+  showLabel: true, labelColor: '#9BC1D8', labelOpacity: 1, labelScale: 1, labelX: 0, labelY: 0,
+  showValue: true, valueColor: '#FFFFFF', valueOpacity: 1, valueScale: 1, valueX: 0, valueY: 0,
   showPercent: true, percentColor: '#8FDFFF', percentOpacity: 1, percentScale: 1, percentY: 0,
   showIcon: false, iconSize: 26, iconX: 0, iconY: 0, iconOpacity: 1, iconStateEnabled: true, iconOpacityStateEnabled: false, iconOnOpacity: 1, iconOffOpacity: 1, iconFillEnabled: true, iconOutlineEnabled: false, iconOutlineColor: '#FFFFFF', iconOutlineOpacity: 1, iconOutlineWidth: 1, iconOutlineStateEnabled: false, iconOutlineOnColor: '#FFFFFF', iconOutlineOffColor: '#FFFFFF', iconOutlineOnOpacity: 1, iconOutlineOffOpacity: 1, iconOutlineOnWidth: 1, iconOutlineOffWidth: 1,
   iconColor: '#9BC1D8', iconOnColor: '#20B9E7', iconOffColor: '#8AA2AF', iconUnavailableColor: '#FF6374'
@@ -1344,7 +1344,7 @@ function normalizedStyle(type, raw = {}) {
     }
   }
   if (!Object.prototype.hasOwnProperty.call(raw || {}, 'iconOpacityStateEnabled')) base.iconOpacityStateEnabled = Boolean(raw?.iconStateEnabled);
-  ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelY','valueY','iconSize','iconX','iconY','iconOpacity','iconOutlineWidth','backgroundOnOpacity','backgroundOffOpacity','borderOnOpacity','borderOffOpacity','borderOnWidth','borderOffWidth','iconOnOpacity','iconOffOpacity','backgroundGradientX','backgroundGradientY','backgroundGradientSpread','backgroundGradientFill','iconOutlineOpacity','iconOutlineOnOpacity','iconOutlineOffOpacity','iconOutlineOnWidth','iconOutlineOffWidth'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
+  ['width','height','contentScale','baseContentScale','borderWidth','radius','labelScale','valueScale','labelX','labelY','valueX','valueY','iconSize','iconX','iconY','iconOpacity','iconOutlineWidth','backgroundOnOpacity','backgroundOffOpacity','borderOnOpacity','borderOffOpacity','borderOnWidth','borderOffWidth','iconOnOpacity','iconOffOpacity','backgroundGradientX','backgroundGradientY','backgroundGradientSpread','backgroundGradientFill','iconOutlineOpacity','iconOutlineOnOpacity','iconOutlineOffOpacity','iconOutlineOnWidth','iconOutlineOffWidth'].forEach(k => base[k] = numberOr(base[k], markerStyleDefaults(type)[k]));
   if (isGaugeType(type)) ['min','max','thickness','percentScale','percentY'].forEach(k => base[k] = numberOr(base[k], gaugeDefaults()[k]));
   return base;
 }
@@ -1582,8 +1582,8 @@ function applyMarkerStyle(node, marker) {
   if (label) Object.assign(label.style, { color: s.labelColor, opacity: clamp(s.labelOpacity, 0, 1), fontSize: `${12 * s.labelScale * contentScale}px` });
   if (value) Object.assign(value.style, { color: rule?.apply.value ? rule.color : s.valueColor, opacity: clamp(s.valueOpacity, 0, 1), fontSize: `${22 * s.valueScale * contentScale}px` });
   if (marker.type === 'badge' || marker.type === 'icon') {
-    if (label) label.style.transform = `translateY(${s.labelY * contentScale}px)`;
-    if (value) value.style.transform = `translateY(${s.valueY * contentScale}px)`;
+    if (label) label.style.transform = `translate(${(Number(s.labelX) || 0) * contentScale}px, ${s.labelY * contentScale}px)`;
+    if (value) value.style.transform = `translate(${(Number(s.valueX) || 0) * contentScale}px, ${s.valueY * contentScale}px)`;
   }
   const icon = $('.marker-icon', node);
   if (icon) {
@@ -1600,8 +1600,8 @@ function applyMarkerStyle(node, marker) {
   if (isGaugeType(marker.type)) {
     // Anchor labels to the marker centre: resizing the Gauge changes neither their
     // horizontal nor vertical screen position. The Position sliders stay additive.
-    if (label) Object.assign(label.style, { left: '50%', top: `calc(50% + ${(37 + Number(s.labelY || 0)) * contentScale}px)` });
-    if (value) Object.assign(value.style, { left: '50%', top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
+    if (label) Object.assign(label.style, { left: `calc(50% + ${Number(s.labelX || 0) * contentScale}px)`, top: `calc(50% + ${(37 + Number(s.labelY || 0)) * contentScale}px)` });
+    if (value) Object.assign(value.style, { left: `calc(50% + ${Number(s.valueX || 0) * contentScale}px)`, top: `calc(50% + ${(10 + Number(s.valueY || 0)) * contentScale}px)` });
     const percent = $('.percent', node); if (percent) Object.assign(percent.style, { left: '50%', top: `calc(50% + ${(-18 + Number(s.percentY || 0)) * contentScale}px)`, color: rgba(s.percentColor, s.percentOpacity), fontSize: `${11 * s.percentScale * contentScale}px` });
     const svg = $('.gauge-svg', node); if (svg) Object.assign(svg.style, { inset: 'auto', left: '50%', top: '50%', width: marker.type === 'horseshoe' ? '136px' : '', height: marker.type === 'horseshoe' ? '118px' : '', transform: `translate(-50%, -50%) scale(${contentScale})`, transformOrigin: '50% 50%' });
     const visual = $('.gauge-visual', node); if (visual) Object.assign(visual.style, { transform: gaugeVisualTransform(marker, s), transformOrigin: '100px 90px' });
@@ -2312,8 +2312,8 @@ function compactBadgeEditor(root, marker) {
     if (input) input.dataset.editorRefresh = 'true';
   });
   refresh(['style.showLabel','style.showValue','style.showBackground','style.backgroundStateEnabled','style.showBorder','style.shape','style.borderStateEnabled','style.showIcon','iconMode','iconVariantEnabled','style.iconFillEnabled','style.iconStateEnabled','style.iconOpacityStateEnabled','style.iconOutlineEnabled','style.iconOutlineStateEnabled']);
-  if (!s.showLabel) hide(['style.labelColor','style.labelOpacity','style.labelScale','style.labelY']);
-  if (!s.showValue) hide(['style.valueColor','style.valueOpacity','style.valueScale','style.valueY']);
+  if (!s.showLabel) hide(['style.labelColor','style.labelOpacity','style.labelScale','style.labelX','style.labelY']);
+  if (!s.showValue) hide(['style.valueColor','style.valueOpacity','style.valueScale','style.valueX','style.valueY']);
   if (!s.showBackground) hide(['style.backgroundGradient','style.backgroundGradientX','style.backgroundGradientY','style.backgroundGradientDirection','style.backgroundGradientSpread','style.backgroundGradientFill','style.backgroundColor','style.backgroundOpacity','style.backgroundStateEnabled','style.backgroundOnColor','style.backgroundOffColor','style.backgroundOnOpacity','style.backgroundOffOpacity']);
   else {
     if ((s.backgroundGradient || 'none') === 'none') hide(['style.backgroundGradientX','style.backgroundGradientY','style.backgroundGradientDirection','style.backgroundGradientSpread','style.backgroundGradientFill']);
@@ -2353,8 +2353,8 @@ function editorMarkup(marker) {
   const s = marker.style;
   const tapAction = tapActionControl(marker.tapAction || 'more_info', isToggleableMarker(marker));
   const entity = section('Encja', control('Nazwa','displayName','text',marker.displayName) + control('Jednostka','unitOverride','text',marker.unitOverride) + control('Zaokrąglenie','decimals','select',marker.decimals,{items:[['auto','Auto'],[0,'0'],[1,'1'],[2,'2'],[3,'3']]}) + control('Tekst ON','stateOnLabel','text',marker.stateOnLabel) + control('Tekst OFF','stateOffLabel','text',marker.stateOffLabel) + tapAction);
-  const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
-  const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Pozycja','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
+  const label = section('Nazwa', control('Pokaż','style.showLabel','checkbox',s.showLabel) + control('Kolor','style.labelColor','color',s.labelColor) + control('Przezrocz.','style.labelOpacity','range',s.labelOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.labelScale','range',s.labelScale,{min:.5,max:3,step:.05}) + control('Lewo / prawo','style.labelX','range',s.labelX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.labelY','range',s.labelY,{min:-100,max:100,step:1,suffix:'px'}));
+  const value = section('Stan', control('Pokaż','style.showValue','checkbox',s.showValue) + control('Kolor','style.valueColor','color',s.valueColor) + control('Przezrocz.','style.valueOpacity','range',s.valueOpacity,{min:0,max:1,step:.01}) + control('Rozmiar','style.valueScale','range',s.valueScale,{min:.5,max:3,step:.05}) + control('Lewo / prawo','style.valueX','range',s.valueX,{min:-100,max:100,step:1,suffix:'px'}) + control('Góra / dół','style.valueY','range',s.valueY,{min:-100,max:100,step:1,suffix:'px'}));
   const minimumSize = isGaugeType(marker.type) ? { width: 44, height: 28 } : marker.type === 'icon' ? { width: 24, height: 24 } : { width: 36, height: 24 };
   const maximumSize = { width: 2400, height: 1800 };
   const size = section('Rozmiar', control('Szerokość','style.width','range',s.width,{min:minimumSize.width,max:maximumSize.width,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Wysokość','style.height','range',s.height,{min:minimumSize.height,max:maximumSize.height,step:1,suffix:'px',integer:true,disabled:!!marker.geometryLocked}) + control('Skala elementów','style.contentScale','range',s.contentScale,{min:.4,max:5,step:.05,suffix:'×'}));
