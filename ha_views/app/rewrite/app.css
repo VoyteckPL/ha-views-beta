@@ -725,3 +725,4 @@ body:not(.editing) #snap-menu-button{display:none}
 
 /* Sharpness above 100 % draws the point past the item box: do not clip it */
 svg.flow-chevron{overflow:visible}
+.rotate-row{display:grid;grid-template-columns:minmax(0,1fr) 38px;align-items:center;gap:6px}.rotate-row input{width:100%;accent-color:var(--cyan)}.rotate-row input:disabled{opacity:.35}.rotate-row output{color:#8fe3fb;text-align:right;font-size:10px}.rotate-step{position:relative}.rotate-step small{position:absolute;right:2px;bottom:1px;font-size:8px;font-weight:800;line-height:1}

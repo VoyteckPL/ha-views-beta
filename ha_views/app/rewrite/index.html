@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-228">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-229">
 </head>
 <body>
   <header class="topbar">
@@ -78,6 +78,14 @@
           <button type="button" class="snap-icon" data-align="vcenter" title="Wyśrodkuj w pionie"><i class="mdi mdi-align-vertical-center"></i></button>
           <button type="button" class="snap-icon" data-align="bottom" title="Do dolnej krawędzi tła"><i class="mdi mdi-align-vertical-bottom"></i></button>
         </div></div>
+        <div class="menu-divider"></div>
+        <div class="snap-group"><span>Obróć zaznaczony</span><div class="snap-icons align-icons rotate-icons">
+          <button type="button" class="snap-icon" data-rotate="-90" title="Obróć o 90° w lewo"><i class="mdi mdi-rotate-left"></i></button>
+          <button type="button" class="snap-icon rotate-step" data-rotate="-15" title="Obróć o 15° w lewo"><i class="mdi mdi-rotate-left"></i><small>15</small></button>
+          <button type="button" class="snap-icon" data-rotate="reset" title="Bez obrotu"><i class="mdi mdi-restore"></i></button>
+          <button type="button" class="snap-icon rotate-step" data-rotate="15" title="Obróć o 15° w prawo"><i class="mdi mdi-rotate-right"></i><small>15</small></button>
+          <button type="button" class="snap-icon" data-rotate="90" title="Obróć o 90° w prawo"><i class="mdi mdi-rotate-right"></i></button>
+        </div><div class="rotate-row"><input id="rotate-range" type="range" min="-180" max="180" step="1" value="0" title="Obrót płynny" aria-label="Obrót płynny"><output id="rotate-value">0°</output></div></div>
       </div>
       <button id="snap-menu-button" class="icon-action" title="Przyciąganie i siatka" aria-label="Przyciąganie i siatka"><i class="mdi mdi-magnet"></i></button>
       <button id="integrations-button" class="icon-action" title="Integracje" aria-label="Integracje"><i class="mdi mdi-puzzle-outline"></i></button>
@@ -248,6 +256,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-228"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-229"></script>
 </body>
 </html>

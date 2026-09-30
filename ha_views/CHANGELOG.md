@@ -1,3 +1,9 @@
+## 0.4.1-beta.229
+
+- Obrót markerów i Flow. W menu magnesu jest nowa grupa „Obróć zaznaczony”: ikonki obracają o 90° i 15° w lewo / prawo, ikonka przywracania ustawia 0°, a suwak obraca płynnie co 1° (−180…180°).
+- W edytorze markera w sekcji „Rozmiar” jest suwak „Obrót”. W Flow dotychczasowa „Korekta obrotu” nazywa się teraz „Obrót” i jest tą samą wartością co w menu.
+- Zablokowana geometria blokuje też obrót. Istniejące widoki wyglądają bez zmian.
+
 ## 0.4.1-beta.228
 
 - Badge, Ikona, Gauge i Podkowa: tekst „Nazwa” i „Stan” można przesuwać także w lewo / prawo. Suwaki nazywają się teraz „Lewo / prawo” i „Góra / dół”, tak jak w sekcji Ikona. Istniejące widoki wyglądają bez zmian.
