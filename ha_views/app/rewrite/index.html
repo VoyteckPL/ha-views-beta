@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-231">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-232">
 </head>
 <body>
   <header class="topbar">
@@ -37,6 +37,14 @@
           <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i></button><button id="background-download" class="background-icon" title="Pobierz tło" aria-label="Pobierz tło"><i class="mdi mdi-download-outline"></i></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i></button></div>
           <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
           <span id="background-status"></span>
+          <div class="night-bg-block">
+            <div class="night-bg-title"><i class="mdi mdi-weather-night"></i><b>Tło nocne</b></div>
+            <div class="night-bg-row"><select id="night-background-select" aria-label="Tło nocne"></select><button id="night-background-upload" type="button" class="background-icon" title="Wgraj tło nocne" aria-label="Wgraj tło nocne"><i class="mdi mdi-image-plus-outline"></i></button></div>
+            <label class="night-bg-entity"><small>Przełącza encja</small><input id="night-entity" type="text" autocomplete="off" spellcheck="false" placeholder="sun.sun" aria-label="Encja przełączająca tło nocne"></label>
+            <div class="night-preview" role="group" aria-label="Podgląd tła"><button type="button" data-night-preview="day" title="Podgląd: dzień"><i class="mdi mdi-white-balance-sunny"></i><em>Dzień</em></button><button type="button" data-night-preview="night" title="Podgląd: noc"><i class="mdi mdi-weather-night"></i><em>Noc</em></button></div>
+            <small id="night-status" class="night-status"></small>
+            <input id="night-background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
+          </div>
         </div>
         <label class="view-transition-row"><i class="mdi mdi-gesture-swipe-horizontal"></i><span>Przełączanie palcem</span><select id="view-transition" aria-label="Przełączanie palcem"><option value="off">Wyłączone (tylko zakładki)</option><option value="slide">Przesunięcie</option><option value="cube">Kostka</option></select></label>
         <label class="view-transition-row" id="ha-start-row" hidden><i class="mdi mdi-home-import-outline"></i><span>Domyślny panel Home Assistant</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian (ustawienia HA)</option><option value="user">HA Views — moje konto</option><option value="device">HA Views — tylko to urządzenie</option></select></label>
@@ -99,6 +107,7 @@
         <div id="scene-viewport" class="scene-viewport">
           <div id="scene" class="scene">
             <img id="scene-image" alt="Tło widoku HA Views" draggable="false">
+            <img id="scene-night-image" class="scene-night" alt="" draggable="false" hidden>
             <div id="rooms" class="rooms" aria-hidden="true"></div>
             <div id="scene-empty" class="scene-empty"><div id="background-upload-progress" class="background-upload-progress" aria-live="polite"><i class="mdi mdi-loading"></i><span>Wgrywanie tła…</span></div>
               <div class="welcome-card">
@@ -256,6 +265,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-231"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-232"></script>
 </body>
 </html>

@@ -1,3 +1,9 @@
+## 0.4.1-beta.232
+
+- Tło nocne dla widoku (opcjonalne). W „Zarządzaj widokiem → Tło” jest nowa sekcja „Tło nocne”: wybierz obraz z listy albo wgraj nowy. Obraz nocny powinien mieć ten sam rozmiar co dzienny, bo leży dokładnie na nim, a markery, Flow i pomieszczenia zostają na swoich miejscach.
+- Tło przełącza się samo i płynnie przenika. Domyślnie decyduje `sun.sun` (noc = `below_horizon`). W polu „Przełącza encja” można podać inną encję, np. `input_boolean.noc` albo `binary_sensor.…`: noc, gdy ma stan `on`.
+- Przyciski „Dzień” / „Noc” pokazują podgląd bez czekania na zachód słońca. Podgląd znika po wyjściu z trybu edycji albo po zmianie widoku.
+
 ## 0.4.1-beta.231
 
 - Pomieszczenia: w sekcji „Wygląd” jest „Kolor zależny ON/OFF”, tak jak w markerach. Po zaznaczeniu pojawiają się „Kolor ON”, „Kolor OFF”, „Intensywność ON” i „Intensywność OFF”, więc wyłączone pomieszczenie może mieć własny kolor zamiast znikać. Podgląd ON/OFF pokazuje oba stany, a kopiuj / wklej styl przenosi też te ustawienia.
