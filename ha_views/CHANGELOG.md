@@ -1,3 +1,14 @@
+## 0.4.1-beta.235
+
+- Nowe menu widoku, dopasowane do telefonu (dolny panel) i PC (rozwijane okno):
+  - główna strona: 4 ikony w rzędzie (Dodaj widok, Zmień nazwę, Duplikuj, Ustaw jako startowy) oraz dwa kafelki: „Tło” i „Opcje”. Strzałki przesuwania widoku usunięte, bo kolejność zmienia się przeciąganiem nazw;
+  - „Tło” ma trzy strefy. **Obraz**: wybór tła i 4 ikony (Wgraj, Pobierz, Zmień nazwę pliku, Pliki tła). **Tło nocne**: wybór obrazu i 4 ikony (Wgraj, Auto, Zawsze dzień, Zawsze noc) oraz encja. **Kolor**: kolor z palety, formaty 16:9 / 4:3 / 1:1 / 3:4 / 9:16 / 21:9, własny rozmiar (szerokość × wysokość) i ustawianie rozmiaru kółkami na ekranie;
+  - „Opcje”: przełączanie palcem, domyślny panel Home Assistant, Usuń widok;
+  - „Diagnostyka przesuwania” usunięta.
+- Tło w kolorze mieści się teraz w całości na ekranie w wybranym formacie, tak samo jak obraz.
+- „Pliki tła”: miniatury pokazują cały obraz (pion i poziom). Przy każdym pliku: ustaw jako tło widoku, ustaw jako tło nocne, zmień nazwę, pobierz, usuń. Usuwanie tła jest tylko tutaj. Zamknięcie okna wraca do menu Tło zamiast zamykać menu.
+- Zmiana nazwy pliku tła (zachowuje rozszerzenie i poprawia odwołania we wszystkich widokach bety). Nazwa zajęta = komunikat. Tło wersji stabilnej wymaga potwierdzenia.
+
 ## 0.4.1-beta.234
 
 - „Pliki tła”: tło używane przez stabilną wersję HA Views można teraz usunąć (pomarańczowy kosz). Najpierw pojawia się ostrzeżenie z nazwami widoków stabilnej wersji, które zostaną bez tła, i przycisk „Usuń mimo to”. „Usuń nieużywane” nadal nie rusza takich plików.

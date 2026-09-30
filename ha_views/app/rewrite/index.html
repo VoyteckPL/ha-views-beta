@@ -7,49 +7,82 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-234">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-235">
 </head>
 <body>
   <header class="topbar">
     <div class="view-tabs-group">
       <nav id="scene-tabs" class="tabs scene-tabs" aria-label="Widoki"></nav>
       <div class="view-manage-anchor"><button id="view-manage" class="icon-action" title="Zarządzaj widokami" aria-label="Zarządzaj widokami"><i class="mdi mdi-view-dashboard-edit-outline"></i></button>
-      <div id="view-switcher" class="view-switcher view-management">
-        <div class="view-sheet-head"><button id="view-sheet-back" class="view-sheet-back" type="button" title="Wstecz" aria-label="Wstecz"><i class="mdi mdi-arrow-left"></i></button><div class="view-sheet-title"><strong id="view-sheet-title">Zarządzaj widokiem</strong><small id="view-sheet-name" data-no-i18n></small></div><button id="view-sheet-close" class="view-sheet-close" type="button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button></div>
-        <div class="view-order-row"><div><button id="view-move-left" type="button" title="Przesuń widok w lewo" aria-label="Przesuń widok w lewo"><i class="mdi mdi-arrow-left"></i></button><button id="view-move-right" type="button" title="Przesuń widok w prawo" aria-label="Przesuń widok w prawo"><i class="mdi mdi-arrow-right"></i></button></div></div>
-        <button id="view-add" class="view-action" title="Dodaj widok" aria-label="Dodaj widok"><i class="mdi mdi-plus"></i><span>Dodaj widok</span></button>
-        <button id="view-rename" class="view-action" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i><span>Zmień nazwę</span></button>
-        <button id="view-duplicate" class="view-action" title="Duplikuj widok" aria-label="Duplikuj widok"><i class="mdi mdi-content-duplicate"></i><span>Duplikuj widok</span></button><button id="view-default" class="view-action" title="Ustaw jako widok startowy" aria-label="Ustaw jako widok startowy"><i class="mdi mdi-home-variant-outline"></i><span>Ustaw jako widok startowy</span></button>
-        <button id="background-manage" class="view-action background-entry" title="Zarządzaj tłem" aria-label="Zarządzaj tłem"><i class="mdi mdi-image-outline"></i><span>Tło</span></button>
-        <div id="background-bar" class="background-bar">
-          <select id="background-select" aria-label="Wybierz tło"></select>
-          <div id="background-preview-wrap" class="background-preview-wrap" hidden><img id="background-preview" alt="Podgląd wybranego tła"><div class="background-preview-actions"><button id="background-preview-cancel" type="button">Anuluj</button><button id="background-preview-apply" type="button" class="primary">Ustaw tło</button></div></div>
-          <div class="solid-canvas-row"><i class="mdi mdi-aspect-ratio"></i><span>Format koloru</span><select id="solid-canvas-ratio" aria-label="Format kolorowego tła"><option value="1.7777777778">16:9</option><option value="1.3333333333">4:3</option><option value="1">1:1</option><option value="0.5625">9:16</option></select></div>
-          <div class="background-colour-picker color-picker">
-            <button id="background-color-toggle" type="button" class="color-current" data-bg-color-toggle style="background:#0d2838" aria-label="Wybierz kolor tła"></button>
-            <input id="background-color" class="color-native" type="color" value="#0d2838" aria-label="Własny kolor">
-            <div class="color-menu"><div class="color-palette">
-              <button type="button" data-bg-colour="#FFFFFF" style="background:#FFFFFF"></button><button type="button" data-bg-colour="#DCE8EF" style="background:#DCE8EF"></button><button type="button" data-bg-colour="#9BC1D8" style="background:#9BC1D8"></button><button type="button" data-bg-colour="#607D8B" style="background:#607D8B"></button><button type="button" data-bg-colour="#03101A" style="background:#03101A"></button><button type="button" data-bg-colour="#102A3A" style="background:#102A3A"></button>
-              <button type="button" data-bg-colour="#20B9E7" style="background:#20B9E7"></button><button type="button" data-bg-colour="#147EA5" style="background:#147EA5"></button><button type="button" data-bg-colour="#22D69B" style="background:#22D69B"></button><button type="button" data-bg-colour="#39B86C" style="background:#39B86C"></button><button type="button" data-bg-colour="#FFD166" style="background:#FFD166"></button><button type="button" data-bg-colour="#F59E0B" style="background:#F59E0B"></button>
-              <button type="button" data-bg-colour="#FF6374" style="background:#FF6374"></button><button type="button" data-bg-colour="#E63946" style="background:#E63946"></button><button type="button" data-bg-colour="#B66DFF" style="background:#B66DFF"></button><button type="button" data-bg-colour="#7C4DFF" style="background:#7C4DFF"></button><button type="button" data-bg-colour="#EC4899" style="background:#EC4899"></button><button type="button" data-bg-colour="#8B5E3C" style="background:#8B5E3C"></button>
-            </div><button id="background-rgb-open" type="button" class="rgb-button">Własny kolor RGB…</button></div>
+      <div id="view-menu" class="vm" data-page="main" role="dialog" aria-label="Zarządzaj widokiem">
+        <div class="vm-head"><button id="vm-back" class="vm-round" type="button" title="Wstecz" aria-label="Wstecz"><i class="mdi mdi-arrow-left"></i></button><div class="vm-title"><strong id="vm-title">Widok</strong><small id="vm-name" data-no-i18n></small></div><button id="vm-close" class="vm-round" type="button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button></div>
+        <div class="vm-page" data-vm-page="main">
+          <div class="vm-icons">
+            <button id="view-add" class="vm-icon" type="button" title="Dodaj widok" aria-label="Dodaj widok"><i class="mdi mdi-plus"></i></button>
+            <button id="view-rename" class="vm-icon" type="button" title="Zmień nazwę widoku" aria-label="Zmień nazwę widoku"><i class="mdi mdi-pencil-outline"></i></button>
+            <button id="view-duplicate" class="vm-icon" type="button" title="Duplikuj widok" aria-label="Duplikuj widok"><i class="mdi mdi-content-duplicate"></i></button>
+            <button id="view-default" class="vm-icon" type="button" title="Ustaw jako widok startowy" aria-label="Ustaw jako widok startowy"><i class="mdi mdi-home-variant-outline"></i></button>
           </div>
-          <div class="background-tools"><button id="background-upload" class="background-icon" title="Wgraj obraz" aria-label="Wgraj obraz"><i class="mdi mdi-image-plus-outline"></i></button><button id="background-download" class="background-icon" title="Pobierz tło" aria-label="Pobierz tło"><i class="mdi mdi-download-outline"></i></button><button id="background-delete" class="background-icon danger" title="Usuń tło" aria-label="Usuń tło"><i class="mdi mdi-delete-outline"></i></button><button id="background-files" class="background-icon background-files" title="Pliki tła" aria-label="Pliki tła"><i class="mdi mdi-folder-multiple-image"></i><span>Pliki tła</span></button></div>
-          <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
-          <span id="background-status"></span>
-          <div class="night-bg-block">
-            <div class="night-bg-title"><i class="mdi mdi-weather-night"></i><b>Tło nocne</b></div>
-            <div class="night-bg-row"><select id="night-background-select" aria-label="Tło nocne"></select><button id="night-background-upload" type="button" class="background-icon" title="Wgraj tło nocne" aria-label="Wgraj tło nocne"><i class="mdi mdi-image-plus-outline"></i></button></div>
-            <label class="night-bg-entity"><small>Przełącza encja</small><input id="night-entity" type="text" autocomplete="off" spellcheck="false" placeholder="sun.sun" aria-label="Encja przełączająca tło nocne"></label>
-            <div class="night-preview night-mode" role="group" aria-label="Tryb tła"><button type="button" data-night-mode="auto" title="Automatycznie wg encji"><i class="mdi mdi-theme-light-dark"></i><em>Auto</em></button><button type="button" data-night-mode="day" title="Zawsze dzień"><i class="mdi mdi-white-balance-sunny"></i><em>Zawsze dzień</em></button><button type="button" data-night-mode="night" title="Zawsze noc"><i class="mdi mdi-weather-night"></i><em>Zawsze noc</em></button></div>
-            <small id="night-status" class="night-status"></small>
-            <input id="night-background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
+          <div class="vm-tiles">
+            <button id="background-manage" class="vm-tile" type="button" data-vm-open="background" title="Tło" aria-label="Tło"><i class="mdi mdi-image-outline"></i><span>Tło</span><i class="mdi mdi-chevron-right vm-chev"></i></button>
+            <button id="view-options" class="vm-tile" type="button" data-vm-open="options" title="Opcje" aria-label="Opcje"><i class="mdi mdi-cog-outline"></i><span>Opcje</span><i class="mdi mdi-chevron-right vm-chev"></i></button>
           </div>
         </div>
-        <label class="view-transition-row"><i class="mdi mdi-gesture-swipe-horizontal"></i><span>Przełączanie palcem</span><select id="view-transition" aria-label="Przełączanie palcem"><option value="off">Wyłączone (tylko zakładki)</option><option value="slide">Przesunięcie</option><option value="cube">Kostka</option></select></label>
-        <label class="view-transition-row" id="ha-start-row" hidden><i class="mdi mdi-home-import-outline"></i><span>Domyślny panel Home Assistant</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian (ustawienia HA)</option><option value="user">HA Views — moje konto</option><option value="device">HA Views — tylko to urządzenie</option></select></label>
-        <label class="view-debug-row"><input id="swipe-debug-toggle" type="checkbox"><span>Diagnostyka przesuwania</span></label>
-        <button id="view-delete" class="view-action danger view-delete-separated" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
+        <div id="vm-background" class="vm-page" data-vm-page="background">
+          <section class="vm-zone">
+            <div class="vm-zone-title"><i class="mdi mdi-image-outline"></i><b>Obraz</b></div>
+            <select id="background-select" aria-label="Wybierz tło"></select>
+            <div id="background-preview-wrap" class="vm-preview" hidden><img id="background-preview" alt="Podgląd wybranego tła"><div class="vm-preview-actions"><button id="background-preview-cancel" type="button">Anuluj</button><button id="background-preview-apply" type="button" class="primary">Ustaw tło</button></div></div>
+            <div class="vm-icons">
+              <button id="background-upload" class="vm-icon" type="button" title="Wgraj tło" aria-label="Wgraj tło"><i class="mdi mdi-image-plus-outline"></i></button>
+              <button id="background-download" class="vm-icon" type="button" title="Pobierz tło" aria-label="Pobierz tło"><i class="mdi mdi-download-outline"></i></button>
+              <button id="background-rename" class="vm-icon" type="button" title="Zmień nazwę pliku tła" aria-label="Zmień nazwę pliku tła"><i class="mdi mdi-rename-outline"></i></button>
+              <button id="background-files" class="vm-icon" type="button" title="Pliki tła" aria-label="Pliki tła"><i class="mdi mdi-folder-multiple-image"></i></button>
+            </div>
+            <input id="background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
+          </section>
+          <section class="vm-zone night-bg-block">
+            <div class="vm-zone-title"><i class="mdi mdi-weather-night"></i><b>Tło nocne</b></div>
+            <select id="night-background-select" aria-label="Tło nocne"></select>
+            <div class="vm-icons night-mode" role="group" aria-label="Tryb tła">
+              <button id="night-background-upload" class="vm-icon" type="button" title="Wgraj tło nocne" aria-label="Wgraj tło nocne"><i class="mdi mdi-image-plus-outline"></i></button>
+              <button class="vm-icon" type="button" data-night-mode="auto" title="Auto — przełącza encja" aria-label="Auto — przełącza encja"><i class="mdi mdi-theme-light-dark"></i></button>
+              <button class="vm-icon" type="button" data-night-mode="day" title="Zawsze dzień" aria-label="Zawsze dzień"><i class="mdi mdi-white-balance-sunny"></i></button>
+              <button class="vm-icon" type="button" data-night-mode="night" title="Zawsze noc" aria-label="Zawsze noc"><i class="mdi mdi-weather-night"></i></button>
+            </div>
+            <label class="night-bg-entity vm-field"><span>Przełącza encja</span><input id="night-entity" type="text" autocomplete="off" spellcheck="false" placeholder="sun.sun" aria-label="Encja przełączająca tło nocne"></label>
+            <small id="night-status" class="vm-status"></small>
+            <input id="night-background-file" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden>
+          </section>
+          <section class="vm-zone vm-colour-zone">
+            <div class="vm-zone-title"><i class="mdi mdi-palette-outline"></i><b>Kolor</b></div>
+            <div class="vm-colour-row">
+              <div class="color-picker vm-colour">
+                <button id="background-color-toggle" type="button" class="color-current" style="background:#0d2838" aria-label="Wybierz kolor tła"></button>
+                <input id="background-color" class="color-native" type="color" value="#0d2838" aria-label="Własny kolor">
+                <div class="color-menu"><div class="color-palette">
+<button type="button" data-bg-colour="#FFFFFF" style="background:#FFFFFF"></button><button type="button" data-bg-colour="#DCE8EF" style="background:#DCE8EF"></button><button type="button" data-bg-colour="#9BC1D8" style="background:#9BC1D8"></button><button type="button" data-bg-colour="#607D8B" style="background:#607D8B"></button><button type="button" data-bg-colour="#03101A" style="background:#03101A"></button><button type="button" data-bg-colour="#102A3A" style="background:#102A3A"></button>
+<button type="button" data-bg-colour="#20B9E7" style="background:#20B9E7"></button><button type="button" data-bg-colour="#147EA5" style="background:#147EA5"></button><button type="button" data-bg-colour="#22D69B" style="background:#22D69B"></button><button type="button" data-bg-colour="#39B86C" style="background:#39B86C"></button><button type="button" data-bg-colour="#FFD166" style="background:#FFD166"></button><button type="button" data-bg-colour="#F59E0B" style="background:#F59E0B"></button>
+<button type="button" data-bg-colour="#FF6374" style="background:#FF6374"></button><button type="button" data-bg-colour="#E63946" style="background:#E63946"></button><button type="button" data-bg-colour="#B66DFF" style="background:#B66DFF"></button><button type="button" data-bg-colour="#7C4DFF" style="background:#7C4DFF"></button><button type="button" data-bg-colour="#EC4899" style="background:#EC4899"></button><button type="button" data-bg-colour="#8B5E3C" style="background:#8B5E3C"></button>
+                </div><button id="background-rgb-open" type="button" class="rgb-button">Własny kolor RGB…</button></div>
+              </div>
+              <small class="vm-colour-note">Kolor zamiast obrazu</small>
+            </div>
+            <div class="vm-formats" role="group" aria-label="Format koloru">
+              <button type="button" data-canvas-size="1920x1080">16:9</button><button type="button" data-canvas-size="1600x1200">4:3</button><button type="button" data-canvas-size="1200x1200">1:1</button><button type="button" data-canvas-size="1200x1600">3:4</button><button type="button" data-canvas-size="1080x1920">9:16</button><button type="button" data-canvas-size="2560x1080">21:9</button>
+            </div>
+            <div class="vm-size-row">
+              <label><input id="canvas-width" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Szerokość"></label><span>×</span><label><input id="canvas-height" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Wysokość"></label>
+              <button id="canvas-resize-start" class="vm-icon" type="button" title="Ustaw rozmiar na ekranie" aria-label="Ustaw rozmiar na ekranie"><i class="mdi mdi-resize-bottom-right"></i></button>
+            </div>
+          </section>
+          <span id="background-status" class="vm-status"></span>
+        </div>
+        <div class="vm-page" data-vm-page="options">
+          <label class="vm-field"><span><i class="mdi mdi-gesture-swipe-horizontal"></i>Przełączanie palcem</span><select id="view-transition" aria-label="Przełączanie palcem"><option value="off">Wyłączone (tylko zakładki)</option><option value="slide">Przesunięcie</option><option value="cube">Kostka</option></select></label>
+          <label class="vm-field" id="ha-start-row" hidden><span><i class="mdi mdi-home-import-outline"></i>Domyślny panel Home Assistant</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian (ustawienia HA)</option><option value="user">HA Views — moje konto</option><option value="device">HA Views — tylko to urządzenie</option></select></label>
+          <button id="view-delete" class="vm-danger" type="button" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
+        </div>
       </div></div>
     </div>
     <div class="top-actions">
@@ -227,6 +260,10 @@
     </div>
     <div id="room-editor-content" class="editor-content flow-editor-content"></div>
   </aside>
+  <div id="canvas-resize-bar" class="room-draw-bar canvas-resize-bar" role="toolbar">
+    <span>Przeciągnij kółka, aby ustawić rozmiar</span><b id="canvas-resize-value" data-no-i18n></b>
+    <button id="canvas-resize-done" type="button" class="primary"><i class="mdi mdi-check"></i><span>Gotowe</span></button>
+  </div>
   <div id="room-draw-bar" class="room-draw-bar" role="toolbar">
     <span id="room-draw-text">Klikaj kolejne narożniki pomieszczenia</span>
     <button id="room-draw-undo" type="button"><i class="mdi mdi-undo"></i><span>Cofnij punkt</span></button>
@@ -272,6 +309,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-234"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-235"></script>
 </body>
 </html>

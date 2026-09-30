@@ -1349,6 +1349,9 @@ def ensure_background_store():
     else:
         _atomic_json(BACKGROUND_META, {"current": None})
 
+def _background_stem(value):
+    return re.sub(r'[\x00-\x1f<>:"/\\|?*]+', "_", os.path.splitext(str(value or ""))[0]).strip(" .") or "background"
+
 def _background_name(value):
     name = os.path.basename(str(value or "")).strip()
     if not name or name in {".", ".."}:
@@ -1411,7 +1414,7 @@ async def api_background_upload(request):
     # Keep the original file name (Polish letters and spaces included). Only characters that are not allowed
     # in file names are replaced. A name that is already taken gets " (2)", " (3)" …, never overwrites:
     # the same file may be used by the stable add-on, and images are cached by name.
-    stem = re.sub(r'[\x00-\x1f<>:"/\\|?*]+', "_", os.path.splitext(original)[0]).strip(" .") or "background"
+    stem = _background_stem(original)
     name, counter = stem + ext, 2
     while os.path.exists(os.path.join(BACKGROUND_DIR, name)):
         name = f"{stem} ({counter}){ext}"
@@ -1469,6 +1472,35 @@ def _stable_background_usage():
 
 async def api_background_usage(request):
     return web.json_response({"ok": True, "stable": _stable_background_usage()})
+
+async def api_background_rename(request):
+    denial = await editor_denial(request)
+    if denial:
+        return denial
+    ensure_background_store()
+    body = await request.json()
+    name = _background_name(body.get("name"))
+    path = os.path.join(BACKGROUND_DIR, name) if name else ""
+    if not name or not os.path.isfile(path):
+        return web.json_response({"ok": False, "error": "Nie znaleziono tła"}, status=404)
+    wanted = os.path.basename(str(body.get("newName") or "").replace("\\", "/")).strip()
+    # The file keeps its own extension (the image format does not change); a typed image extension is dropped.
+    ext = os.path.splitext(name)[1].lower()
+    if os.path.splitext(wanted)[1].lower() in ALLOWED_BACKGROUND_EXT:
+        wanted = os.path.splitext(wanted)[0]
+    new_name = _background_stem(wanted + ext) + ext
+    if new_name == name:
+        return web.json_response({"ok": True, "name": name})
+    if os.path.exists(os.path.join(BACKGROUND_DIR, new_name)):
+        return web.json_response({"ok": False, "error": "Plik o tej nazwie już istnieje"}, status=409)
+    # Renaming a file the stable add-on uses leaves its view without a background: only on a confirmed request.
+    if name in _stable_background_usage() and body.get("force") is not True:
+        return web.json_response({"ok": False, "error": "Tło jest używane w stabilnej wersji HA Views", "stable": True}, status=409)
+    os.rename(path, os.path.join(BACKGROUND_DIR, new_name))
+    meta = _read_json(BACKGROUND_META, {})
+    if meta.get("current") == name:
+        _atomic_json(BACKGROUND_META, {"current": new_name})
+    return web.json_response({"ok": True, "name": new_name})
 
 async def api_background_delete(request):
     denial = await editor_denial(request)
@@ -1692,6 +1724,7 @@ app.router.add_post("/api/layout", api_layout_save)
 app.router.add_get("/api/backgrounds", api_backgrounds_list)
 app.router.add_get("/api/background/current", api_background_current)
 app.router.add_get("/api/background/usage", api_background_usage)
+app.router.add_post("/api/background/rename", api_background_rename)
 app.router.add_get("/api/background/file", api_background_file)
 app.router.add_get("/api/background/download", api_background_download)
 app.router.add_post("/api/background/upload", api_background_upload)
