@@ -1,3 +1,11 @@
+## 0.4.1-beta.223
+
+- Kolory zaznaczenia w trybie edycji zależne od rodzaju elementu: marker — niebieski, Flow — fioletowy, pomieszczenie — bursztynowy (ramka i uchwyty).
+- Podgląd stanu to teraz dwa przyciski ON i OFF (zamiast listy) — w markerach i pomieszczeniach; ponowne kliknięcie aktywnego wraca do stanu rzeczywistego.
+- Wyjście z trybu edycji: podgląd wraca do stanu rzeczywistego, a widok do pełnego (zoom 100%).
+- Pomieszczenie: w sekcji encji tylko dodane encje i wyszukiwarka (bez listy podpowiedzi z widoku).
+- Popupy bez podpowiedzi i komentarzy (na razie ukryte).
+
 ## 0.4.1-beta.222
 
 - Telefon: narożniki pomieszczeń dają się złapać palcem i płynnie przesuwać. Uchwyt był przerysowywany przy każdym ruchu, przez co telefon gubił palec; teraz palec trzyma scena. Większy obszar dotyku kropek.
