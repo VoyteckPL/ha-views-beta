@@ -1,3 +1,7 @@
+## 0.4.1-beta.226
+
+- Flow: „Ostrość” strzałek do 300% (było do 100%). Powyżej 100% szpic jest głębszy niż długość strzałki i wychodzi poza jej pole (nie jest obcinany) — rozmiar ramki, odstęp i liczba się nie zmieniają.
+
 ## 0.4.1-beta.225
 
 - Nowe menu „Przyciąganie i siatka” (ikona magnesu obok ołówka, widoczna w trybie edycji), przeniesione z menu edycji i rozbudowane, na ikonach:

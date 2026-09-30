@@ -1792,10 +1792,11 @@ function flowEffective(flow, side) {
 // The flattened shape stays centred in its item slot, so item size, spacing and frame do not change.
 function flowShapePath(shape, w, h, t, sharpness = 100) {
   const cy = h / 2, f = n => Math.round(n * 100) / 100, poly = points => 'M ' + points.map(p => f(p[0]) + ' ' + f(p[1])).join(' L ') + ' Z';
-  const k = clamp(Number(sharpness) || 100, 10, 100) / 100;
+  // Above 100 % the point is deeper than the item is long; it stays centred and simply reaches past the item box.
+  const k = clamp(Number(sharpness) || 100, 10, 300) / 100;
   if (shape === 'segment') { const r = Math.min(w, h) / 2; return 'M ' + f(r) + ' 0 H ' + f(w - r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(w) + ' ' + f(r) + ' V ' + f(h - r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(w - r) + ' ' + f(h) + ' H ' + f(r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 0 ' + f(h - r) + ' V ' + f(r) + ' A ' + f(r) + ' ' + f(r) + ' 0 0 1 ' + f(r) + ' 0 Z'; }
   if (shape === 'arrow') {
-    const head = Math.min(w * .55, h * .95) * k, shaft = clamp(t, 1, h * .8), neck = w - head * .78;
+    const head = Math.min(Math.min(w * .55, h * .95) * k, w * .95), shaft = clamp(t, 1, h * .8), neck = w - head * .78;
     return poly([[0,cy - shaft / 2],[neck,cy - shaft / 2],[w - head,0],[w,cy],[w - head,h],[neck,cy + shaft / 2],[0,cy + shaft / 2]]);
   }
   const depth = w * k, x0 = (w - depth) / 2, tip = x0 + depth;
@@ -1936,7 +1937,7 @@ function flowEditorMarkup(flow) {
     + control('Korekta obrotu','rotation','range',Number(flow.rotation) || 0,{ min:-180, max:180, step:1, suffix:'°', integer:true, disabled:locked })
     + note('Ramka to obszar Flow na planie, liczony wzdłuż kierunku strzałek. Szerokość ramki jest też wysokością strzałek. Uchwyty zaznaczenia zmieniają to samo.'));
   const shape = section('Strzałki', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true })
-    + (shapeKey === 'segment' ? '' : control('Ostrość','shapeSharpness','range',clamp(Number(s.shapeSharpness) || 100,10,100),{ min:10, max:100, step:1, suffix:'%', integer:true }))
+    + (shapeKey === 'segment' ? '' : control('Ostrość','shapeSharpness','range',clamp(Number(s.shapeSharpness) || 100,10,300),{ min:10, max:300, step:1, suffix:'%', integer:true }))
     + (shapeKey === 'chevron' || shapeKey === 'arrow' ? control(shapeKey === 'arrow' ? 'Grubość trzonu' : 'Grubość','chevronThickness','range',Number(s.chevronThickness) || 5,{ min:1, max:FLOW_LIMITS.thickness, step:1, suffix:'px', integer:true }) : '')
     + control('Długość strzałki','chevronWidth','range',Number(s.chevronWidth) || 22,{ min:2, max:FLOW_LIMITS.size, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Odstęp','gap','range',Number(s.gap) || 0,{ min:-(Math.max(2, Number(s.chevronWidth) || 22) - 2), max:FLOW_LIMITS.gap, step:1, suffix:'px', integer:true, disabled:locked })

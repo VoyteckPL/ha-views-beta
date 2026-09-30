@@ -722,3 +722,6 @@ body:not(.editing) #snap-menu-button{display:none}
 .snap-icon:disabled{opacity:.35}
 .align-icons .snap-icon{color:#dce8ef}
 .align-guide.bg{background:#35d07f;box-shadow:0 0 0 1px rgba(3,16,26,.55),0 0 6px rgba(53,208,127,.85)}
+
+/* Sharpness above 100 % draws the point past the item box: do not clip it */
+svg.flow-chevron{overflow:visible}
