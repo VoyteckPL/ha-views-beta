@@ -1,3 +1,12 @@
+## 0.4.1-beta.242
+
+- Pomieszczenia — nowy, pewny sposób usuwania narożników (PC i telefon):
+  - kliknięcie / stuknięcie narożnika zaznacza go (czerwona obwódka), a obok pojawia się czerwony przycisk **×**, który go usuwa;
+  - na komputerze zaznaczony narożnik usuwa też klawisz **Delete** / **Backspace**;
+  - **prawy przycisk myszy** na narożniku usuwa go od razu, bez menu kontekstowego przeglądarki;
+  - szybki dwuklik / podwójne stuknięcie nadal działa.
+- Pomieszczenie musi mieć co najmniej 3 narożniki.
+
 ## 0.4.1-beta.241
 
 - Pomieszczenia: narożnik usuwa się podwójnym stuknięciem (telefon) albo dwuklikiem (komputer). Od bety 222 nie działało to nigdzie, bo narożnik przekazuje palec/kursor scenie, żeby płynnie się przesuwał, a wtedy przeglądarka nie wysyła dwukliku do kropki. Edytor pomieszczenia zostaje otwarty po usunięciu narożnika.
