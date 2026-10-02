@@ -1,3 +1,11 @@
+## 0.4.1-beta.245
+
+- Widok → Tło → Tło nocne: nowa opcja „Ściemniaj tło wg słońca” dla widoków z jednym tłem (bez obrazu nocnego). Tło płynnie ciemnieje o zmierzchu i rozjaśnia się o świcie według wysokości słońca (atrybut `elevation` encji `sun.sun` lub encji ustawionej w polu „Przełącza encja”).
+- Regulowany zakres: „Zaczyna ściemniać, gdy słońce na” (domyślnie 6°) i „Pełna noc, gdy słońce na” (domyślnie −6°). Przesunięcie jednego suwaka za drugi przesuwa także ten drugi.
+- „Jasność w nocy” (10–100%, domyślnie 45%) i opcjonalny „Chłodny odcień nocą” (lekko niebieski, mniej nasycony obraz; domyślnie włączony).
+- Przyciski Auto / Zawsze dzień / Zawsze noc działają także dla ściemniania. Encja bez atrybutu `elevation` przełącza od razu między dniem a pełnym ściemnieniem.
+- Zmiana na żywo przechodzi płynnie (2,5 s). Markery, pomieszczenia i Flow nie są ściemniane. Pod ustawieniami widać bieżący stan, np. „Ściemnienie: 50% · słońce −3.0°”.
+
 ## 0.4.1-beta.244
 
 - Naprawa panelu bocznego z 243: zasłaniał rozwijane menu górnego paska (menu edycji z „Pomieszczenie / Flow / Tekst”, menu magnesu), więc nie dało się w nie kliknąć. Menu otwierają się teraz nad panelem.
