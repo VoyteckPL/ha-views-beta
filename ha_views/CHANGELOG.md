@@ -1,3 +1,9 @@
+## 0.4.1-beta.243
+
+- Komputer, tryb edycji: edytory markera, Flow i pomieszczenia otwierają się w stałym panelu przy prawej krawędzi ekranu zamiast unosić się przy elemencie. Scena w trybie edycji zwęża się o szerokość panelu, więc panel nigdy nie zasłania edytowanego elementu. Gdy nic nie jest zaznaczone, panel pokazuje krótką podpowiedź.
+- Przycisk w nagłówku panelu przenosi go na lewą stronę i z powrotem (zapamiętywane na danym urządzeniu).
+- Telefon bez zmian — edytor dalej wysuwa się od dołu.
+
 ## 0.4.1-beta.242
 
 - Pomieszczenia — nowy, pewny sposób usuwania narożników (PC i telefon):
