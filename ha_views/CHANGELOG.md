@@ -1,3 +1,8 @@
+## 0.4.1-beta.246
+
+- Poprawka: po przejściu na widok ze ściemnionym tłem (ściemnianie wg słońca lub ustawiona jasność tła) przez chwilę było widać tło w normalnej jasności, które dopiero potem ciemniało. Jasność i odcień nowego widoku są teraz ustawiane od razu, jeszcze przed pokazaniem obrazu i bez przejścia. Płynne przejście (2,5 s) zostaje tylko wtedy, gdy na żywo zmienia się wysokość słońca.
+- Podgląd sąsiedniego widoku przy przesuwaniu palcem pokazuje teraz także chłodny odcień nocy, więc nie różni się od widoku po puszczeniu.
+
 ## 0.4.1-beta.245
 
 - Widok → Tło → Tło nocne: nowa opcja „Ściemniaj tło wg słońca” dla widoków z jednym tłem (bez obrazu nocnego). Tło płynnie ciemnieje o zmierzchu i rozjaśnia się o świcie według wysokości słońca (atrybut `elevation` encji `sun.sun` lub encji ustawionej w polu „Przełącza encja”).
