@@ -1,3 +1,7 @@
+## 0.4.1-beta.249
+
+- Poprawka: przycisk magnesu (Przyciąganie i siatka) znowu działa jak przełącznik — pierwsze kliknięcie otwiera menu, drugie je zamyka. Wcześniej dotknięcie przycisku najpierw zamykało menu jako „kliknięcie obok”, a zaraz potem otwierało je ponownie, więc nie dało się go schować tym samym przyciskiem.
+
 ## 0.4.1-beta.248
 
 - Rysowanie pomieszczenia na telefonie: pasek z podpowiedzią jest teraz niski i jednowierszowy. „Cofnij punkt” i „Anuluj” mają same ikony, a podpowiedź zajmuje najwyżej dwie małe linie, więc pasek nie zawija się już w wysokie okienko zasłaniające plan.
