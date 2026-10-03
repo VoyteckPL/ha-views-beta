@@ -1,3 +1,12 @@
+## 0.4.1-beta.247
+
+- Nowy suwak „Oba wymiary” (ikona łańcucha) nad suwakami szerokości i wysokości. Zmienia oba wymiary naraz z zachowaniem proporcji, a obok pokazuje rozmiar „szer.×wys.”. Jest w:
+  - Ikona: Rozmiar → Szerokość / Wysokość,
+  - Badge, Gauge, Horseshoe i Tekst / przycisk: Rozmiar → Szerokość / Wysokość,
+  - Flow: Ramka i pozycja → Długość ramki / Szerokość ramki.
+- Suwak ma skalę logarytmiczną, więc małe elementy da się ustawić równie dokładnie jak duże. Proporcję wyznaczają aktualne suwaki szerokości i wysokości — po zmianie jednego z nich suwak „Oba wymiary” od razu przyjmuje nową proporcję. Zakres jest ograniczony tak, by żaden z wymiarów nie wyszedł poza swoje granice.
+- Przy zablokowanej geometrii suwak jest wyłączony, tak jak suwaki szerokości i wysokości.
+
 ## 0.4.1-beta.246
 
 - Poprawka: po przejściu na widok ze ściemnionym tłem (ściemnianie wg słońca lub ustawiona jasność tła) przez chwilę było widać tło w normalnej jasności, które dopiero potem ciemniało. Jasność i odcień nowego widoku są teraz ustawiane od razu, jeszcze przed pokazaniem obrazu i bez przejścia. Płynne przejście (2,5 s) zostaje tylko wtedy, gdy na żywo zmienia się wysokość słońca.
