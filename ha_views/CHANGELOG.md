@@ -1,3 +1,9 @@
+## 0.4.1-beta.248
+
+- Rysowanie pomieszczenia na telefonie: pasek z podpowiedzią jest teraz niski i jednowierszowy. „Cofnij punkt” i „Anuluj” mają same ikony, a podpowiedź zajmuje najwyżej dwie małe linie, więc pasek nie zawija się już w wysokie okienko zasłaniające plan.
+- Pasek sam ustępuje miejsca: po postawieniu narożnika w dolnej części ekranu przeskakuje pod górny pasek, a po postawieniu narożnika w górnej części wraca na dół. Na komputerze działa tak samo przy ruchu myszy.
+- Dotknięcie wolnego miejsca na pasku (poza przyciskami) przenosi go na drugą krawędź ekranu.
+
 ## 0.4.1-beta.247
 
 - Nowy suwak „Oba wymiary” (ikona łańcucha) nad suwakami szerokości i wysokości. Zmienia oba wymiary naraz z zachowaniem proporcji, a obok pokazuje rozmiar „szer.×wys.”. Jest w:

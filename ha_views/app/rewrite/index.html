@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-247">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-248">
 </head>
 <body>
   <header class="topbar">
@@ -287,8 +287,8 @@
   </div>
   <div id="room-draw-bar" class="room-draw-bar" role="toolbar">
     <span id="room-draw-text">Klikaj kolejne narożniki pomieszczenia</span>
-    <button id="room-draw-undo" type="button"><i class="mdi mdi-undo"></i><span>Cofnij punkt</span></button>
-    <button id="room-draw-cancel" type="button"><i class="mdi mdi-close"></i><span>Anuluj</span></button>
+    <button id="room-draw-undo" type="button" title="Cofnij punkt" aria-label="Cofnij punkt"><i class="mdi mdi-undo"></i><span>Cofnij punkt</span></button>
+    <button id="room-draw-cancel" type="button" title="Anuluj" aria-label="Anuluj"><i class="mdi mdi-close"></i><span>Anuluj</span></button>
     <button id="room-draw-done" type="button" class="primary"><i class="mdi mdi-check"></i><span>Gotowe</span></button>
   </div>
 
@@ -330,6 +330,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-247"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-248"></script>
 </body>
 </html>
