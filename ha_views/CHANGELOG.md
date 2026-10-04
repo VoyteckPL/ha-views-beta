@@ -1,3 +1,11 @@
+## 0.4.1-beta.283
+
+Ikona (bez kształtu) w edycji działa teraz jak pomieszczenie:
+- **Centrowanie na telefonie:** po stuknięciu ikona jest przybliżana i ustawiana na środku widocznego pola (między górnym paskiem a panelem edycji). Wcześniej zaraz po jej zaznaczeniu kliknięcie trafiało w plan i zaznaczało pomieszczenie leżące pod ikoną (z centrowaniem na nim).
+- **Przesuwanie:** po przeciągnięciu ikona zapisuje swoje nowe miejsce (zamiast przesunięcia od starego punktu), więc centrowanie, linie pomocnicze, kopia i wyrównanie liczą się od miejsca, gdzie ikona naprawdę jest. Kamera jedzie za ikoną przy krawędzi widocznego pola, a po puszczeniu centruje ją nad panelem; ikona nie mruga w trakcie ruchu.
+- **Wyrównanie do tła** (menu magnesu: do lewej / środka / prawej, góry / środka / dołu) działa też dla ikon.
+- Poprawka ogólna: stuknięcie w etykietę pomieszczenia leżącą nad innym pomieszczeniem nie zaznacza już tego drugiego.
+
 ## 0.4.1-beta.282
 
 - Koniec mrugania ikony **przesuwanego** pomieszczenia: gdy zmienia się tylko położenie etykiety (przesuwanie pomieszczenia albo samej etykiety / grupy), istniejące elementy dostają nowe położenie zamiast być tworzone od nowa — ikona nie jest przeładowywana w trakcie ruchu. Pełne przebudowanie następuje tylko przy zmianie wyglądu lub stanu.
