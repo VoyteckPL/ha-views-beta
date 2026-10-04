@@ -1,3 +1,8 @@
+## 0.4.1-beta.281
+
+- Koniec mrugania ikon podczas przesuwania: etykiety (ikona, nazwa, stan) wszystkich pomieszczeń i ikon były budowane od nowa przy każdym ruchu — teraz każda ma własny kontener i jest przebudowywana tylko wtedy, gdy naprawdę się zmieniła. Etykiety innych pomieszczeń w trakcie przesuwania pozostają nietknięte.
+- Strefa przy krawędzi, w której kamera zaczyna jechać za przeciąganym elementem, jest liczona od **widocznego pola planu** — pod górnym paskiem i, na telefonie, nad otwartym panelem edycji (marker, Flow, pomieszczenie) — a nie od całego ekranu. Wcześniej dolna strefa leżała pod panelem.
+
 ## 0.4.1-beta.280
 
 - Przesuwanie pomieszczenia w edycji:
