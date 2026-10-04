@@ -1,3 +1,9 @@
+## 0.4.1-beta.251
+
+- Przesuwanie markera albo Flow w trybie edycji: kamera podąża za elementem. Gdy palec (albo kursor) zbliży się do krawędzi widoku, plan płynnie przesuwa się w tę stronę, a element razem z nim. Im bliżej krawędzi, tym szybciej. Nie trzeba już puszczać elementu i ręcznie przesuwać ekranu.
+- Telefon: po puszczeniu kamera płynnie centruje przesunięty element w widocznej części planu nad edytorem, więc okienko edytora go nie zasłania.
+- Pozycja przeciąganego elementu jest teraz liczona względem miejsca, w którym palec trzyma go na planie, więc zostaje pod palcem także wtedy, gdy kamera się przesuwa.
+
 ## 0.4.1-beta.250
 
 ### Nowe okno „Dodaj do widoku”
