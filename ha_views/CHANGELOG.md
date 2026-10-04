@@ -1,3 +1,8 @@
+## 0.4.1-beta.254
+
+- Poprawka (telefon): podwójne dotknięcie narożnika pomieszczenia usuwa narożnik, ale przeglądarka zamieniała te dwa dotknięcia także w „podwójne kliknięcie” na planie, które przełącza powiększenie. Widok wracał wtedy do 100% i trzeba było wychodzić z edycji. Teraz podwójne dotknięcie uchwytu pomieszczenia nie zmienia powiększenia ani położenia widoku.
+- To samo przy rysowaniu nowego pomieszczenia: szybkie stawianie kolejnych narożników nie przełącza już powiększenia.
+
 ## 0.4.1-beta.253
 
 - Menu magnesu → Linie pomocnicze: nowy przełącznik **„Tylko elementy widoczne na ekranie”** (ikona oka, domyślnie włączony). Przesuwany marker, Flow albo pomieszczenie przyciąga się wtedy tylko do markerów, Flow i pomieszczeń widocznych na ekranie, a nie do elementów z całego planu. Najbardziej pomaga na telefonie przy powiększeniu. Gdy kamera przesuwa się za elementem, lista celów odświeża się z nowym widokiem. Wyłączenie przywraca przyciąganie do wszystkich elementów.
