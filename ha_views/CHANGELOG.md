@@ -1,3 +1,12 @@
+## 0.4.1-beta.273
+
+- **Nowa „Ikona”** w oknie „Dodaj”: działa jak pomieszczenie, tylko bez rysowania kształtu.
+  - Kliknięcie „Ikona” od razu stawia ją na środku widoku (albo w miejscu wskazanym na planie, gdy włączone „Wskaż miejsce na planie”) i otwiera ten sam mały popup: **Nazwa ikony** → **Encje ikony**. Pusta nazwa = nazwa pierwszej wybranej encji (bez encji: „Ikona N”).
+  - Ma **te same opcje co pomieszczenie**: sekcje Ogólne, Grupa, Ikona, Nazwa, Stan (bez sekcji Wygląd, bo nie ma obszaru do podświetlenia). Domyślnie: grupa włączona, ikona z obrysem, tłem i ramką, nazwa i stan bez tła, rozmiar całości ×0,5.
+  - W edycji przeciągasz ją palcem lub myszą; działa kopia, blokada, kopiuj/wklej styl, usuwanie.
+  - W widoku stuknięcie działa jak w pomieszczeniu (przełącza encje albo otwiera szczegóły).
+- Dotychczasowe ikony (markery) działają bez zmian; Badge, Gauge i Horseshoe dodaje się jak wcześniej.
+
 ## 0.4.1-beta.272
 
 - Domyślny wygląd nowego pomieszczenia: grupa włączona, ikona bez zmian (obrys, tło, ramka), a **nazwa i stan domyślnie bez własnego tła** (stoją na wspólnym tle grupy). Cofnięte domyślne tła nazwy i stanu z 0.4.1-beta.271.
