@@ -1,3 +1,8 @@
+## 0.4.1-beta.271
+
+- Nowe pomieszczenie: **nazwa i stan mają domyślnie tło** takie samo jak ikona (ten sam kolor i przezroczystość).
+- Po popupie z wybranymi encjami panel pomieszczenia otwiera się ze **zwiniętymi sekcjami** (sekcja „Pomieszczenie” jest zwinięta). Gdy encje pominięto, sekcja „Pomieszczenie” dalej otwiera się z podpowiedzią.
+
 ## 0.4.1-beta.270
 
 - Nowe pomieszczenie ma ikonę, nazwę i stan od razu w **trybie grupy** („Grupuj ikonę, nazwę i stan” włączone): wspólne tło i ramka grupy, ikona z obrysem, tłem i ramką.
