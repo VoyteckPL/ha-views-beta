@@ -1,3 +1,32 @@
+## 0.4.1-beta.250
+
+### Nowe okno „Dodaj do widoku”
+- W trybie edycji w pasku górnym jest nowy przycisk **„+”**, obok magnesu. To samo okno otwiera „Dodaj” w menu ołówka. Osobne pozycje „Pomieszczenie”, „Flow” i „Tekst / przycisk” z menu ołówka trafiły do tego okna.
+- U góry są kafelki: **Ikona, Badge, Gauge, Horseshoe, Pomieszczenie, Flow, Tekst / przycisk**. Każdy ma miniaturę narysowaną prawdziwym markerem na tle w stylu planu.
+- Pod kafelkami jest wyszukiwarka **wszystkich encji Home Assistanta**, także tych bez integracji (sensory szablonowe, encje z YAML). Szuka po nazwie, `entity_id`, obszarze i integracji. Każde słowo zawęża wynik, np. „salon lampa”.
+- Filtry: Wszystkie, Ostatnie (ostatnio dodane na tym urządzeniu) i **obszary z Home Assistanta**. Przycisk po prawej przełącza na grupowanie po typach: Światła, Przełączniki, Czujniki, Czujniki binarne, Rolety, Klimat, Media, Inne.
+- Przy każdej encji widać jej stan oraz dopisek „na widoku: Ikona, Pomieszczenie…”, jeśli już jest użyta na tym widoku.
+- Kolejność jest dowolna:
+  - **Najpierw encja:** miniatury przerysowują się z jej prawdziwym stanem, pasujący typ dostaje etykietę **★ Polecane** i jest od razu wybrany, a typy niepasujące są wyszarzone (Gauge, Horseshoe i Flow wymagają wartości liczbowej).
+  - **Najpierw typ:** dla Gauge, Horseshoe i Flow lista pokazuje tylko encje liczbowe.
+- Pomieszczenie, Flow i Tekst / przycisk można dodać bez encji. Pomieszczenie z encją od razu przechodzi w rysowanie narożników, dostaje tę encję oraz nazwę jej obszaru (np. „Kuchnia”).
+- Przycisk na dole mówi, co się stanie, np. „Dodaj: Ikona”. Ikona światła, gniazdka lub przełącznika dostaje od razu akcję „Przełącz”.
+- Przełącznik **„Wskaż miejsce na planie”** (zapamiętywany): po dodaniu dotykasz plan w miejscu, gdzie ma stanąć element. Bez niego element pojawia się na środku widocznej części planu. Esc anuluje.
+- Po dodaniu element jest zaznaczony, a jego edytor otwarty.
+- Na telefonie okno wysuwa się od dołu, a kafelki są w dwóch kolumnach.
+
+### Ta sama encja wiele razy
+- Każdy marker ma teraz własny identyfikator, a encja jest jego ustawieniem. Na jednym widoku może być np. Ikona i Badge tej samej lampy albo kilka Ikon tej samej encji.
+- Wszystkie markery tej encji odświeżają się na żywo, przełączanie działa z każdego z nich, a usunięcie jednego zostawia pozostałe.
+- Nowy przycisk **„Duplikuj marker”** w nagłówku edytora markera robi kopię z całym wyglądem obok oryginału. Tekst / przycisk dostaje przy tym własny identyfikator.
+
+### Migracja układu i kopia zapasowa
+- Układ przechodzi automatycznie na wersję 3 przy pierwszym wczytaniu. Istniejące markery zachowują dotychczasowe identyfikatory, więc nic się nie przesuwa ani nie znika.
+- Przed pierwszym zapisem w wersji 3 serwer zapisuje jednorazowo kopię poprzedniego układu jako `rewrite_state_beta.v2-backup.json` (w `/config/ha_views`).
+
+### Serwer
+- Nowe zapytanie `api/entity_catalog`: wszystkie encje z nazwą, obszarem (własnym lub urządzenia), integracją, stanem i jednostką w jednej odpowiedzi. Encje wyłączone są pomijane. Gdy HA nie odpowie, okno korzysta z dotychczasowej listy encji z integracji.
+
 ## 0.4.1-beta.249
 
 - Poprawka: przycisk magnesu (Przyciąganie i siatka) znowu działa jak przełącznik — pierwsze kliknięcie otwiera menu, drugie je zamyka. Wcześniej dotknięcie przycisku najpierw zamykało menu jako „kliknięcie obok”, a zaraz potem otwierało je ponownie, więc nie dało się go schować tym samym przyciskiem.

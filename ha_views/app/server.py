@@ -1053,6 +1053,62 @@ async def api_all_integration_entities(request):
     return web.json_response({"ok": True, "entities_by_entry": grouped})
 
 
+
+async def api_entity_catalog(request):
+    """Every entity Home Assistant has a state for (also YAML/template ones without an integration), for the Add window:
+    name, domain, area (own or the device's), integration entry, state and unit. Registries are read once."""
+
+    try:
+        states = await ha_all_states()
+    except Exception as err:
+        return web.json_response({"ok": False, "error": str(err), "entities": [], "areas": []}, status=500)
+    registry, devices, areas = [], [], []
+    for command, target in (("config/entity_registry/list", "registry"), ("config/device_registry/list", "devices"), ("config/area_registry/list", "areas")):
+        try:
+            result = await ha_ws_command({"type": command})
+        except Exception:
+            result = []
+        if target == "registry":
+            registry = result if isinstance(result, list) else []
+        elif target == "devices":
+            devices = result if isinstance(result, list) else []
+        else:
+            areas = result if isinstance(result, list) else []
+    area_names = {a.get("area_id"): a.get("name") or a.get("area_id") for a in areas if isinstance(a, dict) and a.get("area_id")}
+    device_info = {}
+    for device in devices:
+        if isinstance(device, dict) and device.get("id"):
+            entries = device.get("config_entries") or []
+            device_info[device["id"]] = (device.get("area_id"), entries[0] if isinstance(entries, list) and entries else device.get("config_entry_id"))
+    by_id = {item.get("entity_id"): item for item in registry if isinstance(item, dict) and item.get("entity_id")}
+    entities = []
+    for state in states if isinstance(states, list) else []:
+        if not isinstance(state, dict) or not state.get("entity_id"):
+            continue
+        entity_id = state["entity_id"]
+        item = by_id.get(entity_id) or {}
+        if item.get("disabled_by"):
+            continue
+        attributes = state.get("attributes") or {}
+        device_area, device_entry = device_info.get(item.get("device_id"), (None, None))
+        area_id = item.get("area_id") or device_area
+        entities.append({
+            "entity_id": entity_id,
+            "name": attributes.get("friendly_name") or item.get("name") or item.get("original_name") or entity_id,
+            "domain": entity_id.split(".", 1)[0],
+            "state": state.get("state"),
+            "unit": attributes.get("unit_of_measurement") or "",
+            "device_class": attributes.get("device_class") or "",
+            "icon": attributes.get("icon") or item.get("icon") or "",
+            "area": area_names.get(area_id, "") if area_id else "",
+            "entry_id": item.get("config_entry_id") or device_entry or "",
+            "platform": item.get("platform") or "",
+            "hidden": bool(item.get("hidden_by")),
+        })
+    entities.sort(key=lambda value: (str(value["name"]).lower(), value["entity_id"]))
+    return web.json_response({"ok": True, "entities": entities, "areas": sorted(set(area_names.values()), key=lambda value: str(value).lower())})
+
+
 # ===== END HA Views INTEGRATIONS API V1 =====
 
 
@@ -1649,8 +1705,29 @@ async def api_rewrite_state_save(request):
             {"ok": False, "error": "Stan jest za duży"},
             status=413,
         )
+    _backup_before_layout_upgrade(current, data)
     _atomic_json(REWRITE_STATE_FILE, data)
     return web.json_response({"ok": True, "revision": data.get("revision")})
+
+
+def _layout_version(data):
+    try:
+        return int(data.get("version") or 0) if isinstance(data, dict) else 0
+    except (TypeError, ValueError):
+        return 0
+
+
+def _backup_before_layout_upgrade(current, data):
+    # Layout v3 keys markers by their own id. Before the first v3 save the previous file is kept once as
+    # rewrite_state[_beta].v2-backup.json, so going back to an older version can restore it.
+    if _layout_version(current) >= 3 or _layout_version(data) < 3:
+        return
+    backup = REWRITE_STATE_FILE[:-5] + ".v2-backup.json"
+    try:
+        if not os.path.exists(backup):
+            _atomic_json(backup, current)
+    except Exception as error:
+        print(f"HA Views: could not back up the layout before the upgrade: {error}", flush=True)
 
 
 def _layout_revision(data):
@@ -1742,6 +1819,7 @@ app.router.add_get("/api/entity_events", api_entity_events)
 app.router.add_get("/api/integrations", api_integrations)
 app.router.add_get("/api/integration_entities", api_integration_entities)
 app.router.add_get("/api/integration_entities_all", api_all_integration_entities)
+app.router.add_get("/api/entity_catalog", api_entity_catalog)
 
 # HA Views ENABLE ENTITY API V2
 app.router.add_post("/api/enable_entity", api_enable_entity)
