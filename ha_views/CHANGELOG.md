@@ -1,3 +1,15 @@
+## 0.4.1-beta.261
+
+### Ikona etykiety pomieszczenia
+- **Źródło ikony** (3 przyciski z ikonami): **Z encji** — domyślnie, ikona taka, jak pokazuje ją Home Assistant dla pierwszej encji pomieszczenia (bez wymyślonych zamienników i bez zmiany przy ON/OFF, o ile sama encja jej nie zmienia); **Logo integracji**; **Własna ikona MDI** — tylko wtedy pojawia się pole do wpisania ikony i opcja „Ikona zależna ON/OFF” (osobna ikona ON i OFF).
+- Sekcja Ikona jest podzielona na podsekcje: **Źródło, Wypełnienie, Obrys, Tło, Ramka, Kształt**. Otwarte podsekcje zostają otwarte po zmianie ustawień.
+- Nowa **ramka ikony** (kolor, przezroczystość, grubość) obok tła ikony (kolor, przezroczystość). **Kształt** tła i ramki: **Kwadrat, Koło, Dowolny** — suwak zaokrąglenia pojawia się dopiero przy „Dowolny”; do tego margines wokół ikony.
+- **Rozmiar ikony do 360 px** (wcześniej 120).
+- Pomieszczenia z wpisaną wcześniej własną ikoną są automatycznie przestawiane na źródło „Własna ikona MDI”, więc nic się nie zmienia w ich wyglądzie.
+
+### Wszędzie przyciski zamiast list rozwijanych
+- W edytorach markerów, Flow i pomieszczeń krótkie listy wyboru (do 8 pozycji) są teraz rzędem przycisków — z ikoną, gdy pasuje (np. akcja dotknięcia, kierunek, kształt, efekt światła, typ animacji, źródło ikony, akcja linku), albo z krótkim tekstem (np. zaokrąglenie 0 / 1 / 2 / 3, czcionka). Nazwa opcji jest w podpowiedzi. Długie listy (np. ponad 8 widoków) zostają listą.
+
 ## 0.4.1-beta.260
 
 - Etykieta → Wspólne tło: **Układ** to teraz 4 przyciski z samymi ikonami w jednym rzędzie, **Styl** — 5 próbek kolorów w jednym rzędzie, a **Wyrównanie** — 3 ikony (do lewej / do środka / do prawej) zamiast listy. Nazwa każdego przycisku jest w podpowiedzi.
