@@ -1,3 +1,13 @@
+## 0.4.1-beta.275
+
+Szybsze i pewniejsze przełączanie ON/OFF:
+- **Marker zmienia wygląd od razu** po stuknięciu (wcześniej czekał na odpowiedź Home Assistanta i potwierdzenie stanu — przy wolniejszym urządzeniu to było nawet 1–3 s). Jeśli HA zgłosi błąd, wygląd wraca do poprzedniego.
+- **Koniec „martwych” stuknięć**:
+  - po przesunięciu planu palcem na markerze zostawała flaga „przeciągnięto”, która połykała następne stuknięcie w ten marker — każde nowe dotknięcie zaczyna się teraz od czysta;
+  - kolejne stuknięcie było ignorowane, dopóki trwało potwierdzanie stanu (do ~2–3 s) — teraz blokada trwa tylko na czas wysłania polecenia;
+  - pomieszczenie przyjmowało kolejne stuknięcie dopiero ~0,7 s po odpowiedzi HA — teraz od razu po wysłaniu polecenia;
+  - dłuższe stuknięcie w pomieszczenie (ponad 0,6 s) nie działało — limit podniesiony do 1,2 s (i 12 px ruchu).
+
 ## 0.4.1-beta.274
 
 - Usunięty komunikat **„Dodaj pierwszą encję”** (z przyciskiem „Otwórz integracje”), który pokazywał się na nowym, pustym widoku po wybraniu tła. Elementy dodajesz przyciskiem **+** („Dodaj”) w górnym pasku. Ekran powitalny z wyborem tła zostaje bez zmian.
