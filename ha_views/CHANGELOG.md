@@ -1,3 +1,12 @@
+## 0.4.1-beta.252
+
+- Kamera przy krawędzi jedzie wolniej i łagodniej: maksymalna prędkość jest mniej więcej o połowę mniejsza, rośnie łagodnie z głębokością wejścia w strefę przy krawędzi i rozpędza się stopniowo przez ok. 0,8 s, zamiast od razu ruszać pełną prędkością.
+- Linie pomocnicze przy wielu markerach migają dużo mniej:
+  - przy szybkim przeciąganiu element niczego nie łapie i nie pokazuje linii — linie pojawiają się dopiero, gdy ruch zwalnia przy linii (czyli kiedy faktycznie celujesz);
+  - złapana linia „trzyma” element, dopóki nie odsuniesz go wyraźnie dalej, więc linia nie miga na granicy;
+  - gdy szybko przeciągniesz i zatrzymasz się dokładnie na linii, pojawia się ona po ok. 0,1 s bezruchu.
+- Dotyczy markerów, Flow i przesuwania całych pomieszczeń. W teście szybkiego przeciągania przez plan linie świeciły w 3 klatkach z 60 zamiast w 54.
+
 ## 0.4.1-beta.251
 
 - Przesuwanie markera albo Flow w trybie edycji: kamera podąża za elementem. Gdy palec (albo kursor) zbliży się do krawędzi widoku, plan płynnie przesuwa się w tę stronę, a element razem z nim. Im bliżej krawędzi, tym szybciej. Nie trzeba już puszczać elementu i ręcznie przesuwać ekranu.
