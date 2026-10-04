@@ -1,3 +1,7 @@
+## 0.4.1-beta.278
+
+- Poprawka (właściwa przyczyna): **„Szczegóły” (more info) nie otwierały się dla ikony** — i dla pomieszczenia — gdy jej encja nie miała na planie zwykłego markera. Okno szczegółów wymagało markera tej encji i bez niego po cichu nic nie robiło (zostawało tylko podświetlenie stuknięcia). Teraz otwiera się dla każdej encji: z nazwą, ikoną i stanem z Home Assistanta; w aplikacji HA otwiera się natywne okno HA.
+
 ## 0.4.1-beta.277
 
 - Poprawka: stuknięcie w **ikonę** (nową, bez kształtu) na telefonie czasem nic nie robiło — np. „Szczegóły” (more info) się nie otwierały. Stuknięcie jest teraz rozpoznawane po dotknięciu i puszczeniu palca na samej ikonie, więc działa także wtedy, gdy telefon / aplikacja HA nie wyśle zwykłego kliknięcia. Jedno stuknięcie = jedna akcja (bez podwójnego przełączenia), a ikona leżąca na pomieszczeniu nie przełącza też pomieszczenia pod spodem.
