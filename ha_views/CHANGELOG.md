@@ -1,3 +1,11 @@
+## 0.4.1-beta.260
+
+- Etykieta → Wspólne tło: **Układ** to teraz 4 przyciski z samymi ikonami w jednym rzędzie, **Styl** — 5 próbek kolorów w jednym rzędzie, a **Wyrównanie** — 3 ikony (do lewej / do środka / do prawej) zamiast listy. Nazwa każdego przycisku jest w podpowiedzi.
+- Poprawka: po zmianie czegoś w sekcji Ikona, Nazwa albo Stan edytor nie przeskakuje już na sekcję Etykieta — otwarta zostaje ta sekcja, w której była zmiana.
+- Nagłówek edytorów (pomieszczenie, marker, Flow): przyciski (Przywróć domyślny, Blokada, Duplikuj, Kopiuj, Wklej, Usuń, Zamknij) są zawsze w jednym rzędzie pod tytułem, także na telefonie.
+- Pod nimi nowy mały pasek **„Podgląd stanu” z przyciskami ON / OFF** — symuluje stan podczas ustawiania wyglądu (nie zmienia encji). Jest w edytorze pomieszczenia i markera i zastępuje dotychczasowe przyciski podglądu rozrzucone po sekcjach. W pomieszczeniu podgląd zmienia też tekst stanu w etykiecie.
+- Włączenie „Wspólnego tła” wyłącza osobne tła ikony, nazwy i stanu (żeby nie było tła na tle); każde z nich można potem włączyć z powrotem.
+
 ## 0.4.1-beta.259
 
 - Etykieta pomieszczenia → przełącznik **„Wspólne tło”**: ikona, nazwa i stan stają się jedną **kartą** ze wspólnym tłem (zamiast trzech osobnych elementów).
