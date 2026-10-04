@@ -1,3 +1,11 @@
+## 0.4.1-beta.268
+
+- Po narysowaniu pomieszczenia pojawia się **mały popup w dwóch krokach**:
+  1. **Nazwa** — pole od razu aktywne; zostaw puste, a pomieszczenie dostanie nazwę automatyczną (np. „Pomieszczenie 6”). Enter = Dalej.
+  2. **Co zapala to pomieszczenie?** — lista encji z polami do zaznaczenia (można kilka). Na górze encje z obszaru o tej samej nazwie co pomieszczenie, potem światła; wyszukiwarka po nazwie, obszarze i entity_id. Wybrane widać jako chipy, przycisk „Gotowe (n)”.
+- Każdy krok można pominąć („Pomiń”), Esc zamyka popup z tym, co już wpisane. Potem otwiera się panel pomieszczenia na sekcji „Pomieszczenie”.
+- Na telefonie popup jest pod górnym paskiem, żeby klawiatura go nie zasłaniała.
+
 ## 0.4.1-beta.267
 
 - Okno **„Dodaj”** ma teraz dwa kroki. Najpierw wybierasz tylko, **co** dodać (Ikona, Badge, Gauge, Horseshoe, Pomieszczenie, Flow, Tekst) — bez listy encji.
