@@ -1,3 +1,9 @@
+## 0.4.1-beta.276
+
+- Nowa ikona: po wyborze encji jest **trzeci krok „Co ma być widać?”** — trzy przyciski: **Ikona, Nazwa, Stan** (domyślnie wszystkie włączone, co najmniej jeden musi zostać). Licznik kroków 1/3 → 3/3, przycisk końcowy **„Utwórz ikonę”**; „Pomiń” zostawia wszystkie trzy.
+- Ikona **powstaje dopiero po zakończeniu** popupu (wcześniej pojawiała się na planie od razu po kliknięciu „Ikona”). Esc kończy z tym, co już wybrane. Niedokończona ikona nie jest zapisywana.
+- Limit rozmiaru **ikony, nazwy i stanu: 420 px** (wcześniej ikona 360 px, nazwa i stan 120 px) — w pomieszczeniach i ikonach.
+
 ## 0.4.1-beta.275
 
 Szybsze i pewniejsze przełączanie ON/OFF:

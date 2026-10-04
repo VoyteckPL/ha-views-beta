@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-275">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-276">
 </head>
 <body>
   <header class="topbar">
@@ -317,6 +317,10 @@
         <label class="room-wizard-search"><i class="mdi mdi-magnify"></i><input id="room-wizard-search" type="search" autocomplete="off" spellcheck="false" placeholder="Szukaj: nazwa, obszar, entity_id…" aria-label="Szukaj encji"></label>
         <div id="room-wizard-list" class="room-wizard-list"></div>
       </div>
+      <div class="room-wizard-parts-step">
+        <small>Wybierz, co pokazać. Resztę zmienisz potem w panelu.</small>
+        <div id="room-wizard-parts" class="room-wizard-parts"></div>
+      </div>
       <div class="room-wizard-foot"><button type="button" class="room-wizard-skip" data-wizard-skip>Pomiń</button><button type="button" id="room-wizard-next" class="room-wizard-next"></button></div>
     </div>
   </div>
@@ -365,6 +369,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-275"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-276"></script>
 </body>
 </html>
