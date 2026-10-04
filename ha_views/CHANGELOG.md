@@ -1,3 +1,14 @@
+## 0.4.1-beta.256
+
+- Pomieszczenie → nowa sekcja **„Etykieta”**: ikona, nazwa i stan rysowane na środku pomieszczenia, jako jego część (nie osobny marker).
+  - **Pokaż ikonę** — automatyczna z encji (np. żarówka zapalona / zgaszona, gniazdko, wentylator) albo własna ikona MDI z listy; osobny kolor ON i OFF.
+  - **Pokaż nazwę** — nazwa pomieszczenia.
+  - **Pokaż stan** — jedna lampa: „Wł. · 80%” (z jasnością) albo „Wył.”; kilka świateł / przełączników: „Wł. 2/3”; czujnik: wartość z jednostką.
+  - Kolor tekstu, **tło etykiety** z przezroczystością, układ **pionowy / poziomy**, **rozmiar** oraz przesunięcie **lewo / prawo** i **góra / dół** od środka pomieszczenia.
+- Etykieta stoi w środku ciężkości kształtu pomieszczenia, skaluje się razem z planem, zmienia się na żywo razem ze stanem encji i ma przejście koloru przy włączaniu / wyłączaniu.
+- Dotknięcie etykiety działa jak dotknięcie pomieszczenia (np. przełącza światło). Etykieta jest widoczna także w podglądzie sąsiedniego widoku przy przesuwaniu palcem.
+- Ustawienia etykiety są kopiowane razem ze stylem pomieszczenia („Kopiuj styl” / „Wklej styl”). Domyślnie etykieta jest wyłączona, więc istniejące pomieszczenia wyglądają jak dotąd.
+
 ## 0.4.1-beta.255
 
 - Edycja pomieszczenia: usunięty czerwony przycisk × przy zaznaczonym narożniku. Narożnik usuwa się podwójnym dotknięciem / dwuklikiem, a na komputerze także klawiszem Delete / Backspace po zaznaczeniu albo prawym przyciskiem myszy.
