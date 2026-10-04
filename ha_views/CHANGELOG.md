@@ -1,3 +1,8 @@
+## 0.4.1-beta.285
+
+- Telefon: **klawiatura nie rusza już planu**. Przy edycji pola tekstowego (np. nazwy) klawiatura zmniejszała wysokość okna, przez co plan był przeliczany — zmieniał się jego rozmiar i zoom, a na niższych telefonach był nawet uznawany za ustawiony poziomo (reset widoku). Na czas pisania plan zachowuje wysokość sprzed klawiatury.
+- Po schowaniu klawiatury zaznaczony element (ikona, pomieszczenie, marker) jest ponownie centrowany nad panelem edycji.
+
 ## 0.4.1-beta.284
 
 - **Płynna jazda kamery przy krawędzi** (markery, Flow, pomieszczenia, ikony, etykiety): kamera robiła krok tylko przy ruchu palca, więc gdy palec stał przy krawędzi — stawała, a ruszała przy najmniejszym drgnięciu („zamulanie”). Teraz jedzie sama, równo, dopóki palec jest w strefie krawędzi. W trakcie jazdy kamery nie działa przyciąganie do linii pomocniczych (wcześniej element „łapał się” linii innych pomieszczeń i szarpał); przyciąganie wraca, gdy znów prowadzisz palcem.
