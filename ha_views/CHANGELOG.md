@@ -1,3 +1,9 @@
+## 0.4.1-beta.266
+
+- Sekcja „Etykieta” w edytorze pomieszczenia nazywa się teraz **„Grupa”** — mniej myląco, bo chodzi o połączenie ikony, nazwy i stanu w jeden element.
+- Przełącznik „Wspólne tło” → **„Grupuj ikonę, nazwę i stan”**.
+- W sekcjach Nazwa i Stan: „Przesunięcie w karcie” → **„Przesunięcie w grupie”**. Opisy zaktualizowane (PL i EN).
+
 ## 0.4.1-beta.265
 
 - Włączenie „Wspólnego tła” nie wyłącza już osobnych teł ikony, nazwy i stanu — zostają takie, jak były ustawione.
