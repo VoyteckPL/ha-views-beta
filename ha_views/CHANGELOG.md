@@ -1,3 +1,13 @@
+## 0.4.1-beta.259
+
+- Etykieta pomieszczenia → przełącznik **„Wspólne tło”**: ikona, nazwa i stan stają się jedną **kartą** ze wspólnym tłem (zamiast trzech osobnych elementów).
+- **Gotowe układy** (przyciski z podglądem): **Jedno pod drugim**, **Obok siebie**, **Ikona z lewej** (nazwa nad stanem obok ikony), **Ikona z prawej**.
+- **Gotowe style** jednym kliknięciem: **Bez tła**, **Ciemne**, **Jasne** (ciemny tekst), **Szkło** (półprzezroczyste tło z rozmyciem pod spodem i jasną ramką), **Kolor pokoju** (tło i ramka w kolorze światła pomieszczenia). Po wybraniu stylu wszystko da się dalej zmieniać ręcznie.
+- Ustawienia karty: wyrównanie (do lewej / środka / prawej), tło (kolor, przezroczystość, rozmycie pod spodem), ramka (kolor, przezroczystość, grubość), zaokrąglenie, margines, odstęp między częściami, rozmiar całości oraz położenie lewo / prawo, góra / dół.
+- **Wewnątrz karty**: w sekcjach Ikona, Nazwa i Stan każdą część można przesunąć w karcie („Przesunięcie w karcie: poziomo / pionowo”), a także zmienić jej rozmiar, kolor i własne tło.
+- Kartę przeciąga się palcem / myszą w trybie edycji jako całość (z siatką i liniami pomocniczymi tylko tego pomieszczenia).
+- Z wyłączonym „Wspólnym tłem” ikona, nazwa i stan działają jak dotąd — osobno, z osobnym położeniem. Przełączanie między trybami nie gubi ustawień żadnego z nich.
+
 ## 0.4.1-beta.258
 
 ### Etykieta pomieszczenia
