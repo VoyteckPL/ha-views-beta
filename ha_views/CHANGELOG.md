@@ -1,3 +1,13 @@
+## 0.4.1-beta.269
+
+- Nowo narysowane pomieszczenie ma od razu widoczne **ikonę, nazwę i stan** w domyślnym układzie (jedno pod drugim, bez nachodzenia), z włączonymi opcjami: **obrys ikony, tło i ramka ikony, tło nazwy i stanu**. Wszystko można potem zmienić albo wyłączyć w sekcjach Ikona / Nazwa / Stan.
+- Uniwersalne nazewnictwo encji pomieszczenia (to nie musi być światło — może to być włącznik, czujnik itd.):
+  - krok 2 popupu: **„Encje pomieszczenia”** — „Zaznacz encje, od których zależy stan pomieszczenia — światło, włącznik, czujnik…”;
+  - w panelu: „Zapalają je encje” → **„Encje pomieszczenia”**, podpowiedź też bez „zapalania”;
+  - podpowiadane encje: najpierw z obszaru o tej samej nazwie (dowolny typ), potem światła, włączniki, czujniki binarne, rolety, klimat, media, zamki, odkurzacze.
+  - Kafelek w oknie „Dodaj”: „Obszar ze stanem encji”.
+- Poprawka: podczas rysowania pomieszczenia stuknięcie w etykietę innego pomieszczenia otwierało jego panel zamiast postawić punkt. Etykiety są teraz „przezroczyste” dla kliknięć w trakcie rysowania.
+
 ## 0.4.1-beta.268
 
 - Po narysowaniu pomieszczenia pojawia się **mały popup w dwóch krokach**:
