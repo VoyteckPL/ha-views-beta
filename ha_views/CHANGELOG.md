@@ -1,3 +1,8 @@
+## 0.4.1-beta.270
+
+- Nowe pomieszczenie ma ikonę, nazwę i stan od razu w **trybie grupy** („Grupuj ikonę, nazwę i stan” włączone): wspólne tło i ramka grupy, ikona z obrysem, tłem i ramką.
+- Grupa **dopasowuje się do narysowanego kształtu**: „Rozmiar całości” jest ustawiany tak, by grupa zajmowała najwyżej ~70% szerokości i ~60% wysokości pomieszczenia (od ×0,3 do domyślnego ×1 — w dużych pomieszczeniach nie rośnie ponad domyślny rozmiar). Dopasowanie liczy się po narysowaniu i ponownie po popupie (nazwa i stan zmieniają rozmiar). Potem możesz to zmienić suwakiem w sekcji Grupa.
+
 ## 0.4.1-beta.269
 
 - Nowo narysowane pomieszczenie ma od razu widoczne **ikonę, nazwę i stan** w domyślnym układzie (jedno pod drugim, bez nachodzenia), z włączonymi opcjami: **obrys ikony, tło i ramka ikony, tło nazwy i stanu**. Wszystko można potem zmienić albo wyłączyć w sekcjach Ikona / Nazwa / Stan.
