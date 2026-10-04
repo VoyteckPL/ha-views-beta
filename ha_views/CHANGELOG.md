@@ -1,3 +1,11 @@
+## 0.4.1-beta.255
+
+- Edycja pomieszczenia: usunięty czerwony przycisk × przy zaznaczonym narożniku. Narożnik usuwa się podwójnym dotknięciem / dwuklikiem, a na komputerze także klawiszem Delete / Backspace po zaznaczeniu albo prawym przyciskiem myszy.
+- Wskaźniki kątów przy narożnikach zaznaczonego pomieszczenia i pomieszczenia w trakcie rysowania (także dla linii do kursora):
+  - **kąt prosty (90°)** — mały zielony kwadracik w rogu, jak na rysunku technicznym;
+  - **45° i 135°** — zielony łuk z etykietą „45°” / „135°”.
+- Kąty są liczone na planie w pikselach (z uwzględnieniem proporcji tła), z tolerancją ±1,5°. Znaczniki zmieniają się na żywo przy przeciąganiu narożnika i mają stały rozmiar niezależnie od powiększenia.
+
 ## 0.4.1-beta.254
 
 - Poprawka (telefon): podwójne dotknięcie narożnika pomieszczenia usuwa narożnik, ale przeglądarka zamieniała te dwa dotknięcia także w „podwójne kliknięcie” na planie, które przełącza powiększenie. Widok wracał wtedy do 100% i trzeba było wychodzić z edycji. Teraz podwójne dotknięcie uchwytu pomieszczenia nie zmienia powiększenia ani położenia widoku.
