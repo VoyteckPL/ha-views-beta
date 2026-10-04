@@ -1,3 +1,11 @@
+## 0.4.1-beta.265
+
+- Włączenie „Wspólnego tła” nie wyłącza już osobnych teł ikony, nazwy i stanu — zostają takie, jak były ustawione.
+- Wspólne tło (karta) ma teraz podsekcje: **Tło, Ramka, Wymiary, Położenie**.
+  - **Tło** i **Ramka** mają przełącznik **„Zależne ON/OFF”**: kolor i przezroczystość (a dla ramki także grubość) osobno dla ON i OFF; tło ma też rozmycie.
+  - Wymiary: zaokrąglenie, margines, odstęp, rozmiar całości. Położenie: lewo / prawo, góra / dół.
+- Poprawka: karta zmieniała rozmiar, gdy ramka ikony (albo karty) miała inną grubość dla ON i OFF. Ramki ikony i karty są teraz rysowane do środka, więc grubość ramki nie zmienia rozmiaru — karta ma stały rozmiar przy każdym stanie.
+
 ## 0.4.1-beta.264
 
 - Poprawka: zmniejszanie przezroczystości wypełnienia ikony etykiety zmieniało też obrys. Obrys ma teraz **własną przezroczystość** (podsekcja Obrys → „Przezrocz. obrysu”, a przy „Zależne ON/OFF” osobno ON i OFF) i nie zależy od wypełnienia. Cień ikony ma stałą siłę i sam dopasowuje się do tego, co jest widoczne.
