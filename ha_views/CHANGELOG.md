@@ -1,3 +1,7 @@
+## 0.4.1-beta.293
+
+- Poprawka: **„Przywróć domyślny wygląd”** ukrywał ikonę (i etykietę pomieszczenia) — kasował też przełączniki Ikona / Nazwa / Stan, a te są domyślnie wyłączone. Teraz przywraca wygląd nowo dodanego elementu: grupa włączona, ikona z obrysem, tłem i ramką, nazwa i stan widoczne (ikona: rozmiar całości ×0,5; pomieszczenie: grupa dopasowana do kształtu). Położenie ikony, kształt pomieszczenia, nazwa i encje zostają. Ikonę niewidoczną po wcześniejszym resecie naprawisz, klikając „Przywróć” jeszcze raz.
+
 ## 0.4.1-beta.292
 
 - Włączanie / wyłączanie **grupowania** nie przesuwa już elementów: po rozgrupowaniu ikona, nazwa i stan zostają dokładnie tam, gdzie były w grupie, a po zgrupowaniu grupa staje na środku miejsca, które zajmowały części. Wcześniej oba tryby miały osobne, niezależne położenia.
