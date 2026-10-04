@@ -1,3 +1,7 @@
+## 0.4.1-beta.274
+
+- Usunięty komunikat **„Dodaj pierwszą encję”** (z przyciskiem „Otwórz integracje”), który pokazywał się na nowym, pustym widoku po wybraniu tła. Elementy dodajesz przyciskiem **+** („Dodaj”) w górnym pasku. Ekran powitalny z wyborem tła zostaje bez zmian.
+
 ## 0.4.1-beta.273
 
 - **Nowa „Ikona”** w oknie „Dodaj”: działa jak pomieszczenie, tylko bez rysowania kształtu.
