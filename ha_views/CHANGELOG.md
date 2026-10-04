@@ -1,3 +1,11 @@
+## 0.4.1-beta.263
+
+- Ikona etykiety: usunięte suwaki położenia (lewo / prawo, góra / dół i przesunięcie w karcie) — ikonę ustawia się przeciągając ją na planie.
+- Poprawka: przezroczystość wypełnienia ikony robiła ikonę czarną, a wyłączenie wypełnienia dawało czarną ikonę. Przyczyną był cień tekstu, który rysował cały kształt ikony pod przezroczystym wypełnieniem. Teraz cień idzie za faktyczną przezroczystością: przezroczysta ikona jest przezroczysta, a bez wypełnienia widać tylko obrys (albo nic, gdy obrys też jest wyłączony).
+- Pasek **Podgląd stanu ON / OFF** jest przypięty na górze edytora — zostaje widoczny przy przewijaniu w dół.
+- Podsekcje działają jak akordeon: otwarcie jednej zamyka poprzednią. Po otwarciu sekcji (np. Ikona) wszystkie jej podsekcje są zwinięte. Zmiana ustawienia nadal nie zamyka otwartej podsekcji.
+- Tło ikony: nowa opcja **„Rozmycie”** — rozmywa to, co jest pod tłem ikony.
+
 ## 0.4.1-beta.262
 
 - Nowe pomieszczenie ma domyślnie większą etykietę: **ikona 120 px, nazwa 60 px, stan 50 px**, rozstawione jedno pod drugim tak, żeby na siebie nie nachodziły. „Przywróć domyślny” też wraca do tych wartości. Pomieszczenia, które miały już widoczną etykietę, zachowują dotychczasowy rozmiar i położenie.
