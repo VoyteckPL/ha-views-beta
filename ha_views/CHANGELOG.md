@@ -1,3 +1,7 @@
+## 0.4.1-beta.282
+
+- Koniec mrugania ikony **przesuwanego** pomieszczenia: gdy zmienia się tylko położenie etykiety (przesuwanie pomieszczenia albo samej etykiety / grupy), istniejące elementy dostają nowe położenie zamiast być tworzone od nowa — ikona nie jest przeładowywana w trakcie ruchu. Pełne przebudowanie następuje tylko przy zmianie wyglądu lub stanu.
+
 ## 0.4.1-beta.281
 
 - Koniec mrugania ikon podczas przesuwania: etykiety (ikona, nazwa, stan) wszystkich pomieszczeń i ikon były budowane od nowa przy każdym ruchu — teraz każda ma własny kontener i jest przebudowywana tylko wtedy, gdy naprawdę się zmieniła. Etykiety innych pomieszczeń w trakcie przesuwania pozostają nietknięte.
