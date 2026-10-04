@@ -1,3 +1,7 @@
+## 0.4.1-beta.279
+
+- Telefon: po stuknięciu pomieszczenia w edycji kamera dopasowuje je teraz do **rzeczywistego wolnego miejsca** między górnym paskiem a panelem edycji (z małym marginesem), więc całe pomieszczenie jest widoczne. Wcześniej zakładała stałe ~42% wysokości ekranu, a na niższych ekranach (np. w aplikacji HA) panel zasłaniał dół wyższych pomieszczeń o ~30–40 px.
+
 ## 0.4.1-beta.278
 
 - Poprawka (właściwa przyczyna): **„Szczegóły” (more info) nie otwierały się dla ikony** — i dla pomieszczenia — gdy jej encja nie miała na planie zwykłego markera. Okno szczegółów wymagało markera tej encji i bez niego po cichu nic nie robiło (zostawało tylko podświetlenie stuknięcia). Teraz otwiera się dla każdej encji: z nazwą, ikoną i stanem z Home Assistanta; w aplikacji HA otwiera się natywne okno HA.
