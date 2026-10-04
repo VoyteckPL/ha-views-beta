@@ -1,3 +1,7 @@
+## 0.4.1-beta.272
+
+- Domyślny wygląd nowego pomieszczenia: grupa włączona, ikona bez zmian (obrys, tło, ramka), a **nazwa i stan domyślnie bez własnego tła** (stoją na wspólnym tle grupy). Cofnięte domyślne tła nazwy i stanu z 0.4.1-beta.271.
+
 ## 0.4.1-beta.271
 
 - Nowe pomieszczenie: **nazwa i stan mają domyślnie tło** takie samo jak ikona (ten sam kolor i przezroczystość).
