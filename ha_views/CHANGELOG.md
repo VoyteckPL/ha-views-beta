@@ -1,3 +1,7 @@
+## 0.4.1-beta.277
+
+- Poprawka: stuknięcie w **ikonę** (nową, bez kształtu) na telefonie czasem nic nie robiło — np. „Szczegóły” (more info) się nie otwierały. Stuknięcie jest teraz rozpoznawane po dotknięciu i puszczeniu palca na samej ikonie, więc działa także wtedy, gdy telefon / aplikacja HA nie wyśle zwykłego kliknięcia. Jedno stuknięcie = jedna akcja (bez podwójnego przełączenia), a ikona leżąca na pomieszczeniu nie przełącza też pomieszczenia pod spodem.
+
 ## 0.4.1-beta.276
 
 - Nowa ikona: po wyborze encji jest **trzeci krok „Co ma być widać?”** — trzy przyciski: **Ikona, Nazwa, Stan** (domyślnie wszystkie włączone, co najmniej jeden musi zostać). Licznik kroków 1/3 → 3/3, przycisk końcowy **„Utwórz ikonę”**; „Pomiń” zostawia wszystkie trzy.
