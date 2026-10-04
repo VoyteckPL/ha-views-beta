@@ -1,3 +1,7 @@
+## 0.4.1-beta.264
+
+- Poprawka: zmniejszanie przezroczystości wypełnienia ikony etykiety zmieniało też obrys. Obrys ma teraz **własną przezroczystość** (podsekcja Obrys → „Przezrocz. obrysu”, a przy „Zależne ON/OFF” osobno ON i OFF) i nie zależy od wypełnienia. Cień ikony ma stałą siłę i sam dopasowuje się do tego, co jest widoczne.
+
 ## 0.4.1-beta.263
 
 - Ikona etykiety: usunięte suwaki położenia (lewo / prawo, góra / dół i przesunięcie w karcie) — ikonę ustawia się przeciągając ją na planie.
