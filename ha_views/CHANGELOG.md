@@ -1,3 +1,17 @@
+## 0.4.1-beta.258
+
+### Etykieta pomieszczenia
+- Nowa sekcja **„Etykieta”** z przełącznikiem **„Ikona, nazwa i stan jako jeden element”**. Włączony: przeciągnięcie dowolnej części przesuwa całą etykietę (części mają wtedy pomarańczową przerywaną ramkę). Wyłączony: każdą część przesuwasz osobno.
+- **Linie pomocnicze przy przeciąganiu etykiety — tylko dla tego pomieszczenia:** krawędzie i środek jego obrysu, środek etykiety oraz pozostałe (nieprzesuwane) części jego etykiety. Działają jak przy markerach: pojawiają się, gdy ruch zwalnia, przyciągają, a włącza je przełącznik linii w menu magnesu. Siatka działa jak wcześniej.
+- W trybie edycji części etykiety są nad markerami, więc zawsze da się je chwycić; w widoku zostają pod markerami.
+- **Ikona — pełne ustawienia jak w Ikonie:** ikona zależna ON/OFF (osobna ikona ON i OFF), kolor ON / OFF, przezroczystość ON / OFF, wypełnienie, obrys (kolor i grubość), rozmiar, tło i położenie.
+- Ikona, Nazwa i Stan: tło ma teraz także **kolor** (oprócz przezroczystości).
+
+### Wygląd pomieszczenia — efekty światła
+- Nowa opcja **„Efekt światła”** jak w tle Badge / Ikony: **Jednolity** (jak dotąd), **Centralny**, **Róg**, **Od ściany**, **Ambient**.
+- Ustawienia: pozycja pozioma i pionowa (Centralny / Róg / Ambient), kierunek i pozycja na ścianie (Od ściany), **Rozproszenie** i **Wypełnienie**. Efekt działa z kolorem ON / OFF, intensywnością i miękkością krawędzi pomieszczenia, a przy włączaniu / wyłączaniu kolor zmienia się płynnie.
+- Efekty światła i wszystkie nowe ustawienia etykiety są kopiowane razem ze stylem pomieszczenia.
+
 ## 0.4.1-beta.257
 
 - Etykieta pomieszczenia jest teraz podzielona na trzy niezależne części: **ikonę, nazwę i stan**. W edytorze pomieszczenia każda ma własną sekcję („Ikona”, „Nazwa”, „Stan”) z ustawieniami:
