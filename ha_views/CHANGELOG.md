@@ -1,3 +1,13 @@
+## 0.4.1-beta.262
+
+- Nowe pomieszczenie ma domyślnie większą etykietę: **ikona 120 px, nazwa 60 px, stan 50 px**, rozstawione jedno pod drugim tak, żeby na siebie nie nachodziły. „Przywróć domyślny” też wraca do tych wartości. Pomieszczenia, które miały już widoczną etykietę, zachowują dotychczasowy rozmiar i położenie.
+- Ikona etykiety: w każdej podsekcji jest przełącznik **„Zależne ON/OFF”**:
+  - **Wypełnienie** — włączony: kolor i przezroczystość ON / OFF; wyłączony: jeden kolor i jedna przezroczystość;
+  - **Obrys** — kolor i grubość ON / OFF albo jedne wspólne;
+  - **Tło** — kolor i przezroczystość ON / OFF albo jedne wspólne;
+  - **Ramka** — kolor, przezroczystość i grubość ON / OFF albo jedne wspólne.
+- Podgląd stanu ON / OFF w nagłówku edytora pokazuje te różnice od razu.
+
 ## 0.4.1-beta.261
 
 ### Ikona etykiety pomieszczenia
