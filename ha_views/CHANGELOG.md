@@ -1,3 +1,9 @@
+## 0.4.1-beta.280
+
+- Przesuwanie pomieszczenia w edycji:
+  - **bez mrugania** — na czas przesuwania efekt światła / stanu pomieszczenia jest ukryty (widać obrys i etykietę), po puszczeniu wraca płynnie. Wcześniej był budowany od nowa przy każdym ruchu i np. włączone pomieszczenie migało;
+  - **kamera podąża** za pomieszczeniem przy krawędzi ekranu (jak przy markerach i etykietach), więc można je przeciągnąć poza widoczny obszar.
+
 ## 0.4.1-beta.279
 
 - Telefon: po stuknięciu pomieszczenia w edycji kamera dopasowuje je teraz do **rzeczywistego wolnego miejsca** między górnym paskiem a panelem edycji (z małym marginesem), więc całe pomieszczenie jest widoczne. Wcześniej zakładała stałe ~42% wysokości ekranu, a na niższych ekranach (np. w aplikacji HA) panel zasłaniał dół wyższych pomieszczeń o ~30–40 px.
