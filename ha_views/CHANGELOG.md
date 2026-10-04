@@ -1,3 +1,7 @@
+## 0.4.1-beta.290
+
+- Przytrzymanie markera (albo ikony, etykiety, Flow) na planie nie zaznacza już tekstu i nie otwiera menu przeglądarki „Kopiuj / Udostępnij”. Tekst na planie nie jest zaznaczalny, a menu kontekstowe na planie jest wyłączone (pola w panelach edycji działają normalnie).
+
 ## 0.4.1-beta.289
 
 - Chwycenie i od razu przesunięcie **ikony albo etykiety pomieszczenia** nie otwiera już panelu edycji — panel otwiera się tylko po stuknięciu (puszczenie bez przesuwania). Gdy panel tego elementu był już otwarty, zostaje otwarty także po przesunięciu. Markery i Flow działały już tak wcześniej.
