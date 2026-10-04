@@ -1,3 +1,9 @@
+## 0.4.1-beta.288
+
+- **Ołówek (tryb edycji) to już tylko przełącznik** — bez menu „Dodaj / Język”. Gdy edycja jest włączona, ołówek jest podświetlony; dla podglądu (viewer) przycisku nie ma, jak wcześniej. Elementy dodajesz przyciskiem **+** w górnym pasku.
+- **Język** jest teraz w menu widoku → **Opcje** (obok „Przełączania palcem”), z nazwami „English” / „Polski”.
+- Usunięte nieużywane już ukryte przyciski starego menu (Pomieszczenie / Flow / Tekst) — wszystko dodaje się przez okno „Dodaj”.
+
 ## 0.4.1-beta.287
 
 Telefon, edycja pól tekstowych z klawiaturą ekranową:
