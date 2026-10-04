@@ -1,3 +1,9 @@
+## 0.4.1-beta.284
+
+- **Płynna jazda kamery przy krawędzi** (markery, Flow, pomieszczenia, ikony, etykiety): kamera robiła krok tylko przy ruchu palca, więc gdy palec stał przy krawędzi — stawała, a ruszała przy najmniejszym drgnięciu („zamulanie”). Teraz jedzie sama, równo, dopóki palec jest w strefie krawędzi. W trakcie jazdy kamery nie działa przyciąganie do linii pomocniczych (wcześniej element „łapał się” linii innych pomieszczeń i szarpał); przyciąganie wraca, gdy znów prowadzisz palcem.
+- **Centrowanie ikony po stuknięciu** — także ikony już zaznaczonej (wcześniej centrowała się tylko przy pierwszym zaznaczeniu, np. po przewinięciu planu i ponownym stuknięciu nic się nie działo). Centrowanie następuje po puszczeniu palca. To samo dla pomieszczeń: stuknięcie w już zaznaczone pomieszczenie ponownie je centruje.
+- **Ramka zaznaczenia**: aktywna ikona (i etykieta zaznaczonego pomieszczenia) ma wyraźną niebieską przerywaną ramkę.
+
 ## 0.4.1-beta.283
 
 Ikona (bez kształtu) w edycji działa teraz jak pomieszczenie:
