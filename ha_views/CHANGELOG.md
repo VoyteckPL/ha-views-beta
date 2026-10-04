@@ -1,3 +1,15 @@
+## 0.4.1-beta.257
+
+- Etykieta pomieszczenia jest teraz podzielona na trzy niezależne części: **ikonę, nazwę i stan**. W edytorze pomieszczenia każda ma własną sekcję („Ikona”, „Nazwa”, „Stan”) z ustawieniami:
+  - Pokaż;
+  - Ikona: własna ikona MDI albo automatyczna oraz kolor ON / OFF; Nazwa i Stan: kolor;
+  - Rozmiar (px);
+  - Tło (z przezroczystością) — dla ikony okrągłe, dla tekstu zaokrąglony prostokąt;
+  - Lewo / prawo, Góra / dół (px od środka pomieszczenia).
+- **Przeciąganie palcem / myszą:** w trybie edycji każdą część etykiety można złapać i przesunąć na planie (części są wtedy oznaczone przerywaną ramką). Przeciąganie zaznacza pomieszczenie, trzyma się siatki, gdy siatka jest włączona, kamera podąża przy krawędzi ekranu, a po puszczeniu (telefon) element jest wyśrodkowany nad edytorem. Suwaki położenia w edytorze odświeżają się po puszczeniu.
+- Ustawienia z bety 256 (wspólny kolor, rozmiar, układ pionowy / poziomy, przesunięcie i tło) są automatycznie przeliczane na trzy części, więc etykiety stoją tam, gdzie stały.
+- Ustawienia wszystkich trzech części są kopiowane razem ze stylem pomieszczenia.
+
 ## 0.4.1-beta.256
 
 - Pomieszczenie → nowa sekcja **„Etykieta”**: ikona, nazwa i stan rysowane na środku pomieszczenia, jako jego część (nie osobny marker).
