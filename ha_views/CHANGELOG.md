@@ -1,3 +1,10 @@
+## 0.4.1-beta.287
+
+Telefon, edycja pól tekstowych z klawiaturą ekranową:
+- **Centrowanie bez opóźnienia** — gdy klawiatura się wysuwa, zaznaczony marker / ikona / pomieszczenie jest centrowany nad panelem od razu, krok w krok z klawiaturą (wcześniej dopiero ~0,3 s po jej ułożeniu).
+- **Enter chowa klawiaturę** — w polach panelu edycji klawiatura pokazuje „Gotowe”, a Enter kończy edycję (wcześniej przechodził do następnego pola, np. wyszukiwania encji).
+- **Chowanie klawiatury bez szarpania i mrugania** — zmiana wysokości okna wywołana klawiaturą w ogóle nie przelicza już planu (także w trakcie jej chowania, np. po stuknięciu obok pola); po schowaniu jest jedno, czyste wycentrowanie zaznaczonego elementu.
+
 ## 0.4.1-beta.286
 
 - Telefon, **otwarta klawiatura**: panel edycji wjeżdża nad klawiaturę i zasłaniał zaznaczoną ikonę / pomieszczenie / marker. Teraz po otwarciu klawiatury (i przy każdej zmianie jej wysokości) zaznaczony element jest centrowany w miejscu, które zostaje między górnym paskiem a panelem.
