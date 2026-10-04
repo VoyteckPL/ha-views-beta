@@ -1,3 +1,8 @@
+## 0.4.1-beta.286
+
+- Telefon, **otwarta klawiatura**: panel edycji wjeżdża nad klawiaturę i zasłaniał zaznaczoną ikonę / pomieszczenie / marker. Teraz po otwarciu klawiatury (i przy każdej zmianie jej wysokości) zaznaczony element jest centrowany w miejscu, które zostaje między górnym paskiem a panelem.
+- Wspólne liczenie wolnego miejsca nad panelem dla pomieszczeń, ikon i markerów (markery wcześniej stawały na stałej wysokości ekranu, niezależnie od wysokości panelu).
+
 ## 0.4.1-beta.285
 
 - Telefon: **klawiatura nie rusza już planu**. Przy edycji pola tekstowego (np. nazwy) klawiatura zmniejszała wysokość okna, przez co plan był przeliczany — zmieniał się jego rozmiar i zoom, a na niższych telefonach był nawet uznawany za ustawiony poziomo (reset widoku). Na czas pisania plan zachowuje wysokość sprzed klawiatury.
