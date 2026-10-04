@@ -1,3 +1,8 @@
+## 0.4.1-beta.253
+
+- Menu magnesu → Linie pomocnicze: nowy przełącznik **„Tylko elementy widoczne na ekranie”** (ikona oka, domyślnie włączony). Przesuwany marker, Flow albo pomieszczenie przyciąga się wtedy tylko do markerów, Flow i pomieszczeń widocznych na ekranie, a nie do elementów z całego planu. Najbardziej pomaga na telefonie przy powiększeniu. Gdy kamera przesuwa się za elementem, lista celów odświeża się z nowym widokiem. Wyłączenie przywraca przyciąganie do wszystkich elementów.
+- Linie pomocnicze są cieńsze: ok. 0,8 px na ekranie niezależnie od powiększenia (wcześniej na powiększonym widoku telefonu miały ok. 2 px) i bez ciemnej obwódki, tylko z delikatną poświatą.
+
 ## 0.4.1-beta.252
 
 - Kamera przy krawędzi jedzie wolniej i łagodniej: maksymalna prędkość jest mniej więcej o połowę mniejsza, rośnie łagodnie z głębokością wejścia w strefę przy krawędzi i rozpędza się stopniowo przez ok. 0,8 s, zamiast od razu ruszać pełną prędkością.
