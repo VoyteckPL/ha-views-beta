@@ -1,3 +1,11 @@
+## 0.4.1-beta.267
+
+- Okno **„Dodaj”** ma teraz dwa kroki. Najpierw wybierasz tylko, **co** dodać (Ikona, Badge, Gauge, Horseshoe, Pomieszczenie, Flow, Tekst) — bez listy encji.
+  - **Pomieszczenie** od razu przechodzi do rysowania.
+  - **Tekst** i **Flow** dodają się od razu (encję Flow wybierasz potem w jego panelu).
+  - Ikona, Badge, Gauge i Horseshoe przechodzą do drugiego kroku: wybór encji, z przyciskiem **„Zmień typ”**.
+- Po narysowaniu pomieszczenia otwiera się jego panel z rozwiniętą sekcją **„Pomieszczenie”** i małą podpowiedzią, żeby wybrać encje, które je zapalają (na telefonie bez dymka, który zasłaniał wyszukiwarkę).
+
 ## 0.4.1-beta.266
 
 - Sekcja „Etykieta” w edytorze pomieszczenia nazywa się teraz **„Grupa”** — mniej myląco, bo chodzi o połączenie ikony, nazwy i stanu w jeden element.
