@@ -1,3 +1,7 @@
+## 0.4.1-beta.289
+
+- Chwycenie i od razu przesunięcie **ikony albo etykiety pomieszczenia** nie otwiera już panelu edycji — panel otwiera się tylko po stuknięciu (puszczenie bez przesuwania). Gdy panel tego elementu był już otwarty, zostaje otwarty także po przesunięciu. Markery i Flow działały już tak wcześniej.
+
 ## 0.4.1-beta.288
 
 - **Ołówek (tryb edycji) to już tylko przełącznik** — bez menu „Dodaj / Język”. Gdy edycja jest włączona, ołówek jest podświetlony; dla podglądu (viewer) przycisku nie ma, jak wcześniej. Elementy dodajesz przyciskiem **+** w górnym pasku.
