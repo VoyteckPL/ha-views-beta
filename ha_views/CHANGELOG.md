@@ -1,3 +1,8 @@
+## 0.4.1-beta.292
+
+- Włączanie / wyłączanie **grupowania** nie przesuwa już elementów: po rozgrupowaniu ikona, nazwa i stan zostają dokładnie tam, gdzie były w grupie, a po zgrupowaniu grupa staje na środku miejsca, które zajmowały części. Wcześniej oba tryby miały osobne, niezależne położenia.
+- „Rozmiar całości” (sekcja Grupa) działa teraz także na części rozgrupowane, więc przełączanie grupowania nie zmienia ich wielkości.
+
 ## 0.4.1-beta.291
 
 Panel ikony / pomieszczenia:
