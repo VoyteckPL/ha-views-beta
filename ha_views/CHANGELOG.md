@@ -1,3 +1,12 @@
+## 0.4.1-beta.291
+
+Panel ikony / pomieszczenia:
+- **Podgląd stanu (ON/OFF)** jest widoczny tylko, gdy encja może być włączona / wyłączona (światło, włącznik, czujnik binarny, roleta, klimat, media…). Dla np. czujnika temperatury go nie ma.
+- **Ogólne** (ikona): bez wiersza „Stan”. **Dotknięcie w widoku**: kwadratowe przyciski, wyrównane z resztą sekcji (także w panelu markera).
+- **Grupa**: na górze rząd 4 kwadratowych przełączników — **Grupuj, Ikona, Nazwa, Stan** (przełączniki „Pokaż” przeniesione tu z sekcji Ikona / Nazwa / Stan; co najmniej jedna część musi zostać widoczna). Wszystkie przyciski w sekcji (Układ, Styl, Wyrównanie) mają ten sam rozmiar i są wyrównane w rzędach.
+- **Nazwa** i **Stan** mają podsekcje **Tekst, Tło, Ramka, Położenie**; nowa **ramka** nazwy / stanu (kolor, przezroczystość, grubość — rysowana do środka, nie zmienia rozmiaru).
+- **Ramka zaznaczenia markera / Flow** ma tę samą grubość (2 px, przerywana niebieska) co ramka zaznaczonej ikony i obrys pomieszczenia.
+
 ## 0.4.1-beta.290
 
 - Przytrzymanie markera (albo ikony, etykiety, Flow) na planie nie zaznacza już tekstu i nie otwiera menu przeglądarki „Kopiuj / Udostępnij”. Tekst na planie nie jest zaznaczalny, a menu kontekstowe na planie jest wyłączone (pola w panelach edycji działają normalnie).
