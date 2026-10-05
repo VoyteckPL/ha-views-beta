@@ -1,3 +1,7 @@
+## 0.4.1-beta.333
+
+- **Ikona etykiety / pomieszczenia na środku także na telefonie**: aplikacja mierzy (raz na ikonę), gdzie przeglądarka danego urządzenia faktycznie rysuje kształt ikony, i dosuwa go dokładnie na środek kółka / ramki. Dotyczy wszystkich ikon MDI, także niesymetrycznych (dom, termometr, garaż…).
+
 ## 0.4.1-beta.332
 
 - **Ikona etykiety / pomieszczenia dokładnie na środku swojej ramki**: glif ikony był ustawiany względem linii pisma czcionki systemowej, co na telefonie (inna czcionka niż na komputerze) potrafiło przesunąć dużą ikonę w dół i w bok wewnątrz tła / ramki. Teraz glif ma własny kwadrat 1 em, wyśrodkowany niezależnie od czcionki systemu.
