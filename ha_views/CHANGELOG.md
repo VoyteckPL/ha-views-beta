@@ -1,3 +1,11 @@
+## 0.4.1-beta.323
+
+- **Siatka dashboardu** (menu magnesu → „Siatka dashboardu”): siatka kolumny × wiersze (np. 3 × 8) z odstępem, ustawiana osobno dla każdego widoku i widoczna w trybie edycji. Przeciągana grupa etykiety pokazuje kratki, na które trafi, a po upuszczeniu przyciąga się do nich i wypełnia je (tło grupy ma rozmiar kratek). W sekcji Grupa: „Szerokość (kratki)”, „Wysokość (kratki)”, przypnij / odepnij od siatki. Zmiana liczby kolumn / wierszy / odstępu przesuwa przypięte grupy razem z siatką; wyłączenie siatki zostawia je na miejscu.
+- **Granice tła dla etykiet**: przeciągana grupa (albo rozgrupowana część) zatrzymuje się na krawędzi tła — nie da się nią wyjechać poza tło (gdy „Granice tła” są włączone).
+- **Grupa → Rozmiar**: przycisk „Przywróć domyślną wartość” działa (wraca do 1×).
+- **Grupa → Tło i Ramka** jako przyciski na pasku sekcji Grupa (jak w Ikonie, Nazwie i Stanie); wyłączone nie pokazują podsekcji.
+- Krótko po puszczeniu przeciąganego elementu albo kropki rozmiaru kliknięcie nie jest już „połykane” (wcześniej przez pół sekundy).
+
 ## 0.4.1-beta.322
 
 - **Dodawanie etykiety, krok 2/3 (encja)**: wybranie encji od razu przechodzi do kroku 3/3 („Co ma być widać?”) — drugiej encji nie da się dodać (klawiatura się chowa).
