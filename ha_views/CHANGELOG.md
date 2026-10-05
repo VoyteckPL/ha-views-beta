@@ -1,3 +1,7 @@
+## 0.4.1-beta.334
+
+- **Ikona etykiety / pomieszczenia rysowana jako SVG**: zamiast znaku z czcionki ikon (którego położenie zależy od silnika przeglądarki — w aplikacji HA na telefonie był przesunięty w prawo i w dół) ikona jest teraz rysowana jako wektor 24×24, zawsze dokładnie na środku kółka / ramki. Kolor, przezroczystość, wypełnienie, obrys i cień działają jak dotąd. Przez ułamek sekundy po pierwszym wyświetleniu nowej ikony może być widoczny stary znak z czcionki.
+
 ## 0.4.1-beta.333
 
 - **Ikona etykiety / pomieszczenia na środku także na telefonie**: aplikacja mierzy (raz na ikonę), gdzie przeglądarka danego urządzenia faktycznie rysuje kształt ikony, i dosuwa go dokładnie na środek kółka / ramki. Dotyczy wszystkich ikon MDI, także niesymetrycznych (dom, termometr, garaż…).
