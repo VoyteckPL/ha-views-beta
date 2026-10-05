@@ -1,3 +1,7 @@
+## 0.4.1-beta.357
+
+- **Integracje → „+” otwiera „Dodaj do widoku”**: zamiast od razu tworzyć etykietę, otwiera się menu wyboru (Etykieta, Pomieszczenie, Wskaźnik, Przepływ, Tekst) z tą encją już wybraną. Etykieta przechodzi do kreatora bez kroku encji, pomieszczenie do rysowania z tą encją, wskaźnik i przepływ dostają ją od razu.
+
 ## 0.4.1-beta.356
 
 - **Integracje → „+” przy encji dodaje Etykietę**: zamiast starego badge otwiera się plan w trybie edycji i kreator etykiety z tą encją już wybraną — tylko nadanie nazwy (domyślnie nazwa encji) i wybór części (ikona / nazwa / stan), bez kroku wyboru encji. Encja użyta w etykiecie jest na liście oznaczona jako dodana.

@@ -4239,7 +4239,7 @@ function integrationBody(group) {
   if (group.entries.some(item => !integrationEntities.has(item.entry_id))) return '<div class="empty-row">Kliknij, aby wczytać encje.</div>';
   const seen = new Set(), entities = group.entries.flatMap(item => (integrationEntities.get(item.entry_id) || []).map(entity => ({ ...entity, _entryId: item.entry_id }))).filter(entity => !seen.has(entity.entity_id) && seen.add(entity.entity_id)).sort((a,b) => String(a.name).localeCompare(String(b.name), 'pl', { sensitivity: 'base' }));
   if (!entities.length) return '<div class="empty-row">Brak encji.</div>';
-  return entities.map(e => { const added = markersForEntity(e.entity_id).length > 0 || Object.values(activeSceneView()?.rooms || {}).some(room => isIconRoom(room) && (room.entityIds || []).includes(e.entity_id)); return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong data-no-i18n>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj etykietę' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`; }).join('');
+  return entities.map(e => { const added = markersForEntity(e.entity_id).length > 0 || Object.values(activeSceneView()?.rooms || {}).some(room => isIconRoom(room) && (room.entityIds || []).includes(e.entity_id)); return `<div class="entity-row ${e.enabled ? '' : 'disabled-entity'}"><div><strong data-no-i18n>${escapeHtml(e.name)}</strong><small>${escapeHtml(e.entity_id)}${e.state != null ? ` · ${escapeHtml(e.state)}${e.unit ? ` ${escapeHtml(e.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(e.enabled)}<button class="add-entity" data-add="${escapeHtml(e.entity_id)}" data-entry="${escapeHtml(e._entryId)}" ${added || !e.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : e.enabled ? 'Dodaj do widoku' : 'Encja jest wyłączona'}">${added ? '✓' : '+'}</button></div></div>`; }).join('');
 }
 async function toggleIntegration(groupKey) {
   if (openIntegrations.has(groupKey)) { openIntegrations.delete(groupKey); return renderIntegrations(); }
@@ -4411,11 +4411,12 @@ function renderAddDialog(part = 'all') {
   const go = addGoLabel(), button = $('#add-go', els.addDialog);
   button.hidden = state.step === 'type'; button.disabled = !go.ok; button.innerHTML = `<i class="mdi mdi-plus"></i><span>${escapeHtml(translateValue(go.text))}</span>`;
 }
-async function openAddDialog() {
+// presetEntity: opened from an entity's "+" in Integrations - the entity is already chosen, only the kind is asked.
+async function openAddDialog(presetEntity = null) {
   if (!editMode || !els.addDialog) return;
   closeCompactMenus(); closeEditor(); closeFlowEditor(); closeRoomEditor(); cancelRoomDrawing(); cancelAddPicking();
   let pick = false; try { pick = localStorage.getItem(ADD_PICK_KEY) === '1'; } catch {}
-  addState = { step:'type', type:'', entity:null, query:'', filter: addRecent().length ? 'recent' : 'all', group:'areas', pick };
+  addState = { step:'type', type:'', entity:presetEntity, preset:!!presetEntity, query:'', filter: addRecent().length ? 'recent' : 'all', group:'areas', pick };
   const search = $('#add-search', els.addDialog); search.value = ''; $('#add-pick', els.addDialog).checked = pick;
   els.addDialog.classList.add('visible'); els.addDialog.setAttribute('aria-hidden', 'false'); renderAddDialog();
   await loadEntityCatalog();
@@ -4425,8 +4426,8 @@ async function openAddDialog() {
 // panel afterwards), text and Flow are placed without an entity; markers move on to the entity step.
 function chooseAddType(key) {
   const type = ADD_TYPES.find(t => t.key === key); if (!type || !addState) return;
-  addState.type = key; addState.entity = null;
-  if (type.entity !== 'required') return confirmAddDialog();
+  addState.type = key; if (!addState.preset || type.entity === 'none') addState.entity = null;
+  if (type.entity !== 'required' || addState.entity) return confirmAddDialog();
   addState.step = 'entity'; addState.query = ''; const search = $('#add-search', els.addDialog); search.value = '';
   renderAddDialog(); $('.add-body', els.addDialog)?.scrollTo({ top: 0 });
   if (!mobileView()) setTimeout(() => search.focus(), 60);
@@ -4455,7 +4456,7 @@ function addIconElement([x, y], entity = null) {
 }
 function createAddedElement(type, entity, [x, y]) {
   const view = activeSceneView(); if (!view || !editMode) return;
-  if (type === 'icon') return addIconElement([x, y]);
+  if (type === 'icon') return addIconElement([x, y], entity);
   const now = new Date().toISOString(); if (entity) rememberAdded(entity.entity_id);
   if (type === 'text') { addTextElement([x, y]); return; }
   if (type === 'flow') {
@@ -4529,12 +4530,14 @@ async function removeFlow(id) {
   const view = activeSceneView(); if (!view?.flows?.[id]) return;
   delete view.flows[id]; renderMarkers(); renderAdded(); renderIntegrations(); await queueSave(); notify('Usunięto Flow');
 }
-// "+" next to an entity in Integrations adds a label (Etykieta) with that entity: the plan opens in edit mode and the
-// label wizard asks for the name and the parts (the entity is already chosen).
+// "+" next to an entity in Integrations opens "Add to view" on the plan (edit mode) with that entity already chosen:
+// only the kind is picked; a label's wizard then skips its entity step.
 async function addEntity(entityId, entryId) {
   const entity = (integrationEntities.get(entryId) || []).find(x => x.entity_id === entityId); if (!entity) return;
   showMainView('overview'); if (!editMode) els.editToggle.click();
-  addIconElement(viewCenterPercent(), { entity_id: entity.entity_id, name: entity.name || entity.entity_id });
+  await loadEntityCatalog();
+  const known = entityCatalog?.entities?.find(item => item.entity_id === entity.entity_id);
+  openAddDialog(known || { entity_id: entity.entity_id, name: entity.name || entity.entity_id, domain: entity.domain || entity.entity_id.split('.')[0], state: entity.state, unit: entity.unit || '' });
 }
 async function removeMarker(key) {
   const marker = model.entities[key]; if (!marker) return; delete model.entities[key];
