@@ -1,3 +1,7 @@
+## 0.4.1-beta.352
+
+- **Pusta karta w pierwszej klatce obrotu przy zoomie**: na nagraniu przy przybliżonym widoku, gdy przy krawędzi zaczynał się obrót kostki, przez 1–2 klatki karta była pusta (widać było tylko poświatę i żarówkę). Start obrotu usuwał osobną warstwę planu i plan musiał się od nowa narysować w teksturze karty. Od 351 karta zawsze przycina plan do ekranu, więc ta zamiana nie jest już potrzebna — warstwa planu zostaje, a na czas obrotu wyłączane jest tylko rozmycie pod etykietami.
+
 ## 0.4.1-beta.351
 
 - **Naprawa regresji z 350 (kostka przy 100%)**: wyłączenie trybu obrotu przy 100% sprawiło, że obracana karta znów nie przycinała planu i miała rozmyte etykiety jako osobne warstwy — telefon rysował ją tylko częściowo, a etykiety znikały. Teraz karta zawsze przycina plan do krawędzi ekranu (na stałe, bez przełączania przy zoomie i obrocie), a tryb obrotu (bez rozmycia pod etykietami na czas obrotu) znów działa także przy 100%. Bez zmiany z 350: dotknięcie przy 100% nie robi z planu osobnej warstwy, więc start obrotu nie przerysowuje karty.
