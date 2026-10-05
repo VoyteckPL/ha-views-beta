@@ -1,3 +1,7 @@
+## 0.4.1-beta.339
+
+- **Poświaty przy obrocie kostki (ciąg dalszy)**: każda poświata miała własną warstwę GPU z mieszaniem „rozjaśnij”; gdy karta widoku zaczynała obrót 3D, telefon przez kilka klatek składał je źle i znikały (także na wjeżdżającym widoku). Poświaty — już jako małe, gotowe obrazy — są teraz częścią samego planu, więc obracana karta jest jedną gotową teksturą.
+
 ## 0.4.1-beta.338
 
 - **Poświaty pomieszczeń przy obrocie kostki**: podgląd sąsiedniego widoku (to, co wjeżdża podczas przewijania) rysował poświaty rozmyciem na żywo, którego telefon nie nadążał narysować w obrocie 3D — pomieszczenia zapalały się dopiero na końcu animacji. Podgląd używa teraz tych samych gotowych obrazów poświat co sam widok, przygotowanych zawczasu.
