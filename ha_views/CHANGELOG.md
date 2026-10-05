@@ -1,3 +1,7 @@
+## 0.4.1-beta.309
+
+- **Opcje ON/OFF tylko dla encji ON/OFF**: gdy encja się nie włącza i nie wyłącza (np. czujnik temperatury), popup nie pokazuje „Zależne ON/OFF”, „Ikona zależna ON/OFF”, kolorów/przezroczystości/grubości ON i OFF ani tekstów ON/OFF — tylko zwykłe ustawienia. Dotyczy ikony, nazwy, stanu, grupy (pomieszczenia i ikony) oraz markerów. Etykieta takiej encji zawsze używa zwykłych kolorów, więc to, co widać w popupie, odpowiada temu, co na planie (ustawienia ON/OFF z wcześniej nie giną — wrócą, gdy dodasz encję ON/OFF).
+
 ## 0.4.1-beta.308
 
 - **Zmniejszanie rozgrupowanej części kropkami poniżej rozmiaru treści**: ikona albo tekst (nazwa, stan) zmniejsza się proporcjonalnie razem z ramką — ikona zostaje kwadratowa / okrągła, przeciwna krawędź stoi w miejscu. Rozciągnięcie z powrotem w tym samym ruchu przywraca pierwotny rozmiar treści, a dalej powiększa już tylko ramkę. Nowy rozmiar treści widać potem w suwaku „Rozmiar” danej części.
