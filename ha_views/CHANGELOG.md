@@ -1,3 +1,7 @@
+## 0.4.1-beta.328
+
+- **Etykieta / pomieszczenie → Stan → Format**: własne „Tekst ON” / „Tekst OFF” działają też dla bram, rolet, zamków, czujników binarnych itp. (np. `cover` „closed” → Twój tekst OFF, „open” → tekst ON). Wcześniej działały tylko dla świateł i przełączników, a dla pozostałych widać było surowy stan z HA. Puste pola zostawiają stan z HA.
+
 ## 0.4.1-beta.327
 
 **Wskaźnik (gauge / podkowa) — nowy panel, jak panel etykiety:**
