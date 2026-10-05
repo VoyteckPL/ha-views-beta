@@ -1,3 +1,10 @@
+## 0.4.1-beta.300
+
+Linie pomocnicze dla rozgrupowanych części (ikona / nazwa / stan):
+- **Łapią w trakcie jednego płynnego ruchu**: przesuwając część obok innej, kolejno dostajesz wyrównanie krawędź-krawędź, środek i drugą krawędź — bez puszczania i ponownego chwytania (wcześniej przy szybszym ruchu linia się nie pojawiała, a złapana linia trzymała za długo).
+- **Linia leży dokładnie na krawędzi ramki**: przerywana obwódka edycji przylega teraz do ramki części (wcześniej była 6 px na zewnątrz, przez co linia wyglądała na „niedosuniętą”), a położenie nie jest już zaokrąglane do pełnych pikseli.
+- **Cieńsze linie**, bez poświaty. Linie pomieszczenia (pomarańczowe) zostają.
+
 ## 0.4.1-beta.299
 
 Sekcja **Grupa** (ikona / pomieszczenie):
