@@ -1,3 +1,10 @@
+## 0.4.1-beta.310
+
+Ikona / pomieszczenie:
+- **Stan → Treść**: dla encji ON/OFF własne „Tekst ON” i „Tekst OFF” (puste = „Wł.” / „Wył.”; jasność dalej dopisywana); dla encji liczbowej „Jednostka” (puste = z encji, „-” = bez jednostki) i „Zaokrąglenie” (automatycznie / 0 / 0,1 / 0,01 / 0,001).
+- **Kolory wg wartości** (nowa sekcja, tylko dla encji liczbowej, np. temperatury): dolny i górny próg, kolor poniżej / pomiędzy / od górnego, płynne przejście; do wyboru kolorowanie ikony i/lub tekstu stanu.
+- **Grupa → Tło → Cień**: cień pod tłem grupy można wyłączyć.
+
 ## 0.4.1-beta.309
 
 - **Opcje ON/OFF tylko dla encji ON/OFF**: gdy encja się nie włącza i nie wyłącza (np. czujnik temperatury), popup nie pokazuje „Zależne ON/OFF”, „Ikona zależna ON/OFF”, kolorów/przezroczystości/grubości ON i OFF ani tekstów ON/OFF — tylko zwykłe ustawienia. Dotyczy ikony, nazwy, stanu, grupy (pomieszczenia i ikony) oraz markerów. Etykieta takiej encji zawsze używa zwykłych kolorów, więc to, co widać w popupie, odpowiada temu, co na planie (ustawienia ON/OFF z wcześniej nie giną — wrócą, gdy dodasz encję ON/OFF).
