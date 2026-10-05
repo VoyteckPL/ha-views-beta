@@ -1,3 +1,7 @@
+## 0.4.1-beta.308
+
+- **Zmniejszanie rozgrupowanej części kropkami poniżej rozmiaru treści**: ikona albo tekst (nazwa, stan) zmniejsza się proporcjonalnie razem z ramką — ikona zostaje kwadratowa / okrągła, przeciwna krawędź stoi w miejscu. Rozciągnięcie z powrotem w tym samym ruchu przywraca pierwotny rozmiar treści, a dalej powiększa już tylko ramkę. Nowy rozmiar treści widać potem w suwaku „Rozmiar” danej części.
+
 ## 0.4.1-beta.307
 
 Ikona / pomieszczenie — części etykiety:
