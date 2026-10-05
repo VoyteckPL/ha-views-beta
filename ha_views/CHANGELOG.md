@@ -1,3 +1,7 @@
+## 0.4.1-beta.335
+
+- **Podświetlone pomieszczenia nie mrugają przy przesuwaniu planu palcem**: miękka poświata pomieszczenia była rozmywana na żywo i telefon przeliczał ją od nowa na początku / końcu każdego gestu, przez co potrafiła zniknąć na jedną klatkę. Teraz poświata jest rysowana raz (po każdej zmianie wyglądu) do gotowego obrazu, który przesuwa się i skaluje bez przeliczania. Wygląd bez zmian; pomieszczenia z ostrą krawędzią (bez wtapiania) zostają rysowane jak dotąd.
+
 ## 0.4.1-beta.334
 
 - **Ikona etykiety / pomieszczenia rysowana jako SVG**: zamiast znaku z czcionki ikon (którego położenie zależy od silnika przeglądarki — w aplikacji HA na telefonie był przesunięty w prawo i w dół) ikona jest teraz rysowana jako wektor 24×24, zawsze dokładnie na środku kółka / ramki. Kolor, przezroczystość, wypełnienie, obrys i cień działają jak dotąd. Przez ułamek sekundy po pierwszym wyświetleniu nowej ikony może być widoczny stary znak z czcionki.
