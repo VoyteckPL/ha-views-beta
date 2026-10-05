@@ -1,3 +1,7 @@
+## 0.4.1-beta.350
+
+- **Pusta karta w pierwszej klatce obrotu kostki (100%)**: na nagraniu 90 kl./s w pierwszej klatce obrotu cała karta była pusta, z jednym prostokątnym kawałkiem planu. Przy 100% każde dotknięcie robiło z planu osobną warstwę GPU (choć przy 100% nie ma czego przesuwać), a start obrotu od razu ją usuwał — karta musiała się przerysować w pierwszej klatce ruchu. Teraz przy 100% dotknięcie nie tworzy warstwy (dopiero szczypanie lub przesuwanie, gdy jest możliwe), a specjalny tryb obrotu (z 342) włącza się tylko przy przybliżonym widoku — przy 100% kostka obraca się jak dawniej.
+
 ## 0.4.1-beta.349
 
 - **Zapalanie / gaszenie pomieszczeń bez znikających kafli**: na nagraniu przy każdej zmianie światła na klatkę znikały prostokątne fragmenty planu. Poświata na czas płynnego zapalania / gaszenia dostawała chwilową warstwę GPU, a po animacji ją traciła — to za każdym razem przebudowywało warstwy planu. Poświaty mają teraz stałą, własną warstwę (zapalanie to tylko zmiana przezroczystości, bez przerysowania planu), a przy pomieszczeniach z innym kolorem dla OFF obraz poświaty jest podmieniany w tym samym elemencie, gdy nowy jest gotowy (wcześniej element był wymieniany dwa razy).
