@@ -1,3 +1,7 @@
+## 0.4.1-beta.347
+
+- **Tło nie znika przy szczypaniu**: na nagraniu przy przybliżaniu / oddalaniu palcami była klatka, w której plan rysował się bez obrazu tła (same znaczniki na ciemnym polu) — przeglądarka dekodowała duży obraz w nowej skali „w tle” i przez chwilę pokazywała plan bez niego. Tło, tło nocne, poświaty i podgląd sąsiedniego widoku są teraz dekodowane synchronicznie, więc obraz jest zawsze rysowany razem z resztą planu.
+
 ## 0.4.1-beta.346
 
 - **Bez mignięcia przy niedokończonym obrocie kostki**: gdy po dojechaniu do krawędzi przybliżonego planu obrót się zaczął, ale nie przeszedł na sąsiedni widok, plan wracał do zwykłego trybu rysowania w tej samej klatce, w której karta odskakiwała na miejsce — i migał. Teraz wraca dopiero, gdy karta chwilę stoi (ok. 0,3 s) albo przy następnym dotknięciu.
