@@ -1,3 +1,7 @@
+## 0.4.1-beta.354
+
+- **Jedna widoczna część = automatyczne rozgrupowanie**: gdy w zgrupowanej etykiecie / pomieszczeniu wyłączysz widoczność tak, że zostaje tylko jedna część (np. sama ikona), grupa rozgrupowuje się sama w miejscu — od razu widać kółeczka do zmiany rozmiaru tej części. Istniejące grupy z jedną widoczną częścią rozgrupowują się przy otwarciu edytora.
+
 ## 0.4.1-beta.353
 
 - **Puste kafle na starcie obrotu kostki**: w pierwszej klatce obrotu brakowało kafli planu dokładnie pod etykietami z rozmytym tłem — wyłączanie rozmycia na czas obrotu zmuszało telefon do przerysowania tych kafli. Na urządzeniach dotykowych etykiety i znaczniki na planie nie używają już rozmycia tła wcale (półprzezroczyste tło zostaje), więc na starcie obrotu nic się nie przełącza. Rozmycie było też najdroższym efektem dla telefonu. Na komputerze bez zmian.

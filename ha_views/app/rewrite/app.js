@@ -1801,6 +1801,8 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
   const newlySelected = selectedRoomId !== id;
   if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
+  // A group left with a single visible part (made before parts ungrouped themselves) is ungrouped in place.
+  if (room.labelLinked && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, false); room.labelLinked = false; room.updatedAt = new Date().toISOString(); scheduleSave(true); }
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
@@ -1881,6 +1883,9 @@ function onRoomEditorClick(event) {
     // At least one of icon / name / state stays visible.
     if (['labelIcon','labelName','labelState'].includes(key) && room[key] && ['labelIcon','labelName','labelState'].filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); }
+    // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
+    const parts = ['labelIcon','labelName','labelState'];
+    if (parts.includes(key) && room[key] && room.labelLinked && parts.filter(k => room[k]).length === 2) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, false); room.labelLinked = false; }
     room[key] = !room[key]; room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const layoutButton = event.target.closest('[data-card-layout]'), styleButton = event.target.closest('[data-card-style]'), alignButton = event.target.closest('[data-card-align]');
