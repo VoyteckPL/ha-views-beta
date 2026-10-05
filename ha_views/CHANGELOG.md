@@ -1,3 +1,7 @@
+## 0.4.1-beta.298
+
+- Popup dodawania na telefonie z otwartą klawiaturą: lista encji zajmuje tylko miejsce, które zostaje nad klawiaturą (mniej wierszy naraz, reszta przewijana), więc przyciski **Pomiń / Dalej** są zawsze widoczne. Przy otwartej klawiaturze opis kroku jest ukryty, żeby popup był niższy.
+
 ## 0.4.1-beta.297
 
 - Dodawanie ikony / pomieszczenia na telefonie: **klawiatura nie chowa się między nazwą a wyborem encji** — po Enter albo „Dalej” od razu aktywne jest wyszukiwanie encji. Przyciski i lista w popupie nie zabierają fokusu polu tekstowemu, więc zaznaczanie encji też nie zamyka klawiatury.
