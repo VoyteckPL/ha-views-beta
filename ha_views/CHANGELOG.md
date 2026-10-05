@@ -1,3 +1,7 @@
+## 0.4.1-beta.343
+
+- **Przybliżony widok przechodzi przesunięciem zamiast kostką**: telefon nie potrafi narysować przybliżonego planu (wielokrotnie większego od ekranu) w obrocie 3D — znikały poświaty, znaczniki, a nawet dolna część planu. Gdy widok jest przybliżony, przejście do sąsiedniego widoku jest więc zwykłym płaskim przesunięciem (płynnym jak przesuwanie planu); bez przybliżenia nadal działa kostka.
+
 ## 0.4.1-beta.342
 
 - **Kostka przy przybliżonym widoku — właściwa przyczyna**: przy zoomie plan jest ogromną warstwą (kilka razy większą od ekranu). Gdy karta obraca się w 3D, telefon nie potrafi policzyć, który jej fragment jest widoczny, i rysuje ją tylko częściowo — stąd znikające / do połowy zapalone poświaty. Na czas obrotu kostki plan nie jest już osobną warstwą: jest rysowany do tekstury samej karty (rozmiaru ekranu), która jest zawsze narysowana w całości i tylko się obraca. Po obrocie wszystko wraca do zwykłego trybu.
