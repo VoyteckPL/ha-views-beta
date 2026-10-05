@@ -1,3 +1,7 @@
+## 0.4.1-beta.344
+
+- **Mniej mignięć przy przybliżaniu**: po każdym zoomie plan był przerysowywany dwa razy (zmiana z 341, potrzebna tylko dla kostki — a ta przy zoomie już nie występuje), więc wracamy do jednego przerysowania. Do tego tło, poświaty i znaczniki są teraz jedną warstwą: wcześniej tło było osobną warstwą i telefon potrafił pokazać je już gotowe, zanim dorysował poświaty / znaczniki (krótkie zniknięcie). Teraz plan jest pokazywany w całości albo wcale.
+
 ## 0.4.1-beta.343
 
 - **Przybliżony widok przechodzi przesunięciem zamiast kostką**: telefon nie potrafi narysować przybliżonego planu (wielokrotnie większego od ekranu) w obrocie 3D — znikały poświaty, znaczniki, a nawet dolna część planu. Gdy widok jest przybliżony, przejście do sąsiedniego widoku jest więc zwykłym płaskim przesunięciem (płynnym jak przesuwanie planu); bez przybliżenia nadal działa kostka.
