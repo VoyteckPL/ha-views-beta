@@ -1,3 +1,11 @@
+## 0.4.1-beta.326
+
+- **Pomieszczenie ma jedną encję** (jak etykieta): w Ogólnych wyszukiwarka jest tylko, gdy nie ma encji; w kreatorze wybranie encji od razu kończy krok. Pomieszczenia z kilkoma encjami z wcześniej je zachowują.
+- **Przyciąganie wszystkiego do wszystkiego**: etykiety (grupa albo rozgrupowane części) są znowu celami linii pomocniczych — przy przesuwaniu markerów, Flow, pomieszczeń (całych i narożników) i innych etykiet; przesuwana etykieta łapie też markery, Flow, inne etykiety, pomieszczenia i tło.
+- **Kolory linii pomocniczych wg źródła**: etykieta — różowa, pomieszczenie — pomarańczowa, tło (krawędzie i środek ekranu) — zielona, wskaźnik / marker — niebieska, Flow — turkusowa.
+- **Menu magnesu uporządkowane**: na wierzchu Siatka, Linie pomocnicze, Przyciągaj do (etykiety, wskaźniki, Flow, pomieszczenia, tło) i Punkty (środki, krawędzie); „Granice tła”, „Wyrównaj zaznaczony do tła” i „Obróć zaznaczony” schowane pod „Więcej”. Usunięto „Tylko elementy widoczne na ekranie” i na razie „Siatkę dashboardu”.
+- **Okno dodawania — 5 kafelków**: Etykieta (miniatura z ikoną, nazwą i stanem), Pomieszczenie, Wskaźnik (gauge; podkowę wybierzesz w panelu), Flow, Tekst / przycisk. Badge nie jest już dodawany (istniejące działają); czujnik bez mocy / procentów proponuje Etykietę.
+
 ## 0.4.1-beta.325
 
 - **Etykieta nazywa się etykietą wszędzie**: potwierdzenie usuwania („Usunąć etykietę?”), komunikaty (usunięto / kopia), podpowiedzi przycisków w nagłówku (duplikuj / kopiuj / wklej styl / usuń etykietę), lista „Dodane do widoku” (własna ikona), domyślna nazwa przy pustym polu.
