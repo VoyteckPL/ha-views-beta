@@ -1,3 +1,11 @@
+## 0.4.1-beta.304
+
+Etykieta (ikona / nazwa / stan):
+- **Nowy znacznik**: ikona, nazwa i stan mają od początku własne tło i ramkę — także w grupie — i stykają się ze sobą, bez nachodzenia.
+- **Części nie nachodzą na siebie**: przesuwana rozgrupowana część zatrzymuje się na krawędzi sąsiedniej (ślizga się wzdłuż niej), a rozciągana kropką krawędź zatrzymuje się na sąsiedniej części.
+- **Ponowne zgrupowanie zachowuje wygląd**: tło i ramka nazwy oraz stanu zostają takie, jak były po rozgrupowaniu.
+- **Panel**: sekcje Ikona / Nazwa / Stan pokazują się tylko dla widocznych części. W sekcji Grupa „Margines” jest pod „Rozmiarem”, „Zaokrąglenie” przeszło do podsekcji Ramka, a „Odstęp” usunięto (części w grupie stykają się); podsekcja Wymiary zniknęła.
+
 ## 0.4.1-beta.303
 
 Zmiana rozmiaru rozgrupowanej części (kropki na bokach):
