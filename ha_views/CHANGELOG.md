@@ -1,3 +1,7 @@
+## 0.4.1-beta.348
+
+- **Plan nie znika przy przejściu przez 100% zoomu**: na nagraniu 60 kl./s przez 2–6 klatek znikało całe tło i poświaty (zostawały same znaczniki) dokładnie wtedy, gdy szczypanie przekraczało 100% w górę lub w dół. W tym momencie widok przełączał tryb „plan może wyjść poza kartę”, co przebudowywało warstwy grafiki w trakcie gestu. Dla planów pionowych ten tryb jest teraz włączony na stałe (przy 100% i tak nic nie wychodzi poza kartę), a zaokrąglone rogi rysuje sam plan — wygląd bez zmian.
+
 ## 0.4.1-beta.347
 
 - **Tło nie znika przy szczypaniu**: na nagraniu przy przybliżaniu / oddalaniu palcami była klatka, w której plan rysował się bez obrazu tła (same znaczniki na ciemnym polu) — przeglądarka dekodowała duży obraz w nowej skali „w tle” i przez chwilę pokazywała plan bez niego. Tło, tło nocne, poświaty i podgląd sąsiedniego widoku są teraz dekodowane synchronicznie, więc obraz jest zawsze rysowany razem z resztą planu.
