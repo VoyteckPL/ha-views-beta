@@ -1,3 +1,7 @@
+## 0.4.1-beta.342
+
+- **Kostka przy przybliżonym widoku — właściwa przyczyna**: przy zoomie plan jest ogromną warstwą (kilka razy większą od ekranu). Gdy karta obraca się w 3D, telefon nie potrafi policzyć, który jej fragment jest widoczny, i rysuje ją tylko częściowo — stąd znikające / do połowy zapalone poświaty. Na czas obrotu kostki plan nie jest już osobną warstwą: jest rysowany do tekstury samej karty (rozmiaru ekranu), która jest zawsze narysowana w całości i tylko się obraca. Po obrocie wszystko wraca do zwykłego trybu.
+
 ## 0.4.1-beta.341
 
 - **Kostka przy przybliżonym widoku bez mrugania**: po zmianie zoomu plan tracił swoją warstwę GPU (żeby przerysować się ostro) i tworzył ją dopiero przy następnym dotknięciu — czyli dokładnie w chwili startu obrotu kostki, gdy telefon musiał narysować ogromną, przybliżoną warstwę. Teraz warstwa jest odtwarzana w nowej, ostrej skali od razu po przybliżeniu, w spoczynku, więc obrót startuje z gotowym obrazem. Przy wpisywaniu tekstu (klawiatura) warstwa nadal jest wyłączana.
