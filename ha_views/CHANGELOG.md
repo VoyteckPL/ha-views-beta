@@ -1,3 +1,7 @@
+## 0.4.1-beta.337
+
+- **Mniej przerysowań planu przy dotyku**: plan dostawał osobną warstwę GPU przy każdym dotknięciu i tracił ją 350 ms po puszczeniu — każde takie przełączenie przerysowuje cały plan i mogło mignąć. Po zwykłym przesuwaniu (bez zmiany zoomu) warstwa teraz zostaje, więc kolejne przesunięcia już nic nie przełączają. Jest zdejmowana tylko wtedy, gdy byłaby nieaktualna: po zmianie zoomu (żeby plan znów był ostry), po zmianie rozmiaru okna i przy wpisywaniu tekstu (klawiatura).
+
 ## 0.4.1-beta.336
 
 - **Poprawka mrugania poświat (beta 335 pogorszyła sprawę)**: na początku gestu przesuwania / przybliżania telefon przerysowywał cały plan razem z pełnoekranowymi obrazami poświat i przez kilka klatek ich nie pokazywał. Teraz każda poświata jest przycięta do swojego pomieszczenia (dużo mniejszy obraz) i ma własną, stałą warstwę GPU — przy gestach jest tylko przesuwana / skalowana, bez przerysowywania.
