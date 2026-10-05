@@ -1,3 +1,10 @@
+## 0.4.1-beta.331
+
+Edycja na telefonie — **najpierw zaznacz, potem przesuwaj**:
+- Palec na **niezaznaczonym** elemencie (etykieta, marker / wskaźnik, Flow) go nie przesuwa: przeciąganie przesuwa plan, a krótkie dotknięcie zaznacza element. Przesuwać da się tylko zaznaczony element — koniec z przypadkowym przesuwaniem sąsiednich obiektów przy przewijaniu planu.
+- **Pomieszczenie** (zaznaczone) przesuwa się dopiero po krótkim przytrzymaniu palca (~0,35 s, krótka wibracja); szybki ruch palcem po pomieszczeniu przesuwa plan. Narożniki działają jak dotąd.
+- Na komputerze (mysz) bez zmian.
+
 ## 0.4.1-beta.330
 
 - **Nowa etykieta / pomieszczenie: ikona domyślnie szara** (zamiast żółtej) dla encji, które się nie włączają i nie wyłączają (np. czujnik temperatury). Światła i przełączniki dalej mają kolor ON (bursztynowy) i OFF (szary). Miniatura „Etykieta” w oknie dodawania też ma szarą ikonę. Istniejące etykiety się nie zmieniają.
