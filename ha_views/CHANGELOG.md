@@ -1,3 +1,9 @@
+## 0.4.1-beta.311
+
+- **Obrys pomieszczenia** (Wygląd → Obrys): linia wzdłuż kształtu pomieszczenia — ciągła, kreskowana albo kropkowana; kolor, przezroczystość, grubość, opcjonalnie zależne ON/OFF (tylko dla encji ON/OFF). Obrys jest rysowany nad światłem i nie gaśnie razem z nim.
+- **Markery**: „Grubość czcionki” dla nazwy i stanu (domyślna / normalna / średnia / pogrubiona).
+- **Markery — ikona**: tło ikony, ramka ikony (kolor, przezroczystość, grubość) i kształt (koło / kwadrat / dowolny z zaokrągleniem) z marginesem — tak jak ikona w etykiecie pomieszczenia.
+
 ## 0.4.1-beta.310
 
 Ikona / pomieszczenie:
