@@ -1,3 +1,7 @@
+## 0.4.1-beta.317
+
+- **Wybór koloru w popupach**: po otwarciu palety pole koloru zostaje na swoim miejscu (po prawej), a paleta rozwija się pod nim, wyrównana do prawej krawędzi — wcześniej pole przeskakiwało na lewo.
+
 ## 0.4.1-beta.316
 
 Popupy (marker, Flow, pomieszczenie, etykieta) — wszystko równo do prawej krawędzi:
