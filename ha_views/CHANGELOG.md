@@ -1,3 +1,8 @@
+## 0.4.1-beta.305
+
+- **Usunięto „Jednakowe ramki”** (sekcja Grupa przy rozgrupowanej etykiecie). Rozmiar ramek ustawiasz kropkami na bokach.
+- **Usunięto „Zablokuj geometrię”** z paneli znacznika, Flow, pomieszczenia i ikony. Elementy zablokowane wcześniej są po aktualizacji znowu odblokowane (blokada wróci później w innej formie).
+
 ## 0.4.1-beta.304
 
 Etykieta (ikona / nazwa / stan):
