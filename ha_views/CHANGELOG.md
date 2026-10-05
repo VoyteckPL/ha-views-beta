@@ -1,3 +1,7 @@
+## 0.4.1-beta.355
+
+- **Przywracanie ukrytych części bez nachodzenia**: element, który rozgrupował się sam (bo została jedna widoczna część), po ponownym włączeniu nazwy / stanu znów staje się tą samą grupą (z jej układem), w miejscu, gdzie stoi widoczna część. W ręcznie rozgrupowanym elemencie włączona część jest odsuwana od pozostałych, żeby na nie nie nachodziła.
+
 ## 0.4.1-beta.354
 
 - **Jedna widoczna część = automatyczne rozgrupowanie**: gdy w zgrupowanej etykiecie / pomieszczeniu wyłączysz widoczność tak, że zostaje tylko jedna część (np. sama ikona), grupa rozgrupowuje się sama w miejscu — od razu widać kółeczka do zmiany rozmiaru tej części. Istniejące grupy z jedną widoczną częścią rozgrupowują się przy otwarciu edytora.

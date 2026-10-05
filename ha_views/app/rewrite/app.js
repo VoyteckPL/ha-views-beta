@@ -954,6 +954,20 @@ function keepLabelPlaceOnRegroup(room) {
     room.labelCardFree = true;
   }
 }
+// A group left with one visible part is ungrouped (so that part has resize handles), remembering it was a group;
+// showing a second part again rebuilds that group with its arrangement, around where the visible part stands now.
+function autoUngroupLabel(room) {
+  keepLabelPlaceOnRegroup(room); togglePartFrames(room, false);
+  room.labelAutoUngrouped = { free: !!room.labelCardFree }; room.labelLinked = false;
+}
+function regroupAutoLabel(room) {
+  const auto = room.labelAutoUngrouped || {}, shown = ROOM_LABEL_PARTS.find(([, k]) => room[k])?.[1], scale = clamp(Number(room.labelCardScale) || 1, .3, 4);
+  if (shown) {
+    const px = Number(room[`${shown}X`]) || 0, py = Number(room[`${shown}Y`]) || 0;
+    room.labelCardX = Math.round(px - (auto.free ? (Number(room[`${shown}FX`]) || 0) * scale : 0)); room.labelCardY = Math.round(py - (auto.free ? (Number(room[`${shown}FY`]) || 0) * scale : 0));
+  }
+  room.labelCardFree = !!auto.free; room.labelLinked = true; delete room.labelAutoUngrouped;
+}
 // "Equal frames" (ungrouped parts): icon, name and state get the same box — the size of the largest of them.
 function equalizeLabelFrames(room, group) {
   const parts = [...group.querySelectorAll('.room-label-part, .room-label-card.free > .room-card-part')];
@@ -1802,7 +1816,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   const newlySelected = selectedRoomId !== id;
   if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
   // A group left with a single visible part (made before parts ungrouped themselves) is ungrouped in place.
-  if (room.labelLinked && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, false); room.labelLinked = false; room.updatedAt = new Date().toISOString(); scheduleSave(true); }
+  if (room.labelLinked && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1) { autoUngroupLabel(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); }
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
@@ -1882,11 +1896,17 @@ function onRoomEditorClick(event) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;
     // At least one of icon / name / state stays visible.
     if (['labelIcon','labelName','labelState'].includes(key) && room[key] && ['labelIcon','labelName','labelState'].filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
-    if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); }
+    if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
     const parts = ['labelIcon','labelName','labelState'];
-    if (parts.includes(key) && room[key] && room.labelLinked && parts.filter(k => room[k]).length === 2) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, false); room.labelLinked = false; }
-    room[key] = !room[key]; room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
+    if (parts.includes(key) && room[key] && room.labelLinked && parts.filter(k => room[k]).length === 2) autoUngroupLabel(room);
+    // Showing a part again: an automatically ungrouped label becomes the group it was; otherwise the shown part is
+    // moved off the parts it would cover.
+    const showing = parts.includes(key) && !room[key];
+    if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
+    room[key] = !room[key]; room.updatedAt = new Date().toISOString(); renderRooms();
+    if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part) keepApart(room, key, part); }
+    openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const layoutButton = event.target.closest('[data-card-layout]'), styleButton = event.target.closest('[data-card-style]'), alignButton = event.target.closest('[data-card-align]');
   if (layoutButton || styleButton || alignButton) {
