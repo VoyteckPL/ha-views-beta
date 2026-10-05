@@ -1,3 +1,7 @@
+## 0.4.1-beta.346
+
+- **Bez mignięcia przy niedokończonym obrocie kostki**: gdy po dojechaniu do krawędzi przybliżonego planu obrót się zaczął, ale nie przeszedł na sąsiedni widok, plan wracał do zwykłego trybu rysowania w tej samej klatce, w której karta odskakiwała na miejsce — i migał. Teraz wraca dopiero, gdy karta chwilę stoi (ok. 0,3 s) albo przy następnym dotknięciu.
+
 ## 0.4.1-beta.345
 
 - **Kostka wraca przy przybliżonym widoku**: przy zoomie karta widoku nie przycina planu (tło może wyjść na całą szerokość ekranu), więc obracana karta zawierała cały, wielokrotnie większy od ekranu plan — telefon rysował go w obrocie tylko częściowo (ucięta dolna część, znikające elementy). Na czas obrotu karta jest teraz przycinana do tego, co widać na ekranie, a rozmycie tła pod etykietami (osobne warstwy, które w 3D znikały) jest na ten moment wyłączane.
