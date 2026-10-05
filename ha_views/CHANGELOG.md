@@ -1,3 +1,11 @@
+## 0.4.1-beta.316
+
+Popupy (marker, Flow, pomieszczenie, etykieta) — wszystko równo do prawej krawędzi:
+- **Wybór koloru, pola wyboru (ptaszki), przyciski wyboru i pola tekstowe** (np. „Jednostka” w Treści stanu) kończą się na prawej krawędzi, w każdej sekcji i podsekcji.
+- **Przyciski wyboru z ikoną** (Źródło, Kształt, Dotknięcie, Kierunek, Efekt światła…) mają ten sam rozmiar 30 px co pozostałe ikony.
+- **Grubość czcionki** jako ikony (domyślna / normalna / średnia / pogrubiona); **Obrys pomieszczenia → Linia** też jako ikony.
+- **Zaokrąglenie stanu** jako lista rozwijana (mieści się w jednym wierszu).
+
 ## 0.4.1-beta.315
 
 - **Grupa**: „Tło” i „Ramka” jako dwa przyciski-ikony w jednym wierszu („Tło i ramka”) zamiast dwóch pól wyboru.
