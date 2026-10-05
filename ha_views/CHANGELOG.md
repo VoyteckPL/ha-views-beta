@@ -1,3 +1,7 @@
+## 0.4.1-beta.338
+
+- **Poświaty pomieszczeń przy obrocie kostki**: podgląd sąsiedniego widoku (to, co wjeżdża podczas przewijania) rysował poświaty rozmyciem na żywo, którego telefon nie nadążał narysować w obrocie 3D — pomieszczenia zapalały się dopiero na końcu animacji. Podgląd używa teraz tych samych gotowych obrazów poświat co sam widok, przygotowanych zawczasu.
+
 ## 0.4.1-beta.337
 
 - **Mniej przerysowań planu przy dotyku**: plan dostawał osobną warstwę GPU przy każdym dotknięciu i tracił ją 350 ms po puszczeniu — każde takie przełączenie przerysowuje cały plan i mogło mignąć. Po zwykłym przesuwaniu (bez zmiany zoomu) warstwa teraz zostaje, więc kolejne przesunięcia już nic nie przełączają. Jest zdejmowana tylko wtedy, gdy byłaby nieaktualna: po zmianie zoomu (żeby plan znów był ostry), po zmianie rozmiaru okna i przy wpisywaniu tekstu (klawiatura).
