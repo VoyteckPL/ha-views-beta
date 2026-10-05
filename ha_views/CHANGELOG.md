@@ -1,3 +1,9 @@
+## 0.4.1-beta.318
+
+- **„Przywróć domyślną wartość” działa przy każdym suwaku** etykiety / pomieszczenia — także przy nowych: przezroczystość nazwy i stanu, przezroczystość / grubość ramki, zaokrąglenie i margines ramki (te dwa wracają do wartości automatycznej, rosnącej z tekstem) itd.
+- **Tytuły podsekcji** (Treść, Kolor, Rozmiar, Tło, Ramka…) mają własny, jaśniejszy niebieski kolor — nie zlewają się z nazwami głównych sekcji.
+- **Usunięto na razie „Kolory wg wartości”** z etykiety / pomieszczenia (sekcja i jej działanie); markery mają je bez zmian.
+
 ## 0.4.1-beta.317
 
 - **Wybór koloru w popupach**: po otwarciu palety pole koloru zostaje na swoim miejscu (po prawej), a paleta rozwija się pod nim, wyrównana do prawej krawędzi — wcześniej pole przeskakiwało na lewo.
