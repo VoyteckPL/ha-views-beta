@@ -1,3 +1,7 @@
+## 0.4.1-beta.341
+
+- **Kostka przy przybliżonym widoku bez mrugania**: po zmianie zoomu plan tracił swoją warstwę GPU (żeby przerysować się ostro) i tworzył ją dopiero przy następnym dotknięciu — czyli dokładnie w chwili startu obrotu kostki, gdy telefon musiał narysować ogromną, przybliżoną warstwę. Teraz warstwa jest odtwarzana w nowej, ostrej skali od razu po przybliżeniu, w spoczynku, więc obrót startuje z gotowym obrazem. Przy wpisywaniu tekstu (klawiatura) warstwa nadal jest wyłączana.
+
 ## 0.4.1-beta.340
 
 - **Płynne poświaty na telefonie**: na nagraniu przy dużym przybliżeniu poświata była dorysowywana kawałkami (połowa pomieszczenia oświetlona, połowa nie), a przy obrocie kostki znikała. Powodem było mieszanie kolorów „rozjaśnij”, przez które telefon musi składać plan w drogich kafelkach. Na urządzeniach dotykowych poświata jest teraz zwykłym półprzezroczystym obrazem z „rozjaśnieniem” wypieczonym na podstawie średniego koloru tła pod pomieszczeniem (z jasnością dnia / nocy i przyciemnieniem od słońca) — wygląda praktycznie tak samo, ale ma własną, małą warstwę GPU rysowaną raz, więc przy przesuwaniu, zoomie i kostce tylko się przesuwa.
