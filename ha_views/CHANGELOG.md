@@ -1,3 +1,7 @@
+## 0.4.1-beta.329
+
+- **Punkty kształtu pomieszczenia**: po najechaniu kursor zmienia się na strzałki przesuwania (narożniki) albo plus (punkty środkowe — dodają narożnik), a punkt powiększa się i podświetla; przy przeciąganiu kursor „zaciśniętej dłoni”.
+
 ## 0.4.1-beta.328
 
 - **Etykieta / pomieszczenie → Stan → Format**: własne „Tekst ON” / „Tekst OFF” działają też dla bram, rolet, zamków, czujników binarnych itp. (np. `cover` „closed” → Twój tekst OFF, „open” → tekst ON). Wcześniej działały tylko dla świateł i przełączników, a dla pozostałych widać było surowy stan z HA. Puste pola zostawiają stan z HA.
