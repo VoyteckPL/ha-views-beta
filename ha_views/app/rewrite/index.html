@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-305">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-306">
 </head>
 <body>
   <header class="topbar">
@@ -91,6 +91,7 @@
         </div>
         <div class="vm-page" data-vm-page="options">
           <label class="vm-field"><span><i class="mdi mdi-gesture-swipe-horizontal"></i>Przełączanie palcem</span><select id="view-transition" aria-label="Przełączanie palcem"><option value="off">Wyłączone (tylko zakładki)</option><option value="slide">Przesunięcie</option><option value="cube">Kostka</option></select></label>
+          <label class="vm-field"><span><i class="mdi mdi-dock-right"></i>Panel edycji</span><select id="dock-side-select" aria-label="Panel edycji"><option value="right">Po prawej</option><option value="left">Po lewej</option></select></label>
           <label class="vm-field"><span><i class="mdi mdi-translate"></i>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">English</option><option value="pl">Polski</option></select></label>
           <label class="vm-field" id="ha-start-row" hidden><span><i class="mdi mdi-home-import-outline"></i>Domyślny panel Home Assistant</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian (ustawienia HA)</option><option value="user">HA Views — moje konto</option><option value="device">HA Views — tylko to urządzenie</option></select></label>
           <button id="view-link" class="vm-tile vm-link" type="button" title="Kopiuj link do widoku" aria-label="Kopiuj link do widoku"><i class="mdi mdi-link-variant"></i><span>Kopiuj link do widoku</span><i class="mdi mdi-content-copy vm-chev"></i></button>
@@ -198,7 +199,7 @@
   </main>
 
   <aside id="edit-dock" class="edit-dock" aria-hidden="true">
-    <div class="edit-dock-head"><b>Edycja</b><button type="button" class="editor-icon-button dock-side" data-dock-side title="Przenieś panel na drugą stronę" aria-label="Przenieś panel na drugą stronę"><i class="mdi mdi-dock-left"></i></button></div>
+    <div class="edit-dock-head"><b>Edycja</b></div>
     <div class="edit-dock-empty"><i class="mdi mdi-cursor-default-click-outline"></i><p>Kliknij marker, Flow albo pomieszczenie, żeby je edytować.</p><small>Nowe elementy dodasz z menu edycji (ołówek), a przyciąganie i wyrównanie z menu magnesu.</small></div>
   </aside>
   <aside id="editor" class="editor" aria-hidden="true">
@@ -215,7 +216,7 @@
         <button id="paste-style" class="editor-icon-button" title="Wklej styl" aria-label="Wklej styl"><i class="mdi mdi-content-paste"></i></button>
         <button id="marker-duplicate" class="editor-icon-button" title="Duplikuj marker" aria-label="Duplikuj marker"><i class="mdi mdi-content-duplicate"></i></button>
         <button id="remove-marker" class="editor-icon-button danger" title="Usuń z widoku" aria-label="Usuń z widoku"><i class="mdi mdi-delete-outline"></i></button>
-        <button type="button" class="editor-icon-button dock-side" data-dock-side title="Przenieś panel na drugą stronę" aria-label="Przenieś panel na drugą stronę"><i class="mdi mdi-dock-left"></i></button>
+        <button type="button" class="editor-icon-button head-preview" hidden><i class="mdi mdi-lightbulb-on-outline"></i></button>
         <button id="editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
         <span class="editor-version" title="HA Views app version">v0.3.0-b55</span>
       </div>
@@ -243,7 +244,6 @@
         <button id="flow-copy-style" class="editor-icon-button" title="Kopiuj styl Flow" aria-label="Kopiuj styl Flow"><i class="mdi mdi-content-copy"></i></button>
         <button id="flow-paste-style" class="editor-icon-button" title="Wklej styl Flow" aria-label="Wklej styl Flow"><i class="mdi mdi-content-paste"></i></button>
         <button id="flow-remove" class="editor-icon-button danger" title="Usuń Flow" aria-label="Usuń Flow"><i class="mdi mdi-delete-outline"></i></button>
-        <button type="button" class="editor-icon-button dock-side" data-dock-side title="Przenieś panel na drugą stronę" aria-label="Przenieś panel na drugą stronę"><i class="mdi mdi-dock-left"></i></button>
         <button id="flow-editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
       </div>
     </div>
@@ -264,7 +264,7 @@
         <button id="room-copy-style" class="editor-icon-button" title="Kopiuj styl pomieszczenia" aria-label="Kopiuj styl pomieszczenia"><i class="mdi mdi-content-copy"></i></button>
         <button id="room-paste-style" class="editor-icon-button" title="Wklej styl pomieszczenia" aria-label="Wklej styl pomieszczenia"><i class="mdi mdi-content-paste"></i></button>
         <button id="room-remove" class="editor-icon-button danger" title="Usuń pomieszczenie" aria-label="Usuń pomieszczenie"><i class="mdi mdi-delete-outline"></i></button>
-        <button type="button" class="editor-icon-button dock-side" data-dock-side title="Przenieś panel na drugą stronę" aria-label="Przenieś panel na drugą stronę"><i class="mdi mdi-dock-left"></i></button>
+        <button type="button" class="editor-icon-button head-preview" hidden><i class="mdi mdi-lightbulb-on-outline"></i></button>
         <button id="room-editor-close" class="editor-icon-button" title="Zamknij" aria-label="Zamknij"><i class="mdi mdi-close"></i></button>
       </div>
     </div>
@@ -359,6 +359,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-305"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-306"></script>
 </body>
 </html>

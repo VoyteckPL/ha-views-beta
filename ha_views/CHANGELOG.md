@@ -1,3 +1,12 @@
+## 0.4.1-beta.306
+
+Popup edycji (marker, Flow, pomieszczenie, ikona) — kompaktowo:
+- **X w prawym górnym rogu**, na wysokości nazwy.
+- **Jeden zwarty rząd ikon** pod nazwą (bez rozciągania na całą szerokość).
+- **Podgląd ON/OFF jako jeden przełącznik** w tym samym rzędzie (żarówka, bez podpisu) — tylko dla elementów, które się włączają i wyłączają. Kliknięcie przełącza podgląd na stan przeciwny do widocznego; podświetlony = podgląd aktywny.
+- **„Przenieś panel na drugą stronę”** zniknęło z popupu — teraz w ustawieniach widoku: „Panel edycji: Po prawej / Po lewej”.
+- **Wszystkie ikony w popupie mają jeden rozmiar** (30 px): przyciski nagłówka, „Dotknięcie w widoku”, przełączniki i style w sekcji Grupa, zakładki typu markera.
+
 ## 0.4.1-beta.305
 
 - **Usunięto „Jednakowe ramki”** (sekcja Grupa przy rozgrupowanej etykiecie). Rozmiar ramek ustawiasz kropkami na bokach.
