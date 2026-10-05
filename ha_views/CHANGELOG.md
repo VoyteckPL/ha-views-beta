@@ -1,3 +1,13 @@
+## 0.4.1-beta.299
+
+Sekcja **Grupa** (ikona / pomieszczenie):
+- Na górze suwak **„Rozmiar”** (dawny „Rozmiar całości” z podsekcji Wymiary). Dla ikony **1,0× = domyślny rozmiar** nowej ikony, który jest teraz o 20% większy niż wcześniej (stare ikony pokażą ok. 0,85×).
+- Podsekcja **Wymiary** jest zaraz pod przyciskami grupy (przed Tłem i Ramką).
+- Usunięte suwaki położenia (Grupa → Położenie, a w Nazwie i Stanie „Przesunięcie” / „Lewo-prawo, góra-dół”) — elementy przesuwasz palcem lub myszą na planie.
+- Po **rozgrupowaniu**: linie pomocnicze pokazują **krawędzie i środki** pozostałych części (ikona, nazwa, stan), a przeciągana część przyciąga się środkiem albo krawędzią — łatwe równe ustawienie.
+- Po rozgrupowaniu nowy przycisk **„Jednakowe ramki”**: ikona, nazwa i stan dostają ten sam rozmiar ramki (największej z nich) — jedno kliknięcie zamiast suwaków szerokości i wysokości.
+- Poprawka: suwak przezroczystości ramki nazwy / stanu działał źle (ramka zawsze w pełni widoczna).
+
 ## 0.4.1-beta.298
 
 - Popup dodawania na telefonie z otwartą klawiaturą: lista encji zajmuje tylko miejsce, które zostaje nad klawiaturą (mniej wierszy naraz, reszta przewijana), więc przyciski **Pomiń / Dalej** są zawsze widoczne. Przy otwartej klawiaturze opis kroku jest ukryty, żeby popup był niższy.
