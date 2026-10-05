@@ -1,3 +1,10 @@
+## 0.4.1-beta.296
+
+Na podstawie nagrania z telefonu:
+- **Mniej mignięć i rozmycia przy klawiaturze i zoomie**: plan (z tłem) był stale osobną warstwą grafiki; przy dużym zoomie i każdej zmianie rozmiaru okna przez klawiaturę telefon nie nadążał jej przerysować — pokazywał puste (granatowe) kafle albo rozmytą kopię. Teraz ta warstwa jest włączana tylko na czas przesuwania / szczypania palcem, a poza tym plan jest rysowany ostro w aktualnej skali.
+- Komunikat „Dotknij plan w miejscu, gdzie ma stanąć element” znika od razu po wskazaniu miejsca (wcześniej zasłaniał plan jeszcze kilka sekund).
+- Uwaga: biały pas, który przez chwilę widać w miejscu wysuwającej się / chowającej klawiatury, rysuje aplikacja Home Assistant (zmienia wtedy rozmiar całej strony) — HA Views nie ma na to wpływu.
+
 ## 0.4.1-beta.295
 
 - **Płynna kamera przy klawiaturze**: centrowanie (zaznaczonego elementu i miejsca dodawanej ikony / pomieszczenia) nie przeskakuje już przy każdej zmianie wysokości wysuwającej się / chowającej klawiatury — kamera łagodnie dojeżdża do celu, a kolejne zmiany tylko przesuwają cel. W teście największy ruch na klatkę spadł z 35 px do 9 px. Dotknięcie planu palcem od razu przerywa ten ruch.
