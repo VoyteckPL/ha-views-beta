@@ -1,3 +1,8 @@
+## 0.4.1-beta.356
+
+- **Integracje → „+” przy encji dodaje Etykietę**: zamiast starego badge otwiera się plan w trybie edycji i kreator etykiety z tą encją już wybraną — tylko nadanie nazwy (domyślnie nazwa encji) i wybór części (ikona / nazwa / stan), bez kroku wyboru encji. Encja użyta w etykiecie jest na liście oznaczona jako dodana.
+- **Lista „Dodane”**: etykiety mają własną grupę „Etykiety” (wcześniej były wśród pomieszczeń).
+
 ## 0.4.1-beta.355
 
 - **Przywracanie ukrytych części bez nachodzenia**: element, który rozgrupował się sam (bo została jedna widoczna część), po ponownym włączeniu nazwy / stanu znów staje się tą samą grupą (z jej układem), w miejscu, gdzie stoi widoczna część. W ręcznie rozgrupowanym elemencie włączona część jest odsuwana od pozostałych, żeby na nie nie nachodziła.
