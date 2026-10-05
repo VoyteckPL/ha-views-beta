@@ -1,3 +1,14 @@
+## 0.4.1-beta.327
+
+**Wskaźnik (gauge / podkowa) — nowy panel, jak panel etykiety:**
+- **Ogólne**: nazwa, **Typ** (gauge / podkowa jako dwie ikony — zamiast zakładek u góry), dotknięcie w widoku, encja.
+- **Wskaźnik** (niebieska sekcja) z przyciskami na pasku: Gradient, Podziałka, Liczby skali, Procent. Podsekcje: Rozmiar, Zakres, Łuk (grubość, tor, wartość albo kolory gradientu), **Kąt** — gotowe łuki jednym kliknięciem (gauge: 180°/240°/270°/300°, podkowa: 240°/270°/300°/320°, symetryczne względem góry) oraz dowolne „Kąt start / Kąt koniec”, skala i pozycja; Podziałka / Liczby skali / Procent tylko gdy włączone.
+- **Ikona, Nazwa, Stan** w kolorach jak w etykiecie, z przyciskiem „Pokaż” (i dla ikony: Obrys, Tło, Ramka) na pasku; Rozmiar jako pierwsza podsekcja; Stan → Format (jednostka, zaokrąglenie, teksty ON/OFF tylko dla encji ON/OFF).
+- **Grupa** (tło i ramka całego wskaźnika) z przyciskami Tło / Ramka na pasku i podsekcją Kształt.
+- Otwarta podsekcja nie zamyka się po zmianie przełącznika.
+
+Ogólnie: wartości suwaków pokazują tyle miejsc po przecinku, ile ma krok (np. „1.09” zamiast „1.0869565…”); przyciski wyboru w popupach mają jednakowy rozmiar 30 px.
+
 ## 0.4.1-beta.326
 
 - **Pomieszczenie ma jedną encję** (jak etykieta): w Ogólnych wyszukiwarka jest tylko, gdy nie ma encji; w kreatorze wybranie encji od razu kończy krok. Pomieszczenia z kilkoma encjami z wcześniej je zachowują.
