@@ -1,3 +1,7 @@
+## 0.4.1-beta.351
+
+- **Naprawa regresji z 350 (kostka przy 100%)**: wyłączenie trybu obrotu przy 100% sprawiło, że obracana karta znów nie przycinała planu i miała rozmyte etykiety jako osobne warstwy — telefon rysował ją tylko częściowo, a etykiety znikały. Teraz karta zawsze przycina plan do krawędzi ekranu (na stałe, bez przełączania przy zoomie i obrocie), a tryb obrotu (bez rozmycia pod etykietami na czas obrotu) znów działa także przy 100%. Bez zmiany z 350: dotknięcie przy 100% nie robi z planu osobnej warstwy, więc start obrotu nie przerysowuje karty.
+
 ## 0.4.1-beta.350
 
 - **Pusta karta w pierwszej klatce obrotu kostki (100%)**: na nagraniu 90 kl./s w pierwszej klatce obrotu cała karta była pusta, z jednym prostokątnym kawałkiem planu. Przy 100% każde dotknięcie robiło z planu osobną warstwę GPU (choć przy 100% nie ma czego przesuwać), a start obrotu od razu ją usuwał — karta musiała się przerysować w pierwszej klatce ruchu. Teraz przy 100% dotknięcie nie tworzy warstwy (dopiero szczypanie lub przesuwanie, gdy jest możliwe), a specjalny tryb obrotu (z 342) włącza się tylko przy przybliżonym widoku — przy 100% kostka obraca się jak dawniej.
