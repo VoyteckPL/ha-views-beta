@@ -1,3 +1,11 @@
+## 0.4.1-beta.302
+
+Rozgrupowana etykieta (ikona / nazwa / stan):
+- **Nazwa i stan dostają tło i ramkę** po rozgrupowaniu (tak jak ikona), jeśli wcześniej ich nie miały; ponowne zgrupowanie zdejmuje tylko to, co zostało dodane automatycznie.
+- **Ta sama czcionka stanu** w grupie i osobno (w grupie stan był trochę mniejszy); ramki nazwy i stanu mają też te same odstępy w obu trybach.
+- **Tło grupy zostaje po rozgrupowaniu** i obejmuje wszystkie części — także w trakcie przesuwania, nawet gdy są mocno rozrzucone. Można je wyłączyć i ustawić (Tło grupy, Wymiary: zaokrąglenie i margines, Tło, Ramka) w sekcji Grupa.
+- Margines tła grupy w swobodnym układzie (po ponownym zgrupowaniu) jest teraz liczony prawidłowo.
+
 ## 0.4.1-beta.301
 
 Rozgrupowane części etykiety (ikona / nazwa / stan):
