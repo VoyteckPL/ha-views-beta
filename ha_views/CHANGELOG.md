@@ -1,3 +1,8 @@
+## 0.4.1-beta.315
+
+- **Grupa**: „Tło” i „Ramka” jako dwa przyciski-ikony w jednym wierszu („Tło i ramka”) zamiast dwóch pól wyboru.
+- **Suwaki we wszystkich popupach** (marker, Flow, pomieszczenie, etykieta): nazwa po lewej, wartość (px, %, ×…) między nazwą a suwakiem, suwak dosunięty do prawej krawędzi, przycisk przywracania na końcu.
+
 ## 0.4.1-beta.314
 
 Etykieta / pomieszczenie → sekcja **Grupa** (nowy, zwarty układ jak w Ogólnych — wszystko dosunięte do prawej krawędzi):
