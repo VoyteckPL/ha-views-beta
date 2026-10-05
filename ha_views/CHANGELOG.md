@@ -1,3 +1,8 @@
+## 0.4.1-beta.312
+
+- **„Ikona” nazywa się teraz „Etykieta”** (ang. „Label”) — w menu dodawania („Ikona, nazwa i stan w dowolnym miejscu”), w popupie, w kreatorze („Nazwa etykiety”, „Encja etykiety”, „Utwórz etykietę”) i w komunikatach; nowe dostają nazwy „Etykieta 1”, „Etykieta 2”… Zapisane elementy działają bez zmian. Sekcja „Ikona” w popupie zostaje (to część etykiety).
+- **Etykieta ma jedną encję**: w kreatorze wybór innej encji zastępuje poprzednią; w sekcji Ogólne pole wyszukiwania jest widoczne tylko, gdy etykieta nie ma encji — po dodaniu znika, po usunięciu encji wraca.
+
 ## 0.4.1-beta.311
 
 - **Obrys pomieszczenia** (Wygląd → Obrys): linia wzdłuż kształtu pomieszczenia — ciągła, kreskowana albo kropkowana; kolor, przezroczystość, grubość, opcjonalnie zależne ON/OFF (tylko dla encji ON/OFF). Obrys jest rysowany nad światłem i nie gaśnie razem z nim.
