@@ -1,3 +1,10 @@
+## 0.4.1-beta.303
+
+Zmiana rozmiaru rozgrupowanej części (kropki na bokach):
+- **Blokada 1:1**: gdy szerokość zrówna się z wysokością, ramka „przykleja się” do kwadratu (silniej niż do innych linii), więc okrągła ikona zostaje kołem, a nie jajkiem.
+- **Widać, kiedy jest symetrycznie**: przy równych bokach obwódka zaznaczenia i kropki zmieniają kolor na zielony — w trakcie rozciągania i po puszczeniu.
+- Ikona ma teraz domyślnie idealnie kwadratową ramkę (wcześniej była o 1–3 px wyższa niż szersza).
+
 ## 0.4.1-beta.302
 
 Rozgrupowana etykieta (ikona / nazwa / stan):
