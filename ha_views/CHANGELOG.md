@@ -1,3 +1,11 @@
+## 0.4.1-beta.325
+
+- **Etykieta nazywa się etykietą wszędzie**: potwierdzenie usuwania („Usunąć etykietę?”), komunikaty (usunięto / kopia), podpowiedzi przycisków w nagłówku (duplikuj / kopiuj / wklej styl / usuń etykietę), lista „Dodane do widoku” (własna ikona), domyślna nazwa przy pustym polu.
+- **Popup pomieszczenia jak popup etykiety**:
+  - sekcja **„Ogólne”** (zamiast „Pomieszczenie”) w tym samym zwartym układzie: nazwa na całą szerokość, stan i przyciski dotknięcia po prawej, encje bez podpisu (pomieszczenie dalej może mieć kilka encji, wyszukiwarka zostaje);
+  - sekcja **„Wygląd”** z własnym kolorem i przyciskiem **Obrys** na pasku; podsekcje **Kolor**, **Światło** (miękkość, efekt światła) i **Obrys** (tylko gdy włączony);
+  - Grupa, Ikona, Nazwa i Stan działają tak samo jak w etykiecie (grupowanie, rozgrupowanie, kropki rozmiaru, przyciski na paskach, kolory sekcji).
+
 ## 0.4.1-beta.324
 
 - **Grupa po ponownym zgrupowaniu dopasowuje się do widocznych części**: gdy ukryjesz np. ikonę albo stan (Grupa → Pokaż), tło i ramka grupy obejmują tylko to, co zostało — bez pustego miejsca po ukrytej części; pozostałe części nie przesuwają się. Po ponownym pokazaniu części grupa wraca do pełnego rozmiaru.
