@@ -1,3 +1,7 @@
+## 0.4.1-beta.313
+
+- **Etykieta → Ogólne, zwarciej**: bez podpisu „Encja” — pole encji jest od razu pod „Dotknięciem w widoku”; pole nazwy, przyciski dotknięcia (wyrównane do prawej) i pole encji kończą się na tej samej prawej krawędzi; pole encji ma tę samą wysokość co pole nazwy.
+
 ## 0.4.1-beta.312
 
 - **„Ikona” nazywa się teraz „Etykieta”** (ang. „Label”) — w menu dodawania („Ikona, nazwa i stan w dowolnym miejscu”), w popupie, w kreatorze („Nazwa etykiety”, „Encja etykiety”, „Utwórz etykietę”) i w komunikatach; nowe dostają nazwy „Etykieta 1”, „Etykieta 2”… Zapisane elementy działają bez zmian. Sekcja „Ikona” w popupie zostaje (to część etykiety).
