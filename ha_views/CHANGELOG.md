@@ -1,3 +1,7 @@
+## 0.4.1-beta.319
+
+- **Nagłówek popupu**: ikony akcji (domyślny wygląd, duplikuj, kopiuj / wklej styl, usuń) są zawsze wyrównane do prawej, równo z X — także gdy nie ma przełącznika podglądu ON/OFF (np. dla czujnika) i w trybie panelu bocznego.
+
 ## 0.4.1-beta.318
 
 - **„Przywróć domyślną wartość” działa przy każdym suwaku** etykiety / pomieszczenia — także przy nowych: przezroczystość nazwy i stanu, przezroczystość / grubość ramki, zaokrąglenie i margines ramki (te dwa wracają do wartości automatycznej, rosnącej z tekstem) itd.
