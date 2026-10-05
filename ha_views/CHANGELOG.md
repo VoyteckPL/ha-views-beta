@@ -1,3 +1,8 @@
+## 0.4.1-beta.349
+
+- **Zapalanie / gaszenie pomieszczeń bez znikających kafli**: na nagraniu przy każdej zmianie światła na klatkę znikały prostokątne fragmenty planu. Poświata na czas płynnego zapalania / gaszenia dostawała chwilową warstwę GPU, a po animacji ją traciła — to za każdym razem przebudowywało warstwy planu. Poświaty mają teraz stałą, własną warstwę (zapalanie to tylko zmiana przezroczystości, bez przerysowania planu), a przy pomieszczeniach z innym kolorem dla OFF obraz poświaty jest podmieniany w tym samym elemencie, gdy nowy jest gotowy (wcześniej element był wymieniany dwa razy).
+- Cofnięte synchroniczne dekodowanie tła z 347 (spowalniało rysowanie kafli; właściwą przyczynę usunęła 348).
+
 ## 0.4.1-beta.348
 
 - **Plan nie znika przy przejściu przez 100% zoomu**: na nagraniu 60 kl./s przez 2–6 klatek znikało całe tło i poświaty (zostawały same znaczniki) dokładnie wtedy, gdy szczypanie przekraczało 100% w górę lub w dół. W tym momencie widok przełączał tryb „plan może wyjść poza kartę”, co przebudowywało warstwy grafiki w trakcie gestu. Dla planów pionowych ten tryb jest teraz włączony na stałe (przy 100% i tak nic nie wychodzi poza kartę), a zaokrąglone rogi rysuje sam plan — wygląd bez zmian.
