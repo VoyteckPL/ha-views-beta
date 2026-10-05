@@ -1,3 +1,14 @@
+## 0.4.1-beta.307
+
+Ikona / pomieszczenie — części etykiety:
+- **Nazwa i stan mają te same opcje co ikona**: kolor zależny ON/OFF (kolor i przezroczystość osobno dla ON i OFF), przezroczystość tekstu, grubość czcionki (normalna / średnia / pogrubiona), tło i ramka zależne ON/OFF, rozmycie tła, zaokrąglenie i margines wewnętrzny ramki.
+- **Jednakowy układ podsekcji** w Ikonie, Nazwie i Stanie: Treść → Kolor (→ Obrys dla ikony) → Rozmiar → Tło → Ramka. Kształt ikony (koło / kwadrat / dowolny), zaokrąglenie i margines są teraz w podsekcji Ramka.
+- Usunięto przycisk „Układ grupy” (reset układu) — układ grupy przywraca „Ustaw domyślny” w nagłówku.
+
+Popup:
+- Podgląd ON/OFF jest pierwszy po lewej, pozostałe ikony nagłówka — po prawej.
+- Encje: zostaje tylko pasek wyszukiwania (bez podpowiedzi); po dodaniu encji tekst wyszukiwania i lista sugestii znikają.
+
 ## 0.4.1-beta.306
 
 Popup edycji (marker, Flow, pomieszczenie, ikona) — kompaktowo:
