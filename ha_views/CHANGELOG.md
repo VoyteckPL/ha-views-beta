@@ -1,3 +1,7 @@
+## 0.4.1-beta.336
+
+- **Poprawka mrugania poświat (beta 335 pogorszyła sprawę)**: na początku gestu przesuwania / przybliżania telefon przerysowywał cały plan razem z pełnoekranowymi obrazami poświat i przez kilka klatek ich nie pokazywał. Teraz każda poświata jest przycięta do swojego pomieszczenia (dużo mniejszy obraz) i ma własną, stałą warstwę GPU — przy gestach jest tylko przesuwana / skalowana, bez przerysowywania.
+
 ## 0.4.1-beta.335
 
 - **Podświetlone pomieszczenia nie mrugają przy przesuwaniu planu palcem**: miękka poświata pomieszczenia była rozmywana na żywo i telefon przeliczał ją od nowa na początku / końcu każdego gestu, przez co potrafiła zniknąć na jedną klatkę. Teraz poświata jest rysowana raz (po każdej zmianie wyglądu) do gotowego obrazu, który przesuwa się i skaluje bez przeliczania. Wygląd bez zmian; pomieszczenia z ostrą krawędzią (bez wtapiania) zostają rysowane jak dotąd.
