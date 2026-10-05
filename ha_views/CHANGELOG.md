@@ -1,3 +1,8 @@
+## 0.4.1-beta.340
+
+- **Płynne poświaty na telefonie**: na nagraniu przy dużym przybliżeniu poświata była dorysowywana kawałkami (połowa pomieszczenia oświetlona, połowa nie), a przy obrocie kostki znikała. Powodem było mieszanie kolorów „rozjaśnij”, przez które telefon musi składać plan w drogich kafelkach. Na urządzeniach dotykowych poświata jest teraz zwykłym półprzezroczystym obrazem z „rozjaśnieniem” wypieczonym na podstawie średniego koloru tła pod pomieszczeniem (z jasnością dnia / nocy i przyciemnieniem od słońca) — wygląda praktycznie tak samo, ale ma własną, małą warstwę GPU rysowaną raz, więc przy przesuwaniu, zoomie i kostce tylko się przesuwa.
+- Nowa opcja w ustawieniach: **Poświata pomieszczeń** — Automatycznie (płynna na telefonie, dokładna z myszą) / Płynna / Dokładna.
+
 ## 0.4.1-beta.339
 
 - **Poświaty przy obrocie kostki (ciąg dalszy)**: każda poświata miała własną warstwę GPU z mieszaniem „rozjaśnij”; gdy karta widoku zaczynała obrót 3D, telefon przez kilka klatek składał je źle i znikały (także na wjeżdżającym widoku). Poświaty — już jako małe, gotowe obrazy — są teraz częścią samego planu, więc obracana karta jest jedną gotową teksturą.
