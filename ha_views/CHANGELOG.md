@@ -1,3 +1,11 @@
+## 0.4.1-beta.301
+
+Rozgrupowane części etykiety (ikona / nazwa / stan):
+- **Zmiana rozmiaru ramki**: zaznaczona część ma kropki na środkach boków — przeciągając je zmieniasz szerokość lub wysokość ramki; przeciwna krawędź zostaje w miejscu, a ramka nie zmniejszy się poniżej treści.
+- **Dopasowanie do sąsiadów**: rozciągana krawędź przyciąga się do krawędzi i środków sąsiednich części, a ramka do ich szerokości/wysokości — z linią pomocniczą.
+- **Grupowanie zachowuje ułożenie**: ponowne włączenie grupowania zostawia części tam, gdzie je ustawiłeś (tło grupy obejmuje je w aktualnym układzie).
+- **„Domyślny układ grupy”**: nowy przycisk w sekcji Grupa (pod „Pokaż”) przywraca standardowy układ grupy; wybór Układu też go przywraca.
+
 ## 0.4.1-beta.300
 
 Linie pomocnicze dla rozgrupowanych części (ikona / nazwa / stan):
