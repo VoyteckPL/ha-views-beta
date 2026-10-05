@@ -1,3 +1,7 @@
+## 0.4.1-beta.322
+
+- **Dodawanie etykiety, krok 2/3 (encja)**: wybranie encji od razu przechodzi do kroku 3/3 („Co ma być widać?”) — drugiej encji nie da się dodać (klawiatura się chowa).
+
 ## 0.4.1-beta.321
 
 Etykieta / pomieszczenie — sekcje **Ikona, Nazwa, Stan**:
