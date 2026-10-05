@@ -1,3 +1,11 @@
+## 0.4.1-beta.314
+
+Etykieta / pomieszczenie → sekcja **Grupa** (nowy, zwarty układ jak w Ogólnych — wszystko dosunięte do prawej krawędzi):
+- Na górze wiersz **„Grupa”** z przyciskiem grupowania w innym (pomarańczowym) kolorze; niżej Rozmiar, **„Pokaż”** (ikona / nazwa / stan), Układ (dla zgrupowanych), Styl, Margines.
+- **Włączniki „Tło” i „Ramka” grupy** bezpośrednio w sekcji; podsekcje Tło i Ramka pokazują się tylko, gdy są włączone. Zaokrąglenie jest w Ramce (albo w Tle, gdy ramka jest wyłączona).
+- Usunięto **„Wyrównanie”**; **Styl** ma 4 warianty (Ciemne, Jasne, Szkło, Kolor pokoju) — „Bez tła” zastąpił włącznik Tła.
+- **Tylko jedna widoczna część** (np. sama ikona): tło, ramka i margines grupy nie są rysowane (nie ma podwójnej ramki), a opcje grupy są ukryte. Ustawienia nie giną — wracają, gdy pokażesz drugą część.
+
 ## 0.4.1-beta.313
 
 - **Etykieta → Ogólne, zwarciej**: bez podpisu „Encja” — pole encji jest od razu pod „Dotknięciem w widoku”; pole nazwy, przyciski dotknięcia (wyrównane do prawej) i pole encji kończą się na tej samej prawej krawędzi; pole encji ma tę samą wysokość co pole nazwy.
