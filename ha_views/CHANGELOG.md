@@ -1,3 +1,7 @@
+## 0.4.1-beta.297
+
+- Dodawanie ikony / pomieszczenia na telefonie: **klawiatura nie chowa się między nazwą a wyborem encji** — po Enter albo „Dalej” od razu aktywne jest wyszukiwanie encji. Przyciski i lista w popupie nie zabierają fokusu polu tekstowemu, więc zaznaczanie encji też nie zamyka klawiatury.
+
 ## 0.4.1-beta.296
 
 Na podstawie nagrania z telefonu:
