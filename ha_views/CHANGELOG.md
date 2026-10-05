@@ -1,3 +1,7 @@
+## 0.4.1-beta.353
+
+- **Puste kafle na starcie obrotu kostki**: w pierwszej klatce obrotu brakowało kafli planu dokładnie pod etykietami z rozmytym tłem — wyłączanie rozmycia na czas obrotu zmuszało telefon do przerysowania tych kafli. Na urządzeniach dotykowych etykiety i znaczniki na planie nie używają już rozmycia tła wcale (półprzezroczyste tło zostaje), więc na starcie obrotu nic się nie przełącza. Rozmycie było też najdroższym efektem dla telefonu. Na komputerze bez zmian.
+
 ## 0.4.1-beta.352
 
 - **Pusta karta w pierwszej klatce obrotu przy zoomie**: na nagraniu przy przybliżonym widoku, gdy przy krawędzi zaczynał się obrót kostki, przez 1–2 klatki karta była pusta (widać było tylko poświatę i żarówkę). Start obrotu usuwał osobną warstwę planu i plan musiał się od nowa narysować w teksturze karty. Od 351 karta zawsze przycina plan do ekranu, więc ta zamiana nie jest już potrzebna — warstwa planu zostaje, a na czas obrotu wyłączane jest tylko rozmycie pod etykietami.
