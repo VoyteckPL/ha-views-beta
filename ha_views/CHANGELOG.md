@@ -1,3 +1,7 @@
+## 0.4.1-beta.345
+
+- **Kostka wraca przy przybliżonym widoku**: przy zoomie karta widoku nie przycina planu (tło może wyjść na całą szerokość ekranu), więc obracana karta zawierała cały, wielokrotnie większy od ekranu plan — telefon rysował go w obrocie tylko częściowo (ucięta dolna część, znikające elementy). Na czas obrotu karta jest teraz przycinana do tego, co widać na ekranie, a rozmycie tła pod etykietami (osobne warstwy, które w 3D znikały) jest na ten moment wyłączane.
+
 ## 0.4.1-beta.344
 
 - **Mniej mignięć przy przybliżaniu**: po każdym zoomie plan był przerysowywany dwa razy (zmiana z 341, potrzebna tylko dla kostki — a ta przy zoomie już nie występuje), więc wracamy do jednego przerysowania. Do tego tło, poświaty i znaczniki są teraz jedną warstwą: wcześniej tło było osobną warstwą i telefon potrafił pokazać je już gotowe, zanim dorysował poświaty / znaczniki (krótkie zniknięcie). Teraz plan jest pokazywany w całości albo wcale.
