@@ -1,3 +1,8 @@
+## 0.4.1-beta.295
+
+- **Płynna kamera przy klawiaturze**: centrowanie (zaznaczonego elementu i miejsca dodawanej ikony / pomieszczenia) nie przeskakuje już przy każdej zmianie wysokości wysuwającej się / chowającej klawiatury — kamera łagodnie dojeżdża do celu, a kolejne zmiany tylko przesuwają cel. W teście największy ruch na klatkę spadł z 35 px do 9 px. Dotknięcie planu palcem od razu przerywa ten ruch.
+- Tak samo płynnie działa teraz centrowanie po stuknięciu elementu w edycji.
+
 ## 0.4.1-beta.294
 
 Dodawanie ikony (i pomieszczenia) na telefonie:
