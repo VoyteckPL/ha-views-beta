@@ -1,3 +1,7 @@
+## 0.4.1-beta.330
+
+- **Nowa etykieta / pomieszczenie: ikona domyślnie szara** (zamiast żółtej) dla encji, które się nie włączają i nie wyłączają (np. czujnik temperatury). Światła i przełączniki dalej mają kolor ON (bursztynowy) i OFF (szary). Miniatura „Etykieta” w oknie dodawania też ma szarą ikonę. Istniejące etykiety się nie zmieniają.
+
 ## 0.4.1-beta.329
 
 - **Punkty kształtu pomieszczenia**: po najechaniu kursor zmienia się na strzałki przesuwania (narożniki) albo plus (punkty środkowe — dodają narożnik), a punkt powiększa się i podświetla; przy przeciąganiu kursor „zaciśniętej dłoni”.
