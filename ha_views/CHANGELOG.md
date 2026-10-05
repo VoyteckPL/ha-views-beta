@@ -1,3 +1,10 @@
+## 0.4.1-beta.294
+
+Dodawanie ikony (i pomieszczenia) na telefonie:
+- Po wskazaniu miejsca kamera **centruje się na nim** w wolnym polu pod popupem i **zostaje tam** przez cały popup — także gdy wysuwa się klawiatura (pole liczy się od dołu popupu do górnej krawędzi klawiatury) i przy przejściu do kolejnego kroku.
+- Wybrane miejsce oznacza **pulsująca pinezka**, dopóki ikona nie zostanie utworzona.
+- Lista encji w popupie ma stałą wysokość, więc nie skacze przy otwieraniu klawiatury.
+
 ## 0.4.1-beta.293
 
 - Poprawka: **„Przywróć domyślny wygląd”** ukrywał ikonę (i etykietę pomieszczenia) — kasował też przełączniki Ikona / Nazwa / Stan, a te są domyślnie wyłączone. Teraz przywraca wygląd nowo dodanego elementu: grupa włączona, ikona z obrysem, tłem i ramką, nazwa i stan widoczne (ikona: rozmiar całości ×0,5; pomieszczenie: grupa dopasowana do kształtu). Położenie ikony, kształt pomieszczenia, nazwa i encje zostają. Ikonę niewidoczną po wcześniejszym resecie naprawisz, klikając „Przywróć” jeszcze raz.
