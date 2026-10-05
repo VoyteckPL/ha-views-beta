@@ -1,3 +1,7 @@
+## 0.4.1-beta.320
+
+- **Popup na komputerze**: sekcje są szersze i kończą się dokładnie pod ikonami nagłówka i X (wąski, 6-pikselowy pasek przewijania zamiast szerokiego marginesu). Na telefonie sekcje też równo z X.
+
 ## 0.4.1-beta.319
 
 - **Nagłówek popupu**: ikony akcji (domyślny wygląd, duplikuj, kopiuj / wklej styl, usuń) są zawsze wyrównane do prawej, równo z X — także gdy nie ma przełącznika podglądu ON/OFF (np. dla czujnika) i w trybie panelu bocznego.
