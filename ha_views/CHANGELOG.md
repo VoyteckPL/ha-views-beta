@@ -1,3 +1,12 @@
+## 0.4.1-beta.321
+
+Etykieta / pomieszczenie — sekcje **Ikona, Nazwa, Stan**:
+- **Przyciski na pasku sekcji**: Ikona — Obrys, Tło, Ramka; Nazwa i Stan — Tło, Ramka. Kliknięcie włącza / wyłącza element bez otwierania sekcji; podsekcje wyłączonych elementów są ukryte (mniej bałaganu).
+- **Każda sekcja ma swój kolor** (Ikona — bursztynowy, Nazwa — zielony, Stan — fioletowy): kolorowy tytuł, pasek z lewej i aktywne przyciski.
+- **„Rozmiar” jest pierwszą podsekcją** w Ikonie, Nazwie i Stanie.
+- „Treść” zmieniono na **„Źródło”** (ikona) i **„Format”** (stan: tekst ON/OFF albo jednostka i zaokrąglenie).
+- Zaokrąglenie i margines ramki są w podsekcji Ramka, a gdy ramka jest wyłączona — w Tle.
+
 ## 0.4.1-beta.320
 
 - **Popup na komputerze**: sekcje są szersze i kończą się dokładnie pod ikonami nagłówka i X (wąski, 6-pikselowy pasek przewijania zamiast szerokiego marginesu). Na telefonie sekcje też równo z X.
