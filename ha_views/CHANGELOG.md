@@ -1,3 +1,7 @@
+## 0.4.1-beta.324
+
+- **Grupa po ponownym zgrupowaniu dopasowuje się do widocznych części**: gdy ukryjesz np. ikonę albo stan (Grupa → Pokaż), tło i ramka grupy obejmują tylko to, co zostało — bez pustego miejsca po ukrytej części; pozostałe części nie przesuwają się. Po ponownym pokazaniu części grupa wraca do pełnego rozmiaru.
+
 ## 0.4.1-beta.323
 
 - **Siatka dashboardu** (menu magnesu → „Siatka dashboardu”): siatka kolumny × wiersze (np. 3 × 8) z odstępem, ustawiana osobno dla każdego widoku i widoczna w trybie edycji. Przeciągana grupa etykiety pokazuje kratki, na które trafi, a po upuszczeniu przyciąga się do nich i wypełnia je (tło grupy ma rozmiar kratek). W sekcji Grupa: „Szerokość (kratki)”, „Wysokość (kratki)”, przypnij / odepnij od siatki. Zmiana liczby kolumn / wierszy / odstępu przesuwa przypięte grupy razem z siatką; wyłączenie siatki zostawia je na miejscu.
