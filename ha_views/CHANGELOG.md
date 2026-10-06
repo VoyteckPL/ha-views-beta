@@ -1,3 +1,7 @@
+## 0.4.1-beta.417
+
+- **Potwierdzenie włączenia i wyłączenia termostatu (opcjonalne)**: w części „Tryby” jest sekcja **Potwierdzenie** z opcją „Pytaj przy włączeniu i wyłączeniu”. Gdy jest włączona, przejście na „Wyłączony” albo z „Wyłączony” na inny tryb wymaga potwierdzenia w okienku (Włącz / Wyłącz albo Anuluj). Zmiana temperatury i przełączanie między innymi trybami działa bez pytania.
+
 ## 0.4.1-beta.416
 
 - **Animacja stanu pracy termostatu**: w części „Stan pracy” jest nowa sekcja **Animacja** — dla każdego stanu (Grzeje, Nagrzewa, Chłodzi, …, Wyłączony) osobno: Brak, Mruganie, Pulsowanie, Przygasanie albo Drganie. Np. tekst „Grzeje” może mrugać tylko wtedy, gdy grzeje.
