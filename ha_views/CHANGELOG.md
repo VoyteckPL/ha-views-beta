@@ -1,3 +1,7 @@
+## 0.4.1-beta.387
+
+- **Jednakowe kółeczka dla etykiet i rozgrupowanych części**: rozgrupowana ikona / nazwa / stan (także sama ikona po automatycznym rozgrupowaniu) ma teraz kółeczka w czterech rogach zamiast kropek na środkach boków — tak jak zgrupowana etykieta. Przeciągnięcie rogu skaluje część proporcjonalnie (rozmiar, ramka, margines), przeciwny róg zostaje w miejscu, z tym samym przyciąganiem: róg do linii innych elementów i rozmiar do szerokości / wysokości innej etykiety lub części.
+
 ## 0.4.1-beta.386
 
 - **Komputer: plan nie mruga / nie skacze**: strona z planem miała dokładnie wysokość okna, więc jeden piksel zaokrąglenia (np. przy skalowaniu ekranu 125 %) włączał pasek przewijania, karta planu przeliczała się na węższą, pasek znikał i tak w kółko — plan skakał góra–dół. Teraz na komputerze strona z planem nigdy się nie przewija (zawsze stoi na górze), a karta ma 2 px zapasu. Strona integracji przewija się jak dotąd.

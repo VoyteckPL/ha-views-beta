@@ -976,7 +976,6 @@ function equalizeLabelFrames(room, group) {
   const base = node => { const key = partKey(node); node.style.minWidth = Number(room[`${key}W`]) ? `${room[`${key}W`]}px` : ''; node.style.minHeight = Number(room[`${key}H`]) ? `${room[`${key}H`]}px` : ''; };
   parts.forEach(base);
   fitFreeCard(room, group); fitLabelBackdrop(room, group);
-  group.querySelectorAll('.room-label-part').forEach(node => node.classList.toggle('square', !!node.querySelector('.part-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
 function fitLabelBackdrop(room, group) {
@@ -1121,8 +1120,8 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   return backdrop + ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part, key]) => {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, on);
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}`;
-    // Selected and ungrouped: a dot in the middle of each side resizes the part's frame.
-    const handles = interactive && r.id === selectedRoomId ? ['n','e','s','w'].map(side => `<i class="part-handle ${side}" data-handle="${side}"></i>`).join('') : '';
+    // Selected and ungrouped: a dot on each corner scales the part (like the corners of a grouped label).
+    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
@@ -1151,83 +1150,6 @@ function renderRoomLabels(view = activeSceneView()) {
   renderDashGrid();
 }
 // In edit mode a label part is dragged with the finger or mouse; it follows the grid (when on) and the camera follows it.
-// Resizing an ungrouped part with a side dot: the opposite side stays put; the moving side snaps to the edges and
-// centres of the other parts, and the frame snaps to their width / height (a guide line shows what it caught).
-function startPartResize(event, handle) {
-  const node = handle.closest('.room-label-part'), room = roomsOf()[node?.dataset.roomId], key = node && partKey(node); if (!room || !key) return;
-  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
-  const side = handle.dataset.handle, horizontal = side === 'e' || side === 'w', sign = side === 'e' || side === 's' ? 1 : -1;
-  const id = CSS.escape(room.id), others = $$(`.room-label-part[data-room-id="${id}"]`).filter(other => other !== node).map(other => other.getBoundingClientRect());
-  const scene = els.scene.getBoundingClientRect(), planToScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
-  const rect0 = node.getBoundingClientRect(), localToScreen = rect0.width / Math.max(1, node.offsetWidth);
-  const keep = [node.style.minWidth, node.style.minHeight]; node.style.minWidth = ''; node.style.minHeight = '';
-  const natural = horizontal ? node.offsetWidth : node.offsetHeight; [node.style.minWidth, node.style.minHeight] = keep;
-  // Below the content's own size the content shrinks with the frame (icon / text size scales, the other side too).
-  // A margin set in px (icon; text with its own margin) stays; a default text margin grows with the text.
-  const cs = getComputedStyle(node), fixedPad = node.dataset.labelPart === 'icon' || (room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '') ? (horizontal ? parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) : parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) || 0 : 0;
-  const startSize = Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], acrossKey = `${key}${horizontal ? 'H' : 'W'}`, acrossStart = Number(room[acrossKey]) || 0;
-  const fixed = horizontal ? (sign > 0 ? rect0.left : rect0.right) : (sign > 0 ? rect0.top : rect0.bottom);
-  const centre0 = horizontal ? (rect0.left + rect0.right) / 2 : (rect0.top + rect0.bottom) / 2, start = Number(room[`${key}${horizontal ? 'X' : 'Y'}`]) || 0;
-  // The moved edge snaps to the edges / centres of this label's other parts and of other labels on screen (as set in the
-  // snap menu); the line runs between the part and the one it lines up with, which is highlighted.
-  const st = snapTargets(), view = visibleSceneRect();
-  const targetRects = [...others, ...(st.guides && st.labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null).map(other => other.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)) : [])];
-  const lines = targetRects.flatMap(r => (horizontal ? [[r.left, 0], [(r.left + r.right) / 2, 1], [r.right, 0]] : [[r.top, 0], [(r.top + r.bottom) / 2, 1], [r.bottom, 0]]).filter(([, c]) => c ? st.centers : st.edges).map(([v]) => ({ v, r })));
-  // Same size as another part of this label or as any label / part on screen (e.g. the icon of a neighbouring room).
-  const sizes = targetRects.map(r => ({ size: horizontal ? r.width : r.height, r }));
-  // Width equal to height (and back): a round icon stays a circle, not an egg — only when nothing else on screen is in
-  // reach, so matching a neighbour's size or edge always wins over the own proportion.
-  const across = horizontal ? rect0.height : rect0.width;
-  let moved = false;
-  const move = e => {
-    if (e.pointerId !== event.pointerId) return; moved = true;
-    let edge = (horizontal ? (sign > 0 ? rect0.right : rect0.left) : (sign > 0 ? rect0.bottom : rect0.top)) + (horizontal ? e.clientX - event.clientX : e.clientY - event.clientY);
-    let best = null;
-    if (!e.altKey) {
-      const reach = mobileView() ? 10 : 7;
-      lines.forEach(({ v, r }) => { const d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r }; });
-      sizes.forEach(({ size, r }) => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, size: true, r }; });
-      const square = fixed + sign * across, ds = Math.abs(edge - square); if (!best && ds <= reach) best = { d: ds, edge: square, square: true };
-      if (best) edge = best.edge;
-    }
-    // Parts never overlap: the moving side stops at a part lying next to it.
-    others.forEach(r => {
-      if (horizontal ? r.bottom <= rect0.top + .5 || r.top >= rect0.bottom - .5 : r.right <= rect0.left + .5 || r.left >= rect0.right - .5) return;
-      if (horizontal) { if (sign > 0 && r.left >= rect0.right - .5) edge = Math.min(edge, r.left); if (sign < 0 && r.right <= rect0.left + .5) edge = Math.max(edge, r.right); }
-      else { if (sign > 0 && r.top >= rect0.bottom - .5) edge = Math.min(edge, r.top); if (sign < 0 && r.bottom <= rect0.top + .5) edge = Math.max(edge, r.bottom); }
-    });
-    const content = Math.max(1, natural - fixedPad), local = Math.max(fixedPad + content * 6 / startSize, Math.abs(edge - fixed) / localToScreen), scale = Math.min(1, (local - fixedPad) / content); edge = fixed + sign * local * localToScreen;
-    room[`${key}Size`] = Math.max(6, Math.round(startSize * scale * 10) / 10); room[acrossKey] = acrossStart ? Math.round(acrossStart * scale * 10) / 10 : 0;
-    room[`${key}${horizontal ? 'W' : 'H'}`] = scale < 1 ? 0 : Math.round(local * 10) / 10;
-    room[`${key}${horizontal ? 'X' : 'Y'}`] = Math.round((start + ((fixed + edge) / 2 - centre0) / planToScreen) * 100) / 100;
-    renderRoomLabels();
-    const live = $(`.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`); live?.classList.toggle('square', !!best?.square || (live && Math.abs(live.offsetWidth - live.offsetHeight) < .5));
-    if (best?.square) return showAlignGuides([], []);
-    const at = horizontal ? (edge - scene.left) / scene.width * 100 : (edge - scene.top) / scene.height * 100;
-    if (!best) return showAlignGuides([], []);
-    const own = live?.getBoundingClientRect() || rect0, t = best.r;
-    if (best.size && t) {
-      // Equal size: a dimension marker across the resized part and across the part it matches, which is highlighted.
-      const px = v => (v - scene.left) / scene.width * 100, py = v => (v - scene.top) / scene.height * 100;
-      const marks = horizontal
-        ? [{ axis: 'x', from: px(own.left), to: px(own.right), at: py(own.bottom + 6) }, { axis: 'x', from: px(t.left), to: px(t.right), at: py(t.bottom + 6) }]
-        : [{ axis: 'y', from: py(own.top), to: py(own.bottom), at: px(own.right + 6) }, { axis: 'y', from: py(t.top), to: py(t.bottom), at: px(t.right + 6) }];
-      return showAlignGuides([], [], marks, [{ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: 'label' }]);
-    }
-    const guide = !t ? { at, kind: 'label' } : horizontal
-      ? { at, kind: 'label', from: (Math.min(own.top, t.top) - scene.top) / scene.height * 100, to: (Math.max(own.bottom, t.bottom) - scene.top) / scene.height * 100 }
-      : { at, kind: 'label', from: (Math.min(own.left, t.left) - scene.left) / scene.width * 100, to: (Math.max(own.right, t.right) - scene.left) / scene.width * 100 };
-    const hit = t ? [{ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: 'label' }] : [];
-    showAlignGuides(horizontal ? [guide] : [], horizontal ? [] : [guide], [], hit);
-  };
-  const up = e => {
-    if (e.pointerId !== event.pointerId) return;
-    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []);
-    const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
-    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
-  };
-  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
-}
 // Icon, name and state never overlap: a dragged part that runs into another one stops touching it
 // (it is pushed out the shortest way, so it slides along the other part's side).
 function keepApart(room, key, part) {
@@ -1245,53 +1167,67 @@ function keepApart(room, key, part) {
     renderRoomLabels();
   }
 }
-// A corner dot of a grouped label: the whole label scales with the pointer, the opposite corner keeps its place on screen.
-// The moving corner snaps to the lines of other elements on screen and the label to the width / height of another label.
+// A corner dot of a grouped label or of an ungrouped part (icon / name / state): the element scales proportionally with
+// the pointer and the opposite corner keeps its place on screen. The moving corner snaps to the lines of other elements on
+// screen and the element to the width / height of another label or part (as set in the snap menu; Alt disables).
 function startCardResize(event, handle) {
-  const card = handle.closest('.room-label-card'), room = roomsOf()[card?.dataset.roomId]; if (!room) return;
+  const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
+  const isCard = node.classList.contains('room-label-card'), key = isCard ? '' : partKey(node); if (!isCard && !key) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
-  const c = handle.dataset.corner, r0 = card.getBoundingClientRect(), sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1;
+  const c = handle.dataset.corner, r0 = node.getBoundingClientRect(), sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1;
   const fixed = { x: sx > 0 ? r0.left : r0.right, y: sy > 0 ? r0.top : r0.bottom }, diag = Math.hypot(r0.width, r0.height) || 1, ux = sx * r0.width / diag, uy = sy * r0.height / diag;
-  const startScale = clamp(Number(room.labelCardScale) || 1, .3, 4), sceneRect = els.scene.getBoundingClientRect(), planToScreen = sceneRect.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
-  // Measured from the pointer's own start, so grabbing the dot (outside the corner) does not make the label jump.
+  const sceneRect = els.scene.getBoundingClientRect(), planToScreen = sceneRect.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
   const along0 = Math.max(1, (event.clientX - fixed.x) * ux + (event.clientY - fixed.y) * uy);
-  const sel = `.room-label-card[data-room-id="${CSS.escape(room.id)}"]`, st = snapTargets(), useSnap = st.guides;
+  const id = CSS.escape(room.id), sel = isCard ? `.room-label-card[data-room-id="${id}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
+  const posX = isCard ? 'labelCardX' : `${key}X`, posY = isCard ? 'labelCardY' : `${key}Y`;
+  // What one scale step changes: the group's scale, or the part's text / icon size, its frame and its own margin.
+  const num = k => { const v = room[k]; return v === undefined || v === null || v === '' ? null : Number(v); };
+  const start = isCard ? { scale: clamp(Number(room.labelCardScale) || 1, .3, 4) } : { size: Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], w: Number(room[`${key}W`]) || 0, h: Number(room[`${key}H`]) || 0, pad: num(`${key}Padding`) };
+  const apply = f => {
+    if (isCard) { room.labelCardScale = Math.round(clamp(start.scale * f, .3, 4) * 1000) / 1000; return; }
+    room[`${key}Size`] = Math.round(clamp(start.size * f, 6, 420) * 10) / 10;
+    room[`${key}W`] = start.w ? Math.round(start.w * f * 10) / 10 : 0; room[`${key}H`] = start.h ? Math.round(start.h * f * 10) / 10 : 0;
+    if (start.pad !== null && Number.isFinite(start.pad)) room[`${key}Padding`] = Math.round(start.pad * f * 10) / 10;
+  };
+  const st = snapTargets(), useSnap = st.guides, view = visibleSceneRect();
   const targets = useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
-  const view = visibleSceneRect(), others = useSnap && st.labels ? $$('#room-labels .room-label-card').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)) : [];
-  const toScale = (size, size0) => startScale * size / size0;
+  const boxOf = r => ({ l: r.left - sceneRect.left, r: r.right - sceneRect.left, t: r.top - sceneRect.top, b: r.bottom - sceneRect.top });
+  // A part also lines up with the other parts of its own label.
+  const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(n => n.getBoundingClientRect()).filter(r => r.width);
+  if (useSnap) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => targets.xs.push({ v: v - sceneRect.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => targets.ys.push({ v: v - sceneRect.top, kind: 'label', box: boxOf(r) })); });
+  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
+  const render = () => { renderRoomLabels(); return $(sel)?.getBoundingClientRect(); };
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
     const along = (e.clientX - fixed.x) * ux + (e.clientY - fixed.y) * uy;
-    let scale = startScale * Math.max(.05, along) / along0, snap = null;
+    let f = Math.max(.05, along) / along0, snap = null;
     if (useSnap && !e.altKey) {
-      const reach = mobileView() ? 10 : 7, W = r0.width * scale / startScale, H = r0.height * scale / startScale, cx = fixed.x + sx * W, cy = fixed.y + sy * H;
-      const take = (d, s, info) => { if (d <= reach && s > 0 && (!snap || d < snap.d)) snap = { d, s, ...info }; };
-      targets.xs.forEach(g => { const v = sceneRect.left + g.v; take(Math.abs(cx - v), toScale(sx * (v - fixed.x), r0.width), { axis: 'x', at: g.v, g }); });
-      targets.ys.forEach(g => { const v = sceneRect.top + g.v; take(Math.abs(cy - v), toScale(sy * (v - fixed.y), r0.height), { axis: 'y', at: g.v, g }); });
-      others.forEach(r => { take(Math.abs(W - r.width), toScale(r.width, r0.width), { size: 'w', r }); take(Math.abs(H - r.height), toScale(r.height, r0.height), { size: 'h', r }); });
-      if (snap) scale = snap.s;
+      const reach = mobileView() ? 10 : 7, W = r0.width * f, H = r0.height * f, cx = fixed.x + sx * W, cy = fixed.y + sy * H;
+      const take = (d, info) => { if (d <= reach && (!snap || d < snap.d)) snap = { d, ...info }; };
+      targets.xs.forEach(g => { const v = sceneRect.left + g.v; if (sx * (v - fixed.x) > 4) take(Math.abs(cx - v), { want: 'w', size: sx * (v - fixed.x), at: g.v, axis: 'x', g }); });
+      targets.ys.forEach(g => { const v = sceneRect.top + g.v; if (sy * (v - fixed.y) > 4) take(Math.abs(cy - v), { want: 'h', size: sy * (v - fixed.y), at: g.v, axis: 'y', g }); });
+      sizes.forEach(r => { take(Math.abs(W - r.width), { want: 'w', size: r.width, r, match: true }); take(Math.abs(H - r.height), { want: 'h', size: r.height, r, match: true }); });
+      if (snap) f = snap.size / (snap.want === 'w' ? r0.width : r0.height);
     }
-    room.labelCardScale = Math.round(clamp(scale, .3, 4) * 1000) / 1000;
-    renderRoomLabels();
-    // Keep the opposite corner where it was: move the label by what the scaling shifted it.
-    let live = $(sel); if (!live) return; let r = live.getBoundingClientRect();
+    apply(f); let r = render(); if (!r) return;
+    // Text and margins do not scale exactly linearly: one correction lands a snapped size on the pixel.
+    if (snap) { const got = snap.want === 'w' ? r.width : r.height; if (got > 1 && Math.abs(got - snap.size) > .3) { f *= snap.size / got; apply(f); r = render() || r; } }
+    // Keep the opposite corner where it was: move the element by what the scaling shifted it.
     const dx = fixed.x - (sx > 0 ? r.left : r.right), dy = fixed.y - (sy > 0 ? r.top : r.bottom);
-    if (Math.abs(dx) > .1 || Math.abs(dy) > .1) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + dx / planToScreen) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + dy / planToScreen) * 100) / 100; renderRoomLabels(); live = $(sel); r = live?.getBoundingClientRect() || r; }
+    if (Math.abs(dx) > .1 || Math.abs(dy) > .1) { room[posX] = Math.round(((Number(room[posX]) || 0) + dx / planToScreen) * 100) / 100; room[posY] = Math.round(((Number(room[posY]) || 0) + dy / planToScreen) * 100) / 100; r = render() || r; }
     if (!snap) return showAlignGuides([], []);
-    const W = sceneRect.width || 1, Hs = sceneRect.height || 1, px = v => (v - sceneRect.left) / W * 100, py = v => (v - sceneRect.top) / Hs * 100;
-    const box = snap.r ? { l: snap.r.left - sceneRect.left, r: snap.r.right - sceneRect.left, t: snap.r.top - sceneRect.top, b: snap.r.bottom - sceneRect.top } : snap.g.box;
-    const hit = box ? [{ ...box, kind: snap.g?.kind || 'label' }] : [];
-    if (snap.size) {
-      const marks = snap.size === 'w'
+    const Ws = sceneRect.width || 1, Hs = sceneRect.height || 1, px = v => (v - sceneRect.left) / Ws * 100, py = v => (v - sceneRect.top) / Hs * 100;
+    const box = snap.r ? boxOf(snap.r) : snap.g.box, hit = box ? [{ ...box, kind: snap.g?.kind || 'label' }] : [];
+    if (snap.match) {
+      const marks = snap.want === 'w'
         ? [{ axis: 'x', from: px(r.left), to: px(r.right), at: py(r.bottom + 6) }, { axis: 'x', from: px(snap.r.left), to: px(snap.r.right), at: py(snap.r.bottom + 6) }]
         : [{ axis: 'y', from: py(r.top), to: py(r.bottom), at: px(r.right + 6) }, { axis: 'y', from: py(snap.r.top), to: py(snap.r.bottom), at: px(snap.r.right + 6) }];
       return showAlignGuides([], [], marks, hit);
     }
-    const own = { l: r.left - sceneRect.left, r: r.right - sceneRect.left, t: r.top - sceneRect.top, b: r.bottom - sceneRect.top };
-    const kind = snap.g.kind || 'label';
-    if (snap.axis === 'x') showAlignGuides([{ at: snap.at / W * 100, kind, from: Math.min(own.t, box?.t ?? own.t) / Hs * 100, to: Math.max(own.b, box?.b ?? own.b) / Hs * 100 }], [], [], hit);
-    else showAlignGuides([], [{ at: snap.at / Hs * 100, kind, from: Math.min(own.l, box?.l ?? own.l) / W * 100, to: Math.max(own.r, box?.r ?? own.r) / W * 100 }], [], hit);
+    const mine = boxOf(r), kind = snap.g.kind || 'label';
+    if (snap.axis === 'x') showAlignGuides([{ at: snap.at / Ws * 100, kind, from: Math.min(mine.t, box?.t ?? mine.t) / Hs * 100, to: Math.max(mine.b, box?.b ?? mine.b) / Hs * 100 }], [], [], hit);
+    else showAlignGuides([], [{ at: snap.at / Hs * 100, kind, from: Math.min(mine.l, box?.l ?? mine.l) / Ws * 100, to: Math.max(mine.r, box?.r ?? mine.r) / Ws * 100 }], [], hit);
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return;
@@ -1302,7 +1238,6 @@ function startCardResize(event, handle) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 function startRoomLabelDrag(event) {
-  const handle = event.target.closest?.('.part-handle'); if (handle && editMode) return startPartResize(event, handle);
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startCardResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;

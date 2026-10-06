@@ -1050,18 +1050,11 @@ body.editing .room-labels{z-index:3}
 /* Guide lines: hairline thin, no glow. */
 .align-guide{--g:calc(.5px / var(--view-zoom,1));box-shadow:none!important}
 /* Side dots of a selected, ungrouped part (keep their on-screen size at any zoom / scale). */
-.part-handle{position:absolute;z-index:3;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #20b9e7;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;transform:translate(-50%,-50%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
-.part-handle::before{content:"";position:absolute;inset:-6px;border-radius:50%}
-.part-handle.e,.part-handle.w{z-index:4}
-.part-handle.n{left:50%;top:0;cursor:ns-resize}.part-handle.s{left:50%;top:100%;cursor:ns-resize}
-.part-handle.e{left:100%;top:50%;cursor:ew-resize}.part-handle.w{left:0;top:50%;cursor:ew-resize}
 .room-label-card.free{display:block}
 
 .room-label-backdrop{position:absolute;box-sizing:border-box;pointer-events:none;transform:translate(-50%,-50%) translate(calc(var(--lx,0px) * var(--scene-scale,1)),calc(var(--ly,0px) * var(--scene-scale,1))) scale(calc(var(--lscale,1) * var(--scene-scale,1)))}
 .room-label-backdrop.blur{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.room-label-part.editable.selected.square::after{border-color:#4ade80;border-style:solid}
-.room-label-part.square .part-handle{border-color:#4ade80}
-.room-label-part.icon>.mdi,.room-card-part.icon>.mdi{display:block;width:1em;height:1em;text-align:center}
+.room-label-part.square .room-label-part.icon>.mdi,.room-card-part.icon>.mdi{display:block;width:1em;height:1em;text-align:center}
 /* Editor popup header: close (X) in the top-right corner level with the name; below it one compact row of
    equal icon buttons (incl. the optional ON / OFF preview toggle). All icon buttons in the popup share one size. */
 .editor .editor-head{position:relative;flex-wrap:wrap}
