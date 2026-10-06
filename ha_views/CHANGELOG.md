@@ -1,3 +1,7 @@
+## 0.4.1-beta.406
+
+- Termostat **wyłączony pokazuje temperaturę zadaną** (jak karta termostatu w Home Assistant) zamiast „Wył.” — łuk tarczy jest wtedy w kolorze „wyłączony”, a − / + dalej zmieniają temperaturę. Tekst trybu wyłączonego pokazuje się tylko, gdy encja nie podaje żadnej temperatury zadanej. Dotyczy też starego termostatu z bety 394.
+
 ## 0.4.1-beta.405
 
 - Termostat: **podgląd ON / OFF używa własnych tekstów trybów** — podgląd „wyłączony” pokazuje Twój tekst trybu wyłączonego (w Stanie i na środku tarczy) zamiast „Wył.”, a podgląd „włączony” tekst bieżącego (albo pierwszego niewyłączonego) trybu. Tarcza, stan pracy i przyciski trybów też pokazują podglądany tryb.
