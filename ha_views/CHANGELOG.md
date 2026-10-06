@@ -1,3 +1,8 @@
+## 0.4.1-beta.384
+
+- **Przyciąganie przy skalowaniu etykiety kółeczkami w rogach**: przeciągany róg łapie się do krawędzi / środków innych elementów na ekranie (zgodnie z menu magnesu), a cała etykieta do szerokości lub wysokości innej etykiety — z linią pomocniczą, znacznikami wymiaru i podświetleniem wzorca. Alt wyłącza przyciąganie.
+- Skalowanie rogiem nie skacze już na początku przeciągania (liczone od miejsca chwycenia kółeczka).
+
 ## 0.4.1-beta.383
 
 - **Kółeczka na rogach etykiety**: zaznaczona (zgrupowana) etykieta ma małe kółeczka w czterech rogach. Przeciągnięcie rogu skaluje całą etykietę proporcjonalnie, a przeciwny róg zostaje w miejscu. Suwak „Rozmiar” w popupie pokazuje nową wartość.

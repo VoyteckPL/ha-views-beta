@@ -1245,27 +1245,56 @@ function keepApart(room, key, part) {
   }
 }
 // A corner dot of a grouped label: the whole label scales with the pointer, the opposite corner keeps its place on screen.
+// The moving corner snaps to the lines of other elements on screen and the label to the width / height of another label.
 function startCardResize(event, handle) {
   const card = handle.closest('.room-label-card'), room = roomsOf()[card?.dataset.roomId]; if (!room) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, r0 = card.getBoundingClientRect(), sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1;
   const fixed = { x: sx > 0 ? r0.left : r0.right, y: sy > 0 ? r0.top : r0.bottom }, diag = Math.hypot(r0.width, r0.height) || 1, ux = sx * r0.width / diag, uy = sy * r0.height / diag;
   const startScale = clamp(Number(room.labelCardScale) || 1, .3, 4), sceneRect = els.scene.getBoundingClientRect(), planToScreen = sceneRect.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
-  const sel = `.room-label-card[data-room-id="${CSS.escape(room.id)}"]`;
+  // Measured from the pointer's own start, so grabbing the dot (outside the corner) does not make the label jump.
+  const along0 = Math.max(1, (event.clientX - fixed.x) * ux + (event.clientY - fixed.y) * uy);
+  const sel = `.room-label-card[data-room-id="${CSS.escape(room.id)}"]`, st = snapTargets(), useSnap = st.guides;
+  const targets = useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
+  const view = visibleSceneRect(), others = useSnap && st.labels ? $$('#room-labels .room-label-card').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)) : [];
+  const toScale = (size, size0) => startScale * size / size0;
   let moved = false;
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
     const along = (e.clientX - fixed.x) * ux + (e.clientY - fixed.y) * uy;
-    room.labelCardScale = Math.round(clamp(startScale * Math.max(.05, along) / diag, .3, 4) * 1000) / 1000;
+    let scale = startScale * Math.max(.05, along) / along0, snap = null;
+    if (useSnap && !e.altKey) {
+      const reach = mobileView() ? 10 : 7, W = r0.width * scale / startScale, H = r0.height * scale / startScale, cx = fixed.x + sx * W, cy = fixed.y + sy * H;
+      const take = (d, s, info) => { if (d <= reach && s > 0 && (!snap || d < snap.d)) snap = { d, s, ...info }; };
+      targets.xs.forEach(g => { const v = sceneRect.left + g.v; take(Math.abs(cx - v), toScale(sx * (v - fixed.x), r0.width), { axis: 'x', at: g.v, g }); });
+      targets.ys.forEach(g => { const v = sceneRect.top + g.v; take(Math.abs(cy - v), toScale(sy * (v - fixed.y), r0.height), { axis: 'y', at: g.v, g }); });
+      others.forEach(r => { take(Math.abs(W - r.width), toScale(r.width, r0.width), { size: 'w', r }); take(Math.abs(H - r.height), toScale(r.height, r0.height), { size: 'h', r }); });
+      if (snap) scale = snap.s;
+    }
+    room.labelCardScale = Math.round(clamp(scale, .3, 4) * 1000) / 1000;
     renderRoomLabels();
     // Keep the opposite corner where it was: move the label by what the scaling shifted it.
-    const live = $(sel); if (!live) return; const r = live.getBoundingClientRect();
+    let live = $(sel); if (!live) return; let r = live.getBoundingClientRect();
     const dx = fixed.x - (sx > 0 ? r.left : r.right), dy = fixed.y - (sy > 0 ? r.top : r.bottom);
-    if (Math.abs(dx) > .1 || Math.abs(dy) > .1) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + dx / planToScreen) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + dy / planToScreen) * 100) / 100; renderRoomLabels(); }
+    if (Math.abs(dx) > .1 || Math.abs(dy) > .1) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + dx / planToScreen) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + dy / planToScreen) * 100) / 100; renderRoomLabels(); live = $(sel); r = live?.getBoundingClientRect() || r; }
+    if (!snap) return showAlignGuides([], []);
+    const W = sceneRect.width || 1, Hs = sceneRect.height || 1, px = v => (v - sceneRect.left) / W * 100, py = v => (v - sceneRect.top) / Hs * 100;
+    const box = snap.r ? { l: snap.r.left - sceneRect.left, r: snap.r.right - sceneRect.left, t: snap.r.top - sceneRect.top, b: snap.r.bottom - sceneRect.top } : snap.g.box;
+    const hit = box ? [{ ...box, kind: snap.g?.kind || 'label' }] : [];
+    if (snap.size) {
+      const marks = snap.size === 'w'
+        ? [{ axis: 'x', from: px(r.left), to: px(r.right), at: py(r.bottom + 6) }, { axis: 'x', from: px(snap.r.left), to: px(snap.r.right), at: py(snap.r.bottom + 6) }]
+        : [{ axis: 'y', from: py(r.top), to: py(r.bottom), at: px(r.right + 6) }, { axis: 'y', from: py(snap.r.top), to: py(snap.r.bottom), at: px(snap.r.right + 6) }];
+      return showAlignGuides([], [], marks, hit);
+    }
+    const own = { l: r.left - sceneRect.left, r: r.right - sceneRect.left, t: r.top - sceneRect.top, b: r.bottom - sceneRect.top };
+    const kind = snap.g.kind || 'label';
+    if (snap.axis === 'x') showAlignGuides([{ at: snap.at / W * 100, kind, from: Math.min(own.t, box?.t ?? own.t) / Hs * 100, to: Math.max(own.b, box?.b ?? own.b) / Hs * 100 }], [], [], hit);
+    else showAlignGuides([], [{ at: snap.at / Hs * 100, kind, from: Math.min(own.l, box?.l ?? own.l) / W * 100, to: Math.max(own.r, box?.r ?? own.r) / W * 100 }], [], hit);
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return;
-    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
   };
