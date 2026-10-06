@@ -1,3 +1,7 @@
+## 0.4.1-beta.435
+
+- **Tarcza bez marginesu także na szerokość**: tarcza nie ma już osobnej szerokości / wysokości ramki (to one dawały pusty margin po bokach) — jej obszar to zawsze sam rysunek. Kropki w rogach tarczy zmieniają jej rozmiar proporcjonalnie (powiększają / zmniejszają cały łuk), zamiast rozciągać pustą ramkę.
+
 ## 0.4.1-beta.434
 
 - **Kliknięta część w centrum (rozgrupowane)**: w rozgrupowanym termostacie / etykiecie dotknięcie części na planie (ikona, nazwa, przycisk +, …) przybliża i centruje tę jedną część nad panelem — tak jak kliknięcie nazwy jej sekcji w panelu — zamiast całego termostatu. Zgrupowane etykiety nadal centrują się w całości.

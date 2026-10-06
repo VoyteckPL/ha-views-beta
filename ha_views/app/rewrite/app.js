@@ -1016,7 +1016,7 @@ function regroupAutoLabel(room) {
 // "Equal frames" (ungrouped parts): icon, name and state get the same box — the size of the largest of them.
 function equalizeLabelFrames(room, group) {
   const parts = [...group.querySelectorAll('.room-label-part, .room-label-card.free > .room-card-part')];
-  const base = node => { const key = partKey(node); node.style.minWidth = Number(room[`${key}W`]) ? `${room[`${key}W`]}px` : ''; node.style.minHeight = Number(room[`${key}H`]) ? `${room[`${key}H`]}px` : ''; };
+  const base = node => { const key = partKey(node), free = key !== 'labelDial'; node.style.minWidth = free && Number(room[`${key}W`]) ? `${room[`${key}W`]}px` : ''; node.style.minHeight = free && Number(room[`${key}H`]) ? `${room[`${key}H`]}px` : ''; };
   parts.forEach(base);
   fitFreeCard(room, group); fitLabelBackdrop(room, group);
   // A selected part or label whose width equals its height is marked (green outline): a round icon stays a circle.
@@ -1041,6 +1041,7 @@ function fitLabelBackdrop(room, group) {
 }
 // Frame size set with the side dots (box-local px; never smaller than the content).
 function partBoxSize(r, key) {
+  if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
   const w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0;
   return (w ? `;min-width:${w}px` : '') + (h ? `;min-height:${h}px` : '') + (w || h ? ';box-sizing:border-box' : '');
 }
@@ -1307,7 +1308,8 @@ function fitCardHandles() {
 // than its content. Each moving side snaps to the lines of other elements on screen and to the width / height of another
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
-  if (event.shiftKey) return startCardResize(event, handle);
+  // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
+  if (event.shiftKey || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
   const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const isCard = node.classList.contains('room-label-card'), key = isCard ? 'labelCard' : partKey(node); if (!key) return;
