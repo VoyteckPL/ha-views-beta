@@ -1165,7 +1165,11 @@ function startPartResize(event, handle) {
   const startSize = Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], acrossKey = `${key}${horizontal ? 'H' : 'W'}`, acrossStart = Number(room[acrossKey]) || 0;
   const fixed = horizontal ? (sign > 0 ? rect0.left : rect0.right) : (sign > 0 ? rect0.top : rect0.bottom);
   const centre0 = horizontal ? (rect0.left + rect0.right) / 2 : (rect0.top + rect0.bottom) / 2, start = Number(room[`${key}${horizontal ? 'X' : 'Y'}`]) || 0;
-  const lines = others.flatMap(r => horizontal ? [r.left, (r.left + r.right) / 2, r.right] : [r.top, (r.top + r.bottom) / 2, r.bottom]);
+  // The moved edge snaps to the edges / centres of this label's other parts and of other labels on screen (as set in the
+  // snap menu); the line runs between the part and the one it lines up with, which is highlighted.
+  const st = snapTargets(), view = visibleSceneRect();
+  const targetRects = [...others, ...(st.guides && st.labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null).map(other => other.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)) : [])];
+  const lines = targetRects.flatMap(r => (horizontal ? [[r.left, 0], [(r.left + r.right) / 2, 1], [r.right, 0]] : [[r.top, 0], [(r.top + r.bottom) / 2, 1], [r.bottom, 0]]).filter(([, c]) => c ? st.centers : st.edges).map(([v]) => ({ v, r })));
   const sizes = others.map(r => horizontal ? r.width : r.height);
   // Width equal to height (and back): a round icon stays a circle, not an egg — this catch wins and holds a bit longer.
   const across = horizontal ? rect0.height : rect0.width;
@@ -1175,7 +1179,8 @@ function startPartResize(event, handle) {
     let edge = (horizontal ? (sign > 0 ? rect0.right : rect0.left) : (sign > 0 ? rect0.bottom : rect0.top)) + (horizontal ? e.clientX - event.clientX : e.clientY - event.clientY);
     let best = null;
     if (!e.altKey) {
-      lines.forEach(v => { const d = Math.abs(edge - v); if (d <= 7 && (!best || d < best.d)) best = { d, edge: v }; });
+      const reach = mobileView() ? 10 : 7;
+      lines.forEach(({ v, r }) => { const d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r }; });
       sizes.forEach(size => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= 7 && (!best || d < best.d)) best = { d, edge: v, size: true }; });
       const square = fixed + sign * across, ds = Math.abs(edge - square); if (ds <= 10) best = { d: ds, edge: square, square: true };
       if (best) edge = best.edge;
@@ -1194,7 +1199,13 @@ function startPartResize(event, handle) {
     const live = $(`.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`); live?.classList.toggle('square', !!best?.square || (live && Math.abs(live.offsetWidth - live.offsetHeight) < .5));
     if (best?.square) return showAlignGuides([], []);
     const at = horizontal ? (edge - scene.left) / scene.width * 100 : (edge - scene.top) / scene.height * 100;
-    if (best) showAlignGuides(horizontal ? [{ at }] : [], horizontal ? [] : [{ at }]); else showAlignGuides([], []);
+    if (!best) return showAlignGuides([], []);
+    const own = live?.getBoundingClientRect() || rect0, t = best.r;
+    const guide = !t ? { at, kind: 'label' } : horizontal
+      ? { at, kind: 'label', from: (Math.min(own.top, t.top) - scene.top) / scene.height * 100, to: (Math.max(own.bottom, t.bottom) - scene.top) / scene.height * 100 }
+      : { at, kind: 'label', from: (Math.min(own.left, t.left) - scene.left) / scene.width * 100, to: (Math.max(own.right, t.right) - scene.left) / scene.width * 100 };
+    const hit = t ? [{ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: 'label' }] : [];
+    showAlignGuides(horizontal ? [guide] : [], horizontal ? [] : [guide], [], hit);
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return;
@@ -2339,7 +2350,8 @@ function alignLabel(context, xPercent, yPercent, event) {
   // labels (with "Etykiety" on) - not to other rooms, markers, Flow or the background. Out of the room: to everything.
   const rb = context.roomBox, inside = !!rb && snapTargets().rooms && cx - hw >= rb.l - 1 && cx + hw <= rb.r + 1 && cy - hh >= rb.t - 1 && cy + hh <= rb.b + 1;
   const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
-  const guideValues = values => inside ? values.filter(item => item.own || item.kind === 'label') : values;
+  // Other labels come in as boxes (segment lines, highlight); their copies among the general guides are skipped.
+  const guideValues = values => values.filter(item => item.own || item.kind !== 'label' || !item.box).filter(item => !inside || item.own || item.kind === 'label');
   // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
   const solve = (axis, c, half, oc, ohalf) => {
     const [lo, hi, mid, plo, phi] = axis === 'x' ? ['l','r','cx','t','b'] : ['t','b','cy','l','r'];
@@ -2402,7 +2414,7 @@ function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------
 // Markers and Flows are kept with their whole box inside the scene while dragging or resizing
 // (rooms already cannot leave it: their corners are limited to 0–100 %).
-function keepInBounds() { return model.settings?.keepInBounds !== false; }
+function keepInBounds() { return true; } // "Granice tła" is always on (its switch was removed)
 function boundsShift(node) {
   const s = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(); if (!s.width || !s.height || !r.width) return null;
   const dx = r.width >= s.width ? s.left - r.left : r.left < s.left ? s.left - r.left : r.right > s.right ? s.right - r.right : 0;

@@ -1251,3 +1251,9 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .icon-anim-blink{animation:hv-icon-blink var(--icon-anim-dur,1.5s) ease-in-out infinite}
 .icon-anim-swing{animation:hv-icon-swing var(--icon-anim-dur,1.5s) ease-in-out infinite;transform-origin:50% 50%}
 @media (prefers-reduced-motion:reduce){.icon-anim-spin,.icon-anim-pulse,.icon-anim-blink,.icon-anim-swing{animation:none}}
+/* Snap menu in the style of the label popup: each row has its name on the left and its icons on the right. */
+.snap-menu .snap-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 8px;margin:0}
+.snap-menu .snap-row>span{flex:0 0 auto;color:#8fdcf2;font-size:10px;font-weight:750;white-space:nowrap}
+.snap-menu .snap-row .snap-icons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
+.snap-menu .snap-row .snap-icon{width:28px;height:28px;font-size:15px}
+.snap-menu .grid-row{justify-content:flex-end}

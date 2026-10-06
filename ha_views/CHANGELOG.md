@@ -1,3 +1,9 @@
+## 0.4.1-beta.370
+
+- **Menu przyciągania w stylu popupu**: bez tytułu; każdy wiersz ma nazwę po lewej i ikony po prawej (siatka z S / M / L na górze). Usunięta cała sekcja „Więcej” (granice tła, wyrównanie do tła, obrót) — **granice tła są zawsze włączone**.
+- **Linie pomocnicze przy zmianie rozmiaru części kółeczkami**: przeciągana krawędź rozgrupowanej części przyciąga się do krawędzi / środków pozostałych części i innych etykiet na ekranie (zgodnie z ustawieniami magnesu), z różowym odcinkiem i podświetleniem celu.
+- Przy przesuwaniu rozgrupowanej części odległe etykiety dają odcinek od części do etykiety (wcześniej linię przez cały plan).
+
 ## 0.4.1-beta.369
 
 - **Animacja ikony** (etykieta / pomieszczenie): w pasku sekcji „Ikona” nowy przełącznik „Animacja” (pierwszy, przed obrysem, tłem i ramką). Po włączeniu podsekcja „Animacja”: rodzaj (obrót — np. kręcący się wentylator, pulsowanie, miganie, kołysanie), czas cyklu, kierunek obrotu, „Tylko gdy ON” (dla encji ON/OFF) oraz „Prędkość z encji (%)” dla wentylatorów — im wyższy procent obrotów, tym szybciej. Animacja nie „przeskakuje” przy odświeżaniu stanu i wyłącza się przy systemowym ograniczeniu ruchu.
