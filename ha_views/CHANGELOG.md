@@ -1,3 +1,7 @@
+## 0.4.1-beta.432
+
+- **Rozmiar grupy do 4,5×**: suwak „Rozmiar” w sekcji Grupa (etykiety, termostaty, teksty) sięga teraz do 4,5× (wcześniej 3×); proporcjonalna zmiana rozmiaru kropkami też pozwala na tyle.
+
 ## 0.4.1-beta.431
 
 - **Kropki rozmiaru w rogach, także poza planem**: zamiast przesuwać kropki do środka (beta.429), kropki stoją zawsze dokładnie w rogach elementu i są widoczne w całości — gdy element dotyka krawędzi planu, kropka wystaje poza plan (jest rysowana w warstwie nad planem, której plan nie przycina).

@@ -634,7 +634,7 @@ const NEW_ROOM_LABEL = Object.freeze({ labelIcon:true, labelName:true, labelStat
 function fitRoomLabel(id) {
   const room = roomsOf()[id], card = document.querySelector(`.room-label-card[data-room-id="${CSS.escape(id)}"]`), scene = els.scene?.getBoundingClientRect();
   if (!room?.labelLinked || !card || !scene?.width || !room.points?.length) return;
-  const box = card.getBoundingClientRect(), scale = clamp(Number(room.labelCardScale) || 1, .3, 4); if (!box.width || !box.height) return;
+  const box = card.getBoundingClientRect(), scale = clamp(Number(room.labelCardScale) || 1, .3, 4.5); if (!box.width || !box.height) return;
   const xs = room.points.map(p => p[0]), ys = room.points.map(p => p[1]);
   const roomW = (Math.max(...xs) - Math.min(...xs)) / 100 * scene.width, roomH = (Math.max(...ys) - Math.min(...ys)) / 100 * scene.height;
   const fit = Math.min(roomW * .7 / (box.width / scale), roomH * .6 / (box.height / scale));
@@ -994,7 +994,7 @@ function keepLabelPlaceOnRegroup(room) {
     const cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
     room.labelCardX = toOffsetX(cx); room.labelCardY = toOffsetY(cy);
     // Grouping again keeps the arrangement: each part's place inside the group (group-local px).
-    const local = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 4);
+    const local = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 4.5);
     nodes.forEach(node => { const key = partKey(node), r = node.getBoundingClientRect(); room[`${key}FX`] = Math.round(((r.left + r.right) / 2 - cx) / local * 10) / 10; room[`${key}FY`] = Math.round(((r.top + r.bottom) / 2 - cy) / local * 10) / 10; });
     room.labelCardFree = true;
   }
@@ -1006,7 +1006,7 @@ function autoUngroupLabel(room) {
   room.labelAutoUngrouped = { free: !!room.labelCardFree }; room.labelLinked = false;
 }
 function regroupAutoLabel(room) {
-  const auto = room.labelAutoUngrouped || {}, shown = ROOM_LABEL_PARTS.find(([, k]) => room[k])?.[1], scale = clamp(Number(room.labelCardScale) || 1, .3, 4);
+  const auto = room.labelAutoUngrouped || {}, shown = ROOM_LABEL_PARTS.find(([, k]) => room[k])?.[1], scale = clamp(Number(room.labelCardScale) || 1, .3, 4.5);
   if (shown) {
     const px = Number(room[`${shown}X`]) || 0, py = Number(room[`${shown}Y`]) || 0;
     room.labelCardX = Math.round(px - (auto.free ? (Number(room[`${shown}FX`]) || 0) * scale : 0)); room.labelCardY = Math.round(py - (auto.free ? (Number(room[`${shown}FY`]) || 0) * scale : 0));
@@ -1033,7 +1033,7 @@ function fitLabelBackdrop(room, group) {
   const backdrop = group.querySelector('.room-label-backdrop'); if (!backdrop) return;
   const rects = [...group.querySelectorAll('.room-label-part')].map(node => node.getBoundingClientRect()).filter(r => r.width);
   const scene = els.scene.getBoundingClientRect(), w = els.scene.offsetWidth || 1, k = sceneScale || 1; if (!rects.length || !scene.width) return;
-  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 4), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 4.5), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
   backdrop.style.setProperty('--lx', `${((left + right) / 2 - scene.left - ax / 100 * scene.width) / toPlan}px`);
   backdrop.style.setProperty('--ly', `${((top + bottom) / 2 - scene.top - ay / 100 * scene.height) / toPlan}px`);
@@ -1233,7 +1233,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     }).join('');
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
-    const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 4), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
+    const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 4.5), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
       free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';') + accentVar;
@@ -1242,12 +1242,12 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
-  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};${cardLook(r, on)}"></div>` : '';
+  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4.5)};${cardLook(r, on)}"></div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : shownParts[0];
   return backdrop + layeredParts(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, on);
-    const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
+    const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4.5)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
     const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
@@ -1420,9 +1420,9 @@ function startCardResize(event, handle) {
   const posX = isCard ? 'labelCardX' : `${key}X`, posY = isCard ? 'labelCardY' : `${key}Y`;
   // What one scale step changes: the group's scale, or the part's text / icon size, its frame and its own margin.
   const num = k => { const v = room[k]; return v === undefined || v === null || v === '' ? null : Number(v); };
-  const start = isCard ? { scale: clamp(Number(room.labelCardScale) || 1, .3, 4) } : { size: Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], w: Number(room[`${key}W`]) || 0, h: Number(room[`${key}H`]) || 0, pad: num(`${key}Padding`) };
+  const start = isCard ? { scale: clamp(Number(room.labelCardScale) || 1, .3, 4.5) } : { size: Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], w: Number(room[`${key}W`]) || 0, h: Number(room[`${key}H`]) || 0, pad: num(`${key}Padding`) };
   const apply = f => {
-    if (isCard) { room.labelCardScale = Math.round(clamp(start.scale * f, .3, 4) * 1000) / 1000; return; }
+    if (isCard) { room.labelCardScale = Math.round(clamp(start.scale * f, .3, 4.5) * 1000) / 1000; return; }
     room[`${key}Size`] = Math.round(clamp(start.size * f, 6, 420) * 10) / 10;
     room[`${key}W`] = start.w ? Math.round(start.w * f * 10) / 10 : 0; room[`${key}H`] = start.h ? Math.round(start.h * f * 10) / 10 : 0;
     if (start.pad !== null && Number.isFinite(start.pad)) room[`${key}Padding`] = Math.round(start.pad * f * 10) / 10;
@@ -2192,7 +2192,7 @@ function roomEditorMarkup(room) {
       + radius);
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isThermoRoom(r) ? row('Pokaż', THERMO_WIZARD_PARTS.map(([key, title, mdi]) => toggleButton(key, title, mdi)).join('')) : '')
-    + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 4) / labelScaleBase(r) * 100) / 100,{ min:.3, max:3, step:.05, suffix:'×' })
+    + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 4.5) / labelScaleBase(r) * 100) / 100,{ min:.3, max:4.5, step:.05, suffix:'×' })
     + (solo ? note(translateValue('Widoczna jest jedna część — tło i ramka grupy nie są rysowane. Wrócą, gdy pokażesz drugą część.'))
       : (r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
@@ -2288,10 +2288,10 @@ function onRoomEditorInput(event) {
   if (path === 'labelSizeUi') {
     // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
     // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.
-    const card = room.labelLinked && !(isIconRoom(room) && dashSpan(room)) ? document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`) : null, oldScale = clamp(Number(room.labelCardScale) || 1, .3, 4);
+    const card = room.labelLinked && !(isIconRoom(room) && dashSpan(room)) ? document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`) : null, oldScale = clamp(Number(room.labelCardScale) || 1, .3, 4.5);
     if (card && !input._frame) { input._frame = { w: card.offsetWidth * oldScale, h: card.offsetHeight * oldScale }; input.addEventListener('change', () => { delete input._frame; }, { once:true }); }
-    room.labelCardScale = Math.round(clamp(value * labelScaleBase(room), .2, 4) * 1000) / 1000; room.updatedAt = new Date().toISOString();
-    if (input._frame) { const k = clamp(room.labelCardScale, .3, 4); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
+    room.labelCardScale = Math.round(clamp(value * labelScaleBase(room), .2, 4.5) * 1000) / 1000; room.updatedAt = new Date().toISOString();
+    if (input._frame) { const k = clamp(room.labelCardScale, .3, 4.5); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
