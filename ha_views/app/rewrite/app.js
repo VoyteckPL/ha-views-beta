@@ -2309,11 +2309,11 @@ function alignLabel(context, xPercent, yPercent, event) {
   const W = context.scene.width, H = context.scene.height, hw = context.halfW, hh = context.halfH, G = context.gap || 8;
   const cx = xPercent / 100 * W + (context.shiftX || 0), cy = yPercent / 100 * H + (context.shiftY || 0);
   const threshold = mobileView() ? 10 : 7, release = mobileView() ? 13 : 9, motion = context.motion ||= { stick: {} };
-  // A room's label lying wholly inside its room (with "Pomieszczenia" on) snaps only to that room and its own parts;
-  // moved out of the room it snaps to everything else again.
+  // A room's label lying wholly inside its room (with "Pomieszczenia" on) snaps to that room, its own parts and other
+  // labels (with "Etykiety" on) - not to other rooms, markers, Flow or the background. Out of the room: to everything.
   const rb = context.roomBox, inside = !!rb && snapTargets().rooms && cx - hw >= rb.l - 1 && cx + hw <= rb.r + 1 && cy - hh >= rb.t - 1 && cy + hh <= rb.b + 1;
-  const boxes = context.boxes.filter(b => !inside || b.own).map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
-  const guideValues = values => inside ? values.filter(item => item.own) : values;
+  const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
+  const guideValues = values => inside ? values.filter(item => item.own || item.kind === 'label') : values;
   // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
   const solve = (axis, c, half, oc, ohalf) => {
     const [lo, hi, mid, plo, phi] = axis === 'x' ? ['l','r','cx','t','b'] : ['t','b','cy','l','r'];

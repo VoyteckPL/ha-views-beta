@@ -1,3 +1,7 @@
+## 0.4.1-beta.363
+
+- **Etykieta w pomieszczeniu przyciąga się też do innych etykiet**: etykieta pomieszczenia leżąca w nim w całości przyciąga się do tego pomieszczenia oraz (przy włączonych „Etykietach” w menu magnesu) do innych etykiet; nadal nie do innych pomieszczeń, wskaźników, Flow ani tła.
+
 ## 0.4.1-beta.362
 
 - **Nazwa przechodzi do wyszukiwania encji**: w kreatorze nowej etykiety / pomieszczenia wpisana nazwa (np. „wyspa”) trafia od razu do pola wyszukiwania w kroku encji (można ją tam edytować), a lista od razu podpowiada pasujące encje. Gdy nic nie pasuje, widać zwykłe podpowiedzi.
