@@ -1,3 +1,9 @@
+## 0.4.1-beta.391
+
+- **Pasek „Grupa”**: przełączniki „Grupuj” oraz pokazywania ikony / nazwy / stanu są teraz na pasku sekcji Grupa (wiersze „Grupa” i „Pokaż” zniknęły z jej środka). Od przycisków Tło i Ramka oddziela je odstęp z kreską, żeby się nie zlewały.
+- **Wyraźniejsze ramki edycji**: przerywane obrysy etykiet i rozgrupowanych części mają stałą grubość na ekranie (nie robią się cienkie przy małych etykietach ani przy zoomie) i są mocniejsze.
+- **Wskaźnik „równe boki”**: gruba, ciągła zielona ramka z delikatną poświatą i mała plakietka „1:1” nad elementem.
+
 ## 0.4.1-beta.390
 
 - **Wskaźnik „równe boki” wrócił**: gdy zaznaczona ikona / część albo zgrupowana etykieta ma szerokość równą wysokości, jej obrys i kółeczka robią się zielone.

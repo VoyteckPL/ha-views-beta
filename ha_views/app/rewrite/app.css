@@ -1316,3 +1316,12 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* Width = height: the selected element's outline and dots turn green. */
 .room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-color:#4ade80;border-style:solid}
 .room-label-part.square>.card-handle,.room-label-part.square>.part-handle,.room-label-card.square>.card-handle,.room-label-card.square>.part-handle{border-color:#4ade80}
+/* Group bar: grouping + shown parts, a gap, then background and frame. */
+.part-section .section-sep{flex:0 0 1px;align-self:stretch;margin:2px 5px;background:rgba(143,223,255,.28)}
+/* Edit outlines keep the same thickness on screen at any label size / zoom (they are drawn inside the scaled label). */
+.room-label-part.editable::after,.room-label-card.editable::after{border-width:calc(1.5px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)));border-color:rgba(143,223,255,.8)}
+.room-label-card.editable::after{border-color:rgba(255,181,71,.9)}
+.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{border-width:calc(2px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))}
+/* Width = height: a solid, thicker green outline and a small "1:1" tag above the element. */
+.room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-style:solid;border-color:#4ade80;border-width:calc(3px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)));box-shadow:0 0 calc(8px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))) rgba(74,222,128,.55)}
+.room-label-part.editable.selected.square::before,.room-label-card.editable.selected.square::before{content:"1:1";position:absolute;left:50%;top:-8px;z-index:6;padding:1px 5px;border-radius:6px;background:#4ade80;color:#052e16;font:800 10px/1.2 system-ui,sans-serif;text-shadow:none;letter-spacing:.02em;pointer-events:none;transform:translate(-50%,-150%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))));transform-origin:50% 100%}

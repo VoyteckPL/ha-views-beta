@@ -1934,7 +1934,7 @@ function roomEditorMarkup(room) {
   const frameSubs = (key, shape) => (r[`${key}Bg`] ? sub('Tło', control('Zależne ON/OFF',`${key}BgState`,'checkbox',!!r[`${key}BgState`],refresh) + stateColours(key, 'Bg', 'tła', '#081822', .55) + control('Rozmycie',`${key}Blur`,'checkbox',!!r[`${key}Blur`]) + (r[`${key}Border`] ? '' : shape)) : '')
     + (r[`${key}Border`] ? sub('Ramka', control('Zależne ON/OFF',`${key}BorderState`,'checkbox',!!r[`${key}BorderState`],refresh) + stateColours(key, 'Border', 'ramki', '#FFFFFF', .6, true) + shape) : '');
   // Section with its own colour and on / off buttons on its bar (outline, background, frame).
-  const partBar = (part, title, body, toggles) => `<details class="editor-section part-section part-${part}"><summary><span>${escapeHtml(translateValue(title))}</span><span class="section-tools">${toggles.map(([k, t, mdi]) => `<button type="button" class="section-toggle${r[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!r[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${mdi}"></i></button>`).join('')}</span></summary><div class="editor-section-body">${body}</div></details>`;
+  const partBar = (part, title, body, toggles) => `<details class="editor-section part-section part-${part}"><summary><span>${escapeHtml(translateValue(title))}</span><span class="section-tools">${toggles.map(([k, t, mdi]) => k === '|' ? '<span class="section-sep" aria-hidden="true"></span>' : `<button type="button" class="section-toggle${r[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!r[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${mdi}"></i></button>`).join('')}</span></summary><div class="editor-section-body">${body}</div></details>`;
   const frameToggles = key => [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
   const partSection = ([part, key, title]) => {
     if (!r[key]) return '';
@@ -1986,9 +1986,7 @@ function roomEditorMarkup(room) {
         : control('Kolor ramki','labelCardBorderColor','color',r.labelCardBorderColor || '#FFFFFF') + control('Przezrocz. ramki','labelCardBorderOpacity','range',pct(r.labelCardBorderOpacity ?? .3),{ min:0, max:100, step:1, suffix:'%', integer:true }) + control('Grubość ramki','labelCardBorderWidth','range',clamp(Number(r.labelCardBorderWidth) || 1, .5, 12),{ min:.5, max:12, step:.5, suffix:'px' }))
       + radius);
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
-    + (solo ? '' : row('Grupa', toggleButton('labelLinked','Grupuj ikonę, nazwę i stan','mdi-group',' group-toggle')))
     + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 4) / labelScaleBase(r) * 100) / 100,{ min:.3, max:3, step:.05, suffix:'×' })
-    + row('Pokaż', [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState','Stan','mdi-toggle-switch-outline']].map(([key, title, mdi]) => toggleButton(key, title, mdi)).join(''))
     + (solo ? note(translateValue('Widoczna jest jedna część — tło i ramka grupy nie są rysowane. Wrócą, gdy pokażesz drugą część.'))
       : (r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
@@ -1998,7 +1996,11 @@ function roomEditorMarkup(room) {
         + row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join(''))
         + control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:40, step:1, suffix:'px', integer:true })
         + bgSub + borderSub)
-    + `</div>`, solo ? [] : [['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
+    + `</div>`, [
+      // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
+      ...(solo ? [] : [['labelLinked','Grupuj ikonę, nazwę i stan','mdi-group']]),
+      ['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState','Stan','mdi-toggle-switch-outline'],
+      ...(solo ? [] : [['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']])]);
   const label = group + ROOM_LABEL_PARTS.map(partSection).join('');
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
