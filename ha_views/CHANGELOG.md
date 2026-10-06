@@ -1,3 +1,7 @@
+## 0.4.1-beta.419
+
+- **Edytowany termostat / etykieta zawsze na środku (telefon)**: po wybraniu termostatu albo jego części (także rozgrupowanych) plan przesuwa się tak, że element stoi na środku wolnego miejsca nad panelem edycji — również przy krawędziach planu i przy najmniejszym zoomie (wcześniej duży element nisko na planie zostawał pod panelem). Podczas edycji na telefonie plan można przesunąć trochę poza jego krawędź, żeby było to możliwe.
+
 ## 0.4.1-beta.418
 
 - **Termostat na telefonie: przyciski działają**: dotknięcie trybu (np. Wyłącz) oraz − / + na telefonie przełącza tryb / temperaturę (wcześniej puszczenie palca trafiało w warstwę gestów planu i zamiast tego otwierało się okno szczegółów). Opcjonalne potwierdzenie włączenia / wyłączenia pojawia się teraz także na telefonie i nie zamyka się samo.

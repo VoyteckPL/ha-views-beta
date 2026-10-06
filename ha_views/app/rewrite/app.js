@@ -812,7 +812,7 @@ function iconFocusBox(room) {
   const toX = v => (v - scene.left) / scene.width * 100, toY = v => (v - scene.top) / scene.height * 100;
   const l = toX(Math.min(...nodes.map(r => r.left))), r = toX(Math.max(...nodes.map(r => r.right))), t = toY(Math.min(...nodes.map(r => r.top))), b = toY(Math.max(...nodes.map(r => r.bottom)));
   // A little room around it, so a small icon is not zoomed in as far as it would go.
-  const padX = Math.max((r - l) * .6, 4), padY = Math.max((b - t) * .6, 4);
+  const padX = Math.max((r - l) * .25, 3), padY = Math.max((b - t) * .25, 3);
   return [[l - padX, t - padY], [r + padX, t - padY], [r + padX, b + padY], [l - padX, b + padY]];
 }
 function roomAnchor(room) { const pin = isIconRoom(room) && dashSpan(room); return pin ? [pin.x + pin.w / 2, pin.y + pin.h / 2] : isIconRoom(room) ? [Number(room.x) || 50, Number(room.y) || 50] : roomLabelAnchor(room.points || []); }
@@ -2898,6 +2898,14 @@ function clampViewPan() {
   // While editing on a phone, the camera may go past the lower scene edge only by the part of the viewport
   // the bottom editor covers: the empty area then stays hidden under the editor, never shown as a bare frame.
   const editBottomAllowance = editSheetCover();
+  if (editBottomAllowance) {
+    // An element being edited near a plan edge can still be centred in the free band above the editor (the camera
+    // may go past the plan's edges by as much as that needs).
+    const band = editorFreeBand(), mid = band.top + band.height / 2, halfW = els.viewport.clientWidth / 2;
+    viewPanX = clamp(viewPanX, -maxX - halfW, halfW);
+    viewPanY = clamp(viewPanY, -(maxY + Math.max(editBottomAllowance, els.viewport.clientHeight - mid)), Math.max(0, mid - band.top));
+    return;
+  }
   viewPanX = clamp(viewPanX, -maxX, 0); viewPanY = clamp(viewPanY, -(maxY + editBottomAllowance), 0);
 }
 function updatePanoramaIndicator() {
@@ -4059,7 +4067,9 @@ function focusSceneBoxOnMobile(points) {
   const boxW = Math.max(1, Math.max(...xs) - Math.min(...xs)), boxH = Math.max(1, Math.max(...ys) - Math.min(...ys));
   const viewW = els.viewport.clientWidth || 1, viewH = els.viewport.clientHeight || 1;
   const { top: freeTop, height: freeH } = editorFreeBand();
-  const nextZoom = clamp(Math.min(viewW * .86 / boxW, freeH / boxH), minViewZoom(), 2.35);
+  // Just above the smallest zoom at least: at the smallest one the camera does not move, so a big element (e.g. a
+  // thermostat) low on the plan would stay under the editor instead of being centred.
+  const nextZoom = clamp(Math.min(viewW * .86 / boxW, freeH / boxH), minViewZoom() + .001, 2.35);
   const centreX = (Math.min(...xs) + Math.max(...xs)) / 2, centreY = (Math.min(...ys) + Math.max(...ys)) / 2;
   const targetY = freeTop + freeH / 2;
   glideCamera(nextZoom, viewW / 2 - centreX * nextZoom, targetY - centreY * nextZoom);
