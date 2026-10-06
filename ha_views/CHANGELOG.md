@@ -1,3 +1,7 @@
+## 0.4.1-beta.400
+
+- Termostat: **Stan pracy bez ikon** — dla wszystkich stanów (Grzeje, Bezczynny, Chłodzi, Wyłączony…) widać sam tekst.
+
 ## 0.4.1-beta.399
 
 - **Poprawka**: „Ustaw domyślny” w termostacie zmieniał go w zwykłą etykietę (kasował też znacznik termostatu). Teraz termostat zostaje termostatem i wraca do swojego domyślnego wyglądu.

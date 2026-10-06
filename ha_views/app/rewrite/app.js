@@ -1113,7 +1113,7 @@ function thermoContent(r, on) {
   if (r.labelTarget) parts.target = text('labelTarget', info.unavailable ? esc(tr('Niedostępny')) : info.mode === 'off' ? esc(String(r.thermoModeText_off || '').trim() || tr('Wył.')) : value === null ? '–' : info.target === null && info.low !== null ? `${esc(thermoNumber(info.low, info.step))}–${esc(thermoNumber(info.high, info.step))}°` : `${esc(thermoNumber(value, info.step))}<span class="thermo-deg">°</span>`, 'thermo-target-text');
   if (r.labelCurrent && info.current !== null) parts.current = text('labelCurrent', `<i class="mdi mdi-thermometer"></i>${esc(thermoNumber(info.current, .1))}°`);
   const act = info.mode === 'off' ? THERMO_ACTIONS.off : THERMO_ACTIONS[info.action];
-  if (r.labelAction && act) parts.action = text('labelAction', `<i class="mdi ${act[1]}${working ? ' thermo-working' : ''}"></i>${esc(thermoActionText(r, info.mode === 'off' ? 'off' : info.action))}`);
+  if (r.labelAction && act) parts.action = text('labelAction', esc(thermoActionText(r, info.mode === 'off' ? 'off' : info.action)));
   const canSet = info.target !== null && info.mode !== 'off' && !info.unavailable;
   if (r.labelMinus) parts.minus = `<button type="button" class="thermo-step" data-thermo="down"${canSet ? '' : ' disabled'} aria-label="−" style="${roomTextStyle(r, 'labelMinus', on)}"><i class="mdi mdi-minus"></i></button>`;
   if (r.labelPlus) parts.plus = `<button type="button" class="thermo-step" data-thermo="up"${canSet ? '' : ' disabled'} aria-label="+" style="${roomTextStyle(r, 'labelPlus', on)}"><i class="mdi mdi-plus"></i></button>`;
