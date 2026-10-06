@@ -1,3 +1,7 @@
+## 0.4.1-beta.407
+
+- **Panel podąża za klikniętą częścią**: w rozgrupowanej etykiecie, termostacie albo tekście kliknięcie części (ikony, nazwy, tarczy, temperatury…) otwiera w panelu jej sekcję, zwija pozostałe i przewija do niej. Sekcja edytowanej części jest lekko podświetlona w jej kolorze i ma kropkę przy nazwie.
+
 ## 0.4.1-beta.406
 
 - Termostat **wyłączony pokazuje temperaturę zadaną** (jak karta termostatu w Home Assistant) zamiast „Wył.” — łuk tarczy jest wtedy w kolorze „wyłączony”, a − / + dalej zmieniają temperaturę. Tekst trybu wyłączonego pokazuje się tylko, gdy encja nie podaje żadnej temperatury zadanej. Dotyczy też starego termostatu z bety 394.

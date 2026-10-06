@@ -1386,11 +1386,23 @@ function startCardResize(event, handle) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
+let pendingPartFocus = null;
+// In the label / thermostat panel, the section of the part being edited is opened, marked and scrolled into view.
+function markPartSection(part) { const content = $('#room-editor-content'); if (!content) return null; $$('.part-section.current', content).forEach(d => d.classList.remove('current')); const target = part && content.querySelector(`details.part-section.part-${CSS.escape(part)}`); target?.classList.add('current'); return target; }
+function focusPartSection(part) {
+  const target = markPartSection(part); if (!target) return;
+  if (!target.open) target.open = true;
+  requestAnimationFrame(() => target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+}
 function startRoomLabelDrag(event) {
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startFreeResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
-  if (node.dataset.labelPart !== 'card') { selectedLabelPart = node.dataset.labelPart; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n === node)); }
+  if (node.dataset.labelPart !== 'card') {
+    selectedLabelPart = node.dataset.labelPart; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n === node));
+    // The panel follows the touched part: its section opens and is marked (now, or when the panel opens).
+    if (!room.labelLinked) { if (selectedRoomId === room.id && $('#room-editor')?.classList.contains('visible')) focusPartSection(selectedLabelPart); else pendingPartFocus = { roomId: room.id, part: selectedLabelPart }; }
+  }
   if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []))); })) return;
   event.preventDefault(); event.stopPropagation();
   // The editor opens on a tap only (release without moving); grabbing and dragging right away just moves the label.
@@ -2086,6 +2098,8 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   $('#room-entity-search')?.addEventListener('input', renderRoomEntityResults); renderRoomEntityResults();
   content.scrollTop = scroll;
   panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
+  if (pendingPartFocus?.roomId === room.id) { const part = pendingPartFocus.part; pendingPartFocus = null; requestAnimationFrame(() => focusPartSection(part)); }
+  else if (!room.labelLinked) markPartSection(selectedLabelPart);
   if (newlySelected && !skipRoomFocus) requestAnimationFrame(() => requestAnimationFrame(() => { focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); renderRoomEditLayer(); }));
   requestAnimationFrame(() => { const outline = $('#room-edit-layer .room-outline.selected'); if (outline && !mobileView() && !panel.dataset.dragged) placeEditorNear(panel, outline); });
 }
