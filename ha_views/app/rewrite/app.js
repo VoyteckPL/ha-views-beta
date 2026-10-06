@@ -1226,21 +1226,22 @@ function startRoomLabelDrag(event) {
     // (label colour), and every other element: wskaźniki, Flow, other labels, rooms and the background.
     // Its own room's lines only with "Pomieszczenia" switched on in the snap menu, and only across that room.
     const ownRoom = !isIconRoom(room) && snapTargets().rooms, rb = ownRoom ? { l: toX(Math.min(...xs)), r: toX(Math.max(...xs)), t: toY(Math.min(...ys)), b: toY(Math.max(...ys)) } : null;
-    const gx = (ownRoom ? [Math.min(...xs), Math.max(...xs), (Math.min(...xs) + Math.max(...xs)) / 2, ax] : []).map(v => ({ v: toX(v), room:true, kind:'room', box: rb, span: rb && [rb.t, rb.b] }));
-    const gy = (ownRoom ? [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay] : []).map(v => ({ v: toY(v), room:true, kind:'room', box: rb, span: rb && [rb.l, rb.r] }));
-    $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1])).forEach(other => { const r = other.getBoundingClientRect(); [r.left, r.left + r.width / 2, r.right].forEach(v => gx.push({ v: v - scene.left, kind:'label' })); [r.top, r.top + r.height / 2, r.bottom].forEach(v => gy.push({ v: v - scene.top, kind:'label' })); });
+    const gx = (ownRoom ? [Math.min(...xs), Math.max(...xs), (Math.min(...xs) + Math.max(...xs)) / 2, ax] : []).map(v => ({ v: toX(v), room:true, kind:'room', box: rb, span: rb && [rb.t, rb.b], own: true }));
+    const gy = (ownRoom ? [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay] : []).map(v => ({ v: toY(v), room:true, kind:'room', box: rb, span: rb && [rb.l, rb.r], own: true }));
+    $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1])).forEach(other => { const r = other.getBoundingClientRect(); [r.left, r.left + r.width / 2, r.right].forEach(v => gx.push({ v: v - scene.left, kind:'label', own: true })); [r.top, r.top + r.height / 2, r.bottom].forEach(v => gy.push({ v: v - scene.top, kind:'label', own: true })); });
     if (snapTargets().guides) { const all = guideTargets({ roomId: room.id }); gx.push(...all.xs); gy.push(...all.ys); }
     // Label boxes for label-to-label snapping (alignLabel): other labels (a group as a whole or ungrouped parts) and this
     // label's own parts that stay in place.
     const boxOf = other => { const r = other.getBoundingClientRect(); return { l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top }; };
+    const ownPart = other => other.dataset.roomId === room.id;
     const boxes = [
       ...(snapTargets().guides && snapTargets().labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null) : []),
       ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1]))
-    ].map(boxOf).filter(b => b.r - b.l > 1);
+    ].filter(other => rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), own: ownPart(other) })).filter(b => b.r - b.l > 1);
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
-    return { scene, xs: gx, ys: gy, boxes, gap: 8 * scene.width / (els.scene.offsetWidth || 1), offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
+    return { scene, xs: gx, ys: gy, boxes, roomBox: rb, gap: 8 * scene.width / (els.scene.offsetWidth || 1), offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
       shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
   let moved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
@@ -2217,23 +2218,33 @@ function alignSelectedToBackground(where) {
 }
 // Snap targets shared by markers, Flows and rooms: every other marker / Flow, every room (its bounding box and
 // its corners, so irregular walls line up too) and the background. Nothing depends on where the drag starts.
+// Snapping uses only what is on screen: the part of the plan's viewport inside the window (zoomed phone view).
+function visibleSceneRect() {
+  const v = els.viewport?.getBoundingClientRect() || els.scene.getBoundingClientRect();
+  return { left: Math.max(v.left, 0), top: Math.max(v.top, 0), right: Math.min(v.right, innerWidth), bottom: Math.min(v.bottom, innerHeight) };
+}
+function rectOnScreen(r, view = visibleSceneRect()) { return r.right > view.left && r.left < view.right && r.bottom > view.top && r.top < view.bottom; }
 function guideTargets({ node = null, roomId = '' } = {}) {
   const scene = els.scene.getBoundingClientRect();
   const t = snapTargets(), points = (a, b) => [...(t.edges ? [a, b] : []), ...(t.centers ? [(a + b) / 2] : [])];
   // "Only visible": on a zoomed phone view the element snaps only to what is on screen, not to markers far outside it.
   // Every guide knows what it comes from, so its line has that kind's colour (wskaźnik / Flow / etykieta / pomieszczenie / tło).
-  const onScreen = () => true;
+  const view = visibleSceneRect(), onScreen = r => rectOnScreen(r, view);
   const elements = [];
   if (t.markers) $$('.marker', els.markers).forEach(other => elements.push([other, 'marker']));
   if (t.flows) $$('.flow-marker', els.markers).forEach(other => elements.push([other, 'flow']));
   // Labels: a group as a whole, or each ungrouped part (not the label of the room / label being moved).
   if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other, 'label']));
-  const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [other.getBoundingClientRect(), kind]).filter(([r]) => r.width);
+  const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [other.getBoundingClientRect(), kind]).filter(([r]) => onScreen(r)).filter(([r]) => r.width);
   // Every guide carries the box it comes from (the snapped-to object is highlighted).
   const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top });
   const xs = targets.flatMap(([r, kind]) => points(r.left, r.right).map(v => ({ v: v - scene.left, kind, box: boxOf(r) })));
   const ys = targets.flatMap(([r, kind]) => points(r.top, r.bottom).map(v => ({ v: v - scene.top, kind, box: boxOf(r) })));
-  if (t.background) { xs.push(...points(0, scene.width).map(v => ({ v, bg:true, kind:'bg' }))); ys.push(...points(0, scene.height).map(v => ({ v, bg:true, kind:'bg' }))); }
+  // Background edges / centre only where that line is on screen.
+  if (t.background) {
+    xs.push(...points(0, scene.width).filter(v => scene.left + v >= view.left - 1 && scene.left + v <= view.right + 1).map(v => ({ v, bg:true, kind:'bg' })));
+    ys.push(...points(0, scene.height).filter(v => scene.top + v >= view.top - 1 && scene.top + v <= view.bottom + 1).map(v => ({ v, bg:true, kind:'bg' })));
+  }
   if (t.rooms) Object.values(roomsOf()).filter(room => room.id !== roomId && (room.points || []).length >= 3).forEach(room => {
     const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
     const [minX, maxX, minY, maxY] = [Math.min(...px), Math.max(...px), Math.min(...py), Math.max(...py)];
@@ -2291,7 +2302,11 @@ function alignLabel(context, xPercent, yPercent, event) {
   const W = context.scene.width, H = context.scene.height, hw = context.halfW, hh = context.halfH, G = context.gap || 8;
   const cx = xPercent / 100 * W + (context.shiftX || 0), cy = yPercent / 100 * H + (context.shiftY || 0);
   const threshold = mobileView() ? 10 : 7, release = mobileView() ? 13 : 9, motion = context.motion ||= { stick: {} };
-  const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
+  // A room's label lying wholly inside its room (with "Pomieszczenia" on) snaps only to that room and its own parts;
+  // moved out of the room it snaps to everything else again.
+  const rb = context.roomBox, inside = !!rb && snapTargets().rooms && cx - hw >= rb.l - 1 && cx + hw <= rb.r + 1 && cy - hh >= rb.t - 1 && cy + hh <= rb.b + 1;
+  const boxes = context.boxes.filter(b => !inside || b.own).map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
+  const guideValues = values => inside ? values.filter(item => item.own) : values;
   // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
   const solve = (axis, c, half, oc, ohalf) => {
     const [lo, hi, mid, plo, phi] = axis === 'x' ? ['l','r','cx','t','b'] : ['t','b','cy','l','r'];
@@ -2316,7 +2331,7 @@ function alignLabel(context, xPercent, yPercent, event) {
       if (g > half * 2 + 2) { const free = (g - half * 2) / 2; add(a[hi] + free + half, .3, null, [[a[hi], a[hi] + free], [b[lo] - free, b[lo]]], [a, b]); }
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
-    (axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span }) => [-half, 0, half].forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [])));
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span }) => [-half, 0, half].forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [])));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).

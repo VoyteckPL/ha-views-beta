@@ -1,3 +1,8 @@
+## 0.4.1-beta.361
+
+- **Etykieta w swoim pomieszczeniu przyciąga się tylko do niego**: gdy etykieta pomieszczenia leży w całości wewnątrz tego pomieszczenia (i w menu magnesu włączone są „Pomieszczenia”), przyciąga się wyłącznie do jego krawędzi / środka i do własnych części. Wysunięta poza pomieszczenie przyciąga się do innych obiektów jak zwykle.
+- **Tylko obiekty widoczne na ekranie** (na stałe): przy przybliżonym widoku elementy, etykiety, pomieszczenia i krawędzie tła poza ekranem nie są już celami przyciągania.
+
 ## 0.4.1-beta.360
 
 - **Etykieta pomieszczenia = etykieta przy przyciąganiu**: krawędzie i środek własnego pomieszczenia przyciągają jego etykietę tylko przy włączonym „Pomieszczenia” w menu magnesu (wcześniej zawsze, nawet gdy włączone były same etykiety).
