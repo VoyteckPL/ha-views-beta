@@ -1992,7 +1992,7 @@ function roomEditorMarkup(room) {
       ? sub('Format', control('Zaokrąglenie',`${key}Decimals`,'select',String(r[`${key}Decimals`] ?? 'auto'),{ items: decimalsItems, dropdown:true }) + control('Jednostka',`${key}Unit`,'text',String(r[`${key}Unit`] ?? '°C'),{ placeholder:'°C' }))
       : part === 'action'
       ? sub('Teksty', Object.keys(THERMO_ACTIONS).map(a => control(THERMO_ACTIONS[a][0], `thermoActText_${a}`, 'text', r[`thermoActText_${a}`] || '', { placeholder: translateValue(THERMO_ACTIONS[a][0]) })).join(''))
-      : part === 'state' || part === 'modes' ? sub('Teksty trybów', [...new Set([...climateInfo({ entityId: (r.entityIds || [])[0] || '' }).modes, ...Object.keys(THERMO_MODES)])].map(m => control(THERMO_MODES[m]?.[0] || m, `thermoModeText_${m}`, 'text', r[`thermoModeText_${m}`] || '', { placeholder: thermoModeText({}, m) })).join('')) : '';
+      : part === 'state' ? sub('Teksty trybów', [...new Set([...climateInfo({ entityId: (r.entityIds || [])[0] || '' }).modes, ...Object.keys(THERMO_MODES)])].map(m => control(THERMO_MODES[m]?.[0] || m, `thermoModeText_${m}`, 'text', r[`thermoModeText_${m}`] || '', { placeholder: thermoModeText({}, m) })).join('')) : '';
     const contentSub = isThermoRoom(r) ? thermoTexts : part !== 'state' ? '' : onOff
       ? sub('Format', control('Tekst ON','labelStateOnText','text',r.labelStateOnText || '',{ placeholder: translateValue('Wł.') }) + control('Tekst OFF','labelStateOffText','text',r.labelStateOffText || '',{ placeholder: translateValue('Wył.') }))
       : number ? sub('Format', control('Jednostka','labelStateUnit','text',r.labelStateUnit || '',{ placeholder: stateCache[r.entityIds[0]]?.attributes?.unit_of_measurement || '' })

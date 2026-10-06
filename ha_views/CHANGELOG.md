@@ -1,3 +1,7 @@
+## 0.4.1-beta.404
+
+- Termostat: „Teksty trybów” były pokazane w dwóch sekcjach (Stan i Tryby), ale to te same ustawienia — teraz są tylko w sekcji **Stan**. Teksty dalej działają też jako podpowiedzi przycisków trybów i „wyłączony” na tarczy.
+
 ## 0.4.1-beta.403
 
 - **Mocniejsze łapanie siatki** przy zmianie rozmiaru: większy zasięg chwytu, a złapana linia trzyma kółeczko dłużej (można dalej ruszać kursorem / palcem, element zostaje na linii, dopóki nie odjedziesz wyraźnie dalej).
