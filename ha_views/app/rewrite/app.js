@@ -1228,9 +1228,11 @@ function startRoomLabelDrag(event) {
     const gy = (isIconRoom(room) ? [] : [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay]).map(v => ({ v: toY(v), room:true, kind:'room' }));
     $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1])).forEach(other => { const r = other.getBoundingClientRect(); [r.left, r.left + r.width / 2, r.right].forEach(v => gx.push({ v: v - scene.left, kind:'label' })); [r.top, r.top + r.height / 2, r.bottom].forEach(v => gy.push({ v: v - scene.top, kind:'label' })); });
     if (snapTargets().guides) { const all = guideTargets({ roomId: room.id }); gx.push(...all.xs); gy.push(...all.ys); }
-    const own = node.getBoundingClientRect();
-    // Centre and both edges of the dragged part line up with the edges and centres of the others.
-    return { scene, xs: gx, ys: gy, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true };
+    const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
+    // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
+    // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
+    return { scene, xs: gx, ys: gy, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
+      shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
   let moved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
@@ -2246,7 +2248,7 @@ function alignToGuides(context, xPercent, yPercent, event) {
   }
   // Precise mode (label parts): lines are offered at any speed and let go sooner, so sliding a part past another
   // catches its left edge, centre and right edge one after another in a single movement.
-  const precise = !!context.precise, slow = precise || motion.speed < (mobileView() ? .5 : .4), threshold = precise ? 7 : 6, release = precise ? 8 : 11, match = (axis, centre, half, values) => {
+  const precise = !!context.precise, slow = precise || motion.speed < (mobileView() ? .5 : .4), threshold = precise ? (mobileView() ? 10 : 7) : 6, release = precise ? (mobileView() ? 12 : 8) : 11, match = (axis, centre, half, values) => {
     const stuck = motion.stick[axis];
     if (stuck && Math.abs(centre + stuck.offset - stuck.line) <= release) return { ...stuck, centre: stuck.line - stuck.offset };
     motion.stick[axis] = null; if (!slow) return null;
@@ -2257,9 +2259,10 @@ function alignToGuides(context, xPercent, yPercent, event) {
   // A fast drag that stops right on a line: ~0.12 s without movement counts as slow, so the line is offered then.
   clearTimeout(motion.timer);
   if (!slow && context.onSettle) motion.timer = setTimeout(() => { motion.speed = 0; context.onSettle?.(); }, 120);
-  const { width, height } = context.scene, bx = match('x', xPercent / 100 * width, context.halfW, context.xs), by = match('y', yPercent / 100 * height, context.halfH, context.ys);
-  if (bx) xPercent = clamp(bx.centre / width * 100, 0, 100);
-  if (by) yPercent = clamp(by.centre / height * 100, 0, 100);
+  const { width, height } = context.scene, sx = context.shiftX || 0, sy = context.shiftY || 0;
+  const bx = match('x', xPercent / 100 * width + sx, context.halfW, context.xs), by = match('y', yPercent / 100 * height + sy, context.halfH, context.ys);
+  if (bx) xPercent = clamp((bx.centre - sx) / width * 100, 0, 100);
+  if (by) yPercent = clamp((by.centre - sy) / height * 100, 0, 100);
   showAlignGuides(bx ? [{ at: bx.line / width * 100, room: bx.room, bg: bx.bg, kind: bx.kind }] : [], by ? [{ at: by.line / height * 100, room: by.room, bg: by.bg, kind: by.kind }] : []);
   return { xPercent, yPercent };
 }

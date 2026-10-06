@@ -1,3 +1,7 @@
+## 0.4.1-beta.358
+
+- **Dokładniejsze przyciąganie etykiet do siebie**: krawędzie przeciąganej etykiety były liczone od jej punktu zaczepienia, a nie od rzeczywistej ramki — w grupie o swobodnym układzie (np. po rozgrupowaniu i ponownym zgrupowaniu) ramka jest przesunięta względem punktu, więc etykieta „przyklejała się” kilka pikseli obok krawędzi drugiej. Teraz liczy się rzeczywista ramka (w teście: przyleganie dokładnie 0 px). Na telefonie promień przyciągania etykiet jest nieco większy (10 px zamiast 7).
+
 ## 0.4.1-beta.357
 
 - **Integracje → „+” otwiera „Dodaj do widoku”**: zamiast od razu tworzyć etykietę, otwiera się menu wyboru (Etykieta, Pomieszczenie, Wskaźnik, Przepływ, Tekst) z tą encją już wybraną. Etykieta przechodzi do kreatora bez kroku encji, pomieszczenie do rysowania z tą encją, wskaźnik i przepływ dostają ją od razu.
