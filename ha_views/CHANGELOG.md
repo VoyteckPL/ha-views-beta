@@ -1,3 +1,8 @@
+## 0.4.1-beta.414
+
+- **Linie pomocnicze cieńsze i dokładnie na krawędzi**: linie przyciągania i podświetlenie celu mają 1 piksel ekranu (bez poświaty). Przerywane ramki etykiet, termostatów i rozgrupowanych części są cieńsze i leżą środkiem dokładnie na krawędzi elementu (co do ułamka piksela), więc pokrywają się z liniami pomocniczymi. Etykiety stoją na pełnych pikselach planu.
+- **Tarcza termostatu na spodzie**: tarcza jest najniższą warstwą, więc nazwę, ikonę, stan i inne części leżące na tarczy da się złapać i przenieść.
+
 ## 0.4.1-beta.413
 
 - **Zmiana rozmiaru nie wychodzi poza plan**: przeciąganie kółeczka w rogu (termostat, etykieta, tekst, części; także proporcjonalnie z Shiftem) zatrzymuje się na krawędzi planu.

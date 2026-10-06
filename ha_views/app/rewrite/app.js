@@ -569,6 +569,8 @@ function gridVisual() { const step = Number(model.settings?.snapStep) || .25; re
 // Square grid: the cell is a share of the plan's width (L 10 %, M 5 %, S 2,5 %) on both axes, and the lines are counted
 // from the plan's centre, so a line always runs through the middle of the plan both ways.
 function syncGridGeometry() {
+  // Guide and edit lines are one device pixel thin, whatever the screen density.
+  document.documentElement.style.setProperty('--dpr', String(window.devicePixelRatio || 1));
   const scene = els.scene; if (!scene) return; const w = scene.offsetWidth, h = scene.offsetHeight, g = w * gridVisual() / 100; if (!g) return;
   scene.style.setProperty('--grid-px', `${g}px`); scene.style.setProperty('--grid-ox', `${(w / 2) % g}px`); scene.style.setProperty('--grid-oy', `${(h / 2) % g}px`);
 }
@@ -643,6 +645,8 @@ function fitRoomLabel(id) {
 // A thermostat (a label on a climate entity) has more parts; for other labels they stay off and empty.
 const THERMO_PARTS = [['dial','labelDial','Tarcza'],['target','labelTarget','Temperatura ustawiona'],['current','labelCurrent','Temperatura aktualna'],['action','labelAction','Stan pracy'],['minus','labelMinus','Przycisk −'],['plus','labelPlus','Przycisk +'],['modes','labelModes','Tryby']];
 const ROOM_LABEL_PARTS = [['icon','labelIcon','Ikona'],['name','labelName','Nazwa'],['state','labelState','Stan'], ...THERMO_PARTS];
+// Placed freely, a thermostat's dial is the bottom layer: the parts lying on it (name, icon, state...) stay grabbable.
+const layeredParts = list => [...list].sort((a, b) => (b[0] === 'dial') - (a[0] === 'dial'));
 const ROOM_LABEL_KEYS = ROOM_LABEL_PARTS.flatMap(([, k]) => [k, `${k}Size`, `${k}X`, `${k}Y`, `${k}Bg`, `${k}BgOpacity`, `${k}BgColor`]).concat(['labelCardX','labelCardY','labelCardW','labelCardH','labelCardLayout','labelCardAlign','labelCardBg','labelCardBgColor','labelCardBgOpacity','labelCardBlur','labelCardRadius','labelCardPadding','labelCardGap','labelCardBorder','labelCardBorderColor','labelCardBorderOpacity','labelCardBorderWidth','labelCardBgState','labelCardBgOnColor','labelCardBgOffColor','labelCardBgOnOpacity','labelCardBgOffOpacity','labelCardBorderState','labelCardBorderOnColor','labelCardBorderOffColor','labelCardBorderOnOpacity','labelCardBorderOffOpacity','labelCardBorderOnWidth','labelCardBorderOffWidth','labelCardScale','labelIconDX','labelIconDY','labelNameDX','labelNameDY','labelStateDX','labelStateDY']).concat(['labelLinked','labelIconName','labelIconOn','labelIconOff','labelNameColor','labelStateColor','labelIconVariant','labelIconNameOn','labelIconNameOff','labelIconOpacityOn','labelIconOpacityOff','labelIconFill','labelIconOutline','labelIconOutlineColor','labelIconOutlineWidth','labelIconSource','labelIconBorder','labelIconBorderColor','labelIconBorderOpacity','labelIconBorderWidth','labelIconShape','labelIconRadius','labelIconPadding','labelIconBlur','labelIconColorState','labelIconColor','labelIconOpacity','labelIconOutlineState','labelIconOutlineOnColor','labelIconOutlineOffColor','labelIconOutlineOnWidth','labelIconOutlineOffWidth','labelIconOutlineOpacity','labelIconOutlineOnOpacity','labelIconOutlineOffOpacity','labelIconBgState','labelIconBgOnColor','labelIconBgOffColor','labelIconBgOnOpacity','labelIconBgOffOpacity','labelIconBorderState','labelIconBorderOnColor','labelIconBorderOffColor','labelIconBorderOnOpacity','labelIconBorderOffOpacity','labelIconBorderOnWidth','labelIconBorderOffWidth','labelNameBorder','labelNameBorderColor','labelNameBorderOpacity','labelNameBorderWidth','labelStateBorder','labelStateBorderColor','labelStateBorderOpacity','labelStateBorderWidth','labelEqualFrames','labelCardFree','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelIconFX','labelIconFY','labelNameFX','labelNameFY','labelStateFX','labelStateFY','labelCardShadow','labelStateOnText','labelStateOffText','labelStateUnit','labelStateDecimals','labelRules','labelRulesLow','labelRulesHigh','labelRulesColorLow','labelRulesColorMid','labelRulesColorHigh','labelRulesSmooth','labelRulesIcon','labelRulesState'], ['labelName','labelState'].flatMap(k => ['ColorState', 'ColorOn', 'ColorOff', 'Opacity', 'OpacityOn', 'OpacityOff', 'Weight', 'BgState', 'BgOnColor', 'BgOffColor', 'BgOnOpacity', 'BgOffOpacity', 'Blur', 'BorderState', 'BorderOnColor', 'BorderOffColor', 'BorderOnOpacity', 'BorderOffOpacity', 'BorderOnWidth', 'BorderOffWidth', 'Radius', 'Padding'].map(f => k + f)));
 // Outline of a room's shape (drawn on top of its light, not faded with it); can follow ON / OFF.
 const ROOM_OUTLINE_KEYS = ['outline','outlineColor','outlineOpacity','outlineWidth','outlineStyle','outlineState','outlineOnColor','outlineOffColor','outlineOnOpacity','outlineOffOpacity','outlineOnWidth','outlineOffWidth'];
@@ -1006,6 +1010,12 @@ function equalizeLabelFrames(room, group) {
   parts.forEach(base);
   fitFreeCard(room, group); fitLabelBackdrop(room, group);
   // A selected part or label whose width equals its height is marked (green outline): a round icon stays a circle.
+  // The edit outline is drawn magnified 4x and scaled down (sub-pixel exact), so it needs the element's corner radius.
+  group.querySelectorAll('.room-label-part.editable, .room-label-card.editable').forEach(node => {
+    const rad = String(getComputedStyle(node).borderTopLeftRadius || '0').split(' ')[0];
+    if (rad.endsWith('%') || !(parseFloat(rad) > 0)) { node.style.setProperty('--orad', rad.endsWith('%') ? rad : '0px'); node.style.removeProperty('--prx'); }
+    else { node.style.removeProperty('--orad'); node.style.setProperty('--prx', `${parseFloat(rad)}px`); }
+  });
   group.querySelectorAll('.room-label-part, .room-label-card').forEach(node => node.classList.toggle('square', !!node.querySelector(':scope > .card-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
@@ -1166,7 +1176,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   if (r.labelLinked) {
     // A "free" group keeps the parts where they were placed when it was grouped again (card-local positions).
     const free = !!r.labelCardFree;
-    const inner = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part, key]) => {
+    const inner = (free ? layeredParts : list => list)(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
       const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, on);
       const place = free ? `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(${Number(r[`${key}FX`]) || 0}px,${Number(r[`${key}FY`]) || 0}px)` : `transform:translate(${Number(r[`${key}DX`]) || 0}px,${Number(r[`${key}DY`]) || 0}px)`;
       return `<div class="room-card-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
@@ -1174,7 +1184,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
     const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 4), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
-    const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
+    const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
       free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
@@ -1182,12 +1192,12 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
-  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};${cardLook(r, on)}"></div>` : '';
+  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};${cardLook(r, on)}"></div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : shownParts[0];
-  return backdrop + ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part, key]) => {
+  return backdrop + layeredParts(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, on);
-    const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
+    const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
     const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;

@@ -1429,3 +1429,19 @@ img.room-layer.room-glow.flat{will-change:opacity}
   background-size:100% 100%,100% 100%,100% 100%,100% 100%,var(--grid-px,10%) var(--grid-px,10%),var(--grid-px,10%) var(--grid-px,10%)!important;
   background-position:0 0,0 0,0 0,0 0,var(--grid-ox,0) var(--grid-oy,0),var(--grid-ox,0) var(--grid-oy,0)!important;
   background-repeat:no-repeat,no-repeat,no-repeat,no-repeat,repeat,repeat!important}
+/* Guide lines, snap highlights and edit outlines: one device pixel thin (at most half a CSS pixel) and centred exactly
+   on the element's edge - the outline is drawn half inside, half outside, so it lies on the same line as the guides. */
+:root{--hair:min(.5px, calc(1px / var(--dpr,1)))}
+.align-guide{--g:calc(var(--hair) / var(--view-zoom,1))!important}
+.snap-target{--sg:calc(var(--hair) / var(--view-zoom,1));--sc:rgba(244,114,208,.9);border-width:0!important;box-shadow:0 0 0 calc(var(--sg) / 2) var(--sc),inset 0 0 0 calc(var(--sg) / 2) var(--sc)!important}
+.snap-target.k-room{--sc:rgba(255,181,71,.9)}.snap-target.k-marker{--sc:rgba(32,185,231,.9)}.snap-target.k-flow{--sc:rgba(45,212,191,.9)}.snap-target.k-spacing{--sc:rgba(163,230,53,.9)}.snap-target.k-grid{--sc:rgba(143,223,255,.8)}
+.room-label-part.editable::after,.room-label-card.editable::after{--ow:max(.5px, calc(.75px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{--ow:max(.75px, calc(1px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.room-label-part.editable.selected:not(.active-part)::after{--ow:max(.5px, calc(.75px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{--ow:max(1px, calc(1.5px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+/* Browsers paint a box at whole pixels of its own (scaled) space, so a thin outline moved out by half its width would
+   land on a whole pixel instead. The outline is therefore drawn 4x bigger and scaled down by 4 (a transform is never
+   rounded): its middle lies exactly on the element's edge, where the guide lines are. */
+.room-label-part.editable::after,.room-label-card.editable::after,.room-label-card.editable.selected::after,.room-label-part.editable.selected::after,.room-label-part.editable.selected:not(.active-part)::after,.room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{inset:auto!important;left:0!important;top:0!important;box-sizing:border-box!important;width:calc(400% + 4 * var(--ow))!important;height:calc(400% + 4 * var(--ow))!important;border-width:calc(4 * var(--ow))!important;border-radius:var(--orad, calc(4 * var(--prx, 0px) + 2 * var(--ow)))!important;transform-origin:0 0!important;transform:translate(calc(var(--ow) / -2),calc(var(--ow) / -2)) scale(.25)!important;box-shadow:none!important}
+/* Labels sit on whole pixels of the plan (their place is rounded), so what is painted is exactly where the guides are. */
+@supports (left:round(1.5px,1px)){.room-label-part[style*="--ax"],.room-label-card[style*="--ax"],.room-label-backdrop[style*="--ax"]{left:round(var(--ax),1px)!important;top:round(var(--ay),1px)!important}}
