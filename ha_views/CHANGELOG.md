@@ -1,3 +1,8 @@
+## 0.4.1-beta.402
+
+- **Siatka edycji wg S / M / L**: widoczna siatka zmienia się z wyborem w menu przyciągania — **L** jak dotąd (co 10 % planu), **M** dwa razy gęstsza (5 %), **S** jeszcze dwa razy gęstsza (2,5 %). Linie zaczynają się od krawędzi planu, więc siatka jest zawsze symetryczna względem środka i skaluje się z planem.
+- **Zmiana rozmiaru przyciąga się do siatki**: przy włączonej siatce przeciągane kółeczka w rogach etykiet, termostatów, tekstów i ich części oraz uchwyty wskaźników / markerów łapią się linii siatki (obok przyciągania do innych elementów i 1:1).
+
 ## 0.4.1-beta.401
 
 - Termostat:

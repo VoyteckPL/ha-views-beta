@@ -546,6 +546,7 @@ function applySnapUi() {
   const step = clamp(model.settings?.snapStep || .25, .25, 4);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
+  els.scene?.style.setProperty('--grid-vis', `${gridVisual()}%`);
   const activePreset = [.25, 1, 4].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, .25);
   els.gridPresets.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === activePreset));
 }
@@ -561,6 +562,14 @@ function bringIntoScene(item) {
   const nx = Number.isFinite(x) ? clamp(x, 0, 100) : 50, ny = Number.isFinite(y) ? clamp(y, 0, 100) : 50;
   if (nx === x && ny === y) return false;
   item.xPercent = nx; item.yPercent = ny; return true;
+}
+// The visible edit grid: L = 10 % of the plan (as before), M = 5 %, S = 2,5 %. Lines start at the plan's edges, so the
+// grid is always symmetric (a line through the centre) and scales with the plan. Resize dots snap to these lines.
+function gridVisual() { const step = Number(model.settings?.snapStep) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
+function gridLineNear(v, horizontal) {
+  if (model.settings?.snapEnabled === false) return null;
+  const sc = els.scene.getBoundingClientRect(), size = horizontal ? sc.width : sc.height, origin = horizontal ? sc.left : sc.top, step = size * gridVisual() / 100; if (!step) return null;
+  const line = origin + Math.round((v - origin) / step) * step; return Math.abs(line - v) <= (mobileView() ? 10 : 7) ? line : null;
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
@@ -1237,6 +1246,7 @@ function startFreeResize(event, handle) {
       const pick = (edge, fixed, sign, lines, horizontal) => { let best = null;
         lines.forEach(t => { const v = (horizontal ? scene.left : scene.top) + t.v, d = Math.abs(edge - v); if (sign * (v - fixed) > 4 && d <= reach && (!best || d < best.d)) best = { d, edge: v, t }; });
         sizes.forEach(r => { const size = horizontal ? r.width : r.height, v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r, size: true }; });
+        const gl = gridLineNear(edge, horizontal); if (gl !== null && sign * (gl - fixed) > 4) { const d = Math.abs(edge - gl); if (!best || d < best.d) best = { d, edge: gl, grid: true }; }
         return best; };
       bx = pick(ex, fx, sx, g.xs, true); by = pick(ey, fy, sy, g.ys, false);
       if (bx) ex = bx.edge; if (by) ey = by.edge;
@@ -1262,7 +1272,7 @@ function startFreeResize(event, handle) {
     const r = $(sel)?.getBoundingClientRect() || rect0, Ws = scene.width || 1, Hs = scene.height || 1, px = v => (v - scene.left) / Ws * 100, py = v => (v - scene.top) / Hs * 100;
     const vertical = [], horizontal = [], marks = [], hits = [];
     const add = (b, isX) => {
-      if (!b) return; const t = b.r || (b.t?.box ? { left: b.t.box.l + scene.left, right: b.t.box.r + scene.left, top: b.t.box.t + scene.top, bottom: b.t.box.b + scene.top } : null);
+      if (!b || b.grid) return; const t = b.r || (b.t?.box ? { left: b.t.box.l + scene.left, right: b.t.box.r + scene.left, top: b.t.box.t + scene.top, bottom: b.t.box.b + scene.top } : null);
       if (t) hits.push({ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: b.t?.kind || 'label' });
       if (b.size && t) { if (isX) marks.push({ axis: 'x', from: px(r.left), to: px(r.right), at: py(r.bottom + 6) }, { axis: 'x', from: px(t.left), to: px(t.right), at: py(t.bottom + 6) }); else marks.push({ axis: 'y', from: py(r.top), to: py(r.bottom), at: px(r.right + 6) }, { axis: 'y', from: py(t.top), to: py(t.bottom), at: px(t.right + 6) }); return; }
       const kind = b.t?.kind || 'label';
@@ -6082,10 +6092,11 @@ function startResize(event) {
   const move = e => {
     if ((e.buttons & 1) !== 1) return finish();
     const sx = handle.includes('w') ? -1 : 1, sy = handle.includes('n') ? -1 : 1; changed = true;
-    const snapSize = (value, maximum) => { const limited = clamp(value, 1, maximum); if (model.settings?.snapEnabled === false) return limited; const gridPx = Math.max(1, (Number(model.settings?.designWidth) || DESIGN_WIDTH) * (Number(model.settings?.snapStep) || 1) / 100); return Math.round(limited / gridPx) * gridPx; };
     const minWidth = isGaugeType(marker.type) ? 44 : marker.type === 'icon' ? 24 : 36, minHeight = isGaugeType(marker.type) ? 28 : marker.type === 'icon' ? 24 : 24;
-    marker.style.width = clamp(snapSize(start.w + (e.clientX-start.x)*sx/scale, 2400),minWidth,2400);
-    marker.style.height = clamp(snapSize(start.h + (e.clientY-start.y)*sy/scale, 1800),minHeight,1800);
+    // The moving edges snap to the visible grid lines (screen px per style px from the size when grabbed).
+    const kx = initialRect.width / Math.max(1, start.w), ky = initialRect.height / Math.max(1, start.h), toGrid = (size, k, fixedAt, sign, horizontal) => { const edge = fixedAt + sign * size * k, line = gridLineNear(edge, horizontal); return line === null ? size : Math.abs(line - fixedAt) / k; };
+    marker.style.width = clamp(Math.round(toGrid(clamp(start.w + (e.clientX-start.x)*sx/scale, 1, 2400), kx, fixed.x, sx, true)),minWidth,2400);
+    marker.style.height = clamp(Math.round(toGrid(clamp(start.h + (e.clientY-start.y)*sy/scale, 1, 1800), ky, fixed.y, sy, false)),minHeight,1800);
     // The scene may be re-rendered during the gesture (live states); always measure the node that is on screen.
     const live = node.isConnected ? node : markerNode(marker.id);
     if (!live) return;
