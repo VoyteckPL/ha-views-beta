@@ -1,3 +1,7 @@
+## 0.4.1-beta.415
+
+- **Bez podwójnych linii przy przyciąganiu**: gdy element łapie ten sam rozmiar albo równy odstęp, nie rysują się już podwójne linie miary; przyciąganie działa jak dotąd, a to, do czego się złapało, pokazuje podświetlenie elementów.
+
 ## 0.4.1-beta.414
 
 - **Linie pomocnicze cieńsze i dokładnie na krawędzi**: linie przyciągania i podświetlenie celu mają 1 piksel ekranu (bez poświaty). Przerywane ramki etykiet, termostatów i rozgrupowanych części są cieńsze i leżą środkiem dokładnie na krawędzi elementu (co do ułamka piksela), więc pokrywają się z liniami pomocniczymi. Etykiety stoją na pełnych pikselach planu.

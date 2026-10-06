@@ -2687,6 +2687,8 @@ function alignLabel(context, xPercent, yPercent, event) {
 }
 // A guide may be a full line or a segment (from / to, %), gap markers are short segments with end ticks.
 function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
+  // No double measuring lines (equal size / equal gap): the highlighted elements already show what was caught.
+  marks = [];
   let layer = $('#align-guides');
   if (!vertical.length && !horizontal.length && !marks.length && !hits.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
