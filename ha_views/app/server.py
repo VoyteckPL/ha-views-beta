@@ -130,6 +130,21 @@ def _viewer_toggle_entities():
                 allowed.add(str(marker.get("entityId")))
     return allowed
 
+def _viewer_thermostat_entities():
+    """Climate entities a non-admin user may set: those an admin placed on a view as a Termostat with its controls shown."""
+    allowed = set()
+    data = _read_json(REWRITE_STATE_FILE, None)
+    views = data.get("views") if isinstance(data, dict) else None
+    for view in (views or {}).values():
+        if not isinstance(view, dict):
+            continue
+        for marker in (view.get("entities") or {}).values():
+            if isinstance(marker, dict) and marker.get("type") == "thermostat" and marker.get("entityId"):
+                style = marker.get("style") if isinstance(marker.get("style"), dict) else {}
+                if style.get("thermoShowControls", True) or style.get("thermoShowModes", True):
+                    allowed.add(str(marker.get("entityId")))
+    return allowed
+
 # Generic optional control endpoint. It never contains user-specific entity IDs.
 async def api_control(request):
     is_admin = await request_is_admin(request)
@@ -142,7 +157,11 @@ async def api_control(request):
     action = str(body.get("action", "")).strip()
     if not re.fullmatch(r"[a-z_]+\.[a-zA-Z0-9_]+", entity_id):
         return web.json_response({"ok": False, "error": "Invalid entity ID"}, status=400)
-    if not is_admin and (action not in ("turn_on", "turn_off") or entity_id not in _viewer_toggle_entities()):
+    climate_actions = ("set_temperature", "set_hvac_mode", "set_preset_mode")
+    if not is_admin and not (
+        (action in ("turn_on", "turn_off") and entity_id in _viewer_toggle_entities())
+        or (action in climate_actions and entity_id in _viewer_thermostat_entities())
+    ):
         return web.json_response({"ok": False, "error": "HA Views is view-only for this user"}, status=403)
 
     domain = entity_id.split(".", 1)[0]
@@ -155,6 +174,18 @@ async def api_control(request):
         except (TypeError, ValueError):
             return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
         service_url = f"{HA_API}/services/{domain}/set_value"
+    elif action == "set_temperature" and domain in {"climate", "water_heater"}:
+        try:
+            payload["temperature"] = float(body.get("value"))
+        except (TypeError, ValueError):
+            return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
+        service_url = f"{HA_API}/services/{domain}/set_temperature"
+    elif action in ("set_hvac_mode", "set_preset_mode") and domain == "climate":
+        value = str(body.get("value", "")).strip()
+        if not re.fullmatch(r"[A-Za-z0-9_ -]{1,40}", value):
+            return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
+        payload["hvac_mode" if action == "set_hvac_mode" else "preset_mode"] = value
+        service_url = f"{HA_API}/services/climate/{action}"
     else:
         return web.json_response({"ok": False, "error": "Unsupported action"}, status=400)
 

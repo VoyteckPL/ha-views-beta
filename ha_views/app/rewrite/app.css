@@ -1337,3 +1337,44 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .room-wizard-field{display:grid;gap:4px;margin-top:8px}.room-wizard-field>span{color:#9fbfcf;font-size:11px}
 .room-wizard-field input,.room-wizard-field select{height:36px;padding:0 9px;border:1px solid rgba(99,181,216,.3);border-radius:9px;background:#0d2e3e;color:#dff6ff;font-size:13px}
 .room-wizard-check{display:flex;align-items:center;gap:8px;margin-top:8px;color:#dce8ef;font-size:12px}.room-wizard-check input{width:16px;height:16px;accent-color:#20b9e7}
+/* ---- Termostat ---------------------------------------------------------------------------- */
+.marker.thermostat{--thermo-k:1}
+.thermo{position:absolute;inset:0;display:flex;flex-direction:column;gap:calc(5px * var(--thermo-k));padding:calc(12px * var(--thermo-k)) calc(12px * var(--thermo-k)) calc(11px * var(--thermo-k));font-size:calc(12px * var(--thermo-k));color:#e6f6fd;box-sizing:border-box;text-shadow:none}
+.thermo-head{display:flex;align-items:center;justify-content:space-between;gap:.5em;min-height:1.9em}
+.thermo-name{min-width:0;overflow:hidden;color:#d5ebf5;font-size:1.05em;font-weight:750;text-overflow:ellipsis;white-space:nowrap}
+.thermo-action{display:inline-flex;flex:0 0 auto;align-items:center;gap:.3em;padding:.22em .6em;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-size:.85em;font-weight:750}
+.thermo-action i{font-size:1.15em}
+.thermo-action.working i{animation:thermo-pulse 1.8s ease-in-out infinite}
+@keyframes thermo-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.88)}}
+.thermo-body{position:relative;display:grid;flex:1;min-height:0;place-items:center}
+.thermo-dial{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.thermo-track,.thermo-arc{fill:none;stroke-width:9;stroke-linecap:round}
+.thermo-arc{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--accent) 70%,transparent))}
+.thermo-arc.working{animation:thermo-glow 2.4s ease-in-out infinite}
+@keyframes thermo-glow{0%,100%{opacity:1}50%{opacity:.72}}
+.thermo-knob{fill:#fff;stroke-width:4}
+.thermo-cur{fill:#e6f6fd;stroke:#071a26;stroke-width:1.5}
+.thermo-range{fill:#7f9cad;font:600 10px system-ui,sans-serif;text-anchor:middle}
+.thermo-centre{position:relative;display:grid;justify-items:center;margin-top:-.4em;line-height:1}
+.thermo-centre small{margin-bottom:.3em;color:#8fb0c0;font-size:.82em;letter-spacing:.04em;text-transform:uppercase}
+.thermo-target{color:#fff;font-size:3.2em;font-weight:800;letter-spacing:-.02em}
+.thermo-target sup{margin-left:.03em;font-size:.45em;vertical-align:top;line-height:1.6}
+.thermo-target.off{color:#8fa3b0;font-size:1.9em}
+.thermo-now{display:inline-flex;align-items:center;gap:.15em;margin-top:.4em;color:#a9c6d4;font-size:.95em;font-weight:600}
+.thermo-now i{color:var(--accent)}
+.thermo-controls{display:flex;align-items:center;gap:.5em}
+.thermo-btn{display:grid;flex:0 0 auto;width:2.6em;height:2.6em;place-items:center;padding:0;border:1px solid rgba(143,223,255,.25);border-radius:50%;background:rgba(255,255,255,.06);color:#fff;font-size:1em;cursor:pointer}
+.thermo-btn i{font-size:1.35em}
+.thermo-btn:not(:disabled):active{background:color-mix(in srgb,var(--accent) 35%,transparent)}
+.thermo-btn:disabled{opacity:.3}
+.thermo-chips{display:flex;flex:1;flex-wrap:wrap;justify-content:center;gap:.3em;min-width:0}
+.thermo-chip{display:inline-flex;align-items:center;gap:.25em;max-width:100%;padding:.16em .5em;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.07);color:#cfe6f0;font-size:.82em;white-space:nowrap;text-overflow:ellipsis}
+.thermo-chip b{color:#8fb0c0;font-weight:600}
+.thermo-chip i{color:#8fdfff}
+.thermo-modes{display:flex;justify-content:center;gap:.45em}
+.thermo-mode{display:grid;width:2.35em;height:2.35em;place-items:center;padding:0;border:1px solid rgba(143,223,255,.18);border-radius:.8em;background:rgba(255,255,255,.04);color:#8fa9b7;font-size:1em;cursor:pointer}
+.thermo-mode i{font-size:1.25em}
+.thermo-mode.on{border-color:var(--accent);background:var(--accent);color:#04121b}
+.editing .thermo button{pointer-events:none}
+.control.thermo-missing small,.control.thermo-extra small{grid-column:1/-1;color:#6f8d9c;font-size:10px}
+.control.thermo-attrs code{color:#8fb0c0;font-size:10px}

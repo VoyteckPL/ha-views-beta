@@ -1,3 +1,9 @@
+## 0.4.1-beta.394
+
+- **Nowy element „Termostat”** (osobny kafelek w menu plus, tylko encje `climate`): tarcza od `min_temp` do `max_temp` z łukiem do temperatury ustawionej w kolorze trybu (grzanie / chłodzenie / auto / osuszanie / wentylator / wyłączony), kropką temperatury aktualnej i dużą wartością docelową. Nad tarczą nazwa i stan pracy (`hvac_action`: Grzeje / Bezczynny / Chłodzi…, pulsuje podczas pracy); pod nią przyciski − / + (krok `target_temp_step`) i przyciski trybów z `hvac_modes`.
+- W trybie przeglądania − / + i tryby sterują termostatem (temperatura wysyłana po chwili od ostatniego kliknięcia, tarcza zmienia się od razu); dotknięcie w innym miejscu otwiera szczegóły encji. Użytkownik bez uprawnień administratora może sterować termostatami umieszczonymi na widokach.
+- Panel: **Pokaż** — nazwa, stan pracy, temperatura aktualna, − / +, tryby, zakres min / max, wilgotność, preset, wentylator (niedostępne atrybuty są wyszarzone z opisem); **Inne atrybuty** — każdy pozostały atrybut encji można dodać jako mały wiersz; **Kolory** trybów i toru; rozmiar, skala zawartości, tło, ramka.
+
 ## 0.4.1-beta.393
 
 - **Nowy element „Tekst”** (menu plus): działa jak etykieta — ten sam wygląd, grupa, ikona / nazwa / podpis, kółeczka, przyciąganie, kopiowanie stylu — ale bez encji. Kreator: **Tekst** → **Akcja po dotknięciu** (brak / przejdź do widoku / strona Home Assistant / link, z polem celu) → co pokazać. W panelu, w sekcji Ogólne: Tekst, Podpis (druga linia, pokazuje się po wpisaniu) i akcja z celem. W trybie przeglądania dotknięcie wykonuje akcję.
