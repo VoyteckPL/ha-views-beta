@@ -1235,3 +1235,9 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .gap-mark.spacing,.gap-mark.spacing::before,.gap-mark.spacing::after{background:#a3e635}
 .snap-target.spacing{border-color:rgba(163,230,53,.85);background:rgba(163,230,53,.08);box-shadow:0 0 calc(10px / var(--view-zoom,1)) rgba(163,230,53,.4)}
 .snap-icon[data-snap-key="spacing"].active{color:#a3e635;border-color:rgba(163,230,53,.55)}
+/* Grid row of the snap menu: the grid icon is the switch (coloured when on), S / M / L next to it in one row. */
+.snap-menu .grid-row{display:flex;align-items:center;gap:8px;padding:3px 8px 4px}
+.snap-menu .grid-row .grid-presets{margin:0}
+.snap-menu .grid-toggle{flex:0 0 auto}
+.snap-menu .grid-toggle:not(.active){color:#6f8794}
+.snap-menu .grid-row:has(.grid-toggle:not(.active)) .grid-preset{opacity:.45}

@@ -1,3 +1,7 @@
+## 0.4.1-beta.367
+
+- **Menu przyciągania — siatka w jednym rzędzie**: bez napisu „Siatka” i „ON”; sama ikona siatki jest przełącznikiem (podświetlona, gdy siatka włączona, szara, gdy wyłączona), a obok w tym samym rzędzie wielkości S / M / L (przygaszone przy wyłączonej siatce).
+
 ## 0.4.1-beta.366
 
 - **„Odstępy” jako osobna opcja przyciągania**: w menu magnesu obok „Środki” i „Krawędzie” jest nowa ikona „Odstępy” — ustawianie etykiety dokładnie pośrodku między dwiema innymi oraz powtarzanie odstępu z sąsiedniej pary. Ma własny, limonkowy kolor znaczników i podświetlenia (krawędzie i środki zostają różowe). Odstęp 8 px „obok” nadal należy do krawędzi.
