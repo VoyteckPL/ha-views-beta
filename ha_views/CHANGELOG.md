@@ -1,3 +1,7 @@
+## 0.4.1-beta.372
+
+- **Wklejanie stylu nie przesuwa celu**: przy kopiowaniu stylu (np. z etykiety pomieszczenia do zwykłej etykiety) nie są już przenoszone przesunięcia etykiety i jej części względem punktu — docelowy element zostaje na swoim miejscu, zmienia się tylko wygląd (kolory, tła, ramki, rozmiary, wewnętrzny układ grupy).
+
 ## 0.4.1-beta.371
 
 - **Dopasowanie rozmiaru do sąsiednich elementów**: przy zmianie rozmiaru rozgrupowanej części kółeczkami szerokość / wysokość przyciąga się do rozmiaru innych widocznych etykiet i ich części (np. ikony sąsiedniego pomieszczenia, nawet gdy samo pomieszczenie nie mieści się na ekranie), a nie tylko do części tej samej etykiety. Przy dopasowaniu widać znaczniki wymiaru na obu elementach i podświetlenie wzorca.
