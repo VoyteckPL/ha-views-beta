@@ -1,3 +1,7 @@
+## 0.4.1-beta.433
+
+- **Tarcza bez marginesu**: obszar tarczy termostatu przylega teraz do samego łuku (z jego grubością) i liczb min / max — praktycznie bez pustego marginesu wokół, więc ramka, kropki rozmiaru i przyciąganie trafiają w to, co widać. Kropki temperatury mogą minimalnie wystawać poza ten obszar.
+
 ## 0.4.1-beta.432
 
 - **Rozmiar grupy do 4,5×**: suwak „Rozmiar” w sekcji Grupa (etykiety, termostaty, teksty) sięga teraz do 4,5× (wcześniej 3×); proporcjonalna zmiana rozmiaru kropkami też pozwala na tyle.
