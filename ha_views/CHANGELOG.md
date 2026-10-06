@@ -1,3 +1,7 @@
+## 0.4.1-beta.373
+
+- Usunięty przycisk „Duplikuj” elementu (marker / wskaźnik, Flow, pomieszczenie / etykieta) z nagłówków ich popupów. Duplikowanie widoku zostaje.
+
 ## 0.4.1-beta.372
 
 - **Wklejanie stylu nie przesuwa celu**: przy kopiowaniu stylu (np. z etykiety pomieszczenia do zwykłej etykiety) nie są już przenoszone przesunięcia etykiety i jej części względem punktu — docelowy element zostaje na swoim miejscu, zmienia się tylko wygląd (kolory, tła, ramki, rozmiary, wewnętrzny układ grupy).
