@@ -5970,14 +5970,19 @@ function bindEvents() {
   // Icons are tapped by press + release on the label itself. On phones the scene may capture the finger for
   // panning / swiping, and the browser then sends the click to the scene instead of the label.
   let labelTap = null;
-  document.addEventListener('pointerdown', event => { const node = event.target.closest?.('.tappable'); labelTap = node && !editMode ? { id: node.dataset.roomId, pid: event.pointerId, x: event.clientX, y: event.clientY, t: performance.now() } : null; }, true);
+  document.addEventListener('pointerdown', event => { const node = event.target.closest?.('.tappable'); labelTap = node && !editMode ? { id: node.dataset.roomId, pid: event.pointerId, x: event.clientX, y: event.clientY, t: performance.now(), thermo: event.target.closest?.('[data-thermo], [data-thermo-mode]') || null } : null; }, true);
   window.addEventListener('pointercancel', event => { if (labelTap?.pid === event.pointerId) labelTap = null; }, true);
   window.addEventListener('pointerup', event => {
     const tap = labelTap; if (!tap || tap.pid !== event.pointerId) return; labelTap = null;
     if (editMode || Math.hypot(event.clientX - tap.x, event.clientY - tap.y) > 12 || performance.now() - tap.t > 1200) return;
     const room = roomsOf()[tap.id]; if (!room) return;
-    const thermoButton = isThermoRoom(room) && event.target.closest?.('[data-thermo], [data-thermo-mode]');
-    if (thermoButton) { if (!thermoButton.disabled) thermoTap({ entityId: room.entityIds?.[0] || '', confirm: !!room.thermoConfirm, name: room.name }, thermoButton); return; }
+    // On a phone the release lands on the plan's gesture layer (it captures the touch), so the button is the one pressed.
+    const thermoButton = isThermoRoom(room) && (event.target.closest?.('[data-thermo], [data-thermo-mode]') || (tap.thermo?.isConnected ? tap.thermo : null));
+    if (thermoButton) {
+      // The click that follows the release must not close the confirmation that may open now.
+      const swallow = e => { e.stopPropagation(); e.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 600);
+      if (!thermoButton.disabled) thermoTap({ entityId: room.entityIds?.[0] || '', confirm: !!room.thermoConfirm, name: room.name }, thermoButton); return;
+    }
     // The click that follows this release is not needed any more (it could land on the sheet just opened).
     lastLabelTap = performance.now(); const swallow = e => { e.stopPropagation(); e.preventDefault(); };
     window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 600);

@@ -1,3 +1,7 @@
+## 0.4.1-beta.418
+
+- **Termostat na telefonie: przyciski działają**: dotknięcie trybu (np. Wyłącz) oraz − / + na telefonie przełącza tryb / temperaturę (wcześniej puszczenie palca trafiało w warstwę gestów planu i zamiast tego otwierało się okno szczegółów). Opcjonalne potwierdzenie włączenia / wyłączenia pojawia się teraz także na telefonie i nie zamyka się samo.
+
 ## 0.4.1-beta.417
 
 - **Potwierdzenie włączenia i wyłączenia termostatu (opcjonalne)**: w części „Tryby” jest sekcja **Potwierdzenie** z opcją „Pytaj przy włączeniu i wyłączeniu”. Gdy jest włączona, przejście na „Wyłączony” albo z „Wyłączony” na inny tryb wymaga potwierdzenia w okienku (Włącz / Wyłącz albo Anuluj). Zmiana temperatury i przełączanie między innymi trybami działa bez pytania.
