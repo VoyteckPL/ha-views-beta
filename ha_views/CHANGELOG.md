@@ -1,3 +1,11 @@
+## 0.4.1-beta.401
+
+- Termostat:
+  - **Tarcza** domyślnie trochę większa; nowe suwaki: **Kropka temperatury aktualnej** i **Uchwyt temperatury ustawionej** (rozmiar w %).
+  - **Temperatura ustawiona i aktualna**: podsekcja „Format” — zaokrąglenie (automatycznie / 0 / 0,1 / 0,01) i jednostka (domyślnie °C, można zmienić albo usunąć).
+  - **Temperatura aktualna** bez ikonki termometru.
+  - Sekcje części termostatu (Tarcza, Temperatury, Stan pracy, Przyciski, Tryby) mają własne kolory paska, tytułu i włączonych przycisków (tło / ramka / opcje) — jak części etykiety, zamiast szarych / czarnych.
+
 ## 0.4.1-beta.400
 
 - Termostat: **Stan pracy bez ikon** — dla wszystkich stanów (Grzeje, Bezczynny, Chłodzi, Wyłączony…) widać sam tekst.
