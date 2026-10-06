@@ -1,3 +1,7 @@
+## 0.4.1-beta.388
+
+- **Szerokość i wysokość niezależnie**: zaznaczona etykieta i rozgrupowana część mają teraz kółeczka w rogach (proporcjonalne skalowanie) **i** kropki na środkach boków (tylko szerokość albo tylko wysokość, przeciwny bok zostaje w miejscu). Zgrupowana etykieta zapamiętuje swoją szerokość / wysokość ramki (nie mniejszą niż zawartość). Boki przyciągają się do linii innych elementów i do szerokości / wysokości innej etykiety lub części.
+
 ## 0.4.1-beta.387
 
 - **Jednakowe kółeczka dla etykiet i rozgrupowanych części**: rozgrupowana ikona / nazwa / stan (także sama ikona po automatycznym rozgrupowaniu) ma teraz kółeczka w czterech rogach zamiast kropek na środkach boków — tak jak zgrupowana etykieta. Przeciągnięcie rogu skaluje część proporcjonalnie (rozmiar, ramka, margines), przeciwny róg zostaje w miejscu, z tym samym przyciąganiem: róg do linii innych elementów i rozmiar do szerokości / wysokości innej etykiety lub części.
