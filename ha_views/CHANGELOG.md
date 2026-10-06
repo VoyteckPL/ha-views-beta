@@ -1,3 +1,7 @@
+## 0.4.1-beta.410
+
+- **Kopiowanie stylu termostatu 1:1**: kopiuj / wklej styl przenosi teraz wszystkie ustawienia wyglądu — każdą część termostatu (tarcza, temperatury, stan pracy, przyciski, tryby, stan, nazwa, ikona) z rozmiarem, kolorami, tłem, ramką, jednostką, zaokrągleniem i tekstami, kolory stanu pracy, tarczę, grupowanie i układ części. Między dwoma termostatami wklejenie jest 1:1 (także położenie części); nazwa, encja i miejsce na planie zostają. Etykiety i pomieszczenia też kopiują teraz pełny wygląd części.
+
 ## 0.4.1-beta.409
 
 - **Szablony termostatu** (Ogólne → Szablony): dyskietka zapisuje aktualny układ i wygląd termostatu (wszystkie części, ich położenie, rozmiary, kolory, ramki, teksty, kolory stanu pracy, tarczę) jako szablon w jednym z 5 miejsc; kliknięcie numeru wczytuje szablon do zaznaczonego termostatu (nazwa, encja i miejsce na planie zostają). Kosz przełącza miejsca w tryb usuwania na jedno kliknięcie. Szablony są wspólne dla wszystkich widoków.

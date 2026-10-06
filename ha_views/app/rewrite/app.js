@@ -2278,11 +2278,21 @@ async function onRoomTap(room, action = null) {
   await delay(700); toggleable.forEach(id => { if (pendingToggleStates.get(id) === expected) pendingToggleStates.delete(id); }); refreshStates();
 }
 function toggleRoomLock() { const room = roomsOf()[selectedRoomId]; if (!room) return; room.geometryLocked = !room.geometryLocked; room.updatedAt = new Date().toISOString(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); notify(room.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); }
-function copyRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room) return; roomStyleClipboard = Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in room).map(key => [key, clone(room[key])])); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
+// Every look setting of a room / label / thermostat: the style list plus every label part and thermostat option.
+const roomLookKey = key => ROOM_STYLE_KEYS.includes(key) || (/^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped'].includes(key));
+function copyRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room) return; roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(roomLookKey).map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
 // Pasting a style keeps where the target stands: the label / part offsets from its point are its own (a room's label
 // offsets would move a plain label away); only looks (and the group's inner arrangement) are taken over.
 const isLabelPositionKey = key => key.startsWith('label') && /[XY]$/.test(key) && !/F[XY]$/.test(key);
-function pasteRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room || !roomStyleClipboard) return; ROOM_STYLE_KEYS.filter(key => !isLabelPositionKey(key)).forEach(key => delete room[key]); Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => !isLabelPositionKey(key))), { updatedAt:new Date().toISOString() }); renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia'); }
+function pasteRoomStyle() {
+  const room = roomsOf()[selectedRoomId]; if (!room || !roomStyleClipboard) return;
+  // Thermostat → thermostat is 1:1 (the parts' places too); otherwise the target keeps its own label / part offsets.
+  const exact = roomStyleClipboard.__thermo && isThermoRoom(room), keep = key => exact ? false : isLabelPositionKey(key);
+  Object.keys(room).filter(key => roomLookKey(key) && !keep(key)).forEach(key => delete room[key]);
+  if (exact) Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(roomLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])));
+  Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && !keep(key))), { updatedAt:new Date().toISOString() });
+  delete room.labelAutoUngrouped; renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
+}
 // "Default look" is the look of a freshly added room / icon (label visible, grouped, icon with outline and frame),
 // not the bare defaults of the data model, in which every label part is hidden.
 async function resetRoomStyle() {
