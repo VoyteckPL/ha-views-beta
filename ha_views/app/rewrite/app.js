@@ -2738,7 +2738,8 @@ function applyBackgroundTransform() {
       // Colour background: largest whole canvas of the chosen size that fits the workspace (like an image).
       const ratio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4), parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
       // The card's place on the page, not on screen: a scrolled page must not make the fitted card taller (and scroll more).
-      const availableHeight = Math.max(160, layoutViewportHeight() - (card.getBoundingClientRect().top + (window.scrollY || 0)) - 8);
+      if (!mobileView() && window.scrollY) window.scrollTo(0, 0);
+      const availableHeight = Math.max(160, layoutViewportHeight() - (card.getBoundingClientRect().top + (window.scrollY || 0)) - 10);
       card.style.width = `${(Math.min(parentWidth, availableHeight * ratio) / parentWidth) * 100}%`; card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';
     }
     els.image.style.objectFit = 'fill'; els.image.style.transform = '';
@@ -2754,9 +2755,10 @@ function applyBackgroundTransform() {
   } else {
     // Every other combination: largest whole image that still fits in the visible workspace.
     const parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
+    if (!mobileView() && window.scrollY) window.scrollTo(0, 0);
     const top = card.getBoundingClientRect().top + (window.scrollY || 0);
     const viewportHeight = layoutViewportHeight();
-    const availableHeight = Math.max(160, viewportHeight - top - 8);
+    const availableHeight = Math.max(160, viewportHeight - top - (mobileView() ? 8 : 10));
     const fittedWidth = Math.min(parentWidth, availableHeight * ratio);
     card.style.width = `${(fittedWidth / parentWidth) * 100}%`;
     card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';

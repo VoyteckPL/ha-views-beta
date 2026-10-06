@@ -1,3 +1,7 @@
+## 0.4.1-beta.386
+
+- **Komputer: plan nie mruga / nie skacze**: strona z planem miała dokładnie wysokość okna, więc jeden piksel zaokrąglenia (np. przy skalowaniu ekranu 125 %) włączał pasek przewijania, karta planu przeliczała się na węższą, pasek znikał i tak w kółko — plan skakał góra–dół. Teraz na komputerze strona z planem nigdy się nie przewija (zawsze stoi na górze), a karta ma 2 px zapasu. Strona integracji przewija się jak dotąd.
+
 ## 0.4.1-beta.385
 
 - **Poprawka grubych linii pomocniczych**: linia i podświetlenie od wskaźnika (marker / gauge / podkowa) przejmowały style samych markerów i rysowały się jako szeroki niebieski pas. Teraz są cienkie jak pozostałe.

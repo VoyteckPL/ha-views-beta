@@ -1311,3 +1311,6 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .card-handle.nw{left:-8px;top:-8px;cursor:nwse-resize}.card-handle.se{left:calc(100% + 8px);top:calc(100% + 8px);cursor:nwse-resize}
 .card-handle.ne{left:calc(100% + 8px);top:-8px;cursor:nesw-resize}.card-handle.sw{left:-8px;top:calc(100% + 8px);cursor:nesw-resize}
 @media (pointer:coarse){.card-handle{width:16px;height:16px}.card-handle::before{inset:-10px}}
+/* Computer: the page never scrolls - the plan card is fitted to the window. A scroll bar that came and went with one
+   pixel of rounding changed the width, the card was fitted again and the plan jumped up and down (flicker). */
+@media (min-width:901px),(min-width:769px) and (pointer:fine){html:has(#view-overview.active),html:has(#view-overview.active) body{overflow:hidden}}
