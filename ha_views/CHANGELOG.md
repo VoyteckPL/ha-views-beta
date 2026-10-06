@@ -1,3 +1,7 @@
+## 0.4.1-beta.376
+
+- Menu przyciągania: ikony „Przyciągaj do” w kolejności Etykiety, Pomieszczenia, Wskaźniki, Flow. Usunięte przyciąganie do tła (krawędzie i środek tła nie dają już linii pomocniczych).
+
 ## 0.4.1-beta.375
 
 - Panel edycji bez zaznaczenia: nowe teksty „Kliknij element, aby go edytować.” i „Nowe elementy dodasz z menu plus lub z menu integracji.”, ustawione zaraz pod nagłówkiem „Edycja”.
