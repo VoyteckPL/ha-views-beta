@@ -1302,3 +1302,6 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* A zoomed plan on a computer fills the free screen (top bar and edit panel stay above it). */
 .scene-card.desk-zoom-expanded,.scene-viewport.desk-zoom-expanded{overflow:visible}
 .scene-card.desk-zoom-expanded{position:relative;z-index:3;clip-path:var(--desk-clip,none)}
+/* The plan card is fitted to the window: no bottom margin that would make the page a little taller than the screen
+   (a scroll bar on the right and the top bar half scrolled away). */
+@media (min-width:769px){main{margin-bottom:0}}

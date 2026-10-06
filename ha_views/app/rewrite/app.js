@@ -2674,7 +2674,8 @@ function applyBackgroundTransform() {
     else {
       // Colour background: largest whole canvas of the chosen size that fits the workspace (like an image).
       const ratio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4), parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
-      const availableHeight = Math.max(160, layoutViewportHeight() - card.getBoundingClientRect().top - 8);
+      // The card's place on the page, not on screen: a scrolled page must not make the fitted card taller (and scroll more).
+      const availableHeight = Math.max(160, layoutViewportHeight() - (card.getBoundingClientRect().top + (window.scrollY || 0)) - 8);
       card.style.width = `${(Math.min(parentWidth, availableHeight * ratio) / parentWidth) * 100}%`; card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';
     }
     els.image.style.objectFit = 'fill'; els.image.style.transform = '';
@@ -2690,7 +2691,7 @@ function applyBackgroundTransform() {
   } else {
     // Every other combination: largest whole image that still fits in the visible workspace.
     const parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
-    const top = card.getBoundingClientRect().top;
+    const top = card.getBoundingClientRect().top + (window.scrollY || 0);
     const viewportHeight = layoutViewportHeight();
     const availableHeight = Math.max(160, viewportHeight - top - 8);
     const fittedWidth = Math.min(parentWidth, availableHeight * ratio);
@@ -5465,7 +5466,7 @@ function bindEvents() {
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
-  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); if (!mobileView()) window.scrollTo(0, 0); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   $('#snap-menu-button')?.addEventListener('click', event => { event.stopPropagation(); const menu = $('#snap-menu'), open = !menu.classList.contains('open'); closeCompactMenus(); menu.classList.toggle('open', open); $('#snap-menu-button').classList.toggle('active', open); syncSnapMenu(); });
   $('#snap-menu')?.addEventListener('click', event => {
     event.stopPropagation();

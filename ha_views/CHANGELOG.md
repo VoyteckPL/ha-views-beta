@@ -1,3 +1,7 @@
+## 0.4.1-beta.382
+
+- **Komputer: bez paska przewijania w trybie przeglądania**: karta planu mieści się w oknie (bez dolnego marginesu, który robił stronę o kilkadziesiąt pikseli wyższą od ekranu), a dopasowanie liczy pozycję karty na stronie, nie na ekranie — przewinięta strona nie powiększa już karty. Po wyjściu z edycji strona wraca na górę, więc nazwy widoków i przyciski integracji / edycji są zawsze w całości widoczne.
+
 ## 0.4.1-beta.381
 
 - **Przybliżony plan na komputerze wypełnia cały wolny ekran**: po zoomie (edycja i przeglądanie) plan nie jest już przycinany do swojej karty — sięga od paska u góry do dołu okna, od lewej krawędzi do panelu edycji. Dotyczy każdego formatu (tło kolorem, np. 9:16, i obrazy). Plan można przesuwać w całym tym obszarze; po powrocie do 100% wraca do karty.
