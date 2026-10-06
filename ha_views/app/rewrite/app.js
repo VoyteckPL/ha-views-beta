@@ -2221,7 +2221,7 @@ async function resetRoomStyle() {
   ROOM_STYLE_KEYS.forEach(key => delete room[key]);
   Object.assign(room, Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in ROOM_DEFAULTS).map(key => [key, clone(ROOM_DEFAULTS[key])])), NEW_ROOM_LABEL, icon ? { labelCardScale:ICON_LABEL_SCALE } : {}, isThermoRoom(room) ? thermoLook() : {});
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
-  if (isThermoRoom(room)) { Object.keys(room).filter(k => /^(label|thermo)/.test(k)).forEach(k => delete room[k]); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo)/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), thermoLook()); }
+  if (isThermoRoom(room)) { Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), thermoLook()); }
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id); openRoomEditor(room.id); scheduleSave(true);
   notify(isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
 }

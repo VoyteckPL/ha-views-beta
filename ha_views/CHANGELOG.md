@@ -1,3 +1,7 @@
+## 0.4.1-beta.399
+
+- **Poprawka**: „Ustaw domyślny” w termostacie zmieniał go w zwykłą etykietę (kasował też znacznik termostatu). Teraz termostat zostaje termostatem i wraca do swojego domyślnego wyglądu.
+
 ## 0.4.1-beta.398
 
 - **Termostat — nowy domyślny układ** (po dodaniu i po „Ustaw domyślny”): na górze ikona encji w okrągłej ramce, pod nią nazwa w ramce, stan pracy, tarcza z temperaturą ustawioną i aktualną w środku, przyciski − / + po bokach dołu tarczy i tryby pod spodem.
