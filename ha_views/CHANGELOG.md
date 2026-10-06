@@ -1,3 +1,8 @@
+## 0.4.1-beta.427
+
+- **Pisanie w panelu na telefonie bez ruszania kamery**: gdy wpisujesz tekst w polu panelu edycji (np. nazwę ikony trybu), kamera zostaje dokładnie tam, gdzie była, a panel zwija się do jednej linii z edytowanym polem tuż nad klawiaturą ekranową. Po zakończeniu panel wraca w to samo miejsce (ta sama sekcja i przewinięcie).
+- **Kolory ikon trybów osobno**: w „Ikony trybów” każdy tryb ma teraz własną ikonę, **kolor ikony** i **kolor aktywnego** (tła przycisku, gdy tryb jest włączony).
+
 ## 0.4.1-beta.426
 
 - **Wypełnienie środka tarczy wg stanu pracy**: w części „Tarcza” jest sekcja **Wypełnienie środka** — dla każdego stanu pracy efekt (Brak, Stałe, Pulsowanie, Oddychanie) i kolor (domyślnie kolor stanu pracy), plus wspólna intensywność. Np. Grzeje → Pulsowanie na czerwono: cała przestrzeń wewnątrz tarczy pulsuje, gdy piec grzeje.

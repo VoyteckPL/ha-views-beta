@@ -1471,3 +1471,10 @@ img.room-layer.room-glow.flat{will-change:opacity}
 @keyframes thermo-fill-pulse{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes thermo-fill-breathe{0%,100%{opacity:.35;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.thermo-fill.fx-pulse,.thermo-fill.fx-breathe{animation:none}}
+/* Typing in an editor field on a phone: only that one line is shown, right above the on-screen keyboard. */
+aside.editor.typing{top:auto!important;bottom:var(--kb-bottom,0px)!important;height:auto!important;min-height:0!important;max-height:none!important;transform:none!important;transition:none!important;padding-top:8px!important;padding-bottom:8px!important}
+aside.editor.typing>:not(.editor-content){display:none!important}
+aside.editor.typing .editor-content{overflow:visible!important;max-height:none!important;height:auto!important;padding:0 12px!important}
+aside.editor.typing .editor-content *:not(.typing-row):not(.typing-row *):not(:has(.typing-row)){display:none!important}
+aside.editor.typing .editor-content :has(.typing-row){display:block!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+aside.editor.typing .typing-row{display:grid!important;margin:0!important}
