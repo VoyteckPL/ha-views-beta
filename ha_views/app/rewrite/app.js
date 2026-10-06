@@ -4735,8 +4735,12 @@ function syncHeadPreview(panel, actualOn) {
     button.dataset.previewPath = src.dataset.path; button.dataset.previewValue = next === src.dataset.current && preview ? '' : `act:${next}`;
     button.classList.toggle('active', !!preview); button.querySelector('i').className = `mdi ${THERMO_ACTIONS[shown]?.[1] || 'mdi-thermostat'}`;
     const label = `${translateValue('Podgląd')}: ${translateValue(THERMO_ACTIONS[shown]?.[0] || shown)}`; button.title = label; button.setAttribute('aria-label', label);
+    // The previewed work state is named next to the icon.
+    let text = button.querySelector('.head-preview-text'); if (!text) { text = document.createElement('span'); text.className = 'head-preview-text'; button.append(text); }
+    text.textContent = translateValue(THERMO_ACTIONS[shown]?.[0] || shown); button.classList.add('with-text');
     return;
   }
+  button.querySelector('.head-preview-text')?.remove(); button.classList.remove('with-text');
   const shown = preview || (actualOn ? 'on' : 'off');
   button.dataset.previewPath = src.dataset.path; button.dataset.previewValue = shown === 'on' ? 'off' : 'on';
   button.classList.toggle('active', !!preview); button.querySelector('i').className = `mdi ${shown === 'on' ? 'mdi-lightbulb-on' : 'mdi-lightbulb-off-outline'}`;

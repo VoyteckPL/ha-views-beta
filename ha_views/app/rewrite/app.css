@@ -1461,3 +1461,6 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .thermo-mode-btn{border-radius:var(--mode-radius,30%)}
 .thermo-mode-row.no-frame .thermo-mode-btn{border-color:transparent;background:transparent}
 .thermo-mode-row.no-frame .thermo-mode-btn.on{background:transparent;color:var(--mode)!important}
+/* Thermostat preview button: the previewed work state's name next to its icon. */
+.editor-icon-button.head-preview.with-text{flex:0 0 auto!important;width:auto!important;min-width:0!important;max-width:none!important;padding:0 10px 0 8px!important;gap:6px;display:inline-flex!important;align-items:center;justify-content:center}
+.head-preview-text{font-size:12px;font-weight:700;white-space:nowrap}

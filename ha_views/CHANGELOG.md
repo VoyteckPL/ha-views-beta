@@ -1,3 +1,7 @@
+## 0.4.1-beta.425
+
+- **Podgląd stanu pracy z nazwą**: przycisk podglądu w nagłówku panelu termostatu pokazuje obok ikony nazwę podglądanego stanu pracy (np. „Grzeje”, „Bezczynny”); podświetlony, gdy to podgląd, a nie bieżący stan.
+
 ## 0.4.1-beta.424
 
 - **Termostat: wygląd zależny od stanu pracy zamiast ON/OFF**: wszędzie, gdzie przy etykietach było „Zależne ON/OFF” (kolor ikony, obrys, tło, ramka, kolor nazwy / stanu / stanu pracy / trybów, tło i ramka grupy), w termostacie jest teraz **„Zależne od stanu pracy”** — osobne ustawienie dla każdego wybranego stanu (np. Grzeje, Bezczynny, Wyłączony). Stan bez własnej wartości bierze dotychczasowy kolor ON (gdy pracuje) albo OFF.
