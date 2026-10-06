@@ -1404,3 +1404,12 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* The section of the part being edited (ungrouped label / thermostat) is marked in the panel. */
 .part-section.current{background:color-mix(in srgb,var(--part-color) 12%,transparent)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--part-color) 55%,transparent)}
 .part-section.current>summary>span:first-child::after{content:"";display:inline-block;width:6px;height:6px;margin-left:7px;border-radius:50%;background:var(--part-color);vertical-align:middle}
+/* Thermostat templates: save, five slots (filled ones bright), bin. */
+.thermo-templates .room-card-presets{flex-wrap:nowrap;gap:3px}
+.thermo-tpl:disabled{opacity:.3}
+.thermo-tpl.filled{color:#80e9ff}
+.thermo-tpl.deleting{color:#ff8a95;border-color:rgba(255,99,116,.5)}
+.thermo-templates .room-card-preset{width:26px;min-width:26px;height:26px;padding:0}.thermo-templates .room-card-preset .mdi{font-size:15px}
+.thermo-templates>label{flex:0 0 auto}
+.room-editor .thermo-templates{grid-template-columns:70px minmax(0,1fr) 0}
+.room-editor .thermo-templates .room-card-presets{flex-wrap:nowrap!important;gap:3px!important}

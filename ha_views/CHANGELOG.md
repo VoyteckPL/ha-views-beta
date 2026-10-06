@@ -1,3 +1,7 @@
+## 0.4.1-beta.409
+
+- **Szablony termostatu** (Ogólne → Szablony): dyskietka zapisuje aktualny układ i wygląd termostatu (wszystkie części, ich położenie, rozmiary, kolory, ramki, teksty, kolory stanu pracy, tarczę) jako szablon w jednym z 5 miejsc; kliknięcie numeru wczytuje szablon do zaznaczonego termostatu (nazwa, encja i miejsce na planie zostają). Kosz przełącza miejsca w tryb usuwania na jedno kliknięcie. Szablony są wspólne dla wszystkich widoków.
+
 ## 0.4.1-beta.408
 
 - Termostat: **kolory zależą od stanu pracy** (`hvac_action`), a nie od trybu. W sekcji Tarcza podsekcja „Kolory stanu pracy”: Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony (+ tor tarczy). Kolorem bieżącego stanu pracy rysowany jest łuk, uchwyt, „Kolor wg trybu” części i aktywny przycisk trybu. Gdy encja nie podaje `hvac_action`, stan pracy wynika z trybu (grzanie → Grzeje, chłodzenie → Chłodzi, wyłączony → Wyłączony, inne → Bezczynny).
