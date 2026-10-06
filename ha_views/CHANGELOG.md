@@ -1,3 +1,7 @@
+## 0.4.1-beta.368
+
+- Usunięte przyciąganie „8 px obok” sąsiedniej etykiety (zostają: ta sama krawędź, styk, środki oraz „Odstępy”).
+
 ## 0.4.1-beta.367
 
 - **Menu przyciągania — siatka w jednym rzędzie**: bez napisu „Siatka” i „ON”; sama ikona siatki jest przełącznikiem (podświetlona, gdy siatka włączona, szara, gdy wyłączona), a obok w tym samym rzędzie wielkości S / M / L (przygaszone przy wyłączonej siatce).

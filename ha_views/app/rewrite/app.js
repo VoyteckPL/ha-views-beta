@@ -1242,7 +1242,7 @@ function startRoomLabelDrag(event) {
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
-    return { scene, xs: gx, ys: gy, boxes, roomBox: rb, gap: 8 * scene.width / (els.scene.offsetWidth || 1), offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
+    return { scene, xs: gx, ys: gy, boxes, roomBox: rb, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
       shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
   let moved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
@@ -2303,13 +2303,13 @@ function alignToGuides(context, xPercent, yPercent, event) {
 }
 // ---- Label-to-label snapping (dragging an etykieta / pomieszczenie label) ----------------------------------------
 // Candidates per axis, best (lowest score) wins: the same edge of another label (top to top, centre to centre) first,
-// then edge to edge (touching), "next to it" at a fixed gap, and equal spacing (the gap two labels in a row already
-// have, or exactly between two of them). Labels in the same row / column count more than far ones. Other guides
+// then edge to edge (touching), and equal spacing (the gap two labels in a row already have, or exactly between two
+// of them). Labels in the same row / column count more than far ones. Other guides
 // (markers, rooms, background) still take part with a lower priority. Lines are drawn between the labels involved,
 // gaps get small markers.
 function alignLabel(context, xPercent, yPercent, event) {
   if (cameraPanning || !context || event?.altKey || !snapTargets().guides || !context.scene.width) { showAlignGuides([], []); return { xPercent, yPercent }; }
-  const W = context.scene.width, H = context.scene.height, hw = context.halfW, hh = context.halfH, G = context.gap || 8;
+  const W = context.scene.width, H = context.scene.height, hw = context.halfW, hh = context.halfH;
   const cx = xPercent / 100 * W + (context.shiftX || 0), cy = yPercent / 100 * H + (context.shiftY || 0);
   const threshold = mobileView() ? 10 : 7, release = mobileView() ? 13 : 9, motion = context.motion ||= { stick: {} };
   // A room's label lying wholly inside its room (with "Pomieszczenia" on) snaps to that room, its own parts and other
@@ -2331,9 +2331,6 @@ function alignLabel(context, xPercent, yPercent, event) {
       if (!edges) return;
       add(b[lo] + half, far, { at: b[lo], span }, [], [b]); add(b[hi] - half, far, { at: b[hi], span }, [], [b]);
       add(b[hi] + half, far + 1.5, { at: b[hi], span }, [], [b]); add(b[lo] - half, far + 1.5, { at: b[lo], span }, [], [b]);
-      if (inRow(b)) {
-        add(b[hi] + G + half, far + 1, null, [[b[hi], b[hi] + G]], [b]); add(b[lo] - G - half, far + 1, null, [[b[lo] - G, b[lo]]], [b]);
-      }
     });
     // "Odstępy" (own switch in the snap menu, own colour): repeat the gap of two neighbours in a row, or sit exactly
     // between two of them (equal gaps on both sides).
