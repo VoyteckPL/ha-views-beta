@@ -1228,17 +1228,24 @@ function startRoomLabelDrag(event) {
     const gy = (isIconRoom(room) ? [] : [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay]).map(v => ({ v: toY(v), room:true, kind:'room' }));
     $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1])).forEach(other => { const r = other.getBoundingClientRect(); [r.left, r.left + r.width / 2, r.right].forEach(v => gx.push({ v: v - scene.left, kind:'label' })); [r.top, r.top + r.height / 2, r.bottom].forEach(v => gy.push({ v: v - scene.top, kind:'label' })); });
     if (snapTargets().guides) { const all = guideTargets({ roomId: room.id }); gx.push(...all.xs); gy.push(...all.ys); }
+    // Label boxes for label-to-label snapping (alignLabel): other labels (a group as a whole or ungrouped parts) and this
+    // label's own parts that stay in place.
+    const boxOf = other => { const r = other.getBoundingClientRect(); return { l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top }; };
+    const boxes = [
+      ...(snapTargets().guides && snapTargets().labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null) : []),
+      ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1]))
+    ].map(boxOf).filter(b => b.r - b.l > 1);
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
-    return { scene, xs: gx, ys: gy, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
+    return { scene, xs: gx, ys: gy, boxes, gap: 8 * scene.width / (els.scene.offsetWidth || 1), offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
       shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
   let moved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const place = e => {
     const [x, y] = scenePercentAt(e); if (!cameraPanning) { guides ||= roomGuides(); guides.onSettle = () => place(e); }
-    const snapped = alignToGuides(guides, snapPercent(x - grab[0]), snapPercent(y - grab[1]), e);
+    const snapped = guides?.boxes ? alignLabel(guides, snapPercent(x - grab[0]), snapPercent(y - grab[1]), e) : alignToGuides(guides, snapPercent(x - grab[0]), snapPercent(y - grab[1]), e);
     const dx = Math.round((snapped.xPercent - ax) / 100 * w / k * 100) / 100 - startOffsets[key][0], dy = Math.round((snapped.yPercent - ay) / 100 * h / k * 100) / 100 - startOffsets[key][1];
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
     renderRoomLabels();
@@ -2266,12 +2273,71 @@ function alignToGuides(context, xPercent, yPercent, event) {
   showAlignGuides(bx ? [{ at: bx.line / width * 100, room: bx.room, bg: bx.bg, kind: bx.kind }] : [], by ? [{ at: by.line / height * 100, room: by.room, bg: by.bg, kind: by.kind }] : []);
   return { xPercent, yPercent };
 }
-function showAlignGuides(vertical, horizontal) {
+// ---- Label-to-label snapping (dragging an etykieta / pomieszczenie label) ----------------------------------------
+// Candidates per axis, best (lowest score) wins: the same edge of another label (top to top, centre to centre) first,
+// then edge to edge (touching), "next to it" at a fixed gap, and equal spacing (the gap two labels in a row already
+// have, or exactly between two of them). Labels in the same row / column count more than far ones. Other guides
+// (markers, rooms, background) still take part with a lower priority. Lines are drawn between the labels involved,
+// gaps get small markers.
+function alignLabel(context, xPercent, yPercent, event) {
+  if (cameraPanning || !context || event?.altKey || !snapTargets().guides || !context.scene.width) { showAlignGuides([], []); return { xPercent, yPercent }; }
+  const W = context.scene.width, H = context.scene.height, hw = context.halfW, hh = context.halfH, G = context.gap || 8;
+  const cx = xPercent / 100 * W + (context.shiftX || 0), cy = yPercent / 100 * H + (context.shiftY || 0);
+  const threshold = mobileView() ? 10 : 7, release = mobileView() ? 13 : 9, motion = context.motion ||= { stick: {} };
+  const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
+  // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
+  const solve = (axis, c, half, oc, ohalf) => {
+    const [lo, hi, mid, plo, phi] = axis === 'x' ? ['l','r','cx','t','b'] : ['t','b','cy','l','r'];
+    const near = b => { const gapAcross = Math.max(b[plo] - (oc + ohalf), (oc - ohalf) - b[phi], 0); return gapAcross <= Math.max(3 * ohalf * 2, 160); };
+    const inRow = b => b[phi] > oc - ohalf * 1.5 && b[plo] < oc + ohalf * 1.5;
+    const list = [];
+    const add = (target, score, guide, marks = []) => { const d = Math.abs(c - target); if (d <= threshold) list.push({ target, score: d + score, guide, marks }); };
+    boxes.forEach(b => {
+      const far = near(b) ? 0 : 3, span = [b[plo], b[phi]];
+      add(b[lo] + half, far, { at: b[lo], span }); add(b[hi] - half, far, { at: b[hi], span }); add(b[mid], far + .2, { at: b[mid], span });
+      add(b[hi] + half, far + 1.5, { at: b[hi], span }); add(b[lo] - half, far + 1.5, { at: b[lo], span });
+      if (inRow(b)) {
+        add(b[hi] + G + half, far + 1, null, [[b[hi], b[hi] + G]]); add(b[lo] - G - half, far + 1, null, [[b[lo] - G, b[lo]]]);
+      }
+    });
+    // Equal spacing in a row: repeat the gap of two neighbours, or sit exactly between two of them.
+    const row = boxes.filter(inRow).sort((p, q) => p[lo] - q[lo]);
+    for (let i = 0; i + 1 < row.length; i++) {
+      const a = row[i], b = row[i + 1], g = b[lo] - a[hi]; if (g <= 0) continue;
+      add(b[hi] + g + half, .5, null, [[a[hi], b[lo]], [b[hi], b[hi] + g]]);
+      add(a[lo] - g - half, .5, null, [[a[hi], b[lo]], [a[lo] - g, a[lo]]]);
+      if (g > half * 2 + 2) { const free = (g - half * 2) / 2; add(a[hi] + free + half, .3, null, [[a[hi], a[hi] + free], [b[lo] - free, b[lo]]]); }
+    }
+    // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
+    (axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg }) => [-half, 0, half].forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: true })));
+    const stuck = motion.stick[axis];
+    // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
+    // finger (e.g. sliding from "8 px next to it" on to touching).
+    const held = stuck && Math.abs(c - stuck.target);
+    if (stuck && held <= release && !list.some(item => Math.abs(c - item.target) < held - 1.5)) return stuck;
+    const best = list.sort((p, q) => p.score - q.score)[0] || null; motion.stick[axis] = best; return best;
+  };
+  const bx = solve('x', cx, hw, cy, hh), fx = bx ? bx.target : cx, by = solve('y', cy, hh, fx, hw), fy = by ? by.target : cy;
+  if (bx) xPercent = clamp((bx.target - (context.shiftX || 0)) / W * 100, 0, 100);
+  if (by) yPercent = clamp((by.target - (context.shiftY || 0)) / H * 100, 0, 100);
+  // Lines span from the dragged label to the label it lines up with; gap markers sit across the middle of the label.
+  const vertical = [], horizontal = [], marks = [];
+  if (bx?.guide) vertical.push(bx.guide.full ? { at: bx.guide.at / W * 100, kind: bx.guide.kind } : { at: bx.guide.at / W * 100, kind: 'label', from: Math.min(bx.guide.span[0], fy - hh) / H * 100, to: Math.max(bx.guide.span[1], fy + hh) / H * 100 });
+  if (by?.guide) horizontal.push(by.guide.full ? { at: by.guide.at / H * 100, kind: by.guide.kind } : { at: by.guide.at / H * 100, kind: 'label', from: Math.min(by.guide.span[0], fx - hw) / W * 100, to: Math.max(by.guide.span[1], fx + hw) / W * 100 });
+  (bx?.marks || []).forEach(([a, b]) => marks.push({ axis: 'x', from: a / W * 100, to: b / W * 100, at: fy / H * 100 }));
+  (by?.marks || []).forEach(([a, b]) => marks.push({ axis: 'y', from: a / H * 100, to: b / H * 100, at: fx / W * 100 }));
+  showAlignGuides(vertical, horizontal, marks);
+  return { xPercent, yPercent };
+}
+// A guide may be a full line or a segment (from / to, %), gap markers are short segments with end ticks.
+function showAlignGuides(vertical, horizontal, marks = []) {
   let layer = $('#align-guides');
-  if (!vertical.length && !horizontal.length) { if (layer) layer.innerHTML = ''; return; }
+  if (!vertical.length && !horizontal.length && !marks.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
   const kind = g => g.kind ? ` ${g.kind}` : g.room ? ' room' : g.bg ? ' bg' : '';
-  layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${kind(g)}" style="left:${g.at}%"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${kind(g)}" style="top:${g.at}%"></span>`).join('');
+  const spanV = g => g.from != null ? `;top:${g.from}%;bottom:auto;height:${g.to - g.from}%` : '', spanH = g => g.from != null ? `;left:${g.from}%;right:auto;width:${g.to - g.from}%` : '';
+  layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${kind(g)}" style="left:${g.at}%${spanV(g)}"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${kind(g)}" style="top:${g.at}%${spanH(g)}"></span>`).join('')
+    + marks.map(m => m.axis === 'x' ? `<span class="gap-mark x" style="left:${m.from}%;width:${m.to - m.from}%;top:${m.at}%"></span>` : `<span class="gap-mark y" style="top:${m.from}%;height:${m.to - m.from}%;left:${m.at}%"></span>`).join('');
 }
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------
 // Markers and Flows are kept with their whole box inside the scene while dragging or resizing

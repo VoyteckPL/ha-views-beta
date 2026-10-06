@@ -1219,3 +1219,10 @@ img.room-layer.room-glow{display:block;inset:auto;max-width:none;object-fit:fill
 /* A plain glow keeps a GPU layer of its own for good: switching a light fades its opacity, and a layer created for the
    fade and dropped after it rebuilt the plan's layers each time (blank tiles for a frame on a phone). Small texture. */
 img.room-layer.room-glow.flat{will-change:opacity}
+/* Gap markers of label snapping: a short segment with end ticks between two labels (equal spacing / fixed gap). */
+.gap-mark{position:absolute;--t:calc(1px / var(--view-zoom,1));--k:calc(6px / var(--view-zoom,1));pointer-events:none}
+.gap-mark.x{height:var(--t);background:#f472d0;transform:translateY(-50%)}
+.gap-mark.y{width:var(--t);background:#f472d0;transform:translateX(-50%)}
+.gap-mark::before,.gap-mark::after{content:"";position:absolute;background:#f472d0}
+.gap-mark.x::before,.gap-mark.x::after{top:calc(var(--k) / -2);width:var(--t);height:var(--k)}.gap-mark.x::before{left:0}.gap-mark.x::after{right:0}
+.gap-mark.y::before,.gap-mark.y::after{left:calc(var(--k) / -2);height:var(--t);width:var(--k)}.gap-mark.y::before{top:0}.gap-mark.y::after{bottom:0}

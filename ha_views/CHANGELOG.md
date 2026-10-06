@@ -1,3 +1,12 @@
+## 0.4.1-beta.359
+
+Przyciąganie etykiety do etykiety (przy przeciąganiu etykiety / grupy pomieszczenia):
+- **Ta sama krawędź ma pierwszeństwo**: góra do góry, dół do dołu, środek do środka, lewa do lewej; styk krawędzi (obok siebie) ma niższy priorytet. Etykiety w tym samym rzędzie / kolumnie liczą się bardziej niż odległe.
+- **Odstęp „obok”**: etykieta przyciąga się też 8 px od krawędzi sąsiedniej etykiety w rzędzie.
+- **Równe odstępy**: trzecia etykieta przyciąga się do takiego samego odstępu, jaki mają dwie sąsiednie, albo dokładnie pośrodku między dwiema — z małymi znacznikami odstępów.
+- **Linie od etykiety do etykiety** zamiast przez cały plan; złapana linia puszcza, gdy inna jest wyraźnie bliżej (np. przejście z „8 px obok” do styku).
+- Wskaźniki, Flow, pomieszczenia i krawędzie tła nadal przyciągają, z niższym priorytetem.
+
 ## 0.4.1-beta.358
 
 - **Dokładniejsze przyciąganie etykiet do siebie**: krawędzie przeciąganej etykiety były liczone od jej punktu zaczepienia, a nie od rzeczywistej ramki — w grupie o swobodnym układzie (np. po rozgrupowaniu i ponownym zgrupowaniu) ramka jest przesunięta względem punktu, więc etykieta „przyklejała się” kilka pikseli obok krawędzi drugiej. Teraz liczy się rzeczywista ramka (w teście: przyleganie dokładnie 0 px). Na telefonie promień przyciągania etykiet jest nieco większy (10 px zamiast 7).
