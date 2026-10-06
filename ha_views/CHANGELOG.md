@@ -1,3 +1,7 @@
+## 0.4.1-beta.416
+
+- **Animacja stanu pracy termostatu**: w części „Stan pracy” jest nowa sekcja **Animacja** — dla każdego stanu (Grzeje, Nagrzewa, Chłodzi, …, Wyłączony) osobno: Brak, Mruganie, Pulsowanie, Przygasanie albo Drganie. Np. tekst „Grzeje” może mrugać tylko wtedy, gdy grzeje.
+
 ## 0.4.1-beta.415
 
 - **Bez podwójnych linii przy przyciąganiu**: gdy element łapie ten sam rozmiar albo równy odstęp, nie rysują się już podwójne linie miary; przyciąganie działa jak dotąd, a to, do czego się złapało, pokazuje podświetlenie elementów.
