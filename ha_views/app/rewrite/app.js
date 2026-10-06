@@ -1465,7 +1465,7 @@ function startRoomLabelDrag(event) {
     const boxes = [
       ...(snapTargets().guides && snapTargets().labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null) : []),
       ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1]))
-    ].filter(other => rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), radius: shapedRect(other).radius, own: ownPart(other) })).filter(b => b.r - b.l > 1);
+    ].filter(other => ownPart(other) || rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), radius: shapedRect(other).radius, own: ownPart(other) })).filter(b => b.r - b.l > 1);
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
@@ -2580,7 +2580,8 @@ function visibleSceneRect() {
 }
 // An element's box with its corner radius (screen px), so a highlighted snap target has exactly the element's shape.
 function shapedRect(node) { const r = node.getBoundingClientRect(), k = r.width / Math.max(1, node.offsetWidth), cs = getComputedStyle(node); const radius = node.classList.contains('marker') && node.style.borderRadius ? parseFloat(node.style.borderRadius) : parseFloat(cs.borderTopLeftRadius); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height, radius: /%$/.test(cs.borderTopLeftRadius) || /%$/.test(node.style.borderRadius || '') ? Math.min(r.width, r.height) / 2 : (radius || 0) * k }; }
-function rectOnScreen(r, view = visibleSceneRect()) { return r.right > view.left && r.left < view.right && r.bottom > view.top && r.top < view.bottom; }
+// On screen or near it: elements just outside a zoomed view (half the view's size around it) still give guides.
+function rectOnScreen(r, view = visibleSceneRect()) { const mx = (view.right - view.left) / 2, my = (view.bottom - view.top) / 2; return r.right > view.left - mx && r.left < view.right + mx && r.bottom > view.top - my && r.top < view.bottom + my; }
 function guideTargets({ node = null, roomId = '' } = {}) {
   const scene = els.scene.getBoundingClientRect();
   const t = snapTargets(), points = (a, b) => [...(t.edges ? [a, b] : []), ...(t.centers ? [(a + b) / 2] : [])];

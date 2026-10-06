@@ -1,3 +1,7 @@
+## 0.4.1-beta.421
+
+- **Linie pomocnicze także od elementów poza kadrem**: przy przesuwaniu części rozgrupowanego termostatu (i etykiety) jej własne pozostałe części zawsze dają linie pomocnicze i przyciąganie, nawet gdy są poza ekranem (np. po przybliżeniu). Inne elementy liczą się, gdy są na ekranie albo tuż obok niego (do połowy widoku dalej), a nie tylko gdy są widoczne.
+
 ## 0.4.1-beta.420
 
 - **Sekcja w panelu → zaznaczenie i przybliżenie części**: w edycji termostatu (i etykiety) kliknięcie nazwy sekcji części (np. Tarcza, Temperatura ustawiona, Tryby) zaznacza tę część na planie (rozgrupowana: kropki w rogach, zgrupowana: niebieska przerywana ramka), a na telefonie przybliża ją na środek nad panelem. Zamknięcie sekcji wraca do całego elementu.
