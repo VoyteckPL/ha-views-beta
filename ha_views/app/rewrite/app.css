@@ -1478,3 +1478,5 @@ aside.editor.typing .editor-content{overflow:visible!important;max-height:none!i
 aside.editor.typing .editor-content *:not(.typing-row):not(.typing-row *):not(:has(.typing-row)){display:none!important}
 aside.editor.typing .editor-content :has(.typing-row){display:block!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
 aside.editor.typing .typing-row{display:grid!important;margin:0!important}
+/* Corner dots moved in (fitCardHandles) when the element touches the plan's / screen's edge: always whole. */
+.card-handle{transform:translate(-50%,-50%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) translate(var(--hdx,0px),var(--hdy,0px))}

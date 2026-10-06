@@ -1275,7 +1275,20 @@ function renderRoomLabels(view = activeSceneView()) {
     equalizeLabelFrames(room, group);
   });
   [...layer.children].forEach(node => { if (!kept.has(node.dataset.labelGroup)) node.remove(); });
-  renderDashGrid();
+  renderDashGrid(); fitCardHandles();
+}
+// Corner dots on an element at the edge of the plan (or of the screen when zoomed) are moved in just enough to be
+// whole: a dot cut in half is hard to grab.
+function fitCardHandles() {
+  const handles = $$('#room-labels .card-handle'); if (!handles.length || !els.scene) return;
+  const sc = els.scene.getBoundingClientRect(), v = visibleSceneRect(), pad = 2;
+  const clip = { l: Math.max(sc.left, v.left) + pad, t: Math.max(sc.top, v.top) + pad, r: Math.min(sc.right, v.right) - pad, b: Math.min(sc.bottom, v.bottom) - pad };
+  handles.forEach(h => { h.style.removeProperty('--hdx'); h.style.removeProperty('--hdy'); });
+  handles.forEach(h => {
+    const r = h.getBoundingClientRect(); if (!r.width) return;
+    const dx = r.left < clip.l ? clip.l - r.left : r.right > clip.r ? clip.r - r.right : 0, dy = r.top < clip.t ? clip.t - r.top : r.bottom > clip.b ? clip.b - r.bottom : 0;
+    if (dx) h.style.setProperty('--hdx', `${dx.toFixed(1)}px`); if (dy) h.style.setProperty('--hdy', `${dy.toFixed(1)}px`);
+  });
 }
 // In edit mode a label part is dragged with the finger or mouse; it follows the grid (when on) and the camera follows it.
 // A corner dot of a label or of an ungrouped part: width and height change freely (the opposite corner stays put; Shift
@@ -4235,6 +4248,7 @@ function selectMarker(key) {
 }
 function hideSelection() { els.selection.classList.remove('visible','geometry-locked'); }
 function syncSelection() {
+  fitCardHandles();
   const node = markerNode(selectedId); if (!node) return hideSelection();
   const sr = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), zoom = sceneCameraActive() ? viewZoom : 1;
   Object.assign(els.selection.style, { left: `${(r.left - sr.left) / zoom}px`, top: `${(r.top - sr.top) / zoom}px`, width: `${r.width / zoom}px`, height: `${r.height / zoom}px` });

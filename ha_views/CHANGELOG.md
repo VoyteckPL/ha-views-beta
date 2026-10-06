@@ -1,3 +1,7 @@
+## 0.4.1-beta.429
+
+- **Kropki zmiany rozmiaru zawsze całe**: gdy etykieta / termostat / część dotyka krawędzi planu (albo ekranu przy przybliżeniu), kropki w rogach są przesuwane do środka na tyle, żeby były w całości widoczne i łatwe do złapania — zamiast być obcięte w pół.
+
 ## 0.4.1-beta.428
 
 - **Zoom palcami także poza planem**: gdy plan jest pomniejszony poniżej 100% (edycja na telefonie), szczypanie i przesuwanie działa również wtedy, gdy palce są na pustym miejscu wokół planu, a nie tylko na nim.
