@@ -1378,3 +1378,21 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .editing .thermo button{pointer-events:none}
 .control.thermo-missing small,.control.thermo-extra small{grid-column:1/-1;color:#6f8d9c;font-size:10px}
 .control.thermo-attrs code{color:#8fb0c0;font-size:10px}
+/* ---- Thermostat label parts ---------------------------------------------------------------- */
+.thermo-dial-svg{display:block;width:6em;height:5.16em;overflow:visible}
+.thermo-dial-svg .thermo-arc.glow{filter:drop-shadow(0 0 .12em var(--accent))}
+.thermo-dial-svg.working .thermo-arc{animation:thermo-glow 2.4s ease-in-out infinite}
+.thermo-part{display:inline-flex;align-items:center;gap:.25em;line-height:1;white-space:nowrap}
+.thermo-part sup{margin-left:.03em;font-size:.45em;vertical-align:top;line-height:1.5}
+.thermo-target-text{letter-spacing:-.02em}
+.thermo-part .mdi{font-size:1.1em}
+.thermo-working{animation:thermo-pulse 1.8s ease-in-out infinite}
+.thermo-step{display:grid;width:1.3em;height:1.3em;place-items:center;padding:0;border:0;background:none;font:inherit;line-height:1;cursor:pointer}
+.thermo-step .mdi{font-size:1.15em}
+.thermo-step:disabled{opacity:.3;cursor:default}
+.thermo-mode-row{display:inline-flex;gap:.4em}
+.thermo-mode-btn{display:grid;width:2em;height:2em;place-items:center;padding:0;border:1px solid rgba(143,223,255,.2);border-radius:.6em;background:rgba(255,255,255,.04);font:inherit;cursor:pointer}
+.thermo-mode-btn .mdi{font-size:1.2em}
+.thermo-mode-btn.on{border-color:var(--mode);background:var(--mode);color:#04121b!important}
+.editing .room-label-part button,.editing .room-card-part button{pointer-events:none}
+.thermo-target-text{gap:0}

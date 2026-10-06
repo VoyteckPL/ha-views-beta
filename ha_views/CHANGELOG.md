@@ -1,3 +1,10 @@
+## 0.4.1-beta.395
+
+- **Termostat na silniku etykiet (etap 1)**: kafelek „Termostat” w menu plus tworzy teraz etykietę na encji `climate` — z grupą, kółeczkami w rogach, przyciąganiem, 1:1, kopiowaniem stylu i rozgrupowaniem. Części: **Nazwa, Tarcza, Temperatura ustawiona, Temperatura aktualna, Stan pracy, Przycisk −, Przycisk +, Tryby** (oraz Ikona i Stan jak w etykiecie). Każdą można pokazać / ukryć (Grupa → Pokaż), przesunąć wewnątrz grupy albo po rozgrupowaniu postawić osobno; każda ma rozmiar, grubość czcionki, kolor (także „Kolor wg trybu”), tło i ramkę.
+- Tarcza: grubość łuku, kolory trybów (grzanie / chłodzenie / auto / osuszanie / wentylator / wyłączony) i toru, zakres min / max, poświata podczas pracy. Łuk, uchwyt i stan pracy mają kolor bieżącego trybu.
+- Kreator: nazwa → „Co ma być widać?” (kafelki części). W trybie przeglądania − / + i tryby sterują termostatem, dotknięcie w innym miejscu wykonuje akcję etykiety (domyślnie szczegóły encji).
+- Termostaty dodane w becie 394 (stary typ) nadal działają.
+
 ## 0.4.1-beta.394
 
 - **Nowy element „Termostat”** (osobny kafelek w menu plus, tylko encje `climate`): tarcza od `min_temp` do `max_temp` z łukiem do temperatury ustawionej w kolorze trybu (grzanie / chłodzenie / auto / osuszanie / wentylator / wyłączony), kropką temperatury aktualnej i dużą wartością docelową. Nad tarczą nazwa i stan pracy (`hvac_action`: Grzeje / Bezczynny / Chłodzi…, pulsuje podczas pracy); pod nią przyciski − / + (krok `target_temp_step`) i przyciski trybów z `hvac_modes`.

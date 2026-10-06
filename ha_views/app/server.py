@@ -138,6 +138,9 @@ def _viewer_thermostat_entities():
     for view in (views or {}).values():
         if not isinstance(view, dict):
             continue
+        for room in (view.get("rooms") or {}).values():
+            if isinstance(room, dict) and room.get("thermo") and (room.get("labelMinus") or room.get("labelPlus") or room.get("labelModes")):
+                allowed.update(str(e) for e in (room.get("entityIds") or []))
         for marker in (view.get("entities") or {}).values():
             if isinstance(marker, dict) and marker.get("type") == "thermostat" and marker.get("entityId"):
                 style = marker.get("style") if isinstance(marker.get("style"), dict) else {}
