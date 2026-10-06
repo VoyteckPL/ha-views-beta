@@ -1241,3 +1241,13 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .snap-menu .grid-toggle{flex:0 0 auto}
 .snap-menu .grid-toggle:not(.active){color:#6f8794}
 .snap-menu .grid-row:has(.grid-toggle:not(.active)) .grid-preset{opacity:.45}
+/* Icon animations (label / room icon). */
+@keyframes hv-icon-spin{to{transform:rotate(360deg)}}
+@keyframes hv-icon-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@keyframes hv-icon-blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes hv-icon-swing{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.icon-anim-spin{animation:hv-icon-spin var(--icon-anim-dur,1.5s) linear infinite var(--icon-anim-dir,normal);transform-origin:50% 50%}
+.icon-anim-pulse{animation:hv-icon-pulse var(--icon-anim-dur,1.5s) ease-in-out infinite;transform-origin:50% 50%}
+.icon-anim-blink{animation:hv-icon-blink var(--icon-anim-dur,1.5s) ease-in-out infinite}
+.icon-anim-swing{animation:hv-icon-swing var(--icon-anim-dur,1.5s) ease-in-out infinite;transform-origin:50% 50%}
+@media (prefers-reduced-motion:reduce){.icon-anim-spin,.icon-anim-pulse,.icon-anim-blink,.icon-anim-swing{animation:none}}

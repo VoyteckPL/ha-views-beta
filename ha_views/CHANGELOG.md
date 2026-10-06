@@ -1,3 +1,7 @@
+## 0.4.1-beta.369
+
+- **Animacja ikony** (etykieta / pomieszczenie): w pasku sekcji „Ikona” nowy przełącznik „Animacja” (pierwszy, przed obrysem, tłem i ramką). Po włączeniu podsekcja „Animacja”: rodzaj (obrót — np. kręcący się wentylator, pulsowanie, miganie, kołysanie), czas cyklu, kierunek obrotu, „Tylko gdy ON” (dla encji ON/OFF) oraz „Prędkość z encji (%)” dla wentylatorów — im wyższy procent obrotów, tym szybciej. Animacja nie „przeskakuje” przy odświeżaniu stanu i wyłącza się przy systemowym ograniczeniu ruchu.
+
 ## 0.4.1-beta.368
 
 - Usunięte przyciąganie „8 px obok” sąsiedniej etykiety (zostają: ta sama krawędź, styk, środki oraz „Odstępy”).
