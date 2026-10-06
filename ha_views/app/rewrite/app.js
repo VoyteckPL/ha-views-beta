@@ -24,7 +24,7 @@ const TRANSLATIONS = {
     'Przyciąganie do siatki włączone':'Snap to grid enabled','Przyciąganie do siatki wyłączone':'Snap to grid disabled','Dodano nowy widok':'New view added','Zmieniono nazwę widoku':'View renamed','Zmieniono kolejność widoków':'View order updated','Ustawiono widok startowy':'Startup view set','Kolejność widoków':'View order','Przesuń widok w lewo':'Move view left','Przesuń widok w prawo':'Move view right','Ustaw jako widok startowy':'Set as startup view','Widok startowy':'Startup view','Blokada geometrii':'Geometry lock','Efekt światła':'Light effect','Jednolity':'Solid','Centralny':'Center','Róg':'Corner','Od ściany':'From wall','Ambient':'Ambient','Pozycja pozioma':'Horizontal position','Pozycja pionowa':'Vertical position','Rozproszenie':'Spread','Wypełnienie':'Fill','Kierunek':'Direction','Pozycja na ścianie':'Position on wall','Lewa':'Left','Prawa':'Right','Góra':'Top','Dół':'Bottom','Utworzono kopię widoku':'View duplicated','Usunięto widok':'View deleted','Przywrócono domyślne dopasowanie tła':'Default background fit restored','Przywrócono styl domyślny':'Default style restored','Wklejono kompletny styl 1:1':'Full style pasted 1:1',
     'Dodano do widoku':'Added to view','Usunięto z widoku':'Removed from view','Usunięto tło':'Background deleted','Skopiowano styl':'Style copied','Nie udało się wczytać układu:':'Could not load layout:',
     'Jednostka':'Unit','Zaokrąglenie':'Rounding','Skala elementów':'Element scale','Oba wymiary':'Both dimensions','Dotknięcie w widoku':'Tap in View','Więcej informacji':'More info','Przełącz ON/OFF':'Toggle ON/OFF','Tekst ON':'ON text','Tekst OFF':'OFF text','Pokaż':'Show','Kolor':'Colour','Przezrocz.':'Opacity','Przezroczystość':'Opacity','Przezroczystość ON':'ON opacity','Przezroczystość OFF':'OFF opacity','Przezroczystość obrysu':'Outline opacity','Przezroczystość obrysu ON':'ON outline opacity','Przezroczystość obrysu OFF':'OFF outline opacity','Kolor zależny ON/OFF':'Colour depends on ON/OFF','Przezroczystość zależna ON/OFF':'Opacity depends on ON/OFF','Ikona zależna ON/OFF':'Icon depends on ON/OFF','Tło zależne ON/OFF':'Background depends on ON/OFF','Ramka zależna ON/OFF':'Border depends on ON/OFF','Obrys zależny ON/OFF':'Outline depends on ON/OFF','Ikona podstawowa':'Base icon','Ikona ON':'ON icon','Ikona OFF':'OFF icon','Szerokość':'Width','Wysokość':'Height','Grubość':'Thickness','Źródło':'Source','Z encji Home Assistant':'From Home Assistant entity','Logo integracji':'Integration logo','Własna ikona MDI':'Custom MDI icon','Brak danych':'No data','Zakres i wartość':'Range and value','Minimum':'Minimum','Maksimum':'Maximum','Tor':'Track','Wartość':'Value','Geometria wskaźnika':'Gauge geometry','Skala':'Scale','Pozycja':'Position','Kąt start':'Start angle','Kąt koniec':'End angle','Podziałka':'Ticks','Pokaż ticki':'Show ticks','Co ile':'Interval','Offset':'Offset','Długość':'Length','Liczby skali':'Scale labels','Czcionka':'Font','Odsunięcie':'Offset','Włącz':'Enable','Start':'Start','Koniec':'End','Procent':'Percent','Własny kolor RGB…':'Custom RGB colour…','Brak dodatkowych atrybutów.':'No additional attributes.','Nie dodano jeszcze żadnych encji.':'No entities have been added yet.','Kliknij, aby wczytać encje.':'Click to load entities.','Dodaj do widoku':'Add to view','Encja jest wyłączona':'Entity is disabled','Dodano świeży Badge z ustawieniami domyślnymi':'Added a new Badge with default settings','Usunięto marker i wszystkie jego ustawienia':'Removed marker and all its settings','Połączono':'Connected','Błąd danych':'Data error','Na żywo':'Live','Ponowne łączenie…':'Reconnecting…','Bez tła':'No background','Błąd zapisu':'Save error','Błąd':'Error',
-    "Encja i kierunek":"Entity and direction","Stany pracy":"Work states","Zaznacz stany, których używa to urządzenie — tylko one pojawią się w ustawieniach stanu pracy.":"Tick the states this device uses — only they appear in the work state settings.","Potwierdzenie":"Confirmation","Pytaj przy włączeniu i wyłączeniu":"Ask before turning on and off","Wyłączyć?":"Turn off?","Włączyć?":"Turn on?","urządzenie zostanie wyłączone.":"the device will be turned off.","urządzenie zostanie włączone.":"the device will be turned on.","Wyłącz":"Turn off","Włącz":"Turn on","Mruganie":"Blink","Przygasanie":"Fade","Drganie":"Shake","Aktualna wartość":"Current value","Sterowanie":"Control","Stały kierunek":"Fixed direction","Kierunek wg znaku + / −":"Direction by sign + / −","Kierunek dla +":"Direction for +","Kierunek dla −":"Direction for −","Osobny styl dla −":"Separate style for −","Prawo":"Right","Lewo":"Left","Próg aktywności":"Activity threshold","Ukryj poniżej progu":"Hide below threshold","Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.":"Flow is inactive when |value| ≤ threshold — e.g. a threshold of 0 turns off the solar arrows at 0 W at night. An inactive Flow is dimmed without animation or, with hiding enabled, fully invisible. In edit mode a hidden Flow shows only a dashed frame so it can still be clicked.","Kształt":"Shape","Rodzaj":"Type","Chevron":"Chevron","Strzałka":"Arrow","Grot":"Arrowhead","Trójkąt":"Triangle","Segment":"Segment","Liczba":"Count","Grubość trzonu":"Shaft thickness","Rozmiar i pozycja":"Size and position","Odstęp":"Spacing","Korekta obrotu":"Rotation offset","Długość i szerokość to rozmiar ramki liczony względem kierunku strzałki. Liczba i odstęp rozkładają elementy wewnątrz ramki i nie zmieniają jej rozmiaru.":"Length and width are the frame size, measured along the arrow direction. Count and spacing arrange the items inside the frame and do not change its size.","Kolory i wygląd":"Colours and appearance","Kolor dla +":"Colour for +","Kolor dla −":"Colour for −","Obrys":"Outline","Kolor obrysu":"Outline colour","Poświata":"Glow","Osobny kolor poświaty":"Separate glow colour","Kolor poświaty":"Glow colour","Krycie":"Opacity","Animacja":"Animation","Typ":"Type","Brak":"None","Pulsowanie":"Pulse","Przepływ":"Flow","Tempo":"Speed","Tempo od wartości":"Speed follows value","Pełne tempo przy":"Full speed at","Wartość +":"Value +","Wartość −":"Value −","Styl dla +":"Style for +","Styl dla −":"Style for −","Styl wspólny dla + i −":"Shared style for + and −","Podgląd i edycja dla wartości dodatniej.":"Preview and editing for a positive value.","Podgląd i edycja dla wartości ujemnej.":"Preview and editing for a negative value.","Każda strona ma własny styl.":"Each side has its own style.","Kształt, rozmiar i animacja są wspólne — kolor jest osobny.":"Shape, size and animation are shared — only the colour is separate.","Kopiuj styl Flow":"Copy Flow style","Wklej styl Flow":"Paste Flow style","Usuń Flow":"Delete Flow","Dodaj Flow testowy":"Add Flow","Skopiowano styl Flow — wklej go w innym Flow":"Flow style copied — paste it into another Flow","Wklejono styl Flow":"Flow style pasted","Przywrócono domyślny Flow":"Flow defaults restored","Dodano Flow — przeciągnij go w trybie edycji":"Flow added — drag it in edit mode","Usunięto Flow":"Flow removed","Przywrócić domyślny Flow?":"Restore Flow defaults?","Obecne ustawienia wyglądu i działania Flow zostaną zastąpione domyślnymi. Pozycja i nazwa zostaną zachowane.":"The current Flow appearance and behaviour settings will be replaced with defaults. Position and name are kept.","Usunąć Flow?":"Delete Flow?","Kolor ON":"ON colour","Kolor OFF":"OFF colour","Kolor obrysu ON":"ON outline colour","Kolor obrysu OFF":"OFF outline colour","Grubość obrysu":"Outline thickness","Grubość obrysu ON":"ON outline thickness","Grubość obrysu OFF":"OFF outline thickness","Grubość ON":"ON thickness","Grubość OFF":"OFF thickness","Zależne ON/OFF":"Depends on ON/OFF","Przezrocz. ON":"ON opacity","Przezrocz. OFF":"OFF opacity","Lewo / prawo":"Left / right","Góra / dół":"Up / down","Prostokąt":"Rectangle","Zaokrąglony":"Rounded","Koło / owal":"Circle / oval","Gradient":"Gradient","Auto":"Auto","Monospace":"Monospace","Przywróć domyślną wartość":"Restore default value","Wybierz kolor":"Choose colour","Własny kolor":"Custom colour","Własny kolor RGB":"Custom RGB colour","Podaj kolor w formacie #RRGGBB.":"Enter a colour in #RRGGBB format.","Ustaw":"Set","Typ markera i jego ustawienia wyglądu zostaną zastąpione domyślnymi.":"The marker type and its appearance settings will be replaced with defaults.","Zmień":"Change","Nie można przełączyć encji w tym stanie.":"This entity cannot be toggled in its current state.","Stan encji nie został jeszcze potwierdzony.":"The entity state has not been confirmed yet.","Błąd encji":"Entity error","Błąd przełączania":"Toggle error","Nie udało się pobrać historii":"Could not load history","Pobierz tło":"Download background","Wybierz tło widoku":"Choose view background","Wgraj nowy obraz":"Upload a new image","Wybierz istniejące tło":"Choose an existing background","Wybierz istniejące tło…":"Choose an existing background…","Załaduj wybrane tło":"Load selected background","Wybierz kolor tła":"Choose background colour","Format kolorowego tła":"Colour background format","Usunąć tło?":"Delete background?","Zresetować dopasowanie tła?":"Reset background fit?","Skala, pozycja i tryb dopasowania tego tła wrócą do wartości domyślnych.":"Scale, position and fit mode of this background will return to defaults.","Resetuj":"Reset","Brak aktywnych integracji.":"No active integrations.","Brak encji.":"No entities.","Brak historii w wybranym okresie.":"No history in the selected period.","Brak pasujących encji.":"No matching entities.","Nie dodano jeszcze żadnych elementów.":"Nothing has been added yet.","Widok ogólny":"Overview",
+    "Encja i kierunek":"Entity and direction","Kolor":"Colour","Przezrocz.":"Opacity","Grubość":"Width","Przyciski":"Buttons","Zależne od stanu pracy":"By work state","Ikona zależna od stanu pracy":"Icon by work state","Ikony trybów":"Mode icons","Kolor aktywnego wg trybu":"Active colour by mode","Kolor aktywnego":"Active colour","Ramki przycisków":"Button frames","Stany pracy":"Work states","Zaznacz stany, których używa to urządzenie — tylko one pojawią się w ustawieniach stanu pracy.":"Tick the states this device uses — only they appear in the work state settings.","Potwierdzenie":"Confirmation","Pytaj przy włączeniu i wyłączeniu":"Ask before turning on and off","Wyłączyć?":"Turn off?","Włączyć?":"Turn on?","urządzenie zostanie wyłączone.":"the device will be turned off.","urządzenie zostanie włączone.":"the device will be turned on.","Wyłącz":"Turn off","Włącz":"Turn on","Mruganie":"Blink","Przygasanie":"Fade","Drganie":"Shake","Aktualna wartość":"Current value","Sterowanie":"Control","Stały kierunek":"Fixed direction","Kierunek wg znaku + / −":"Direction by sign + / −","Kierunek dla +":"Direction for +","Kierunek dla −":"Direction for −","Osobny styl dla −":"Separate style for −","Prawo":"Right","Lewo":"Left","Próg aktywności":"Activity threshold","Ukryj poniżej progu":"Hide below threshold","Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.":"Flow is inactive when |value| ≤ threshold — e.g. a threshold of 0 turns off the solar arrows at 0 W at night. An inactive Flow is dimmed without animation or, with hiding enabled, fully invisible. In edit mode a hidden Flow shows only a dashed frame so it can still be clicked.","Kształt":"Shape","Rodzaj":"Type","Chevron":"Chevron","Strzałka":"Arrow","Grot":"Arrowhead","Trójkąt":"Triangle","Segment":"Segment","Liczba":"Count","Grubość trzonu":"Shaft thickness","Rozmiar i pozycja":"Size and position","Odstęp":"Spacing","Korekta obrotu":"Rotation offset","Długość i szerokość to rozmiar ramki liczony względem kierunku strzałki. Liczba i odstęp rozkładają elementy wewnątrz ramki i nie zmieniają jej rozmiaru.":"Length and width are the frame size, measured along the arrow direction. Count and spacing arrange the items inside the frame and do not change its size.","Kolory i wygląd":"Colours and appearance","Kolor dla +":"Colour for +","Kolor dla −":"Colour for −","Obrys":"Outline","Kolor obrysu":"Outline colour","Poświata":"Glow","Osobny kolor poświaty":"Separate glow colour","Kolor poświaty":"Glow colour","Krycie":"Opacity","Animacja":"Animation","Typ":"Type","Brak":"None","Pulsowanie":"Pulse","Przepływ":"Flow","Tempo":"Speed","Tempo od wartości":"Speed follows value","Pełne tempo przy":"Full speed at","Wartość +":"Value +","Wartość −":"Value −","Styl dla +":"Style for +","Styl dla −":"Style for −","Styl wspólny dla + i −":"Shared style for + and −","Podgląd i edycja dla wartości dodatniej.":"Preview and editing for a positive value.","Podgląd i edycja dla wartości ujemnej.":"Preview and editing for a negative value.","Każda strona ma własny styl.":"Each side has its own style.","Kształt, rozmiar i animacja są wspólne — kolor jest osobny.":"Shape, size and animation are shared — only the colour is separate.","Kopiuj styl Flow":"Copy Flow style","Wklej styl Flow":"Paste Flow style","Usuń Flow":"Delete Flow","Dodaj Flow testowy":"Add Flow","Skopiowano styl Flow — wklej go w innym Flow":"Flow style copied — paste it into another Flow","Wklejono styl Flow":"Flow style pasted","Przywrócono domyślny Flow":"Flow defaults restored","Dodano Flow — przeciągnij go w trybie edycji":"Flow added — drag it in edit mode","Usunięto Flow":"Flow removed","Przywrócić domyślny Flow?":"Restore Flow defaults?","Obecne ustawienia wyglądu i działania Flow zostaną zastąpione domyślnymi. Pozycja i nazwa zostaną zachowane.":"The current Flow appearance and behaviour settings will be replaced with defaults. Position and name are kept.","Usunąć Flow?":"Delete Flow?","Kolor ON":"ON colour","Kolor OFF":"OFF colour","Kolor obrysu ON":"ON outline colour","Kolor obrysu OFF":"OFF outline colour","Grubość obrysu":"Outline thickness","Grubość obrysu ON":"ON outline thickness","Grubość obrysu OFF":"OFF outline thickness","Grubość ON":"ON thickness","Grubość OFF":"OFF thickness","Zależne ON/OFF":"Depends on ON/OFF","Przezrocz. ON":"ON opacity","Przezrocz. OFF":"OFF opacity","Lewo / prawo":"Left / right","Góra / dół":"Up / down","Prostokąt":"Rectangle","Zaokrąglony":"Rounded","Koło / owal":"Circle / oval","Gradient":"Gradient","Auto":"Auto","Monospace":"Monospace","Przywróć domyślną wartość":"Restore default value","Wybierz kolor":"Choose colour","Własny kolor":"Custom colour","Własny kolor RGB":"Custom RGB colour","Podaj kolor w formacie #RRGGBB.":"Enter a colour in #RRGGBB format.","Ustaw":"Set","Typ markera i jego ustawienia wyglądu zostaną zastąpione domyślnymi.":"The marker type and its appearance settings will be replaced with defaults.","Zmień":"Change","Nie można przełączyć encji w tym stanie.":"This entity cannot be toggled in its current state.","Stan encji nie został jeszcze potwierdzony.":"The entity state has not been confirmed yet.","Błąd encji":"Entity error","Błąd przełączania":"Toggle error","Nie udało się pobrać historii":"Could not load history","Pobierz tło":"Download background","Wybierz tło widoku":"Choose view background","Wgraj nowy obraz":"Upload a new image","Wybierz istniejące tło":"Choose an existing background","Wybierz istniejące tło…":"Choose an existing background…","Załaduj wybrane tło":"Load selected background","Wybierz kolor tła":"Choose background colour","Format kolorowego tła":"Colour background format","Usunąć tło?":"Delete background?","Zresetować dopasowanie tła?":"Reset background fit?","Skala, pozycja i tryb dopasowania tego tła wrócą do wartości domyślnych.":"Scale, position and fit mode of this background will return to defaults.","Resetuj":"Reset","Brak aktywnych integracji.":"No active integrations.","Brak encji.":"No entities.","Brak historii w wybranym okresie.":"No history in the selected period.","Brak pasujących encji.":"No matching entities.","Nie dodano jeszcze żadnych elementów.":"Nothing has been added yet.","Widok ogólny":"Overview",
     "Brak entity_id":"Missing entity_id","Brak entry_id":"Missing entry_id","Brak listy encji":"Missing entity list","Brak pliku":"No file","Dane muszą być obiektem JSON":"Data must be a JSON object","Dozwolone: PNG, JPG, JPEG, WEBP":"Allowed: PNG, JPG, JPEG, WEBP","Layout jest za duży":"Layout is too large","Layout musi być obiektem JSON":"Layout must be a JSON object","Nie znaleziono tła":"Background not found","Nieprawidlowa encja":"Invalid entity","Nieprawidłowy JSON":"Invalid JSON","Plik stylów jest za duży":"Style file is too large","Stan jest za duży":"State is too large","Stan musi być obiektem JSON":"State must be a JSON object",
     "Cofnij":"Undo","Przywrócono widok":"View restored","Usunięto widok":"View deleted","Widok jest pusty.":"The view is empty.","Usuń widok":"Delete view","Usunąć widok?":"Delete view?",
     "Długość ramki":"Frame length","Długość elementu":"Item length","Długość ramki i szerokość to rozmiar ramki liczony względem kierunku strzałki. Długość elementu to rozmiar jednej strzałki. Liczba i odstęp nie zmieniają ani ramki, ani kształtu strzałek — elementy są wyśrodkowane w ramce, a to, co się nie mieści, jest przycinane.":"Frame length and width are the frame size, measured along the arrow direction. Item length is the size of a single arrow. Count and spacing change neither the frame nor the arrow shape — items are centred in the frame and anything that does not fit is clipped.",
@@ -919,13 +919,13 @@ function roomEntityPlatform(id) {
 function roomLabelIconSpec(room, on) {
   const id = (room.entityIds || [])[0] || '', source = roomLabelIconSource(room);
   if (source === 'integration' && id) return { domain: roomEntityPlatform(id) };
-  if (source === 'mdi') { const own = String((room.labelIconVariant ? (on ? room.labelIconNameOn : room.labelIconNameOff) : room.labelIconName) || '').trim(); if (own) return { cls: own.replace(/^mdi:/, 'mdi-') }; }
+  if (source === 'mdi') { const own = String((room.labelIconVariant ? sv(room, 'labelIconNameOn', 'labelIconNameOff', on) : room.labelIconName) || '').trim(); if (own) return { cls: own.replace(/^mdi:/, 'mdi-') }; }
   return { cls: String((id && automaticIcon({ entityId: id })) || 'mdi:home-outline').replace(/^mdi:/, 'mdi-') };
 }
 // Background and frame of the icon share one shape: square, circle or a free corner radius.
 function roomIconFrameStyle(r, on = false) {
   if (!r.labelIconBg && !r.labelIconBorder) return '';
-  const pick = (stateKey, base, field) => r[stateKey] ? r[`${base}${on ? 'On' : 'Off'}${field}`] : r[`${base}${field}`];
+  const pick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const shape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
   const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px`;
   return `;padding:${clamp(Number(r.labelIconPadding ?? 6), 0, 120)}px;border-radius:${radius}`
@@ -958,7 +958,7 @@ const ROOM_CARD_STYLES = [
   ['room','Kolor pokoju', room => ({ labelCardBg:true, labelCardBgColor: room.color || '#FFD27A', labelCardBgOpacity:.3, labelCardBlur:false, labelCardBorder:true, labelCardBorderColor: room.color || '#FFD27A', labelCardBorderOpacity:.65, labelCardBorderWidth:1.5, labelNameColor:'#FFFFFF', labelStateColor:'#FFFFFF' })]];
 // Background and frame of the name / state part (the frame is drawn inside, like the icon's); each can follow ON / OFF.
 function roomTextPartStyle(r, key, on = false) {
-  const pick = (field, base) => r[`${key}${base}State`] ? r[`${key}${base}${on ? 'On' : 'Off'}${field}`] : r[`${key}${base}${field}`];
+  const pick = (field, base) => r[`${key}${base}State`] ? sv(r, `${key}${base}On${field}`, `${key}${base}Off${field}`, on) : r[`${key}${base}${field}`];
   const bg = r[`${key}Bg`] ? `;background:${rgba(pick('Color', 'Bg') || '#081822', clamp(Number(pick('Opacity', 'Bg') ?? .55), 0, 1))}` + (r[`${key}Blur`] ? ';-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)' : '') : '';
   const border = r[`${key}Border`] ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('Width', 'Border')) || 1.5, .5, 12)}px ${rgba(pick('Color', 'Border') || '#FFFFFF', clamp(Number(pick('Opacity', 'Border') ?? .6), 0, 1))}` : '';
   // Corners and inner margin (px); unset = the default, which grows with the text size.
@@ -969,8 +969,8 @@ function roomTextPartStyle(r, key, on = false) {
 const TEXT_WEIGHTS = { normal:400, medium:600, bold:700 };
 // Colour (fixed or ON / OFF), opacity and weight of the name / state text.
 function roomTextStyle(r, key, on = false) {
-  const state = !!r[`${key}ColorState`], color = state ? r[`${key}Color${on ? 'On' : 'Off'}`] : r[`${key}Color`];
-  const opacity = clamp(Number(state ? r[`${key}Opacity${on ? 'On' : 'Off'}`] : r[`${key}Opacity`]) ?? 1, 0, 1);
+  const state = !!r[`${key}ColorState`], color = state ? sv(r, `${key}ColorOn`, `${key}ColorOff`, on) : r[`${key}Color`];
+  const opacity = clamp(Number(state ? sv(r, `${key}OpacityOn`, `${key}OpacityOff`, on) : r[`${key}Opacity`]) ?? 1, 0, 1);
   return `color:${rgba(color || '#FFFFFF', Number.isFinite(opacity) ? opacity : 1)};font-weight:${TEXT_WEIGHTS[r[`${key}Weight`]] || (key === 'labelName' ? 700 : 400)}`;
 }
 // Ungrouped, the name and state get their own background and frame (like the icon) when they had none;
@@ -1061,7 +1061,7 @@ function fitFreeCard(room, group) {
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
 function cardLook(r, on) {
-  const cardPick = (stateKey, base, field) => r[stateKey] ? r[`${base}${on ? 'On' : 'Off'}${field}`] : r[`${base}${field}`];
+  const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   return [`border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px`,
     r.labelCardBg ? `background:${rgba(cardPick('labelCardBgState', 'labelCardBg', 'Color') || '#081822', clamp(Number(cardPick('labelCardBgState', 'labelCardBg', 'Opacity') ?? .62), 0, 1))}` : '',
     // The frame is drawn inside the card (inset shadow), so a thicker ON / OFF frame never changes the card's size.
@@ -1070,6 +1070,14 @@ function cardLook(r, on) {
 // Only entities that switch on and off (lights, switches, binary sensors…) have ON / OFF look options;
 // for the others (a temperature sensor…) the label always uses the plain colours.
 function roomSwitchable(r) { return (r.entityIds || []).some(id => /^(light|switch|input_boolean|fan|binary_sensor|cover|lock|climate|media_player|vacuum|siren|humidifier|valve|water_heater|alarm_control_panel|automation|script|group)\./.test(id)); }
+// A thermostat's look follows its work state instead of ON / OFF: every "…On…" setting has a version per state
+// ("…_heating…", "…_idle…"); a state without its own value takes the ON value while working, else the OFF one.
+const actPath = (onPath, act) => onPath.replace(/On(?=[A-Z]|$)/, `_${act}`);
+const actWorking = act => !['idle','off'].includes(act);
+function sv(r, onKey, offKey, on) {
+  if (r?.__act) { const v = r[actPath(onKey, r.__act)]; return v !== undefined && v !== '' && v !== null ? v : actWorking(r.__act) ? r[onKey] : r[offKey]; }
+  return on ? r[onKey] : r[offKey];
+}
 const LABEL_STATE_FLAGS = ['labelIconColorState','labelIconVariant','labelIconOutlineState','labelIconBgState','labelIconBorderState','labelCardBgState','labelCardBorderState','labelNameColorState','labelStateColorState','labelNameBgState','labelStateBgState','labelNameBorderState','labelStateBorderState'];
 function withoutOnOff(r) { if (!roomSwitchable(r)) LABEL_STATE_FLAGS.forEach(key => { r[key] = false; }); return r; }
 function roomRuleColor(r) {
@@ -1097,8 +1105,11 @@ function mdiSvgPath(cls) {
 // at the speed of its percentage. Returns the class and CSS variables for the icon element, or null.
 const ICON_ANIMATIONS = ['spin','pulse','blink','swing'];
 function roomIconAnimation(r, on) {
-  if (!r.labelIconAnim || (r.labelIconAnimOnlyOn !== false && roomSwitchable(r) && !on)) return null;
-  const type = ICON_ANIMATIONS.includes(r.labelIconAnimType) ? r.labelIconAnimType : 'spin';
+  if (!r.labelIconAnim) return null;
+  // A thermostat: an animation (or none) per work state; by default only while working.
+  const perAct = r.__act ? (r[`labelIconAnim_${r.__act}`] ?? (actWorking(r.__act) ? r.labelIconAnimType : 'none')) : null;
+  if (perAct === 'none' || (!r.__act && r.labelIconAnimOnlyOn !== false && roomSwitchable(r) && !on)) return null;
+  const type = ICON_ANIMATIONS.includes(perAct || r.labelIconAnimType) ? (perAct || r.labelIconAnimType) : 'spin';
   let seconds = clamp(Number(r.labelIconAnimSpeed) || 1.5, .2, 10);
   if (r.labelIconAnimEntitySpeed) {
     const percent = Number((r.entityIds || []).map(id => stateCache[id]?.attributes?.percentage).find(v => Number.isFinite(Number(v)) && Number(v) > 0));
@@ -1148,8 +1159,9 @@ function thermoActionText(r, action) { return String(r?.[`thermoActText_${action
 function thermoModeText(r, mode) { return String(r?.[`thermoModeText_${mode}`] || '').trim() || translateValue(mode === 'off' ? 'Wyłączony' : THERMO_MODES[mode]?.[0] || mode); }
 // Set / current temperature with its own rounding ("auto": the entity's step, 0,1 for the current one) and unit.
 function thermoFormat(v, decimals, autoStep) { const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', ','); }
-function thermoContent(r, on, previewMode = null) {
-  const marker = { entityId: (r.entityIds || [])[0] || '' }, info = climateInfo(marker, previewMode), accent = thermoAccent(r, info), esc = escapeHtml, tr = translateValue;
+function thermoContent(r, on, previewMode = null, previewAct = '') {
+  const marker = { entityId: (r.entityIds || [])[0] || '' }, info = climateInfo(marker, previewMode); if (previewAct) info.action = previewAct;
+  const accent = thermoAccent(r, info), esc = escapeHtml, tr = translateValue;
   const text = (key, inner, cls = '') => `<span class="thermo-part ${cls}" data-no-i18n style="${r[`${key}Accent`] ? `color:var(--accent);font-weight:${TEXT_WEIGHTS[r[`${key}Weight`]] || 600}` : roomTextStyle(r, key, on)}">${inner}</span>`;
   // Like Home Assistant's own card: a thermostat that is off still shows (and lets you change) its set temperature.
   const value = info.target ?? info.high ?? null, active = !info.unavailable && value !== null;
@@ -1170,13 +1182,20 @@ function thermoContent(r, on, previewMode = null) {
   const canSet = info.target !== null && !info.unavailable;
   if (r.labelMinus) parts.minus = `<button type="button" class="thermo-step" data-thermo="down"${canSet ? '' : ' disabled'} aria-label="−" style="${roomTextStyle(r, 'labelMinus', on)}"><i class="mdi mdi-minus"></i></button>`;
   if (r.labelPlus) parts.plus = `<button type="button" class="thermo-step" data-thermo="up"${canSet ? '' : ' disabled'} aria-label="+" style="${roomTextStyle(r, 'labelPlus', on)}"><i class="mdi mdi-plus"></i></button>`;
-  if (r.labelModes && info.modes.length) parts.modes = `<span class="thermo-mode-row">${info.modes.map(m => { const d = THERMO_MODES[m] || [m, 'mdi-thermostat'], c = m === info.mode ? accent : thermoActColor(r, ({ heat:'heating', cool:'cooling', dry:'drying', fan_only:'fan', off:'off' })[m] || 'idle'); return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}" data-thermo-mode="${esc(m)}" title="${esc(thermoModeText(r, m))}" aria-label="${esc(thermoModeText(r, m))}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}"><i class="mdi ${d[1]}"></i></button>`; }).join('')}</span>`;
+  // Mode buttons: own icon per mode, the active one in the mode's colour (or a chosen one), with or without frames.
+  if (r.labelModes && info.modes.length) parts.modes = `<span class="thermo-mode-row${r.thermoModeFrame === false ? ' no-frame' : ''}" style="gap:${clamp(Number(r.thermoModeGap ?? 40), 0, 300) / 100}em;--mode-radius:${clamp(Number(r.thermoModeRadius ?? 30), 0, 50)}%">${info.modes.map(m => { const d = THERMO_MODES[m] || [m, 'mdi-thermostat'], own = String(r[`thermoModeIcon_${m}`] || '').trim().replace(/^mdi:/, 'mdi-'), icon = own ? (own.startsWith('mdi-') ? own : `mdi-${own}`) : d[1];
+    const c = m === info.mode ? (r.thermoModeAccent === false && r.thermoModeActiveColor ? r.thermoModeActiveColor : accent) : thermoActColor(r, ({ heat:'heating', cool:'cooling', dry:'drying', fan_only:'fan', off:'off' })[m] || 'idle');
+    return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}" data-thermo-mode="${esc(m)}" title="${esc(thermoModeText(r, m))}" aria-label="${esc(thermoModeText(r, m))}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}"><i class="mdi ${esc(icon)}"></i></button>`; }).join('')}</span>`;
   return { accent, parts };
 }
 function roomLabelMarkup(room, preview = '', interactive = false) {
   const r = withoutOnOff({ ...ROOM_DEFAULTS, ...room });
   // One visible part: no group background, frame or margin (it would be a second frame around the part's own).
   if (ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1) Object.assign(r, { labelCardBg:false, labelCardBorder:false, labelCardPadding:0 }); if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
+  // A thermostat's preview shows one of its work states ("act:heating"); its look follows the work state.
+  const previewAct = isThermoRoom(r) && String(preview).startsWith('act:') ? String(preview).slice(4) : '';
+  if (isThermoRoom(r)) r.__act = previewAct || thermoActivity(climateInfo({ entityId: (r.entityIds || [])[0] || '' }));
+  if (previewAct) preview = actWorking(previewAct) ? 'on' : 'off';
   const realOn = roomLight(r).on, on = preview ? preview === 'on' : realOn, [x, y] = roomAnchor(r), tap = (isIconRoom(r) ? ' tappable' : '') + (interactive && r.id === selectedRoomId ? ' selected' : '');
   // The ON / OFF preview simulates the state text too.
   // A thermostat's ON / OFF preview shows its mode texts: "off", or the mode it would be in when on.
@@ -1184,9 +1203,9 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   const state = !r.labelState ? '' : thermoPreview ? thermoModeText(r, thermoPreview) : preview === 'off' ? roomOnOffWord(r, false) : preview === 'on' && !realOn ? roomOnOffWord(r, true) : roomLabelState(r);
   // Colours by value (a number entity): below / between / above two thresholds, for the icon and / or the state text.
   const ruleColor = roomRuleColor(r);
-  const iconColor = ruleColor && r.labelRulesIcon ? ruleColor : r.labelIconColorState === false ? r.labelIconColor : on ? r.labelIconOn : r.labelIconOff, iconOpacity = clamp(Number(r.labelIconColorState === false ? r.labelIconOpacity : on ? r.labelIconOpacityOn : r.labelIconOpacityOff) ?? 1, 0, 1);
-  const outlineColor = r.labelIconOutlineState ? (on ? r.labelIconOutlineOnColor : r.labelIconOutlineOffColor) : r.labelIconOutlineColor, outlineWidth = r.labelIconOutlineState ? (on ? r.labelIconOutlineOnWidth : r.labelIconOutlineOffWidth) : r.labelIconOutlineWidth;
-  const outlineOpacity = clamp(Number(r.labelIconOutlineState ? (on ? r.labelIconOutlineOnOpacity : r.labelIconOutlineOffOpacity) : r.labelIconOutlineOpacity) ?? 1, 0, 1);
+  const iconColor = ruleColor && r.labelRulesIcon ? ruleColor : r.labelIconColorState === false ? r.labelIconColor : sv(r, 'labelIconOn', 'labelIconOff', on), iconOpacity = clamp(Number(r.labelIconColorState === false ? r.labelIconOpacity : sv(r, 'labelIconOpacityOn', 'labelIconOpacityOff', on)) ?? 1, 0, 1);
+  const outlineColor = r.labelIconOutlineState ? sv(r, 'labelIconOutlineOnColor', 'labelIconOutlineOffColor', on) : r.labelIconOutlineColor, outlineWidth = r.labelIconOutlineState ? sv(r, 'labelIconOutlineOnWidth', 'labelIconOutlineOffWidth', on) : r.labelIconOutlineWidth;
+  const outlineOpacity = clamp(Number(r.labelIconOutlineState ? sv(r, 'labelIconOutlineOnOpacity', 'labelIconOutlineOffOpacity', on) : r.labelIconOutlineOpacity) ?? 1, 0, 1);
   const iconStyle = `text-shadow:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55));color:${escapeHtml(iconColor)};-webkit-text-fill-color:${r.labelIconFill !== false ? rgba(iconColor, iconOpacity) : 'transparent'};-webkit-text-stroke:${r.labelIconOutline ? `${clamp(Number(outlineWidth) || 1.5, .5, 8)}px ${rgba(outlineColor || '#FFFFFF', outlineOpacity)}` : '0 transparent'}`;
   const spec = r.labelIcon ? roomLabelIconSpec(r, on) : null;
   const anim = roomIconAnimation(r, on), animAttr = anim ? { cls: ` ${anim.cls}`, style: `;${anim.style}` } : { cls: '', style: '' };
@@ -1196,7 +1215,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     return d ? mdiSvgMarkup(d, svg) : `<i class="mdi ${escapeHtml(spec.cls)}${animAttr.cls}" data-svg-icon="${escapeHtml(String(spec.cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(svg)}" style="${iconStyle}${glyphShiftStyle(spec.cls)}${animAttr.style}"></i>`;
   })();
   const content = { icon: iconHtml, name: r.labelName && r.name ? `<b data-no-i18n style="${roomTextStyle(r, 'labelName', on)}">${escapeHtml(r.name)}</b>` : '', state: state ? `<small data-no-i18n style="${roomTextStyle(r, 'labelState', on)}${ruleColor && r.labelRulesState ? `;color:${escapeHtml(ruleColor)}` : ''}">${escapeHtml(state)}</small>` : '' };
-  const thermo = isThermoRoom(r) ? thermoContent(r, on, thermoPreview) : null; if (thermo) Object.assign(content, thermo.parts);
+  const thermo = isThermoRoom(r) ? thermoContent(r, on, thermoPreview, previewAct) : null; if (thermo) Object.assign(content, thermo.parts);
   const accentVar = thermo ? `;--accent:${escapeHtml(thermo.accent)}` : '';
   if (r.labelLinked) {
     // A "free" group keeps the parts where they were placed when it was grouped again (card-local positions).
@@ -1953,7 +1972,19 @@ function renderRoomEntityResults() {
 function roomEditorMarkup(room) {
   const r = withoutOnOff({ ...ROOM_DEFAULTS, ...room }), light = roomLight({ ...ROOM_DEFAULTS, ...room }), refresh = { refresh:true }, onOff = roomSwitchable(r);
   // No ON / OFF choices for entities that do not switch on and off.
-  const control = (label, path, ...rest) => !onOff && path !== 'stateEnabled' && /zależn[aeyi] ON\/OFF/i.test(label) ? '' : plainControl(label, path, ...rest);
+  const baseControl = (label, path, ...rest) => !onOff && path !== 'stateEnabled' && /zależn[aeyi] ON\/OFF/i.test(label) ? '' : plainControl(label, path, ...rest);
+  // A thermostat follows its work states: each "… ON" / "… OFF" pair becomes one setting per used state.
+  const thermoR = isThermoRoom(r), acts = thermoR ? thermoActsUsed(r) : [], actName = a => translateValue(THERMO_ACTIONS[a]?.[0] || a);
+  const actValue = (onPath, a) => { const v = r[actPath(onPath, a)]; return v !== undefined && v !== '' && v !== null ? v : actWorking(a) ? r[onPath] : r[onPath.replace(/On(?=[A-Z]|$)/, 'Off')]; };
+  const control = (label, path, type, value, opts, ...rest) => {
+    if (!thermoR) return baseControl(label, path, type, value, opts, ...rest);
+    if (path === 'labelIconAnimOnlyOn') return acts.map(a => plainControl(`${translateValue('Animacja')} · ${actName(a)}`, `labelIconAnim_${a}`, 'select', r[`labelIconAnim_${a}`] ?? (actWorking(a) ? (ICON_ANIMATIONS.includes(r.labelIconAnimType) ? r.labelIconAnimType : 'spin') : 'none'), { items:[['none','Brak'],['spin','Obrót'],['pulse','Pulsowanie'],['blink','Miganie'],['swing','Kołysanie']], dropdown:true })).join('');
+    if (/ OFF$/.test(label) && /Off(?=[A-Z]|$)/.test(path)) return '';
+    if (/ ON$/.test(label) && /On(?=[A-Z]|$)/.test(path)) return acts.map(a => { const raw = actValue(path, a), v = type === 'range' ? (opts?.suffix === '%' ? pct(raw) : (Number(raw) || value)) : (raw ?? value);
+      return plainControl(`${translateValue(label.replace(/ ON$/, ''))} · ${actName(a)}`, actPath(path, a), type, v, opts, ...rest); }).join('');
+    if (path === 'labelIconAnimType') return '';
+    return baseControl(label.replace(/(z)ależn([aeyi]) ON\/OFF/i, '$1ależn$2 od stanu pracy'), path, type, value, opts, ...rest);
+  };
   const note = text => `<p class="flow-section-note">${text}</p>`, canToggle = r.entityIds.some(id => isToggleableMarker({ entityId:id }));
   const addedList = r.entityIds.map(id => roomEntityRow(id, 'remove')).join('');
   const icon = isIconRoom(r);
@@ -1996,7 +2027,7 @@ function roomEditorMarkup(room) {
   const source = roomLabelIconSource(r), sub = (title, body) => gaugeSubsection(escapeHtml(translateValue(title)), body);
   const iconOptions = () => sub('Źródło', control('Źródło','labelIconSource','select',source,{ items:[['entity','Z encji'],['integration','Logo integracji'],['mdi','Własna ikona MDI']], refresh:true })
       + (source === 'mdi' ? control('Ikona zależna ON/OFF','labelIconVariant','checkbox',!!r.labelIconVariant,refresh)
-        + (r.labelIconVariant ? iconInput('labelIconNameOn','Ikona ON',r.labelIconNameOn) + iconInput('labelIconNameOff','Ikona OFF',r.labelIconNameOff) : iconInput('labelIconName','Ikona',r.labelIconName)) + iconList : ''))
+        + (r.labelIconVariant ? (thermoR ? acts.map(a => iconInput(actPath('labelIconNameOn', a), `${translateValue('Ikona')} · ${actName(a)}`, actValue('labelIconNameOn', a))).join('') : iconInput('labelIconNameOn','Ikona ON',r.labelIconNameOn) + iconInput('labelIconNameOff','Ikona OFF',r.labelIconNameOff)) : iconInput('labelIconName','Ikona',r.labelIconName)) + iconList : ''))
     + sub('Kolor', control('Wypełnienie','labelIconFill','checkbox',r.labelIconFill !== false,refresh)
       + (r.labelIconFill !== false ? control('Zależne ON/OFF','labelIconColorState','checkbox',r.labelIconColorState !== false,refresh)
         + (r.labelIconColorState !== false
@@ -2059,7 +2090,14 @@ function roomEditorMarkup(room) {
       ? sub('Format', control('Tekst ON','labelStateOnText','text',r.labelStateOnText || '',{ placeholder: translateValue('Wł.') }) + control('Tekst OFF','labelStateOffText','text',r.labelStateOffText || '',{ placeholder: translateValue('Wył.') }))
       : number ? sub('Format', control('Jednostka','labelStateUnit','text',r.labelStateUnit || '',{ placeholder: stateCache[r.entityIds[0]]?.attributes?.unit_of_measurement || '' })
         + control('Zaokrąglenie','labelStateDecimals','select',String(r.labelStateDecimals ?? 'auto'),{ items:[['auto','Automatycznie'],['0','0'],['1','0,1'],['2','0,01'],['3','0,001']], dropdown:true })) : '';
-    const sizeSub = sub('Rozmiar', size + control('Grubość czcionki',`${key}Weight`,'select',TEXT_WEIGHTS[r[`${key}Weight`]] ? r[`${key}Weight`] : (key === 'labelName' ? 'bold' : 'normal'),{ items:[['normal','Normalna'],['medium','Średnia'],['bold','Pogrubiona']] }));
+    const iconParts = isThermoRoom(r) && ['modes','minus','plus'].includes(part);
+    const modeList = part === 'modes' ? climateInfo({ entityId: (r.entityIds || [])[0] || '' }).modes : [];
+    const modesSub = part !== 'modes' ? '' : sub('Ikony trybów', modeList.map(m => iconInput(`thermoModeIcon_${m}`, THERMO_MODES[m]?.[0] || m, r[`thermoModeIcon_${m}`] || (THERMO_MODES[m]?.[1] || '').replace(/^mdi-/, 'mdi:'))).join('') + iconList)
+      + sub('Przyciski', control('Kolor aktywnego wg trybu','thermoModeAccent','checkbox',r.thermoModeAccent !== false,refresh)
+        + (r.thermoModeAccent === false ? control('Kolor aktywnego','thermoModeActiveColor','color',r.thermoModeActiveColor || '#FF7A2F') : '')
+        + control('Ramki przycisków','thermoModeFrame','checkbox',r.thermoModeFrame !== false)
+        + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
+    const sizeSub = iconParts ? sub('Rozmiar', size) + modesSub : sub('Rozmiar', size + control('Grubość czcionki',`${key}Weight`,'select',TEXT_WEIGHTS[r[`${key}Weight`]] ? r[`${key}Weight`] : (key === 'labelName' ? 'bold' : 'normal'),{ items:[['normal','Normalna'],['medium','Średnia'],['bold','Pogrubiona']] }));
     const accentable = ['labelTarget','labelCurrent','labelAction'].includes(key);
     if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + contentSub + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
@@ -2112,7 +2150,7 @@ function roomEditorMarkup(room) {
   const label = group + ROOM_LABEL_PARTS.map(partSection).join('');
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable ? previewRow('previewOn', roomPreviewOn) : '') + entities + (icon ? '' : lookSection()) + label;
+  return (switchable || isThermoRoom(r) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -2199,7 +2237,7 @@ function onRoomEditorInput(event) {
   }
   if (path === 'opacity') value = clamp(value / 100, .05, 1);
   if (path === 'offOpacity') value = clamp(value / 100, 0, 1);
-  if (/^label\w*Opacity(On|Off)?$|^outline\w*Opacity$/.test(path)) value = clamp(value / 100, 0, 1);
+  if (/^label\w*Opacity(On|Off|_[a-z]+)?$|^outline\w*Opacity$/.test(path)) value = clamp(value / 100, 0, 1);
   if (/^labelIconName(On|Off)?$/.test(path)) value = String(value).trim();
   if (path === 'labelIconName') value = String(value).trim();
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
@@ -4685,11 +4723,21 @@ function previewControl(marker) { return stateButtons('__preview', editorPreview
 // A small ON / OFF pair right under the editor header buttons simulates the state while styling (not saved).
 // The ON / OFF preview is one toggle in the header row (only for things that switch on and off); the content
 // only carries where it applies — syncHeadPreview puts it on the button.
-function previewRow(path, value) { return `<i class="head-preview-src" hidden data-path="${path}" data-value="${value}"></i>`; }
+function previewRow(path, value, thermo = null) { return `<i class="head-preview-src" hidden data-path="${path}" data-value="${value}"${thermo ? ` data-acts="${escapeHtml(thermo.acts)}" data-current="${escapeHtml(thermo.current)}"` : ''}></i>`; }
 function syncHeadPreview(panel, actualOn) {
   const button = panel?.querySelector('.head-preview'), src = panel?.querySelector('.head-preview-src'); if (!button) return;
   button.hidden = !src; if (!src) return;
-  const preview = src.dataset.value, shown = preview || (actualOn ? 'on' : 'off');
+  const preview = src.dataset.value;
+  // A thermostat: the button steps through its work states (the real one first), each previewed in turn.
+  if (src.dataset.acts) {
+    const acts = src.dataset.acts.split(',').filter(Boolean), shown = preview.startsWith('act:') ? preview.slice(4) : src.dataset.current, i = acts.indexOf(shown);
+    const next = acts[(i + 1) % Math.max(1, acts.length)] || shown;
+    button.dataset.previewPath = src.dataset.path; button.dataset.previewValue = next === src.dataset.current && preview ? '' : `act:${next}`;
+    button.classList.toggle('active', !!preview); button.querySelector('i').className = `mdi ${THERMO_ACTIONS[shown]?.[1] || 'mdi-thermostat'}`;
+    const label = `${translateValue('Podgląd')}: ${translateValue(THERMO_ACTIONS[shown]?.[0] || shown)}`; button.title = label; button.setAttribute('aria-label', label);
+    return;
+  }
+  const shown = preview || (actualOn ? 'on' : 'off');
   button.dataset.previewPath = src.dataset.path; button.dataset.previewValue = shown === 'on' ? 'off' : 'on';
   button.classList.toggle('active', !!preview); button.querySelector('i').className = `mdi ${shown === 'on' ? 'mdi-lightbulb-on' : 'mdi-lightbulb-off-outline'}`;
   const label = translateValue(shown === 'on' ? 'Podgląd: włączony' : 'Podgląd: wyłączony'); button.title = label; button.setAttribute('aria-label', label);

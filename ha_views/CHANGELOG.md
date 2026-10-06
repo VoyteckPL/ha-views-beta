@@ -1,3 +1,10 @@
+## 0.4.1-beta.424
+
+- **Termostat: wygląd zależny od stanu pracy zamiast ON/OFF**: wszędzie, gdzie przy etykietach było „Zależne ON/OFF” (kolor ikony, obrys, tło, ramka, kolor nazwy / stanu / stanu pracy / trybów, tło i ramka grupy), w termostacie jest teraz **„Zależne od stanu pracy”** — osobne ustawienie dla każdego wybranego stanu (np. Grzeje, Bezczynny, Wyłączony). Stan bez własnej wartości bierze dotychczasowy kolor ON (gdy pracuje) albo OFF.
+- **Ikona termostatu**: animacja wybierana osobno dla każdego stanu pracy (albo „Brak”, np. dla Wyłączony) zamiast „Tylko gdy ON”; własna ikona MDI może być inna dla każdego stanu („Ikona zależna od stanu pracy”).
+- **Podgląd stanów**: przycisk podglądu w nagłówku panelu termostatu przełącza kolejno jego stany pracy (Grzeje → Bezczynny → …), żeby zobaczyć i ustawić wygląd każdego z nich.
+- **Tryby — ikony zamiast czcionki**: w części „Tryby” nie ma już grubości czcionki; są **Ikony trybów** (własna ikona MDI dla każdego trybu) i **Przyciski**: kolor aktywnego wg trybu albo własny, ramki przycisków (wł./wył. — same ikony), odstęp i zaokrąglenie. Przyciski − / + też bez grubości czcionki.
+
 ## 0.4.1-beta.423
 
 - **Wybór stanów pracy termostatu**: w sekcji „Ogólne” termostatu jest podsekcja **Stany pracy** z listą stanów (Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony). Zaznacz te, których używa urządzenie — tylko one pojawiają się w tekstach i animacjach „Stanu pracy” oraz w kolorach stanu pracy tarczy. Bez zmian wybór jest dobierany z trybów urządzenia (np. piec z trybem grzania: Grzeje, Nagrzewa, Bezczynny, Wyłączony).

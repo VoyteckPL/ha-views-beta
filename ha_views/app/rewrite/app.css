@@ -1457,3 +1457,7 @@ img.room-layer.room-glow.flat{will-change:opacity}
 @keyframes thermo-shake{0%,60%,100%{transform:translateX(0)}66%{transform:translateX(-6%)}72%{transform:translateX(6%)}78%{transform:translateX(-4%)}84%{transform:translateX(4%)}90%{transform:translateX(-2%)}}
 /* A grouped part picked by its section name in the editor: marked with the selection colour. */
 .room-card-part.panel-part{outline:max(1px, calc(1.5px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) dashed #20b9e7;outline-offset:0;border-radius:6px}
+/* Thermostat mode buttons: corner rounding from the panel, optionally without frames (icons only). */
+.thermo-mode-btn{border-radius:var(--mode-radius,30%)}
+.thermo-mode-row.no-frame .thermo-mode-btn{border-color:transparent;background:transparent}
+.thermo-mode-row.no-frame .thermo-mode-btn.on{background:transparent;color:var(--mode)!important}
