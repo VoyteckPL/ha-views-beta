@@ -1,3 +1,7 @@
+## 0.4.1-beta.375
+
+- Panel edycji bez zaznaczenia: nowe teksty „Kliknij element, aby go edytować.” i „Nowe elementy dodasz z menu plus lub z menu integracji.”, ustawione zaraz pod nagłówkiem „Edycja”.
+
 ## 0.4.1-beta.374
 
 - Menu przyciągania: ikony „Przyciągaj do” w jednym rzędzie (po polsku dłuższy napis spychał ostatnią ikonę niżej, a napis wyglądał na wyrównany do dołu); menu dopasowuje szerokość do zawartości.

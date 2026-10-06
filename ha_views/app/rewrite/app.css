@@ -1259,3 +1259,5 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .snap-menu .grid-row{justify-content:flex-end}
 .snap-menu .snap-row .snap-icons{flex-wrap:nowrap}
 .snap-menu{width:max-content;max-width:calc(100vw - 16px)}
+/* The empty edit dock: its hint sits right under the "Edycja" title. */
+.edit-dock-empty{margin:0!important;align-content:start;padding-top:18px}
