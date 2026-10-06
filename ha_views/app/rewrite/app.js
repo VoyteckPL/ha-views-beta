@@ -1469,9 +1469,10 @@ function roomWizardName() {
 function roomWizardMatches() {
   const all = (entityCatalog?.entities || []).filter(entity => entity.entity_id), room = roomsOf()[roomWizard.id], query = searchText(roomWizard.query);
   const area = searchText(room?.name), useful = entity => /^(light|switch|input_boolean|fan|binary_sensor|cover|climate|media_player|lock|vacuum)\./.test(entity.entity_id);
-  const list = query.length >= 2
-    ? all.filter(entity => [entity.entity_id, entity.name, entity.area].some(value => searchText(value).includes(query)))
-    : all.filter(entity => area && searchText(entity.area) === area || useful(entity));
+  const suggested = () => all.filter(entity => area && searchText(entity.area) === area || useful(entity));
+  let list = query.length >= 2 ? all.filter(entity => looseMatch([entity.entity_id, entity.name, entity.area].join(' '), query)) : suggested();
+  // A name carried over from the first step that matches nothing still shows the usual suggestions.
+  if (!list.length && query.length >= 2 && roomWizard.queryFromName) list = suggested();
   return list.sort((a, b) => Number(searchText(b.area) === area) - Number(searchText(a.area) === area) || roomEntityRank(a.entity_id) - roomEntityRank(b.entity_id) || String(a.name || a.entity_id).localeCompare(String(b.name || b.entity_id))).slice(0, 30);
 }
 // The entity list takes only the room left above the on-screen keyboard (its buttons always stay visible); with the
@@ -1521,7 +1522,13 @@ function renderRoomWizard(part = 'all') {
 function roomWizardNext() {
   if (!roomWizard) return;
   const steps = wizardSteps(), next = steps[steps.indexOf(roomWizard.step) + 1];
-  if (roomWizard.step === 'name') roomWizardName();
+  if (roomWizard.step === 'name') {
+    roomWizardName();
+    // The typed name goes on into the entity search (editable there), so the list right away offers entities that
+    // belong to it; a search the user typed himself is kept.
+    const typed = $('#room-wizard-name')?.value.trim();
+    if (next === 'entities' && typed && (!roomWizard.query || roomWizard.queryFromName)) { roomWizard.query = typed; roomWizard.queryFromName = true; }
+  }
   if (roomWizard.step === 'parts' && !roomWizard.parts.size) return;
   if (next) { roomWizard.step = next; renderRoomWizard(); return requestAnimationFrame(focusWizardTarget); }
   closeRoomWizard();
@@ -4269,6 +4276,13 @@ async function loadIntegrations(force = false) {
   catch (error) { els.integrationList.innerHTML = `<div class="empty-row">Błąd: ${escapeHtml(error.message)}</div>`; }
 }
 function searchText(value) { return String(value || '').toLocaleLowerCase('pl').trim(); }
+// Search by words, in any order, without Polish diacritics and tolerant of endings ("wyspa" finds "Lampa nad wyspą",
+// "kuchnia" finds "kuchni"): every typed word must appear in the entity's id / name / area.
+function plainText(value) { return searchText(value).replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[_.]/g, ' '); }
+function looseMatch(haystack, query) {
+  const hay = plainText(haystack);
+  return plainText(query).split(/\s+/).filter(Boolean).every(word => hay.includes(word) || (word.length >= 5 && hay.includes(word.slice(0, -1))) || (word.length >= 6 && hay.includes(word.slice(0, -2))));
+}
 function searchResultMarkup(entity, integration) {
   const added = markersForEntity(entity.entity_id).length > 0;
   return `<div class="entity-row search-result ${entity.enabled ? '' : 'disabled-entity'}"><div><strong data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</strong><small>${escapeHtml(entity.entity_id)} · ${escapeHtml(integration.title || integration.domain || 'Home Assistant')}${entity.state != null ? ` · ${escapeHtml(entity.state)}${entity.unit ? ` ${escapeHtml(entity.unit)}` : ''}` : ''}</small></div><div class="entity-actions">${enabledIcon(entity.enabled)}<button class="add-entity" data-add="${escapeHtml(entity.entity_id)}" data-entry="${escapeHtml(integration.entry_id)}" ${added || !entity.enabled ? 'disabled' : ''} title="${added ? 'Dodano do widoku' : 'Dodaj wskaźnik'}">${added ? '✓' : '+'}</button></div></div>`;
@@ -5398,7 +5412,7 @@ function bindEvents() {
   // Buttons in the wizard never take the focus from its text field (that would close the keyboard).
   ['pointerdown','mousedown'].forEach(type => $('#room-wizard')?.addEventListener(type, event => { if (event.target.closest('button') && document.activeElement?.closest?.('#room-wizard') && document.activeElement.matches('input')) event.preventDefault(); }));
   $('#room-wizard-name')?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); roomWizardNext(); } });
-  $('#room-wizard-search')?.addEventListener('input', event => { if (!roomWizard) return; roomWizard.query = event.target.value; renderRoomWizard('list'); });
+  $('#room-wizard-search')?.addEventListener('input', event => { if (!roomWizard) return; roomWizard.query = event.target.value; roomWizard.queryFromName = false; renderRoomWizard('list'); });
   $('#room-wizard-search')?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); roomWizardNext(); } });
   window.addEventListener('keydown', event => { if (event.key !== 'Escape') return; if (roomWizard) { if (roomWizard.step === 'name') roomWizardName(); closeRoomWizard(); } else if (addState) closeAddDialog(); else if (addPicking) { cancelAddPicking(); notify('Anulowano dodawanie'); } });
   $('#view-link')?.addEventListener('click', copyViewLink);

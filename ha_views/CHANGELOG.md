@@ -1,3 +1,8 @@
+## 0.4.1-beta.362
+
+- **Nazwa przechodzi do wyszukiwania encji**: w kreatorze nowej etykiety / pomieszczenia wpisana nazwa (np. „wyspa”) trafia od razu do pola wyszukiwania w kroku encji (można ją tam edytować), a lista od razu podpowiada pasujące encje. Gdy nic nie pasuje, widać zwykłe podpowiedzi.
+- **Mądrzejsze wyszukiwanie encji w kreatorze**: po słowach w dowolnej kolejności, bez polskich znaków i z tolerancją końcówek („wyspa” znajduje „Lampa nad wyspą”, „kuchnia” — „kuchni”).
+
 ## 0.4.1-beta.361
 
 - **Etykieta w swoim pomieszczeniu przyciąga się tylko do niego**: gdy etykieta pomieszczenia leży w całości wewnątrz tego pomieszczenia (i w menu magnesu włączone są „Pomieszczenia”), przyciąga się wyłącznie do jego krawędzi / środka i do własnych części. Wysunięta poza pomieszczenie przyciąga się do innych obiektów jak zwykle.
