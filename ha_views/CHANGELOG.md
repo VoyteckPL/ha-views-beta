@@ -1,3 +1,7 @@
+## 0.4.1-beta.430
+
+- **Dwa palce = zoom, nigdy przesuwanie**: gdy przesuwasz element (np. rozgrupowaną ikonę) i położysz drugi palec, żeby oddalić / przybliżyć, przesuwanie jest anulowane (element wraca dokładnie tam, gdzie był), a oba palce zoomują i przesuwają plan. Drugi palec położony na tarczy, innej części, wskaźniku albo kropce rozmiaru niczego nie przesuwa — idzie do zoomu.
+
 ## 0.4.1-beta.429
 
 - **Kropki zmiany rozmiaru zawsze całe**: gdy etykieta / termostat / część dotyka krawędzi planu (albo ekranu przy przybliżeniu), kropki w rogach są przesuwane do środka na tyle, żeby były w całości widoczne i łatwe do złapania — zamiast być obcięte w pół.

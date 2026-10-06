@@ -1476,7 +1476,24 @@ function focusPartSection(part) {
   if (!target.open) target.open = true;
   requestAnimationFrame(() => target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
 }
+// Two fingers are a zoom, never a move: fingers on the screen are counted; a finger landing while one label is being
+// moved cancels that move (the label goes back where it was) and both fingers zoom / pan the plan instead.
+const touchesDown = new Map(); let activeLabelDrag = null;
+function trackTouchDown(event) {
+  if (event.pointerType !== 'touch') return; touchesDown.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  const drag = activeLabelDrag; if (!drag || drag.id === event.pointerId) return;
+  drag.cancel(); const p = touchesDown.get(drag.id) || { x: drag.x, y: drag.y };
+  viewportPointerDown({ pointerId: drag.id, pointerType: 'touch', isPrimary: true, clientX: p.x, clientY: p.y, button: 0, target: els.scene, preventDefault() {}, stopPropagation() {} });
+}
+function trackTouchMove(event) { if (touchesDown.has(event.pointerId)) touchesDown.set(event.pointerId, { x: event.clientX, y: event.clientY }); }
+function trackTouchUp(event) { touchesDown.delete(event.pointerId); }
+// A second finger on a label / dot / marker goes to the plan's zoom (true when it was handed over).
+function secondFingerToZoom(event) {
+  if (event.pointerType !== 'touch' || touchesDown.size < 2 || !editMode) return false;
+  event.preventDefault(); event.stopPropagation(); viewportPointerDown(event); return true;
+}
 function startRoomLabelDrag(event) {
+  if (secondFingerToZoom(event)) return;
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startFreeResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
@@ -1493,6 +1510,8 @@ function startRoomLabelDrag(event) {
   // "One element": every visible part moves by the same amount as the one held.
   const moving = key === 'labelCard' ? [key] : room.labelLinked ? ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).map(([, kk]) => kk) : [key];
   const startOffsets = Object.fromEntries(moving.map(kk => [kk, [Number(room[`${kk}X`] ?? ROOM_DEFAULTS[`${kk}X`]) || 0, Number(room[`${kk}Y`] ?? ROOM_DEFAULTS[`${kk}Y`]) || 0]]));
+  // Everything a move may change (also parts pushed apart), to put back if a second finger turns it into a zoom.
+  const before = Object.fromEntries([...ROOM_LABEL_PARTS.map(([, kk]) => kk), 'labelCard'].flatMap(kk => [`${kk}X`, `${kk}Y`]).map(kk => [kk, room[kk]]));
   const partPct = kk => [ax + (Number(room[`${kk}X`] ?? ROOM_DEFAULTS[`${kk}X`]) || 0) * k / w * 100, ay + (Number(room[`${kk}Y`] ?? ROOM_DEFAULTS[`${kk}Y`]) || 0) * k / h * 100];
   const [sx, sy] = scenePercentAt(event), [px, py] = partPct(key), grab = [sx - px, sy - py];
   // Guides only of this room: its outline edges and centre, the label anchor, and its label parts that stay in place.
@@ -1565,6 +1584,14 @@ function startRoomLabelDrag(event) {
     centerAfterDrag(fx, fy);
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  activeLabelDrag = { id: event.pointerId, x: event.clientX, y: event.clientY, cancel() {
+    activeLabelDrag = null; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []);
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    try { els.scene.releasePointerCapture(event.pointerId); } catch {}
+    Object.entries(before).forEach(([kk, v]) => { if (v === undefined) delete room[kk]; else room[kk] = v; }); renderRoomLabels();
+  } };
+  const clearActive = e => { if (e.pointerId !== event.pointerId) return; if (activeLabelDrag?.id === event.pointerId) activeLabelDrag = null; window.removeEventListener('pointerup', clearActive, true); window.removeEventListener('pointercancel', clearActive, true); };
+  window.addEventListener('pointerup', clearActive, true); window.addEventListener('pointercancel', clearActive, true);
 }
 function renderRooms() {
   syncRoomIconStates();
@@ -4395,6 +4422,7 @@ function touchSelectFirst(event, selected, select = null) {
 }
 function startDrag(event) {
   if (!editMode || event.button !== 0) return;
+  if (secondFingerToZoom(event)) return;
   if (touchSelectFirst(event, selectedId === event.currentTarget.dataset.markerId)) return; // a tap selects it (click)
   event.preventDefault(); const node = event.currentTarget, key = node.dataset.markerId, marker = model.entities[key];
   if (marker?.geometryLocked) return;
@@ -6333,6 +6361,7 @@ function bindEvents() {
   // Touch gestures and desktop mouse dragging are deliberately separate.
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
+  window.addEventListener('pointerdown', trackTouchDown, true); window.addEventListener('pointermove', trackTouchMove, true); window.addEventListener('pointerup', trackTouchUp, true); window.addEventListener('pointercancel', trackTouchUp, true);
   els.scene?.addEventListener('pointerdown', viewportPointerDown);
   // Zoomed out below the plan's size (editing on a phone) the fingers may also land on the empty space around it.
   els.viewport?.addEventListener('pointerdown', event => { if (!els.scene?.contains(event.target)) viewportPointerDown(event); });
