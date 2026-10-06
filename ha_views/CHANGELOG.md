@@ -1,3 +1,8 @@
+## 0.4.1-beta.379
+
+- **Menu Widok w stylu popupów**: mniejsze ikony (jak w popupach elementów), Tło / Opcje jako zwykłe wiersze zamiast dużych kafli, w Opcjach nazwa po lewej i lista po prawej; całe menu (także strona Tło) jest bardziej kompaktowe.
+- **Opcja „Zoom poza edycją”** (Widok → Opcje): wyłączona blokuje przybliżanie w trybie przeglądania (szczypanie, kółko myszy, podwójne stuknięcie). W trybie edycji zoom działa zawsze.
+
 ## 0.4.1-beta.378
 
 - **Zmiana rozmiaru części kółeczkami**: przyciąganie do sąsiednich elementów (ten sam rozmiar, krawędzie, środki) ma teraz pierwszeństwo przed wyrównaniem ikony do kwadratu. Proporcja „szerokość = wysokość” łapie się tylko wtedy, gdy w zasięgu nie ma innego obiektu — linie pomocnicze i znaczniki wymiaru do sąsiedniej ikony już nie znikają.
