@@ -1328,3 +1328,12 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .room-label-part:not(.active-part)>.card-handle{display:none}
 .room-label-part.editable.selected:not(.active-part)::after{border-style:dashed;border-color:rgba(143,223,255,.8);border-width:max(1px, calc(1.5px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))));box-shadow:0 0 0 max(.5px, calc(1px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) rgba(3,16,26,.55)}
 .room-label-part.selected:not(.active-part)::before{display:none}
+/* Text wizard: the "Akcja" step (action tiles + the target field). */
+.room-wizard:not([data-step="action"]) .room-wizard-action-step,.room-wizard[data-step="action"] .room-wizard-name-step,.room-wizard[data-step="action"] .room-wizard-entity-step,.room-wizard[data-step="action"] .room-wizard-parts-step{display:none}
+.room-wizard-action-step{display:grid;gap:8px}.room-wizard-action-step>small{margin:0 2px;color:#8fa9b7;font-size:11px}
+.room-wizard-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.room-wizard-action{display:flex;align-items:center;gap:8px;min-height:40px;padding:6px 10px;border:1px solid rgba(99,181,216,.3);border-radius:10px;background:#0d2e3e;color:#cfe6f0;font-size:12px;text-align:left}
+.room-wizard-action i{font-size:18px;color:#5cdbff}.room-wizard-action.on{border-color:#20b9e7;background:rgba(32,185,231,.2);color:#e9fbff}
+.room-wizard-field{display:grid;gap:4px;margin-top:8px}.room-wizard-field>span{color:#9fbfcf;font-size:11px}
+.room-wizard-field input,.room-wizard-field select{height:36px;padding:0 9px;border:1px solid rgba(99,181,216,.3);border-radius:9px;background:#0d2e3e;color:#dff6ff;font-size:13px}
+.room-wizard-check{display:flex;align-items:center;gap:8px;margin-top:8px;color:#dce8ef;font-size:12px}.room-wizard-check input{width:16px;height:16px;accent-color:#20b9e7}

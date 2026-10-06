@@ -1,3 +1,8 @@
+## 0.4.1-beta.393
+
+- **Nowy element „Tekst”** (menu plus): działa jak etykieta — ten sam wygląd, grupa, ikona / nazwa / podpis, kółeczka, przyciąganie, kopiowanie stylu — ale bez encji. Kreator: **Tekst** → **Akcja po dotknięciu** (brak / przejdź do widoku / strona Home Assistant / link, z polem celu) → co pokazać. W panelu, w sekcji Ogólne: Tekst, Podpis (druga linia, pokazuje się po wpisaniu) i akcja z celem. W trybie przeglądania dotknięcie wykonuje akcję.
+- Dotychczasowe elementy „Tekst / przycisk” działają jak wcześniej.
+
 ## 0.4.1-beta.392
 
 - **Tylko 4 kółeczka w rogach**: kropki na bokach zniknęły. Róg zmienia teraz szerokość i wysokość dowolnie (przeciwny róg zostaje w miejscu); **Shift** + róg skaluje proporcjonalnie. Zostaje przyciąganie każdego boku do linii i rozmiarów innych elementów oraz łapanie 1:1 z zieloną ramką i plakietką.
