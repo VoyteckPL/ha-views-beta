@@ -1,3 +1,7 @@
+## 0.4.1-beta.413
+
+- **Zmiana rozmiaru nie wychodzi poza plan**: przeciąganie kółeczka w rogu (termostat, etykieta, tekst, części; także proporcjonalnie z Shiftem) zatrzymuje się na krawędzi planu.
+
 ## 0.4.1-beta.412
 
 - **Siatka kwadratowa i wyśrodkowana**: oczka są kwadratowe (bok = 10 % / 5 % / 2,5 % szerokości planu dla L / M / S), a linie liczone są od środka planu. **Środek planu** w poziomie i pionie jest zaznaczony wyraźną linią, **ćwiartki** (1/4 i 3/4) trochę cieńszą. Przyciąganie (przesuwanie i zmiana rozmiaru) łapie się tej samej siatki.

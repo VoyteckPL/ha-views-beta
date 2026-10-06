@@ -1267,6 +1267,8 @@ function startFreeResize(event, handle) {
       const W = Math.abs(ex - fx), H = Math.abs(ey - fy);
       if (Math.abs(W - H) <= reach && !(bx && by)) { square = true; if (bx || (!by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
     }
+    // The moving corner never leaves the plan.
+    ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
     if (isCard) {
       lw = Math.max(natW, lw); lh = Math.max(natH, lh);
@@ -1365,6 +1367,7 @@ function startCardResize(event, handle) {
       sizes.forEach(r => { take(Math.abs(W - r.width), { want: 'w', size: r.width, r, match: true }); take(Math.abs(H - r.height), { want: 'h', size: r.height, r, match: true }); });
       if (snap) f = snap.size / (snap.want === 'w' ? r0.width : r0.height);
     }
+    { const room_ = els.scene.getBoundingClientRect(), maxX = (sx > 0 ? room_.right - fixed.x : fixed.x - room_.left) / Math.max(1, r0.width), maxY = (sy > 0 ? room_.bottom - fixed.y : fixed.y - room_.top) / Math.max(1, r0.height); f = Math.min(f, maxX, maxY); }
     apply(f); let r = render(); if (!r) return;
     // Text and margins do not scale exactly linearly: one correction lands a snapped size on the pixel.
     if (snap) { const got = snap.want === 'w' ? r.width : r.height; if (got > 1 && Math.abs(got - snap.size) > .3) { f *= snap.size / got; apply(f); r = render() || r; } }
