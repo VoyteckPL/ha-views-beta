@@ -1464,3 +1464,10 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* Thermostat preview button: the previewed work state's name next to its icon. */
 .editor-icon-button.head-preview.with-text{flex:0 0 auto!important;width:auto!important;min-width:0!important;max-width:none!important;padding:0 10px 0 8px!important;gap:6px;display:inline-flex!important;align-items:center;justify-content:center}
 .head-preview-text{font-size:12px;font-weight:700;white-space:nowrap}
+/* Thermostat dial: the space inside it lit per work state (steady, pulsing or breathing). */
+.thermo-fill{transform-box:fill-box;transform-origin:center;pointer-events:none}
+.thermo-fill.fx-pulse{animation:thermo-fill-pulse 1.3s ease-in-out infinite}
+.thermo-fill.fx-breathe{animation:thermo-fill-breathe 3.2s ease-in-out infinite}
+@keyframes thermo-fill-pulse{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes thermo-fill-breathe{0%,100%{opacity:.35;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.thermo-fill.fx-pulse,.thermo-fill.fx-breathe{animation:none}}

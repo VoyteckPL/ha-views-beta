@@ -1,3 +1,8 @@
+## 0.4.1-beta.426
+
+- **Wypełnienie środka tarczy wg stanu pracy**: w części „Tarcza” jest sekcja **Wypełnienie środka** — dla każdego stanu pracy efekt (Brak, Stałe, Pulsowanie, Oddychanie) i kolor (domyślnie kolor stanu pracy), plus wspólna intensywność. Np. Grzeje → Pulsowanie na czerwono: cała przestrzeń wewnątrz tarczy pulsuje, gdy piec grzeje.
+- Podgląd stanu „Bezczynny” pokazuje teraz termostat jako włączony (bezczynny), a nie wyłączony.
+
 ## 0.4.1-beta.425
 
 - **Podgląd stanu pracy z nazwą**: przycisk podglądu w nagłówku panelu termostatu pokazuje obok ikony nazwę podglądanego stanu pracy (np. „Grzeje”, „Bezczynny”); podświetlony, gdy to podgląd, a nie bieżący stan.
