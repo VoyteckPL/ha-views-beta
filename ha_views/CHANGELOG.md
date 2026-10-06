@@ -1,3 +1,7 @@
+## 0.4.1-beta.366
+
+- **„Odstępy” jako osobna opcja przyciągania**: w menu magnesu obok „Środki” i „Krawędzie” jest nowa ikona „Odstępy” — ustawianie etykiety dokładnie pośrodku między dwiema innymi oraz powtarzanie odstępu z sąsiedniej pary. Ma własny, limonkowy kolor znaczników i podświetlenia (krawędzie i środki zostają różowe). Odstęp 8 px „obok” nadal należy do krawędzi.
+
 ## 0.4.1-beta.365
 
 - **Przyciąganie do częściowo widocznych etykiet**: przy przybliżonym widoku plan zajmuje cały ekran (poza kartą), a „widoczny obszar” był liczony tylko z karty — etykiety widoczne na ekranie, ale poza kartą, były pomijane. Teraz liczy się cały ekran pod górnym paskiem; każdy obiekt choć częściowo widoczny jest celem przyciągania.
