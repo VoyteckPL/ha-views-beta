@@ -1400,3 +1400,4 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .thermo-target-text{align-items:flex-start}.thermo-target-text .thermo-deg{margin-left:.03em;font-size:.48em;line-height:1.15}
 /* Thermostat part sections get their own colours (bar, title and switched-on buttons), like a label's parts. */
 .part-dial{--part-color:#21bceb}.part-target{--part-color:#ff8a5c}.part-current{--part-color:#5eead4}.part-action{--part-color:#fbbf24}.part-minus,.part-plus{--part-color:#93c5fd}.part-modes{--part-color:#f472b6}
+.align-guide.k-grid{background:rgba(143,223,255,.75)}

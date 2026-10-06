@@ -1,3 +1,8 @@
+## 0.4.1-beta.403
+
+- **Mocniejsze łapanie siatki** przy zmianie rozmiaru: większy zasięg chwytu, a złapana linia trzyma kółeczko dłużej (można dalej ruszać kursorem / palcem, element zostaje na linii, dopóki nie odjedziesz wyraźnie dalej).
+- **Przesuwanie elementów łapie się siatki**: przy włączonej siatce krawędzie i środki przeciąganych etykiet, termostatów, tekstów, markerów, Flow i narożniki pomieszczeń przyciągają się do linii widocznej siatki (S / M / L), z jasną linią pomocniczą.
+
 ## 0.4.1-beta.402
 
 - **Siatka edycji wg S / M / L**: widoczna siatka zmienia się z wyborem w menu przyciągania — **L** jak dotąd (co 10 % planu), **M** dwa razy gęstsza (5 %), **S** jeszcze dwa razy gęstsza (2,5 %). Linie zaczynają się od krawędzi planu, więc siatka jest zawsze symetryczna względem środka i skaluje się z planem.

@@ -569,7 +569,7 @@ function gridVisual() { const step = Number(model.settings?.snapStep) || .25; re
 function gridLineNear(v, horizontal) {
   if (model.settings?.snapEnabled === false) return null;
   const sc = els.scene.getBoundingClientRect(), size = horizontal ? sc.width : sc.height, origin = horizontal ? sc.left : sc.top, step = size * gridVisual() / 100; if (!step) return null;
-  const line = origin + Math.round((v - origin) / step) * step; return Math.abs(line - v) <= (mobileView() ? 10 : 7) ? line : null;
+  const line = origin + Math.round((v - origin) / step) * step; return Math.abs(line - v) <= (mobileView() ? 18 : 13) ? line : null;
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
@@ -1215,6 +1215,7 @@ function renderRoomLabels(view = activeSceneView()) {
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
   if (event.shiftKey) return startCardResize(event, handle);
+  const gridHold = { x: null, y: null };
   const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const isCard = node.classList.contains('room-label-card'), key = isCard ? 'labelCard' : partKey(node); if (!key) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
@@ -1246,7 +1247,10 @@ function startFreeResize(event, handle) {
       const pick = (edge, fixed, sign, lines, horizontal) => { let best = null;
         lines.forEach(t => { const v = (horizontal ? scene.left : scene.top) + t.v, d = Math.abs(edge - v); if (sign * (v - fixed) > 4 && d <= reach && (!best || d < best.d)) best = { d, edge: v, t }; });
         sizes.forEach(r => { const size = horizontal ? r.width : r.height, v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r, size: true }; });
-        const gl = gridLineNear(edge, horizontal); if (gl !== null && sign * (gl - fixed) > 4) { const d = Math.abs(edge - gl); if (!best || d < best.d) best = { d, edge: gl, grid: true }; }
+        // The grid holds a little longer than it catches (a firmer grip): a caught line is kept while the pointer stays near.
+        const held = gridHold[horizontal ? 'x' : 'y'], gl = held !== null && Math.abs(edge - held) <= (mobileView() ? 26 : 20) ? held : gridLineNear(edge, horizontal);
+        gridHold[horizontal ? 'x' : 'y'] = null;
+        if (gl !== null && sign * (gl - fixed) > 4) { const d = Math.abs(edge - gl); if (!best || d < best.d || best.d > 3) { best = { d, edge: gl, grid: true }; gridHold[horizontal ? 'x' : 'y'] = gl; } }
         return best; };
       bx = pick(ex, fx, sx, g.xs, true); by = pick(ey, fy, sy, g.ys, false);
       if (bx) ex = bx.edge; if (by) ey = by.edge;
@@ -2491,6 +2495,11 @@ function guideTargets({ node = null, roomId = '' } = {}) {
     xs.push(...points(minX, maxX).map(gx)); ys.push(...points(minY, maxY).map(gy));
     if (t.edges) { px.forEach(v => { if (v > minX + .5 && v < maxX - .5) xs.push(gx(v)); }); py.forEach(v => { if (v > minY + .5 && v < maxY - .5) ys.push(gy(v)); }); }
   });
+  // The visible edit grid: moved elements line up their edges / centres with its lines too.
+  if (model.settings?.snapEnabled !== false && editMode) {
+    const g = gridVisual();
+    for (let p = 0; p <= 100 + 1e-6; p += g) { const vx = p / 100 * scene.width, vy = p / 100 * scene.height; if (scene.left + vx >= view.left - 1 && scene.left + vx <= view.right + 1) xs.push({ v: vx, kind: 'grid' }); if (scene.top + vy >= view.top - 1 && scene.top + vy <= view.bottom + 1) ys.push({ v: vy, kind: 'grid' }); }
+  }
   return { scene, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
 }
 function alignmentContext(node) {
