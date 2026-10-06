@@ -1,3 +1,7 @@
+## 0.4.1-beta.423
+
+- **Wybór stanów pracy termostatu**: w sekcji „Ogólne” termostatu jest podsekcja **Stany pracy** z listą stanów (Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony). Zaznacz te, których używa urządzenie — tylko one pojawiają się w tekstach i animacjach „Stanu pracy” oraz w kolorach stanu pracy tarczy. Bez zmian wybór jest dobierany z trybów urządzenia (np. piec z trybem grzania: Grzeje, Nagrzewa, Bezczynny, Wyłączony).
+
 ## 0.4.1-beta.422
 
 - **Zoom poniżej 100% w edycji na telefonie**: w trybie edycji plan można pomniejszyć gestem szczypania mniej niż do dopasowanego rozmiaru (do 40%) i przesuwać go w kadrze — np. żeby zobaczyć cały duży termostat albo rozciągnąć go na cały ekran. Duży wybrany element też jest pomniejszany tak, by zmieścił się nad panelem. Po wyjściu z edycji zoom wraca do normalnego zakresu.
