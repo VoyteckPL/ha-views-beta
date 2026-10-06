@@ -1,3 +1,7 @@
+## 0.4.1-beta.420
+
+- **Sekcja w panelu → zaznaczenie i przybliżenie części**: w edycji termostatu (i etykiety) kliknięcie nazwy sekcji części (np. Tarcza, Temperatura ustawiona, Tryby) zaznacza tę część na planie (rozgrupowana: kropki w rogach, zgrupowana: niebieska przerywana ramka), a na telefonie przybliża ją na środek nad panelem. Zamknięcie sekcji wraca do całego elementu.
+
 ## 0.4.1-beta.419
 
 - **Edytowany termostat / etykieta zawsze na środku (telefon)**: po wybraniu termostatu albo jego części (także rozgrupowanych) plan przesuwa się tak, że element stoi na środku wolnego miejsca nad panelem edycji — również przy krawędziach planu i przy najmniejszym zoomie (wcześniej duży element nisko na planie zostawał pod panelem). Podczas edycji na telefonie plan można przesunąć trochę poza jego krawędź, żeby było to możliwe.

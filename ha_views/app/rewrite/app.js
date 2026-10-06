@@ -660,6 +660,8 @@ function roomOutlineMarkup(room, preview = '') {
 }
 const ROOM_LIGHT_KEYS = ['lightEffect','lightX','lightY','lightDirection','lightWallPos','lightSpread','lightFill'];
 const ROOM_ON_STATES = new Set(['on','open','opening','home','playing','heat','heating','cool','cooling','detected','unlocked','active','true']);
+// The part picked by its section name in the editor (marked on the plan and zoomed to on a phone).
+let panelPart = null;
 let skipRoomFocus = false, movingRoomId = null, selectedLabelPart = 'icon', selectedRoomId = null, roomDraft = null, roomPreviewOn = '', roomEditorOpenSectionIndex = -1, roomStyleClipboard = null, allEntitiesCache = null, allEntitiesLoading = null;
 const ROOM_STYLE_KEYS = ['tapAction','color','opacity','feather','stateEnabled','offColor','offOpacity', ...ROOM_LIGHT_KEYS, ...ROOM_LABEL_KEYS, ...ROOM_OUTLINE_KEYS];
 function roomsOf(view = activeSceneView()) { return view?.rooms || {}; }
@@ -814,6 +816,14 @@ function iconFocusBox(room) {
   // A little room around it, so a small icon is not zoomed in as far as it would go.
   const padX = Math.max((r - l) * .25, 3), padY = Math.max((b - t) * .25, 3);
   return [[l - padX, t - padY], [r + padX, t - padY], [r + padX, b + padY], [l - padX, b + padY]];
+}
+// The plan box (scene %) of one part of a label / thermostat, grouped or not, with a little margin.
+function partFocusBox(room, part) {
+  const id = CSS.escape(room.id), node = $(`#room-labels .room-label-part[data-room-id="${id}"][data-label-part="${part}"], #room-labels .room-label-card[data-room-id="${id}"] .room-card-part[data-label-part="${part}"]`);
+  const scene = els.scene.getBoundingClientRect(), r = node?.getBoundingClientRect(); if (!r?.width || !scene.width) return null;
+  const l = (r.left - scene.left) / scene.width * 100, rr = (r.right - scene.left) / scene.width * 100, t = (r.top - scene.top) / scene.height * 100, b = (r.bottom - scene.top) / scene.height * 100;
+  const padX = Math.max((rr - l) * .3, 2), padY = Math.max((b - t) * .3, 2);
+  return [[l - padX, t - padY], [rr + padX, t - padY], [rr + padX, b + padY], [l - padX, b + padY]];
 }
 function roomAnchor(room) { const pin = isIconRoom(room) && dashSpan(room); return pin ? [pin.x + pin.w / 2, pin.y + pin.h / 2] : isIconRoom(room) ? [Number(room.x) || 50, Number(room.y) || 50] : roomLabelAnchor(room.points || []); }
 // ---- Dashboard grid ("Siatka dashboardu"): a per-view grid of cols × rows cells (gap in plan px), shown in edit
@@ -1182,7 +1192,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const inner = (free ? layeredParts : list => list)(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
       const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, on);
       const place = free ? `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(${Number(r[`${key}FX`]) || 0}px,${Number(r[`${key}FY`]) || 0}px)` : `transform:translate(${Number(r[`${key}DX`]) || 0}px,${Number(r[`${key}DY`]) || 0}px)`;
-      return `<div class="room-card-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
+      return `<div class="room-card-part ${part}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
     }).join('');
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
@@ -1421,7 +1431,7 @@ function startRoomLabelDrag(event) {
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
   if (node.dataset.labelPart !== 'card') {
-    selectedLabelPart = node.dataset.labelPart; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n === node));
+    selectedLabelPart = node.dataset.labelPart; panelPart = null; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n === node));
     // The panel follows the touched part: its section opens and is marked (now, or when the panel opens).
     if (!room.labelLinked) { if (selectedRoomId === room.id && $('#room-editor')?.classList.contains('visible')) focusPartSection(selectedLabelPart); else pendingPartFocus = { roomId: room.id, part: selectedLabelPart }; }
   }
@@ -2115,6 +2125,21 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     if (details.open) { roomEditorOpenSectionIndex = index; sections.forEach(other => { if (other !== details) other.removeAttribute('open'); }); }
     else if (roomEditorOpenSectionIndex === index) roomEditorOpenSectionIndex = -1;
   }));
+  // A part's section name picked in the panel: that part is marked on the plan and (phone) zoomed to; closing it
+  // goes back to the whole element.
+  if (newlySelected) panelPart = null;
+  sections.filter(d => d.classList.contains('part-section')).forEach(details => details.querySelector(':scope > summary')?.addEventListener('click', event => {
+    if (event.target.closest('.section-tools')) return;
+    const part = [...details.classList].find(c => c.startsWith('part-') && ROOM_LABEL_PARTS.some(([p]) => `part-${p}` === c))?.slice(5); if (!part) return;
+    const opening = !details.open;
+    if (opening) {
+      panelPart = { roomId: room.id, part }; selectedLabelPart = part; renderRoomLabels(); markPartSection(part);
+      requestAnimationFrame(() => { const box = partFocusBox(room, part); if (box) focusSceneBoxOnMobile(box); });
+    } else {
+      panelPart = null; renderRoomLabels();
+      requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []));
+    }
+  }));
   $$('input,select', content).forEach(input => {
     if (input.type === 'range' || input.type === 'color') { input.addEventListener('input', onRoomEditorInput); input.addEventListener('change', onRoomEditorInput); }
     else if (input.id !== 'room-entity-search') input.addEventListener('change', onRoomEditorInput);
@@ -2131,7 +2156,7 @@ function closeRoomEditor() {
   selectedCorner = null;
   const panel = $('#room-editor'); if (!panel) return;
   if (mobileView() && editMode && panel.classList.contains('visible')) requestAnimationFrame(applyViewTransform);
-  const had = selectedRoomId; selectedRoomId = null; roomPreviewOn = ''; delete panel.dataset.dragged;
+  const had = selectedRoomId; selectedRoomId = null; panelPart = null; roomPreviewOn = ''; delete panel.dataset.dragged;
   panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
 }
 function onRoomEditorInput(event) {
