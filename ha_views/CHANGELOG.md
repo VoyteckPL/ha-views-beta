@@ -1,3 +1,7 @@
+## 0.4.1-beta.434
+
+- **Kliknięta część w centrum (rozgrupowane)**: w rozgrupowanym termostacie / etykiecie dotknięcie części na planie (ikona, nazwa, przycisk +, …) przybliża i centruje tę jedną część nad panelem — tak jak kliknięcie nazwy jej sekcji w panelu — zamiast całego termostatu. Zgrupowane etykiety nadal centrują się w całości.
+
 ## 0.4.1-beta.433
 
 - **Tarcza bez marginesu**: obszar tarczy termostatu przylega teraz do samego łuku (z jego grubością) i liczb min / max — praktycznie bez pustego marginesu wokół, więc ramka, kropki rozmiaru i przyciąganie trafiają w to, co widać. Kropki temperatury mogą minimalnie wystawać poza ten obszar.

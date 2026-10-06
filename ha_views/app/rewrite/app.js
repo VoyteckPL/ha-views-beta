@@ -1513,7 +1513,9 @@ function startRoomLabelDrag(event) {
     // The panel follows the touched part: its section opens and is marked (now, or when the panel opens).
     if (!room.labelLinked) { if (selectedRoomId === room.id && $('#room-editor')?.classList.contains('visible')) focusPartSection(selectedLabelPart); else pendingPartFocus = { roomId: room.id, part: selectedLabelPart }; }
   }
-  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []))); })) return;
+  // Ungrouped: a tapped part is brought into view on its own (like picking its section in the panel), else the whole label.
+  const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
+  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); })) return;
   event.preventDefault(); event.stopPropagation();
   // The editor opens on a tap only (release without moving); grabbing and dragging right away just moves the label.
   const newlySelected = selectedRoomId !== room.id;
@@ -1579,7 +1581,7 @@ function startRoomLabelDrag(event) {
     // A tap (no move) always brings the room / icon into view, also when it was already selected.
     if (!moved) {
       if (newlySelected) { skipRoomFocus = true; try { openRoomEditor(room.id); } finally { skipRoomFocus = false; } }
-      requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []))); return;
+      requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); return;
     }
     let [fx, fy] = partPct(key);
     // An icon has no shape: a moved group becomes its new position, so later centring, guides and copies use it.
