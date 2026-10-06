@@ -2276,6 +2276,7 @@ function alignSelectedToBackground(where) {
 // Snapping uses only what is on screen (partly visible objects count): the window below the top bar, within the area
 // the plan's card shows - a zoomed portrait plan may use the screen beyond the card (its clip margin).
 function visibleSceneRect() {
+  if (deskZoomExpanded()) return deskZoomRegion();
   const card = (els.sceneCard || els.viewport || els.scene).getBoundingClientRect(), margin = parseFloat(els.sceneCard?.style.getPropertyValue('--card-clip')) || 0;
   const expanded = !!els.sceneCard?.classList.contains('portrait-zoom-expanded'), m = expanded ? margin : 0, bar = $('.topbar')?.getBoundingClientRect().bottom || 0;
   return { left: Math.max(card.left - m, 0), top: Math.max(card.top - m, bar, 0), right: Math.min(card.right + m, innerWidth), bottom: Math.min(card.bottom + m, innerHeight) };
@@ -2563,6 +2564,22 @@ function syncCardClip() {
   const margin = `${Math.ceil(Math.max(0, r.left, w - r.right, r.top, h - r.bottom))}px`;
   if (card.style.getPropertyValue('--card-clip') !== margin) card.style.setProperty('--card-clip', margin);
 }
+// On a computer a zoomed plan (any format, image or colour) uses the whole free screen - from the top bar down, between
+// the window edge and the edit panel - not only its card, so there is more room to work.
+function deskZoomExpanded() { return !mobileView() && viewZoom > 1.001; }
+function deskZoomRegion() {
+  const bar = $('.topbar')?.getBoundingClientRect().bottom || 0, dock = $('#edit-dock');
+  let left = 0, right = document.documentElement.clientWidth || innerWidth;
+  if (els.body.classList.contains('dock-mode') && els.body.classList.contains('editing') && dock) { const d = dock.getBoundingClientRect(); if (d.width) { if (d.left > right / 2) right = Math.min(right, d.left); else left = Math.max(left, d.right); } }
+  return { left, top: bar, right, bottom: innerHeight };
+}
+function syncDeskZoom() {
+  const on = deskZoomExpanded(), card = els.sceneCard;
+  els.viewport.classList.toggle('desk-zoom-expanded', on); card?.classList.toggle('desk-zoom-expanded', on);
+  if (!on || !card) { card?.style.removeProperty('--desk-clip'); return; }
+  const c = card.getBoundingClientRect(), r = deskZoomRegion();
+  card.style.setProperty('--desk-clip', `inset(${r.top - c.top}px ${c.right - r.right}px ${c.bottom - r.bottom}px ${r.left - c.left}px)`);
+}
 function portraitZoomExpansion() {
   return !mobileWidePanorama() && els.image.naturalHeight > els.image.naturalWidth;
 }
@@ -2582,6 +2599,13 @@ function clampViewPan() {
   if (!sceneCameraActive()) { viewPanX = 0; viewPanY = 0; return; }
   const panorama = mobileWidePanorama();
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
+  if (deskZoomExpanded()) {
+    // The plan may move anywhere inside the free screen; larger than it, it always covers that area.
+    const R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect(), fit = (size, lo, hi) => size >= hi - lo ? [hi - size, lo] : [lo, hi - size];
+    viewPanX = clamp(viewPanX, ...fit(els.scene.offsetWidth * viewZoom, R.left - vp.left, R.right - vp.left));
+    viewPanY = clamp(viewPanY, ...fit(els.scene.offsetHeight * viewZoom, R.top - vp.top, R.bottom - vp.top));
+    return;
+  }
   const maxX = Math.max(0, els.scene.offsetWidth * viewZoom - els.viewport.clientWidth);
   const maxY = Math.max(0, els.scene.offsetHeight * viewZoom - els.viewport.clientHeight);
   // While editing on a phone, the camera may go past the lower scene edge only by the part of the viewport
@@ -2602,7 +2626,7 @@ function applyViewTransform() {
   els.viewport.classList.toggle('portrait-zoom-expanded', expandedPortrait);
   els.sceneCard?.classList.toggle('portrait-zoom-expanded', expandedPortrait);
   els.viewport.classList.toggle('view-zoomed', viewZoom > 1.01); // hides the edit grid (a pseudo-element, cheap)
-  syncCardClip();
+  syncCardClip(); syncDeskZoom();
   if (!sceneCameraActive()) { els.scene.style.transform = ''; updatePanoramaIndicator(); return; }
   clampViewPan();
   els.scene.style.transformOrigin = '0 0';

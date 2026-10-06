@@ -1299,3 +1299,6 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .vm-page[data-vm-page="options"] .vm-field>span{overflow:hidden;text-overflow:ellipsis}
 .vm-page[data-vm-page="options"] .vm-field>span i{flex:0 0 auto}
 .vm-page[data-vm-page="options"] .vm-field>select,.vm-page[data-vm-page="options"] .vm-field>button{flex-shrink:0}
+/* A zoomed plan on a computer fills the free screen (top bar and edit panel stay above it). */
+.scene-card.desk-zoom-expanded,.scene-viewport.desk-zoom-expanded{overflow:visible}
+.scene-card.desk-zoom-expanded{position:relative;z-index:3;clip-path:var(--desk-clip,none)}

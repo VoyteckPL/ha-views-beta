@@ -1,3 +1,7 @@
+## 0.4.1-beta.381
+
+- **Przybliżony plan na komputerze wypełnia cały wolny ekran**: po zoomie (edycja i przeglądanie) plan nie jest już przycinany do swojej karty — sięga od paska u góry do dołu okna, od lewej krawędzi do panelu edycji. Dotyczy każdego formatu (tło kolorem, np. 9:16, i obrazy). Plan można przesuwać w całym tym obszarze; po powrocie do 100% wraca do karty.
+
 ## 0.4.1-beta.380
 
 - Menu Widok → Opcje bez poziomego przewijania: długie nazwy ucinają się wielokropkiem zamiast poszerzać menu, przełącznik zoomu zawsze widoczny. Krótsze teksty: „Panel startowy HA” z opcjami „Bez zmian”, „HA Views (konto)”, „HA Views (urządzenie)”.
