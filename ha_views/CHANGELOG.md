@@ -1,3 +1,9 @@
+## 0.4.1-beta.360
+
+- **Etykieta pomieszczenia = etykieta przy przyciąganiu**: krawędzie i środek własnego pomieszczenia przyciągają jego etykietę tylko przy włączonym „Pomieszczenia” w menu magnesu (wcześniej zawsze, nawet gdy włączone były same etykiety).
+- **Linie pomieszczeń tylko w jego obrębie**: linia pomocnicza od pomieszczenia sięga przez to pomieszczenie, a nie przez całe tło (także przy przeciąganiu wskaźników i Flow).
+- **Podświetlenie celu**: obiekt, do którego przyciąga się przeciągany element (etykieta, pomieszczenie, wskaźnik, Flow), dostaje delikatną ramkę z poświatą w kolorze swojego rodzaju.
+
 ## 0.4.1-beta.359
 
 Przyciąganie etykiety do etykiety (przy przeciąganiu etykiety / grupy pomieszczenia):

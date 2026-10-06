@@ -1224,8 +1224,10 @@ function startRoomLabelDrag(event) {
     const scene = els.scene.getBoundingClientRect(), xs = isIconRoom(room) ? [ax] : room.points.map(p => p[0]), ys = isIconRoom(room) ? [ay] : room.points.map(p => p[1]), toX = v => v / 100 * scene.width, toY = v => v / 100 * scene.height;
     // Its own room's outline / anchor (room colour; an etykieta has only its point), its own parts that stay put
     // (label colour), and every other element: wskaźniki, Flow, other labels, rooms and the background.
-    const gx = (isIconRoom(room) ? [] : [Math.min(...xs), Math.max(...xs), (Math.min(...xs) + Math.max(...xs)) / 2, ax]).map(v => ({ v: toX(v), room:true, kind:'room' }));
-    const gy = (isIconRoom(room) ? [] : [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay]).map(v => ({ v: toY(v), room:true, kind:'room' }));
+    // Its own room's lines only with "Pomieszczenia" switched on in the snap menu, and only across that room.
+    const ownRoom = !isIconRoom(room) && snapTargets().rooms, rb = ownRoom ? { l: toX(Math.min(...xs)), r: toX(Math.max(...xs)), t: toY(Math.min(...ys)), b: toY(Math.max(...ys)) } : null;
+    const gx = (ownRoom ? [Math.min(...xs), Math.max(...xs), (Math.min(...xs) + Math.max(...xs)) / 2, ax] : []).map(v => ({ v: toX(v), room:true, kind:'room', box: rb, span: rb && [rb.t, rb.b] }));
+    const gy = (ownRoom ? [Math.min(...ys), Math.max(...ys), (Math.min(...ys) + Math.max(...ys)) / 2, ay] : []).map(v => ({ v: toY(v), room:true, kind:'room', box: rb, span: rb && [rb.l, rb.r] }));
     $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1])).forEach(other => { const r = other.getBoundingClientRect(); [r.left, r.left + r.width / 2, r.right].forEach(v => gx.push({ v: v - scene.left, kind:'label' })); [r.top, r.top + r.height / 2, r.bottom].forEach(v => gy.push({ v: v - scene.top, kind:'label' })); });
     if (snapTargets().guides) { const all = guideTargets({ roomId: room.id }); gx.push(...all.xs); gy.push(...all.ys); }
     // Label boxes for label-to-label snapping (alignLabel): other labels (a group as a whole or ungrouped parts) and this
@@ -2227,15 +2229,19 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   // Labels: a group as a whole, or each ungrouped part (not the label of the room / label being moved).
   if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other, 'label']));
   const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [other.getBoundingClientRect(), kind]).filter(([r]) => r.width);
-  const xs = targets.flatMap(([r, kind]) => points(r.left, r.right).map(v => ({ v: v - scene.left, kind })));
-  const ys = targets.flatMap(([r, kind]) => points(r.top, r.bottom).map(v => ({ v: v - scene.top, kind })));
+  // Every guide carries the box it comes from (the snapped-to object is highlighted).
+  const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top });
+  const xs = targets.flatMap(([r, kind]) => points(r.left, r.right).map(v => ({ v: v - scene.left, kind, box: boxOf(r) })));
+  const ys = targets.flatMap(([r, kind]) => points(r.top, r.bottom).map(v => ({ v: v - scene.top, kind, box: boxOf(r) })));
   if (t.background) { xs.push(...points(0, scene.width).map(v => ({ v, bg:true, kind:'bg' }))); ys.push(...points(0, scene.height).map(v => ({ v, bg:true, kind:'bg' }))); }
   if (t.rooms) Object.values(roomsOf()).filter(room => room.id !== roomId && (room.points || []).length >= 3).forEach(room => {
     const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
     const [minX, maxX, minY, maxY] = [Math.min(...px), Math.max(...px), Math.min(...py), Math.max(...py)];
     if (!onScreen({ left: scene.left + minX, right: scene.left + maxX, top: scene.top + minY, bottom: scene.top + maxY })) return;
-    xs.push(...points(minX, maxX).map(v => ({ v, room:true, kind:'room' }))); ys.push(...points(minY, maxY).map(v => ({ v, room:true, kind:'room' })));
-    if (t.edges) { px.forEach(v => { if (v > minX + .5 && v < maxX - .5) xs.push({ v, room:true, kind:'room' }); }); py.forEach(v => { if (v > minY + .5 && v < maxY - .5) ys.push({ v, room:true, kind:'room' }); }); }
+    // A room's lines reach only across that room (span), not over the whole background.
+    const box = { l: minX, r: maxX, t: minY, b: maxY }, gx = v => ({ v, room:true, kind:'room', box, span: [minY, maxY] }), gy = v => ({ v, room:true, kind:'room', box, span: [minX, maxX] });
+    xs.push(...points(minX, maxX).map(gx)); ys.push(...points(minY, maxY).map(gy));
+    if (t.edges) { px.forEach(v => { if (v > minX + .5 && v < maxX - .5) xs.push(gx(v)); }); py.forEach(v => { if (v > minY + .5 && v < maxY - .5) ys.push(gy(v)); }); }
   });
   return { scene, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
 }
@@ -2260,7 +2266,7 @@ function alignToGuides(context, xPercent, yPercent, event) {
     if (stuck && Math.abs(centre + stuck.offset - stuck.line) <= release) return { ...stuck, centre: stuck.line - stuck.offset };
     motion.stick[axis] = null; if (!slow) return null;
     let best = null;
-    (context.offsets || [0, -1, 1]).map(k => k * half).forEach(offset => values.forEach(({ v, room, bg, kind }) => { const distance = Math.abs(centre + offset - v); if (distance <= threshold && (!best || distance < best.distance - .01 || (Math.abs(distance - best.distance) <= .01 && (room || bg) && !best.room && !best.bg))) best = { distance, centre: v - offset, line: v, offset, room, bg, kind }; }));
+    (context.offsets || [0, -1, 1]).map(k => k * half).forEach(offset => values.forEach(({ v, room, bg, kind, box, span }) => { const distance = Math.abs(centre + offset - v); if (distance <= threshold && (!best || distance < best.distance - .01 || (Math.abs(distance - best.distance) <= .01 && (room || bg) && !best.room && !best.bg))) best = { distance, centre: v - offset, line: v, offset, room, bg, kind, box, span }; }));
     motion.stick[axis] = best; return best;
   };
   // A fast drag that stops right on a line: ~0.12 s without movement counts as slow, so the line is offered then.
@@ -2270,7 +2276,8 @@ function alignToGuides(context, xPercent, yPercent, event) {
   const bx = match('x', xPercent / 100 * width + sx, context.halfW, context.xs), by = match('y', yPercent / 100 * height + sy, context.halfH, context.ys);
   if (bx) xPercent = clamp((bx.centre - sx) / width * 100, 0, 100);
   if (by) yPercent = clamp((by.centre - sy) / height * 100, 0, 100);
-  showAlignGuides(bx ? [{ at: bx.line / width * 100, room: bx.room, bg: bx.bg, kind: bx.kind }] : [], by ? [{ at: by.line / height * 100, room: by.room, bg: by.bg, kind: by.kind }] : []);
+  const seg = (g, size) => g.span ? { from: g.span[0] / size * 100, to: g.span[1] / size * 100 } : {};
+  showAlignGuides(bx ? [{ at: bx.line / width * 100, room: bx.room, bg: bx.bg, kind: bx.kind, ...seg(bx, height) }] : [], by ? [{ at: by.line / height * 100, room: by.room, bg: by.bg, kind: by.kind, ...seg(by, width) }] : [], [], [bx, by].filter(g => g?.box).map(g => ({ ...g.box, kind: g.kind })));
   return { xPercent, yPercent };
 }
 // ---- Label-to-label snapping (dragging an etykieta / pomieszczenie label) ----------------------------------------
@@ -2291,25 +2298,25 @@ function alignLabel(context, xPercent, yPercent, event) {
     const near = b => { const gapAcross = Math.max(b[plo] - (oc + ohalf), (oc - ohalf) - b[phi], 0); return gapAcross <= Math.max(3 * ohalf * 2, 160); };
     const inRow = b => b[phi] > oc - ohalf * 1.5 && b[plo] < oc + ohalf * 1.5;
     const list = [];
-    const add = (target, score, guide, marks = []) => { const d = Math.abs(c - target); if (d <= threshold) list.push({ target, score: d + score, guide, marks }); };
+    const add = (target, score, guide, marks = [], hits = []) => { const d = Math.abs(c - target); if (d <= threshold) list.push({ target, score: d + score, guide, marks, hits }); };
     boxes.forEach(b => {
       const far = near(b) ? 0 : 3, span = [b[plo], b[phi]];
-      add(b[lo] + half, far, { at: b[lo], span }); add(b[hi] - half, far, { at: b[hi], span }); add(b[mid], far + .2, { at: b[mid], span });
-      add(b[hi] + half, far + 1.5, { at: b[hi], span }); add(b[lo] - half, far + 1.5, { at: b[lo], span });
+      add(b[lo] + half, far, { at: b[lo], span }, [], [b]); add(b[hi] - half, far, { at: b[hi], span }, [], [b]); add(b[mid], far + .2, { at: b[mid], span }, [], [b]);
+      add(b[hi] + half, far + 1.5, { at: b[hi], span }, [], [b]); add(b[lo] - half, far + 1.5, { at: b[lo], span }, [], [b]);
       if (inRow(b)) {
-        add(b[hi] + G + half, far + 1, null, [[b[hi], b[hi] + G]]); add(b[lo] - G - half, far + 1, null, [[b[lo] - G, b[lo]]]);
+        add(b[hi] + G + half, far + 1, null, [[b[hi], b[hi] + G]], [b]); add(b[lo] - G - half, far + 1, null, [[b[lo] - G, b[lo]]], [b]);
       }
     });
     // Equal spacing in a row: repeat the gap of two neighbours, or sit exactly between two of them.
     const row = boxes.filter(inRow).sort((p, q) => p[lo] - q[lo]);
     for (let i = 0; i + 1 < row.length; i++) {
       const a = row[i], b = row[i + 1], g = b[lo] - a[hi]; if (g <= 0) continue;
-      add(b[hi] + g + half, .5, null, [[a[hi], b[lo]], [b[hi], b[hi] + g]]);
-      add(a[lo] - g - half, .5, null, [[a[hi], b[lo]], [a[lo] - g, a[lo]]]);
-      if (g > half * 2 + 2) { const free = (g - half * 2) / 2; add(a[hi] + free + half, .3, null, [[a[hi], a[hi] + free], [b[lo] - free, b[lo]]]); }
+      add(b[hi] + g + half, .5, null, [[a[hi], b[lo]], [b[hi], b[hi] + g]], [a, b]);
+      add(a[lo] - g - half, .5, null, [[a[hi], b[lo]], [a[lo] - g, a[lo]]], [a, b]);
+      if (g > half * 2 + 2) { const free = (g - half * 2) / 2; add(a[hi] + free + half, .3, null, [[a[hi], a[hi] + free], [b[lo] - free, b[lo]]], [a, b]); }
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
-    (axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg }) => [-half, 0, half].forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: true })));
+    (axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span }) => [-half, 0, half].forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [])));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).
@@ -2322,21 +2329,24 @@ function alignLabel(context, xPercent, yPercent, event) {
   if (by) yPercent = clamp((by.target - (context.shiftY || 0)) / H * 100, 0, 100);
   // Lines span from the dragged label to the label it lines up with; gap markers sit across the middle of the label.
   const vertical = [], horizontal = [], marks = [];
-  if (bx?.guide) vertical.push(bx.guide.full ? { at: bx.guide.at / W * 100, kind: bx.guide.kind } : { at: bx.guide.at / W * 100, kind: 'label', from: Math.min(bx.guide.span[0], fy - hh) / H * 100, to: Math.max(bx.guide.span[1], fy + hh) / H * 100 });
-  if (by?.guide) horizontal.push(by.guide.full ? { at: by.guide.at / H * 100, kind: by.guide.kind } : { at: by.guide.at / H * 100, kind: 'label', from: Math.min(by.guide.span[0], fx - hw) / W * 100, to: Math.max(by.guide.span[1], fx + hw) / W * 100 });
+  if (bx?.guide) vertical.push(bx.guide.full ? { at: bx.guide.at / W * 100, kind: bx.guide.kind } : { at: bx.guide.at / W * 100, kind: bx.guide.kind || 'label', from: Math.min(bx.guide.span[0], fy - hh) / H * 100, to: Math.max(bx.guide.span[1], fy + hh) / H * 100 });
+  if (by?.guide) horizontal.push(by.guide.full ? { at: by.guide.at / H * 100, kind: by.guide.kind } : { at: by.guide.at / H * 100, kind: by.guide.kind || 'label', from: Math.min(by.guide.span[0], fx - hw) / W * 100, to: Math.max(by.guide.span[1], fx + hw) / W * 100 });
   (bx?.marks || []).forEach(([a, b]) => marks.push({ axis: 'x', from: a / W * 100, to: b / W * 100, at: fy / H * 100 }));
   (by?.marks || []).forEach(([a, b]) => marks.push({ axis: 'y', from: a / H * 100, to: b / H * 100, at: fx / W * 100 }));
-  showAlignGuides(vertical, horizontal, marks);
+  const hits = [...(bx?.hits || []), ...(by?.hits || [])].filter((b, i, all) => all.findIndex(o => o.l === b.l && o.t === b.t && o.r === b.r) === i);
+  showAlignGuides(vertical, horizontal, marks, hits);
   return { xPercent, yPercent };
 }
 // A guide may be a full line or a segment (from / to, %), gap markers are short segments with end ticks.
-function showAlignGuides(vertical, horizontal, marks = []) {
+function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
   let layer = $('#align-guides');
-  if (!vertical.length && !horizontal.length && !marks.length) { if (layer) layer.innerHTML = ''; return; }
+  if (!vertical.length && !horizontal.length && !marks.length && !hits.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
   const kind = g => g.kind ? ` ${g.kind}` : g.room ? ' room' : g.bg ? ' bg' : '';
   const spanV = g => g.from != null ? `;top:${g.from}%;bottom:auto;height:${g.to - g.from}%` : '', spanH = g => g.from != null ? `;left:${g.from}%;right:auto;width:${g.to - g.from}%` : '';
   layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${kind(g)}" style="left:${g.at}%${spanV(g)}"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${kind(g)}" style="top:${g.at}%${spanH(g)}"></span>`).join('')
+    // The object snapped to gets a soft frame (in its kind's colour); boxes are px from the scene's top left.
+    + hits.map(b => { const sc = els.scene.getBoundingClientRect(), W = sc.width || 1, H = sc.height || 1; return `<span class="snap-target ${b.kind || 'label'}" style="left:${b.l / W * 100}%;top:${b.t / H * 100}%;width:${(b.r - b.l) / W * 100}%;height:${(b.b - b.t) / H * 100}%"></span>`; }).join('')
     + marks.map(m => m.axis === 'x' ? `<span class="gap-mark x" style="left:${m.from}%;width:${m.to - m.from}%;top:${m.at}%"></span>` : `<span class="gap-mark y" style="top:${m.from}%;height:${m.to - m.from}%;left:${m.at}%"></span>`).join('');
 }
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------
