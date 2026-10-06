@@ -1,3 +1,7 @@
+## 0.4.1-beta.422
+
+- **Zoom poniżej 100% w edycji na telefonie**: w trybie edycji plan można pomniejszyć gestem szczypania mniej niż do dopasowanego rozmiaru (do 40%) i przesuwać go w kadrze — np. żeby zobaczyć cały duży termostat albo rozciągnąć go na cały ekran. Duży wybrany element też jest pomniejszany tak, by zmieścił się nad panelem. Po wyjściu z edycji zoom wraca do normalnego zakresu.
+
 ## 0.4.1-beta.421
 
 - **Linie pomocnicze także od elementów poza kadrem**: przy przesuwaniu części rozgrupowanego termostatu (i etykiety) jej własne pozostałe części zawsze dają linie pomocnicze i przyciąganie, nawet gdy są poza ekranem (np. po przybliżeniu). Inne elementy liczą się, gdy są na ekranie albo tuż obok niego (do połowy widoku dalej), a nie tylko gdy są widoczne.

@@ -2896,6 +2896,8 @@ function syncDeskZoom() {
 function portraitZoomExpansion() {
   return !mobileWidePanorama() && els.image.naturalHeight > els.image.naturalWidth;
 }
+// While editing on a phone the plan may be zoomed out below its fitted size (e.g. to see a big thermostat whole).
+function zoomFloor() { return minViewZoom() * (editMode && mobileView() ? .4 : 1); }
 function minViewZoom() {
   if (!mobileWidePanorama()) return 1;
   return clamp(els.viewport.clientWidth / Math.max(1, els.scene.offsetWidth), .08, 1);
@@ -2911,6 +2913,12 @@ function editSheetCover() {
 function clampViewPan() {
   if (!sceneCameraActive()) { viewPanX = 0; viewPanY = 0; return; }
   const panorama = mobileWidePanorama();
+  if (viewZoom < minViewZoom() - .001) {
+    // Zoomed out below the fitted size (editing on a phone): the smaller plan may be moved within the viewport.
+    const freeX = els.viewport.clientWidth - els.scene.offsetWidth * viewZoom, freeY = els.viewport.clientHeight - els.scene.offsetHeight * viewZoom;
+    viewPanX = clamp(viewPanX, Math.min(0, freeX), Math.max(0, freeX)); viewPanY = clamp(viewPanY, Math.min(0, freeY) - editSheetCover(), Math.max(0, freeY));
+    return;
+  }
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
   if (deskZoomExpanded()) {
     // The plan may move anywhere inside the free screen; larger than it, it always covers that area.
@@ -2949,6 +2957,7 @@ function applyViewTransform() {
   els.viewport.classList.toggle('view-zoomed', viewZoom > 1.01); // hides the edit grid (a pseudo-element, cheap)
   syncCardClip(); syncDeskZoom();
   if (!sceneCameraActive()) { els.scene.style.transform = ''; updatePanoramaIndicator(); return; }
+  if (viewZoom < zoomFloor()) viewZoom = minViewZoom(); // e.g. edit mode left while zoomed out
   clampViewPan();
   els.scene.style.transformOrigin = '0 0';
   els.scene.style.transform = `translate(${viewPanX}px,${viewPanY}px) scale(${viewZoom})`;
@@ -2956,7 +2965,7 @@ function applyViewTransform() {
   // Zoom buttons / wheel / camera glide: the layer (drawn at the old scale) is dropped once the zoom settles.
   if (!viewPointers.size && gestureLayerZoom != null && Math.abs(viewZoom - gestureLayerZoom) > .001) setGestureLayer(false);
   if (els.zoomValue) els.zoomValue.textContent = `${Math.round(viewZoom * 100)}%`;
-  if (els.zoomOut) els.zoomOut.disabled = viewZoom <= minViewZoom() + .001;
+  if (els.zoomOut) els.zoomOut.disabled = viewZoom <= zoomFloor() + .001;
   if (els.zoomIn) els.zoomIn.disabled = viewZoom >= 4;
   updatePanoramaIndicator();
   requestAnimationFrame(syncSelection);
@@ -2964,7 +2973,7 @@ function applyViewTransform() {
 function setViewZoom(next, clientX = null, clientY = null) {
   // In desktop viewing mode, wheel-down must land exactly on the fitted 100% view.
   if (!mobileView() && !editMode && next <= 1) next = 1;
-  const old = viewZoom, zoom = clamp(next, minViewZoom(), 4); if (zoom === old) return;
+  const old = viewZoom, zoom = clamp(next, zoomFloor(), 4); if (zoom === old) return;
   const r = els.viewport.getBoundingClientRect(), x = clientX == null ? r.width / 2 : clientX - r.left, y = clientY == null ? r.height / 2 : clientY - r.top;
   viewPanX = x - (x - viewPanX) * zoom / old; viewPanY = y - (y - viewPanY) * zoom / old; viewZoom = zoom; applyViewTransform();
 }
@@ -4095,7 +4104,7 @@ function focusSceneBoxOnMobile(points) {
   const { top: freeTop, height: freeH } = editorFreeBand();
   // Just above the smallest zoom at least: at the smallest one the camera does not move, so a big element (e.g. a
   // thermostat) low on the plan would stay under the editor instead of being centred.
-  const nextZoom = clamp(Math.min(viewW * .86 / boxW, freeH / boxH), minViewZoom() + .001, 2.35);
+  const nextZoom = clamp(Math.min(viewW * .86 / boxW, freeH / boxH), Math.min(minViewZoom() + .001, Math.max(zoomFloor(), Math.min(viewW * .86 / boxW, freeH / boxH))), 2.35);
   const centreX = (Math.min(...xs) + Math.max(...xs)) / 2, centreY = (Math.min(...ys) + Math.max(...ys)) / 2;
   const targetY = freeTop + freeH / 2;
   glideCamera(nextZoom, viewW / 2 - centreX * nextZoom, targetY - centreY * nextZoom);
@@ -5565,7 +5574,7 @@ function viewportPointerDown(event) {
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY }); lastPointerActivity = performance.now();
   // The plan's own GPU layer only when the touch can move it (pan / pinch). At 100% a single finger cannot pan, and a
   // layer created at the touch was dropped again by the cube turn's first frame (the card showed one tile of the plan).
-  if ((viewPointers.size > 1 && !viewZoomLocked()) || viewZoom > minViewZoom() + .001 || mobileWidePanorama()) setGestureLayer(true);
+  if ((viewPointers.size > 1 && !viewZoomLocked()) || Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama()) setGestureLayer(true);
   if (!swipeBusy && !viewSwipe && !hanging) resetStuckSwipe(false);
   viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target, start:performance.now(), lastMove:performance.now() } : null;
   if (hanging && viewSwipe && swipePreview) { const carry = hanging.lastDx || 0; Object.assign(viewSwipe, { x:event.clientX - carry, tracking:true, direction:hanging.direction, lastDx:carry, maxDx:Math.abs(carry) }); swipeLog(`przejęcie zawieszonego gestu (${Math.round(carry)} px)`); }
@@ -5577,7 +5586,7 @@ function viewportPointerDown(event) {
     panGesture = null; event.preventDefault();
   } else {
     const marker = event.target.closest('.marker');
-    const canPan = viewZoom > minViewZoom() + .001 || mobileWidePanorama();
+    const canPan = Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama();
     // In viewing mode a drag beginning on a marker is still a panorama; only a short tap opens More Info.
     if (canPan && (!editMode || !marker)) {
       panGesture = { id:event.pointerId, x:event.clientX, y:event.clientY, panX:viewPanX, panY:viewPanY, marker, moved:false };
@@ -5595,7 +5604,7 @@ function viewportPointerMove(event) {
   if (viewSwipe?.id === event.pointerId && !panGesture && !pinchGesture) trackViewSwipe(event);
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
   if (viewPointers.size === 2 && pinchGesture) {
-    const [a,b] = [...viewPointers.values()], distance = Math.hypot(a.x-b.x,a.y-b.y), next = clamp(pinchGesture.zoom * distance / Math.max(1,pinchGesture.distance),minViewZoom(),4), ratio = next / pinchGesture.zoom;
+    const [a,b] = [...viewPointers.values()], distance = Math.hypot(a.x-b.x,a.y-b.y), next = clamp(pinchGesture.zoom * distance / Math.max(1,pinchGesture.distance),zoomFloor(),4), ratio = next / pinchGesture.zoom;
     viewZoom = next; viewPanX = pinchGesture.x - (pinchGesture.x-pinchGesture.panX)*ratio; viewPanY = pinchGesture.y - (pinchGesture.y-pinchGesture.panY)*ratio; applyViewTransform(); event.preventDefault();
   } else if (panGesture?.id === event.pointerId) {
     const dx = event.clientX - panGesture.x, dy = event.clientY - panGesture.y;
