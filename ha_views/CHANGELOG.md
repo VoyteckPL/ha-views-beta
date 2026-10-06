@@ -1,3 +1,10 @@
+## 0.4.1-beta.396
+
+- **Termostat: części na tarczy**: po rozgrupowaniu na tarczę można nakładać inne części (np. temperaturę ustawioną, aktualną, przyciski) — tarcza nie odpycha ich i sama też nie jest odpychana. Pozostałe części dalej się nie nakładają.
+- **Termostat większy domyślnie**: większe czcionki (nazwa, temperatury, stan pracy, przyciski, tryby) i tarcza.
+- **„Ustaw domyślny” w termostacie** przywraca wygląd termostatu (części, układ, kolory trybów, tarczę), a nie etykiety.
+- Znak stopnia przy temperaturze ustawionej wyrównany do góry liczby także po rozgrupowaniu.
+
 ## 0.4.1-beta.395
 
 - **Termostat na silniku etykiet (etap 1)**: kafelek „Termostat” w menu plus tworzy teraz etykietę na encji `climate` — z grupą, kółeczkami w rogach, przyciąganiem, 1:1, kopiowaniem stylu i rozgrupowaniem. Części: **Nazwa, Tarcza, Temperatura ustawiona, Temperatura aktualna, Stan pracy, Przycisk −, Przycisk +, Tryby** (oraz Ikona i Stan jak w etykiecie). Każdą można pokazać / ukryć (Grupa → Pokaż), przesunąć wewnątrz grupy albo po rozgrupowaniu postawić osobno; każda ma rozmiar, grubość czcionki, kolor (także „Kolor wg trybu”), tło i ramkę.

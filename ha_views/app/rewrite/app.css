@@ -1396,3 +1396,5 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .thermo-mode-btn.on{border-color:var(--mode);background:var(--mode);color:#04121b!important}
 .editing .room-label-part button,.editing .room-card-part button{pointer-events:none}
 .thermo-target-text{gap:0}
+/* The degree sign of the set temperature sits at the top of the number (works grouped and ungrouped). */
+.thermo-target-text{align-items:flex-start}.thermo-target-text .thermo-deg{margin-left:.03em;font-size:.48em;line-height:1.15}
