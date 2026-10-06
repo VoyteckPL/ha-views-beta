@@ -1,3 +1,7 @@
+## 0.4.1-beta.408
+
+- Termostat: **kolory zależą od stanu pracy** (`hvac_action`), a nie od trybu. W sekcji Tarcza podsekcja „Kolory stanu pracy”: Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony (+ tor tarczy). Kolorem bieżącego stanu pracy rysowany jest łuk, uchwyt, „Kolor wg trybu” części i aktywny przycisk trybu. Gdy encja nie podaje `hvac_action`, stan pracy wynika z trybu (grzanie → Grzeje, chłodzenie → Chłodzi, wyłączony → Wyłączony, inne → Bezczynny).
+
 ## 0.4.1-beta.407
 
 - **Panel podąża za klikniętą częścią**: w rozgrupowanej etykiecie, termostacie albo tekście kliknięcie części (ikony, nazwy, tarczy, temperatury…) otwiera w panelu jej sekcję, zwija pozostałe i przewija do niej. Sekcja edytowanej części jest lekko podświetlona w jej kolorze i ma kropkę przy nazwie.
