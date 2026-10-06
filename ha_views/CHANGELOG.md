@@ -1,3 +1,7 @@
+## 0.4.1-beta.431
+
+- **Kropki rozmiaru w rogach, także poza planem**: zamiast przesuwać kropki do środka (beta.429), kropki stoją zawsze dokładnie w rogach elementu i są widoczne w całości — gdy element dotyka krawędzi planu, kropka wystaje poza plan (jest rysowana w warstwie nad planem, której plan nie przycina).
+
 ## 0.4.1-beta.430
 
 - **Dwa palce = zoom, nigdy przesuwanie**: gdy przesuwasz element (np. rozgrupowaną ikonę) i położysz drugi palec, żeby oddalić / przybliżyć, przesuwanie jest anulowane (element wraca dokładnie tam, gdzie był), a oba palce zoomują i przesuwają plan. Drugi palec położony na tarczy, innej części, wskaźniku albo kropce rozmiaru niczego nie przesuwa — idzie do zoomu.

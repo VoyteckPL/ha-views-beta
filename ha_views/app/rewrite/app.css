@@ -1478,5 +1478,12 @@ aside.editor.typing .editor-content{overflow:visible!important;max-height:none!i
 aside.editor.typing .editor-content *:not(.typing-row):not(.typing-row *):not(:has(.typing-row)){display:none!important}
 aside.editor.typing .editor-content :has(.typing-row){display:block!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
 aside.editor.typing .typing-row{display:grid!important;margin:0!important}
-/* Corner dots moved in (fitCardHandles) when the element touches the plan's / screen's edge: always whole. */
-.card-handle{transform:translate(-50%,-50%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) translate(var(--hdx,0px),var(--hdy,0px))}
+/* Corner dots: the real ones (inside the clipped plan) only mark the place; the visible, grabbable ones are drawn in a
+   layer above the plan card (fitCardHandles), so a dot on the plan's edge is whole, sticking out past it. */
+.card-handle{opacity:0}
+#handle-overlay{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:visible}
+.card-handle-proxy{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:2px solid #20b9e7;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;cursor:nwse-resize}
+.card-handle-proxy[data-corner="ne"],.card-handle-proxy[data-corner="sw"]{cursor:nesw-resize}
+.card-handle-proxy::before{content:"";position:absolute;inset:-6px;border-radius:50%}
+.card-handle-proxy.square{border-color:#4ade80}
+@media (pointer:coarse){.card-handle-proxy{width:16px;height:16px;margin:-8px 0 0 -8px}.card-handle-proxy::before{inset:-10px}}

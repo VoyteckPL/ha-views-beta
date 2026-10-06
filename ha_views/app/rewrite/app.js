@@ -1277,18 +1277,26 @@ function renderRoomLabels(view = activeSceneView()) {
   [...layer.children].forEach(node => { if (!kept.has(node.dataset.labelGroup)) node.remove(); });
   renderDashGrid(); fitCardHandles();
 }
-// Corner dots on an element at the edge of the plan (or of the screen when zoomed) are moved in just enough to be
-// whole: a dot cut in half is hard to grab.
+// Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so
+// the dots are drawn in a layer above the plan card (not clipped) - a dot on the plan's edge shows past it.
 function fitCardHandles() {
-  const handles = $$('#room-labels .card-handle'); if (!handles.length || !els.scene) return;
-  const sc = els.scene.getBoundingClientRect(), v = visibleSceneRect(), pad = 2;
-  const clip = { l: Math.max(sc.left, v.left) + pad, t: Math.max(sc.top, v.top) + pad, r: Math.min(sc.right, v.right) - pad, b: Math.min(sc.bottom, v.bottom) - pad };
-  handles.forEach(h => { h.style.removeProperty('--hdx'); h.style.removeProperty('--hdy'); });
+  const card = els.sceneCard; if (!card || !els.scene) return;
+  let layer = $('#handle-overlay'); const handles = $$('#room-labels .card-handle');
+  if (!handles.length) { layer?.replaceChildren(); return; }
+  if (!layer) { layer = document.createElement('div'); layer.id = 'handle-overlay'; layer.setAttribute('aria-hidden', 'true'); card.append(layer); }
+  const base = card.getBoundingClientRect(), keep = new Set();
   handles.forEach(h => {
-    const r = h.getBoundingClientRect(); if (!r.width) return;
-    const dx = r.left < clip.l ? clip.l - r.left : r.right > clip.r ? clip.r - r.right : 0, dy = r.top < clip.t ? clip.t - r.top : r.bottom > clip.b ? clip.b - r.bottom : 0;
-    if (dx) h.style.setProperty('--hdx', `${dx.toFixed(1)}px`); if (dy) h.style.setProperty('--hdy', `${dy.toFixed(1)}px`);
+    const owner = h.parentElement, key = `${owner?.dataset.roomId}|${owner?.dataset.labelPart}|${h.dataset.corner}`, r = h.getBoundingClientRect(); keep.add(key);
+    let proxy = [...layer.children].find(n => n.dataset.key === key);
+    if (!proxy) {
+      proxy = document.createElement('i'); proxy.className = 'card-handle-proxy'; proxy.dataset.key = key; layer.append(proxy);
+      proxy.addEventListener('pointerdown', event => { if (secondFingerToZoom(event)) return; const real = proxy.__real; if (real?.isConnected && editMode) startFreeResize(event, real); });
+    }
+    proxy.__real = h; proxy.dataset.corner = h.dataset.corner;
+    proxy.classList.toggle('square', !!owner?.classList.contains('square')); proxy.hidden = !r.width || getComputedStyle(h).display === 'none';
+    proxy.style.left = `${(r.left + r.width / 2 - base.left).toFixed(1)}px`; proxy.style.top = `${(r.top + r.height / 2 - base.top).toFixed(1)}px`;
   });
+  [...layer.children].forEach(n => { if (!keep.has(n.dataset.key)) n.remove(); });
 }
 // In edit mode a label part is dragged with the finger or mouse; it follows the grid (when on) and the camera follows it.
 // A corner dot of a label or of an ungrouped part: width and height change freely (the opposite corner stays put; Shift
