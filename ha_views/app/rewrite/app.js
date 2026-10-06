@@ -546,7 +546,7 @@ function applySnapUi() {
   const step = clamp(model.settings?.snapStep || .25, .25, 4);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
-  els.scene?.style.setProperty('--grid-vis', `${gridVisual()}%`);
+  els.scene?.style.setProperty('--grid-vis', `${gridVisual()}%`); syncGridGeometry();
   const activePreset = [.25, 1, 4].reduce((best, value) => Math.abs(value - step) < Math.abs(best - step) ? value : best, .25);
   els.gridPresets.forEach(button => button.classList.toggle('active', Number(button.dataset.gridStep) === activePreset));
 }
@@ -566,9 +566,15 @@ function bringIntoScene(item) {
 // The visible edit grid: L = 10 % of the plan (as before), M = 5 %, S = 2,5 %. Lines start at the plan's edges, so the
 // grid is always symmetric (a line through the centre) and scales with the plan. Resize dots snap to these lines.
 function gridVisual() { const step = Number(model.settings?.snapStep) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
+// Square grid: the cell is a share of the plan's width (L 10 %, M 5 %, S 2,5 %) on both axes, and the lines are counted
+// from the plan's centre, so a line always runs through the middle of the plan both ways.
+function syncGridGeometry() {
+  const scene = els.scene; if (!scene) return; const w = scene.offsetWidth, h = scene.offsetHeight, g = w * gridVisual() / 100; if (!g) return;
+  scene.style.setProperty('--grid-px', `${g}px`); scene.style.setProperty('--grid-ox', `${(w / 2) % g}px`); scene.style.setProperty('--grid-oy', `${(h / 2) % g}px`);
+}
 function gridLineNear(v, horizontal) {
   if (model.settings?.snapEnabled === false) return null;
-  const sc = els.scene.getBoundingClientRect(), size = horizontal ? sc.width : sc.height, origin = horizontal ? sc.left : sc.top, step = size * gridVisual() / 100; if (!step) return null;
+  const sc = els.scene.getBoundingClientRect(), origin = horizontal ? sc.left + sc.width / 2 : sc.top + sc.height / 2, step = sc.width * gridVisual() / 100; if (!step) return null;
   const line = origin + Math.round((v - origin) / step) * step; return Math.abs(line - v) <= (mobileView() ? 18 : 13) ? line : null;
 }
 function snapPercent(value) {
@@ -2559,8 +2565,11 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   });
   // The visible edit grid: moved elements line up their edges / centres with its lines too.
   if (model.settings?.snapEnabled !== false && editMode) {
-    const g = gridVisual();
-    for (let p = 0; p <= 100 + 1e-6; p += g) { const vx = p / 100 * scene.width, vy = p / 100 * scene.height; if (scene.left + vx >= view.left - 1 && scene.left + vx <= view.right + 1) xs.push({ v: vx, kind: 'grid' }); if (scene.top + vy >= view.top - 1 && scene.top + vy <= view.bottom + 1) ys.push({ v: vy, kind: 'grid' }); }
+    const step = scene.width * gridVisual() / 100, cx = scene.width / 2, cy = scene.height / 2;
+    if (step > 0) {
+      for (let v = cx - Math.floor(cx / step) * step; v <= scene.width + .5; v += step) if (scene.left + v >= view.left - 1 && scene.left + v <= view.right + 1) xs.push({ v, kind: 'grid' });
+      for (let v = cy - Math.floor(cy / step) * step; v <= scene.height + .5; v += step) if (scene.top + v >= view.top - 1 && scene.top + v <= view.bottom + 1) ys.push({ v, kind: 'grid' });
+    }
   }
   return { scene, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
 }
@@ -2800,7 +2809,7 @@ function updateSceneGeometry() {
   const physicalScale = renderedWidth / (Number(model.settings?.designWidth) || DESIGN_WIDTH);
   sceneScale = Math.max(.01, physicalScale);
   updateMobileMarkerLayout(renderedWidth, els.scene.clientHeight);
-  els.scene.style.setProperty('--scene-scale', sceneScale);
+  els.scene.style.setProperty('--scene-scale', sceneScale); syncGridGeometry();
   applyViewTransform();
   requestAnimationFrame(() => {
     $$('.marker', els.markers).forEach(node => {
