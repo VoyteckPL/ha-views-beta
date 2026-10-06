@@ -1,3 +1,7 @@
+## 0.4.1-beta.377
+
+- Menu przyciągania: wiersz „Punkty” nazywa się teraz „Wyrównuj po” (środki, krawędzie, odstępy).
+
 ## 0.4.1-beta.376
 
 - Menu przyciągania: ikony „Przyciągaj do” w kolejności Etykiety, Pomieszczenia, Wskaźniki, Flow. Usunięte przyciąganie do tła (krawędzie i środek tła nie dają już linii pomocniczych).
