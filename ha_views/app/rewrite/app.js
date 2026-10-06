@@ -6320,6 +6320,8 @@ function bindEvents() {
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
   els.scene?.addEventListener('pointerdown', viewportPointerDown);
+  // Zoomed out below the plan's size (editing on a phone) the fingers may also land on the empty space around it.
+  els.viewport?.addEventListener('pointerdown', event => { if (!els.scene?.contains(event.target)) viewportPointerDown(event); });
   els.sceneCard?.parentElement?.addEventListener('pointerdown', event => { if (event.target.closest?.('.swipe-preview')) viewportPointerDown(event); }); els.scene?.addEventListener('pointermove', viewportPointerMove);
   els.scene?.addEventListener('pointerup', viewportPointerUp); els.scene?.addEventListener('pointercancel', viewportPointerUp); els.scene?.addEventListener('lostpointercapture', viewportPointerUp);
   window.addEventListener('pointermove', viewportPointerMove); window.addEventListener('pointerup', viewportPointerUp); window.addEventListener('pointercancel', viewportPointerUp);

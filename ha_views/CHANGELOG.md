@@ -1,3 +1,7 @@
+## 0.4.1-beta.428
+
+- **Zoom palcami także poza planem**: gdy plan jest pomniejszony poniżej 100% (edycja na telefonie), szczypanie i przesuwanie działa również wtedy, gdy palce są na pustym miejscu wokół planu, a nie tylko na nim.
+
 ## 0.4.1-beta.427
 
 - **Pisanie w panelu na telefonie bez ruszania kamery**: gdy wpisujesz tekst w polu panelu edycji (np. nazwę ikony trybu), kamera zostaje dokładnie tam, gdzie była, a panel zwija się do jednej linii z edytowanym polem tuż nad klawiaturą ekranową. Po zakończeniu panel wraca w to samo miejsce (ta sama sekcja i przewinięcie).
