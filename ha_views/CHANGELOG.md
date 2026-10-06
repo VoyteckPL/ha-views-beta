@@ -1,3 +1,7 @@
+## 0.4.1-beta.371
+
+- **Dopasowanie rozmiaru do sąsiednich elementów**: przy zmianie rozmiaru rozgrupowanej części kółeczkami szerokość / wysokość przyciąga się do rozmiaru innych widocznych etykiet i ich części (np. ikony sąsiedniego pomieszczenia, nawet gdy samo pomieszczenie nie mieści się na ekranie), a nie tylko do części tej samej etykiety. Przy dopasowaniu widać znaczniki wymiaru na obu elementach i podświetlenie wzorca.
+
 ## 0.4.1-beta.370
 
 - **Menu przyciągania w stylu popupu**: bez tytułu; każdy wiersz ma nazwę po lewej i ikony po prawej (siatka z S / M / L na górze). Usunięta cała sekcja „Więcej” (granice tła, wyrównanie do tła, obrót) — **granice tła są zawsze włączone**.

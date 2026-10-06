@@ -1170,7 +1170,8 @@ function startPartResize(event, handle) {
   const st = snapTargets(), view = visibleSceneRect();
   const targetRects = [...others, ...(st.guides && st.labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null).map(other => other.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)) : [])];
   const lines = targetRects.flatMap(r => (horizontal ? [[r.left, 0], [(r.left + r.right) / 2, 1], [r.right, 0]] : [[r.top, 0], [(r.top + r.bottom) / 2, 1], [r.bottom, 0]]).filter(([, c]) => c ? st.centers : st.edges).map(([v]) => ({ v, r })));
-  const sizes = others.map(r => horizontal ? r.width : r.height);
+  // Same size as another part of this label or as any label / part on screen (e.g. the icon of a neighbouring room).
+  const sizes = targetRects.map(r => ({ size: horizontal ? r.width : r.height, r }));
   // Width equal to height (and back): a round icon stays a circle, not an egg — this catch wins and holds a bit longer.
   const across = horizontal ? rect0.height : rect0.width;
   let moved = false;
@@ -1181,7 +1182,7 @@ function startPartResize(event, handle) {
     if (!e.altKey) {
       const reach = mobileView() ? 10 : 7;
       lines.forEach(({ v, r }) => { const d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r }; });
-      sizes.forEach(size => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= 7 && (!best || d < best.d)) best = { d, edge: v, size: true }; });
+      sizes.forEach(({ size, r }) => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, size: true, r }; });
       const square = fixed + sign * across, ds = Math.abs(edge - square); if (ds <= 10) best = { d: ds, edge: square, square: true };
       if (best) edge = best.edge;
     }
@@ -1201,6 +1202,14 @@ function startPartResize(event, handle) {
     const at = horizontal ? (edge - scene.left) / scene.width * 100 : (edge - scene.top) / scene.height * 100;
     if (!best) return showAlignGuides([], []);
     const own = live?.getBoundingClientRect() || rect0, t = best.r;
+    if (best.size && t) {
+      // Equal size: a dimension marker across the resized part and across the part it matches, which is highlighted.
+      const px = v => (v - scene.left) / scene.width * 100, py = v => (v - scene.top) / scene.height * 100;
+      const marks = horizontal
+        ? [{ axis: 'x', from: px(own.left), to: px(own.right), at: py(own.bottom + 6) }, { axis: 'x', from: px(t.left), to: px(t.right), at: py(t.bottom + 6) }]
+        : [{ axis: 'y', from: py(own.top), to: py(own.bottom), at: px(own.right + 6) }, { axis: 'y', from: py(t.top), to: py(t.bottom), at: px(t.right + 6) }];
+      return showAlignGuides([], [], marks, [{ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: 'label' }]);
+    }
     const guide = !t ? { at, kind: 'label' } : horizontal
       ? { at, kind: 'label', from: (Math.min(own.top, t.top) - scene.top) / scene.height * 100, to: (Math.max(own.bottom, t.bottom) - scene.top) / scene.height * 100 }
       : { at, kind: 'label', from: (Math.min(own.left, t.left) - scene.left) / scene.width * 100, to: (Math.max(own.right, t.right) - scene.left) / scene.width * 100 };
