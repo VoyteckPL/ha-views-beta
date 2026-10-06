@@ -407,6 +407,7 @@ function showMainView(name) {
 function renderViewSelector() {
   if (!els.sceneTabs) return;
   const sheetName = $('#vm-name'); if (sheetName) sheetName.textContent = activeSceneView()?.name || '';
+  syncZoomToggle();
   const transition = $('#view-transition'); if (transition) transition.value = viewTransitionMode();
   els.sceneCard?.parentElement?.classList.toggle('swipe-mode-cube', viewTransitionMode() === 'cube' && mobileView());
   els.sceneTabs.innerHTML = model.viewOrder.map(id => `<button class="tab scene-view-tab ${id === model.activeViewId ? 'active' : ''}" data-scene-view="${escapeHtml(id)}">${model.settings?.defaultViewId === id ? '<i class="mdi mdi-home-variant-outline scene-tab-home" title="Widok startowy" aria-label="Widok startowy"></i>' : ''}<span data-no-i18n>${escapeHtml(model.views[id].name)}</span></button>`).join('');
@@ -2472,12 +2473,13 @@ function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
   let layer = $('#align-guides');
   if (!vertical.length && !horizontal.length && !marks.length && !hits.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }
-  const kind = g => g.kind ? ` ${g.kind}` : g.room ? ' room' : g.bg ? ' bg' : '';
+  // Kind classes carry a prefix: a plain "marker" class would also get the markers' own styles (a thick line).
+  const kind = g => g.kind ? ` k-${g.kind}` : g.room ? ' k-room' : g.bg ? ' k-bg' : '';
   const spanV = g => g.from != null ? `;top:${g.from}%;bottom:auto;height:${g.to - g.from}%` : '', spanH = g => g.from != null ? `;left:${g.from}%;right:auto;width:${g.to - g.from}%` : '';
   layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${kind(g)}" style="left:${g.at}%${spanV(g)}"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${kind(g)}" style="top:${g.at}%${spanH(g)}"></span>`).join('')
     // The object snapped to gets a soft frame (in its kind's colour); boxes are px from the scene's top left.
-    + hits.map(b => { const sc = els.scene.getBoundingClientRect(), W = sc.width || 1, H = sc.height || 1; return `<span class="snap-target ${b.kind || 'label'}" style="left:${b.l / W * 100}%;top:${b.t / H * 100}%;width:${(b.r - b.l) / W * 100}%;height:${(b.b - b.t) / H * 100}%"></span>`; }).join('')
-    + marks.map(m => m.axis === 'x' ? `<span class="gap-mark x${m.kind ? ' ' + m.kind : ''}" style="left:${m.from}%;width:${m.to - m.from}%;top:${m.at}%"></span>` : `<span class="gap-mark y${m.kind ? ' ' + m.kind : ''}" style="top:${m.from}%;height:${m.to - m.from}%;left:${m.at}%"></span>`).join('');
+    + hits.map(b => { const sc = els.scene.getBoundingClientRect(), W = sc.width || 1, H = sc.height || 1; return `<span class="snap-target k-${b.kind || 'label'}" style="left:${b.l / W * 100}%;top:${b.t / H * 100}%;width:${(b.r - b.l) / W * 100}%;height:${(b.b - b.t) / H * 100}%"></span>`; }).join('')
+    + marks.map(m => m.axis === 'x' ? `<span class="gap-mark x${m.kind ? ' k-' + m.kind : ''}" style="left:${m.from}%;width:${m.to - m.from}%;top:${m.at}%"></span>` : `<span class="gap-mark y${m.kind ? ' k-' + m.kind : ''}" style="top:${m.from}%;height:${m.to - m.from}%;left:${m.at}%"></span>`).join('');
 }
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------
 // Markers and Flows are kept with their whole box inside the scene while dragging or resizing
@@ -2499,7 +2501,9 @@ function applyBoundsUi() {
 }
 function mobileView() { return matchMedia('(max-width: 900px) and (pointer: coarse), (max-width: 768px)').matches; }
 // Zoom can be switched off outside editing (Options → "Zoom poza edycją"): pinch, wheel and double tap keep the view at 100%.
-function viewZoomLocked() { return !editMode && !!model.settings?.viewZoomLock; }
+function viewZoomLocked() { return !editMode && !!activeSceneView()?.viewZoomLock; }
+// The "Zoom poza edycją" switch shows the current view's own setting.
+function syncZoomToggle() { const button = $('#view-zoom-toggle'); if (!button) return; const on = !activeSceneView()?.viewZoomLock; button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on)); button.innerHTML = `<i class="mdi ${on ? 'mdi-magnify-plus-outline' : 'mdi-magnify-remove-outline'}"></i>`; }
 function sceneCameraActive() { return mobileView() || editMode || viewZoom > 1.001; }
 function mobileWidePanorama() {
   return mobileView() && layoutViewportHeight() > innerWidth && els.image.naturalWidth > els.image.naturalHeight;
@@ -5775,8 +5779,8 @@ function bindEvents() {
   window.addEventListener('resize', () => { syncDock(); applyBackgroundTransform(); syncMobileOrientation(); });
   $$('[data-dock-side]').forEach(button => button.addEventListener('click', event => { event.stopPropagation(); toggleDockSide(); }));
   $$('.head-preview').forEach(button => button.addEventListener('click', onHeadPreview));
-  const zoomToggle = $('#view-zoom-toggle'), syncZoomToggle = () => { const on = !model.settings?.viewZoomLock; zoomToggle.classList.toggle('active', on); zoomToggle.setAttribute('aria-pressed', String(on)); zoomToggle.innerHTML = `<i class="mdi ${on ? 'mdi-magnify-plus-outline' : 'mdi-magnify-remove-outline'}"></i>`; };
-  if (zoomToggle) { syncZoomToggle(); zoomToggle.addEventListener('click', () => { model.settings ||= {}; model.settings.viewZoomLock = !model.settings.viewZoomLock; syncZoomToggle(); scheduleSave(true); }); }
+  const zoomToggle = $('#view-zoom-toggle');
+  if (zoomToggle) { syncZoomToggle(); zoomToggle.addEventListener('click', () => { const view = activeSceneView(); if (!view) return; view.viewZoomLock = !view.viewZoomLock; view.updatedAt = new Date().toISOString(); syncZoomToggle(); scheduleSave(true); }); }
   const glowSelect = $('#glow-blend-select'); if (glowSelect) { glowSelect.value = ['normal', 'screen'].includes(model.settings?.glowBlend) ? model.settings.glowBlend : 'auto'; glowSelect.addEventListener('change', () => { model.settings ||= {}; model.settings.glowBlend = glowSelect.value; scheduleSave(true); renderRooms(); }); }
   const dockSelect = $('#dock-side-select'); if (dockSelect) { dockSelect.value = dockSide(); dockSelect.addEventListener('change', () => { if (dockSelect.value !== dockSide()) toggleDockSide(); }); }
   window.visualViewport?.addEventListener('resize', () => { if (mobileView()) applyBackgroundTransform(); fitWizardList(); refocusWhileTyping(); });

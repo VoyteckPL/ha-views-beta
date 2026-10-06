@@ -1,3 +1,8 @@
+## 0.4.1-beta.385
+
+- **Poprawka grubych linii pomocniczych**: linia i podświetlenie od wskaźnika (marker / gauge / podkowa) przejmowały style samych markerów i rysowały się jako szeroki niebieski pas. Teraz są cienkie jak pozostałe.
+- **„Zoom poza edycją” osobno dla każdego widoku**: ustawienie zapisuje się w widoku, a przełącznik w Opcjach pokazuje stan otwartego widoku. Wyłączenie w jednym widoku nie blokuje już zoomu w innych (także po przejściu między widokami w trybie edycji). Wcześniejsze ustawienie globalne nie jest przenoszone — w razie potrzeby wyłącz zoom ponownie w wybranym widoku.
+
 ## 0.4.1-beta.384
 
 - **Przyciąganie przy skalowaniu etykiety kółeczkami w rogach**: przeciągany róg łapie się do krawędzi / środków innych elementów na ekranie (zgodnie z menu magnesu), a cała etykieta do szerokości lub wysokości innej etykiety — z linią pomocniczą, znacznikami wymiaru i podświetleniem wzorca. Alt wyłącza przyciąganie.
