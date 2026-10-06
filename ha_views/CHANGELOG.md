@@ -1,3 +1,7 @@
+## 0.4.1-beta.383
+
+- **Kółeczka na rogach etykiety**: zaznaczona (zgrupowana) etykieta ma małe kółeczka w czterech rogach. Przeciągnięcie rogu skaluje całą etykietę proporcjonalnie, a przeciwny róg zostaje w miejscu. Suwak „Rozmiar” w popupie pokazuje nową wartość.
+
 ## 0.4.1-beta.382
 
 - **Komputer: bez paska przewijania w trybie przeglądania**: karta planu mieści się w oknie (bez dolnego marginesu, który robił stronę o kilkadziesiąt pikseli wyższą od ekranu), a dopasowanie liczy pozycję karty na stronie, nie na ekranie — przewinięta strona nie powiększa już karty. Po wyjściu z edycji strona wraca na górę, więc nazwy widoków i przyciski integracji / edycji są zawsze w całości widoczne.

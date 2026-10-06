@@ -1111,7 +1111,9 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : '',
       free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';');
-    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}</div>`;
+    // Selected: a dot on each corner scales the whole label (the opposite corner stays in place).
+    const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 4)};${cardLook(r, on)}"></div>` : '';
@@ -1242,8 +1244,36 @@ function keepApart(room, key, part) {
     renderRoomLabels();
   }
 }
+// A corner dot of a grouped label: the whole label scales with the pointer, the opposite corner keeps its place on screen.
+function startCardResize(event, handle) {
+  const card = handle.closest('.room-label-card'), room = roomsOf()[card?.dataset.roomId]; if (!room) return;
+  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
+  const c = handle.dataset.corner, r0 = card.getBoundingClientRect(), sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1;
+  const fixed = { x: sx > 0 ? r0.left : r0.right, y: sy > 0 ? r0.top : r0.bottom }, diag = Math.hypot(r0.width, r0.height) || 1, ux = sx * r0.width / diag, uy = sy * r0.height / diag;
+  const startScale = clamp(Number(room.labelCardScale) || 1, .3, 4), sceneRect = els.scene.getBoundingClientRect(), planToScreen = sceneRect.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
+  const sel = `.room-label-card[data-room-id="${CSS.escape(room.id)}"]`;
+  let moved = false;
+  const move = e => {
+    if (e.pointerId !== event.pointerId) return; moved = true;
+    const along = (e.clientX - fixed.x) * ux + (e.clientY - fixed.y) * uy;
+    room.labelCardScale = Math.round(clamp(startScale * Math.max(.05, along) / diag, .3, 4) * 1000) / 1000;
+    renderRoomLabels();
+    // Keep the opposite corner where it was: move the label by what the scaling shifted it.
+    const live = $(sel); if (!live) return; const r = live.getBoundingClientRect();
+    const dx = fixed.x - (sx > 0 ? r.left : r.right), dy = fixed.y - (sy > 0 ? r.top : r.bottom);
+    if (Math.abs(dx) > .1 || Math.abs(dy) > .1) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + dx / planToScreen) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + dy / planToScreen) * 100) / 100; renderRoomLabels(); }
+  };
+  const up = e => {
+    if (e.pointerId !== event.pointerId) return;
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
 function startRoomLabelDrag(event) {
   const handle = event.target.closest?.('.part-handle'); if (handle && editMode) return startPartResize(event, handle);
+  const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startCardResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
   if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []))); })) return;

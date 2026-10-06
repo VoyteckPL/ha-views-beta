@@ -1305,3 +1305,9 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* The plan card is fitted to the window: no bottom margin that would make the page a little taller than the screen
    (a scroll bar on the right and the top bar half scrolled away). */
 @media (min-width:769px){main{margin-bottom:0}}
+/* Corner dots of a selected grouped label: on the corners of its dashed outline, always the same size on screen. */
+.card-handle{position:absolute;z-index:5;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #20b9e7;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;transform:translate(-50%,-50%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.card-handle::before{content:"";position:absolute;inset:-6px;border-radius:50%}
+.card-handle.nw{left:-8px;top:-8px;cursor:nwse-resize}.card-handle.se{left:calc(100% + 8px);top:calc(100% + 8px);cursor:nwse-resize}
+.card-handle.ne{left:calc(100% + 8px);top:-8px;cursor:nesw-resize}.card-handle.sw{left:-8px;top:calc(100% + 8px);cursor:nesw-resize}
+@media (pointer:coarse){.card-handle{width:16px;height:16px}.card-handle::before{inset:-10px}}
