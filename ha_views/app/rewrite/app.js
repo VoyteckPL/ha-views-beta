@@ -1108,8 +1108,8 @@ function thermoActionText(r, action) { return String(r?.[`thermoActText_${action
 function thermoModeText(r, mode) { return String(r?.[`thermoModeText_${mode}`] || '').trim() || translateValue(mode === 'off' ? 'Wyłączony' : THERMO_MODES[mode]?.[0] || mode); }
 // Set / current temperature with its own rounding ("auto": the entity's step, 0,1 for the current one) and unit.
 function thermoFormat(v, decimals, autoStep) { const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', ','); }
-function thermoContent(r, on) {
-  const marker = { entityId: (r.entityIds || [])[0] || '' }, info = climateInfo(marker), accent = thermoAccent(r, info), esc = escapeHtml, tr = translateValue;
+function thermoContent(r, on, previewMode = null) {
+  const marker = { entityId: (r.entityIds || [])[0] || '' }, info = climateInfo(marker, previewMode), accent = thermoAccent(r, info), esc = escapeHtml, tr = translateValue;
   const text = (key, inner, cls = '') => `<span class="thermo-part ${cls}" data-no-i18n style="${r[`${key}Accent`] ? `color:var(--accent);font-weight:${TEXT_WEIGHTS[r[`${key}Weight`]] || 600}` : roomTextStyle(r, key, on)}">${inner}</span>`;
   const value = info.target ?? info.high ?? null, active = info.mode !== 'off' && !info.unavailable && value !== null;
   const working = info.mode !== 'off' && ['heating','cooling','preheating','drying','fan','defrosting'].includes(info.action);
@@ -1137,7 +1137,9 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   if (ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1) Object.assign(r, { labelCardBg:false, labelCardBorder:false, labelCardPadding:0 }); if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
   const realOn = roomLight(r).on, on = preview ? preview === 'on' : realOn, [x, y] = roomAnchor(r), tap = (isIconRoom(r) ? ' tappable' : '') + (interactive && r.id === selectedRoomId ? ' selected' : '');
   // The ON / OFF preview simulates the state text too.
-  const state = !r.labelState ? '' : preview === 'off' ? roomOnOffWord(r, false) : preview === 'on' && !realOn ? roomOnOffWord(r, true) : roomLabelState(r);
+  // A thermostat's ON / OFF preview shows its mode texts: "off", or the mode it would be in when on.
+  const thermoPreview = isThermoRoom(r) && preview ? (() => { if (preview === 'off') return 'off'; const i = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); return i.mode && i.mode !== 'off' ? i.mode : i.modes.find(m => m !== 'off') || 'heat'; })() : null;
+  const state = !r.labelState ? '' : thermoPreview ? thermoModeText(r, thermoPreview) : preview === 'off' ? roomOnOffWord(r, false) : preview === 'on' && !realOn ? roomOnOffWord(r, true) : roomLabelState(r);
   // Colours by value (a number entity): below / between / above two thresholds, for the icon and / or the state text.
   const ruleColor = roomRuleColor(r);
   const iconColor = ruleColor && r.labelRulesIcon ? ruleColor : r.labelIconColorState === false ? r.labelIconColor : on ? r.labelIconOn : r.labelIconOff, iconOpacity = clamp(Number(r.labelIconColorState === false ? r.labelIconOpacity : on ? r.labelIconOpacityOn : r.labelIconOpacityOff) ?? 1, 0, 1);
@@ -1152,7 +1154,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     return d ? mdiSvgMarkup(d, svg) : `<i class="mdi ${escapeHtml(spec.cls)}${animAttr.cls}" data-svg-icon="${escapeHtml(String(spec.cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(svg)}" style="${iconStyle}${glyphShiftStyle(spec.cls)}${animAttr.style}"></i>`;
   })();
   const content = { icon: iconHtml, name: r.labelName && r.name ? `<b data-no-i18n style="${roomTextStyle(r, 'labelName', on)}">${escapeHtml(r.name)}</b>` : '', state: state ? `<small data-no-i18n style="${roomTextStyle(r, 'labelState', on)}${ruleColor && r.labelRulesState ? `;color:${escapeHtml(ruleColor)}` : ''}">${escapeHtml(state)}</small>` : '' };
-  const thermo = isThermoRoom(r) ? thermoContent(r, on) : null; if (thermo) Object.assign(content, thermo.parts);
+  const thermo = isThermoRoom(r) ? thermoContent(r, on, thermoPreview) : null; if (thermo) Object.assign(content, thermo.parts);
   const accentVar = thermo ? `;--accent:${escapeHtml(thermo.accent)}` : '';
   if (r.labelLinked) {
     // A "free" group keeps the parts where they were placed when it was grouped again (card-local positions).
@@ -3266,11 +3268,11 @@ const THERMO_ACTIONS = { heating:['Grzeje','mdi-fire'], preheating:['Nagrzewa','
 // Known attributes are drawn by the dial; the rest of a climate entity's attributes can be added as small rows.
 const THERMO_KNOWN_ATTRS = new Set(['hvac_modes','min_temp','max_temp','target_temp_step','current_temperature','temperature','target_temp_low','target_temp_high','hvac_action','current_humidity','humidity','min_humidity','max_humidity','preset_mode','preset_modes','fan_mode','fan_modes','swing_mode','swing_modes','icon','friendly_name','supported_features','entity_picture','device_class','attribution','assumed_state','restored','editable','unit_of_measurement']);
 const thermoPending = new Map();
-function climateInfo(marker) {
+function climateInfo(marker, previewMode = null) {
   const st = stateCache[marker.entityId] || {}, a = st.attributes || {}, num = v => { const n = Number(v); return v === null || v === undefined || v === '' || !Number.isFinite(n) ? null : n; };
   const pending = thermoPending.get(marker.entityId) || {};
   const min = num(a.min_temp) ?? 7, max = Math.max(min + 1, num(a.max_temp) ?? 35), step = num(a.target_temp_step) || .5;
-  return { a, mode: pending.hvac_mode ?? String(st.state || ''), modes: Array.isArray(a.hvac_modes) ? a.hvac_modes : [], action: String(a.hvac_action || ''), current: num(a.current_temperature),
+  return { a, mode: previewMode ?? pending.hvac_mode ?? String(st.state || ''), modes: Array.isArray(a.hvac_modes) ? a.hvac_modes : [], action: String(a.hvac_action || ''), current: num(a.current_temperature),
     target: pending.temperature ?? num(a.temperature), low: num(a.target_temp_low), high: num(a.target_temp_high), min, max, step,
     humidity: num(a.current_humidity), preset: String(pending.preset_mode ?? a.preset_mode ?? ''), presets: Array.isArray(a.preset_modes) ? a.preset_modes : [], fan: String(a.fan_mode || ''), unavailable: !st.state || st.state === 'unavailable' };
 }

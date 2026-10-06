@@ -1,3 +1,7 @@
+## 0.4.1-beta.405
+
+- Termostat: **podgląd ON / OFF używa własnych tekstów trybów** — podgląd „wyłączony” pokazuje Twój tekst trybu wyłączonego (w Stanie i na środku tarczy) zamiast „Wył.”, a podgląd „włączony” tekst bieżącego (albo pierwszego niewyłączonego) trybu. Tarcza, stan pracy i przyciski trybów też pokazują podglądany tryb.
+
 ## 0.4.1-beta.404
 
 - Termostat: „Teksty trybów” były pokazane w dwóch sekcjach (Stan i Tryby), ale to te same ustawienia — teraz są tylko w sekcji **Stan**. Teksty dalej działają też jako podpowiedzi przycisków trybów i „wyłączony” na tarczy.
