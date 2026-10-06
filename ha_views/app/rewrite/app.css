@@ -1313,3 +1313,6 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .part-handle.n{left:50%;top:-8px;cursor:ns-resize}.part-handle.s{left:50%;top:calc(100% + 8px);cursor:ns-resize}
 .part-handle.e{left:calc(100% + 8px);top:50%;cursor:ew-resize}.part-handle.w{left:-8px;top:50%;cursor:ew-resize}
 @media (pointer:coarse){.part-handle{width:14px;height:14px}.part-handle::before{inset:-9px}}
+/* Width = height: the selected element's outline and dots turn green. */
+.room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-color:#4ade80;border-style:solid}
+.room-label-part.square>.card-handle,.room-label-part.square>.part-handle,.room-label-card.square>.card-handle,.room-label-card.square>.part-handle{border-color:#4ade80}

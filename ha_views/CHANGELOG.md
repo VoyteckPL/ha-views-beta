@@ -1,3 +1,8 @@
+## 0.4.1-beta.390
+
+- **Wskaźnik „równe boki” wrócił**: gdy zaznaczona ikona / część albo zgrupowana etykieta ma szerokość równą wysokości, jej obrys i kółeczka robią się zielone.
+- **Przyciąganie do kwadratu** przy zmianie szerokości / wysokości kropkami na bokach — także dla zgrupowanej etykiety. Łapie się tylko, gdy w zasięgu nie ma innego obiektu (dopasowanie do sąsiadów ma pierwszeństwo).
+
 ## 0.4.1-beta.389
 
 - **Suwak „Rozmiar” w grupie zmienia tylko zawartość**: ikona, nazwa i stan w środku zgrupowanej etykiety rosną / maleją, a ramka (tło i obramowanie) zostaje tej samej wielkości na planie. Ramka powiększa się tylko wtedy, gdy zawartość przestaje się w niej mieścić. Całą etykietę razem z ramką skalują kółeczka w rogach.

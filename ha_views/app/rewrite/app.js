@@ -976,6 +976,8 @@ function equalizeLabelFrames(room, group) {
   const base = node => { const key = partKey(node); node.style.minWidth = Number(room[`${key}W`]) ? `${room[`${key}W`]}px` : ''; node.style.minHeight = Number(room[`${key}H`]) ? `${room[`${key}H`]}px` : ''; };
   parts.forEach(base);
   fitFreeCard(room, group); fitLabelBackdrop(room, group);
+  // A selected part or label whose width equals its height is marked (green outline): a round icon stays a circle.
+  group.querySelectorAll('.room-label-part, .room-label-card').forEach(node => node.classList.toggle('square', !!node.querySelector(':scope > .card-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
 function fitLabelBackdrop(room, group) {
@@ -1241,6 +1243,7 @@ function startCardSideResize(event, handle) {
   const fixed = horizontal ? (sign > 0 ? rect0.left : rect0.right) : (sign > 0 ? rect0.top : rect0.bottom);
   const centre0 = horizontal ? (rect0.left + rect0.right) / 2 : (rect0.top + rect0.bottom) / 2, posKey = horizontal ? 'labelCardX' : 'labelCardY', start = Number(room[posKey]) || 0, sizeKey = horizontal ? 'labelCardW' : 'labelCardH';
   const st = snapTargets(), view = visibleSceneRect(), sel = `.room-label-card[data-room-id="${CSS.escape(room.id)}"]`;
+  const across = horizontal ? rect0.height : rect0.width;
   const g = st.guides ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] }, lines = (horizontal ? g.xs : g.ys).map(t => ({ v: (horizontal ? scene.left : scene.top) + t.v, t }));
   const sizes = st.guides && st.labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view)).map(r => ({ size: horizontal ? r.width : r.height, r })) : [];
   let moved = false;
@@ -1251,13 +1254,15 @@ function startCardSideResize(event, handle) {
       const reach = mobileView() ? 10 : 7;
       lines.forEach(({ v, t }) => { const d = Math.abs(edge - v); if (d <= reach && sign * (v - fixed) > 4 && (!best || d < best.d)) best = { d, edge: v, t }; });
       sizes.forEach(({ size, r }) => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, size: true, r }; });
+      // Width equal to height (and back) when nothing else is in reach.
+      const square = fixed + sign * across, ds = Math.abs(edge - square); if (!best && ds <= reach) best = { d: ds, edge: square, square: true };
       if (best) edge = best.edge;
     }
     const local = Math.max(natural, Math.abs(edge - fixed) / localToScreen); edge = fixed + sign * local * localToScreen;
     room[sizeKey] = local <= natural + .5 ? 0 : Math.round(local * 10) / 10;
     room[posKey] = Math.round((start + ((fixed + edge) / 2 - centre0) / planToScreen) * 100) / 100;
     renderRoomLabels();
-    if (!best) return showAlignGuides([], []);
+    if (!best || best.square) return showAlignGuides([], []);
     const own = $(sel)?.getBoundingClientRect() || rect0, W = scene.width || 1, H = scene.height || 1, px = v => (v - scene.left) / W * 100, py = v => (v - scene.top) / H * 100;
     const t = best.r || (best.t?.box ? { left: best.t.box.l + scene.left, right: best.t.box.r + scene.left, top: best.t.box.t + scene.top, bottom: best.t.box.b + scene.top } : null);
     const hit = t ? [{ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: best.t?.kind || 'label' }] : [];
