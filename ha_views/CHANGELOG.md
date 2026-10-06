@@ -1,3 +1,8 @@
+## 0.4.1-beta.364
+
+- **Przyciąganie słucha ustawień „Krawędzie” / „Środki”**: przy przeciąganiu etykiet wyłączone krawędzie nie przyciągają (także styk, odstęp 8 px i równe odstępy, które się na nich opierają), a wyłączone środki — środków.
+- **Środek łapie z dalszej odległości**: środek do środka przyciąga z ok. 1,7× większej odległości niż krawędzie (etykiety, wskaźniki, Flow, pomieszczenia i tło).
+
 ## 0.4.1-beta.363
 
 - **Etykieta w pomieszczeniu przyciąga się też do innych etykiet**: etykieta pomieszczenia leżąca w nim w całości przyciąga się do tego pomieszczenia oraz (przy włączonych „Etykietach” w menu magnesu) do innych etykiet; nadal nie do innych pomieszczeń, wskaźników, Flow ani tła.
