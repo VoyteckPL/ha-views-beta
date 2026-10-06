@@ -1,3 +1,9 @@
+## 0.4.1-beta.392
+
+- **Tylko 4 kółeczka w rogach**: kropki na bokach zniknęły. Róg zmienia teraz szerokość i wysokość dowolnie (przeciwny róg zostaje w miejscu); **Shift** + róg skaluje proporcjonalnie. Zostaje przyciąganie każdego boku do linii i rozmiarów innych elementów oraz łapanie 1:1 z zieloną ramką i plakietką.
+- **Rozgrupowana etykieta**: kółeczka ma tylko ostatnio kliknięta część (pozostałe mają sam lekki obrys), więc kropki nie nakładają się na siebie.
+- **Ramki edycji widoczne przy dużym zoomie**: linie mają minimalną grubość i ciemną obwódkę, więc nie znikają po maksymalnym przybliżeniu.
+
 ## 0.4.1-beta.391
 
 - **Pasek „Grupa”**: przełączniki „Grupuj” oraz pokazywania ikony / nazwy / stanu są teraz na pasku sekcji Grupa (wiersze „Grupa” i „Pokaż” zniknęły z jej środka). Od przycisków Tło i Ramka oddziela je odstęp z kreską, żeby się nie zlewały.

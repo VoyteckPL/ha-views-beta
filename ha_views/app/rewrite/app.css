@@ -1307,15 +1307,9 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* Computer: the page never scrolls - the plan card is fitted to the window. A scroll bar that came and went with one
    pixel of rounding changed the width, the card was fitted again and the plan jumped up and down (flicker). */
 @media (min-width:901px),(min-width:769px) and (pointer:fine){html:has(#view-overview.active),html:has(#view-overview.active) body{overflow:hidden}}
-/* Side dots (width / height only) next to the corner dots, on the selected element's dashed outline. */
-.part-handle{position:absolute;z-index:5;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #20b9e7;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;transform:translate(-50%,-50%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
-.part-handle::before{content:"";position:absolute;inset:-6px;border-radius:50%}
-.part-handle.n{left:50%;top:-8px;cursor:ns-resize}.part-handle.s{left:50%;top:calc(100% + 8px);cursor:ns-resize}
-.part-handle.e{left:calc(100% + 8px);top:50%;cursor:ew-resize}.part-handle.w{left:-8px;top:50%;cursor:ew-resize}
-@media (pointer:coarse){.part-handle{width:14px;height:14px}.part-handle::before{inset:-9px}}
 /* Width = height: the selected element's outline and dots turn green. */
 .room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-color:#4ade80;border-style:solid}
-.room-label-part.square>.card-handle,.room-label-part.square>.part-handle,.room-label-card.square>.card-handle,.room-label-card.square>.part-handle{border-color:#4ade80}
+.room-label-part.square>.card-handle,.room-label-card.square>.card-handle{border-color:#4ade80}
 /* Group bar: grouping + shown parts, a gap, then background and frame. */
 .part-section .section-sep{flex:0 0 1px;align-self:stretch;margin:2px 5px;background:rgba(143,223,255,.28)}
 /* Edit outlines keep the same thickness on screen at any label size / zoom (they are drawn inside the scaled label). */
@@ -1325,3 +1319,12 @@ img.room-layer.room-glow.flat{will-change:opacity}
 /* Width = height: a solid, thicker green outline and a small "1:1" tag above the element. */
 .room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-style:solid;border-color:#4ade80;border-width:calc(3px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)));box-shadow:0 0 calc(8px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))) rgba(74,222,128,.55)}
 .room-label-part.editable.selected.square::before,.room-label-card.editable.selected.square::before{content:"1:1";position:absolute;left:50%;top:-8px;z-index:6;padding:1px 5px;border-radius:6px;background:#4ade80;color:#052e16;font:800 10px/1.2 system-ui,sans-serif;text-shadow:none;letter-spacing:.02em;pointer-events:none;transform:translate(-50%,-150%) scale(calc(1 / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))));transform-origin:50% 100%}
+/* Edit outlines never get thinner than one plan pixel (a zoomed plan's layer is drawn before it is magnified, so a
+   hairline could fade away) and have a dark halo, so they stay visible over any background at any zoom. */
+.room-label-part.editable::after,.room-label-card.editable::after{border-width:max(1px, calc(1.5px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))));box-shadow:0 0 0 max(.5px, calc(1px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) rgba(3,16,26,.55)}
+.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{border-width:max(1.25px, calc(2px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{border-width:max(1.75px, calc(3px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+/* Ungrouped parts: only the active one (last touched) has the dots and the strong outline; the others a light one. */
+.room-label-part:not(.active-part)>.card-handle{display:none}
+.room-label-part.editable.selected:not(.active-part)::after{border-style:dashed;border-color:rgba(143,223,255,.8);border-width:max(1px, calc(1.5px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))));box-shadow:0 0 0 max(.5px, calc(1px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))) rgba(3,16,26,.55)}
+.room-label-part.selected:not(.active-part)::before{display:none}
