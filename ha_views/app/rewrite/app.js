@@ -1172,7 +1172,8 @@ function startPartResize(event, handle) {
   const lines = targetRects.flatMap(r => (horizontal ? [[r.left, 0], [(r.left + r.right) / 2, 1], [r.right, 0]] : [[r.top, 0], [(r.top + r.bottom) / 2, 1], [r.bottom, 0]]).filter(([, c]) => c ? st.centers : st.edges).map(([v]) => ({ v, r })));
   // Same size as another part of this label or as any label / part on screen (e.g. the icon of a neighbouring room).
   const sizes = targetRects.map(r => ({ size: horizontal ? r.width : r.height, r }));
-  // Width equal to height (and back): a round icon stays a circle, not an egg — this catch wins and holds a bit longer.
+  // Width equal to height (and back): a round icon stays a circle, not an egg — only when nothing else on screen is in
+  // reach, so matching a neighbour's size or edge always wins over the own proportion.
   const across = horizontal ? rect0.height : rect0.width;
   let moved = false;
   const move = e => {
@@ -1183,7 +1184,7 @@ function startPartResize(event, handle) {
       const reach = mobileView() ? 10 : 7;
       lines.forEach(({ v, r }) => { const d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r }; });
       sizes.forEach(({ size, r }) => { const v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, size: true, r }; });
-      const square = fixed + sign * across, ds = Math.abs(edge - square); if (ds <= 10) best = { d: ds, edge: square, square: true };
+      const square = fixed + sign * across, ds = Math.abs(edge - square); if (!best && ds <= reach) best = { d: ds, edge: square, square: true };
       if (best) edge = best.edge;
     }
     // Parts never overlap: the moving side stops at a part lying next to it.

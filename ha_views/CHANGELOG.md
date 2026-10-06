@@ -1,3 +1,7 @@
+## 0.4.1-beta.378
+
+- **Zmiana rozmiaru części kółeczkami**: przyciąganie do sąsiednich elementów (ten sam rozmiar, krawędzie, środki) ma teraz pierwszeństwo przed wyrównaniem ikony do kwadratu. Proporcja „szerokość = wysokość” łapie się tylko wtedy, gdy w zasięgu nie ma innego obiektu — linie pomocnicze i znaczniki wymiaru do sąsiedniej ikony już nie znikają.
+
 ## 0.4.1-beta.377
 
 - Menu przyciągania: wiersz „Punkty” nazywa się teraz „Wyrównuj po” (środki, krawędzie, odstępy).
