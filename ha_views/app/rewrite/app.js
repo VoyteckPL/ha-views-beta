@@ -4907,13 +4907,13 @@ function addIconElement([x, y], entity = null) {
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
 }
 // Termostat: a label on a climate entity, laid out freely (each part can be moved inside the group or ungrouped).
-const THERMO_LAYOUT = { labelName:[0,-128], labelAction:[0,-102], labelDial:[0,0], labelTarget:[0,-8], labelCurrent:[0,31], labelMinus:[-72,100], labelPlus:[72,100], labelModes:[0,146], labelIcon:[0,-160], labelState:[0,180] };
+const THERMO_LAYOUT = { labelIcon:[0,-177], labelName:[0,-131], labelAction:[0,-96], labelDial:[0,0], labelTarget:[0,-18], labelCurrent:[0,25], labelMinus:[-70,90], labelPlus:[70,90], labelModes:[0,146], labelState:[0,184] };
 // The default look of a thermostat (a new one, and "Ustaw domyślny" on an existing one).
 function thermoLook() {
   const place = Object.fromEntries(Object.entries(THERMO_LAYOUT).flatMap(([k, [fx, fy]]) => [[`${k}FX`, fx], [`${k}FY`, fy]]));
   return { ...NEW_ROOM_LABEL, labelCardScale:.8, labelCardFree:true, labelLinked:true,
-    labelIcon:false, labelState:false, labelName:true, labelDial:true, labelTarget:true, labelCurrent:true, labelAction:true, labelMinus:true, labelPlus:true, labelModes:true,
-    labelNameBg:false, labelNameBorder:false, labelStateBg:false, labelStateBorder:false, labelNameSize:19, labelDialSize:30, labelTargetSize:46, labelTargetWeight:'bold', labelCurrentSize:18, labelActionSize:15, labelModesSize:19,
+    labelIcon:true, labelState:false, labelName:true, labelDial:true, labelTarget:true, labelCurrent:true, labelAction:true, labelMinus:true, labelPlus:true, labelModes:true,
+    labelStateBg:false, labelStateBorder:false, labelIconSize:32, labelNameSize:19, labelDialSize:30, labelTargetSize:46, labelTargetWeight:'bold', labelCurrentSize:18, labelActionSize:15, labelModesSize:19,
     labelMinusSize:24, labelMinusBg:true, labelMinusBgColor:'#FFFFFF', labelMinusBgOpacity:.08, labelMinusBorder:true, labelMinusBorderOpacity:.25, labelMinusRadius:40, labelMinusPadding:5,
     labelPlusSize:24, labelPlusBg:true, labelPlusBgColor:'#FFFFFF', labelPlusBgOpacity:.08, labelPlusBorder:true, labelPlusBorderOpacity:.25, labelPlusRadius:40, labelPlusPadding:5,
     labelActionBg:true, labelActionBgOpacity:.4, labelActionRadius:20, labelActionPadding:3, labelCardRadius:26, labelCardPadding:14, tapAction:'more_info', ...place };

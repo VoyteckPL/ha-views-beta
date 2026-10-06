@@ -1,3 +1,7 @@
+## 0.4.1-beta.398
+
+- **Termostat — nowy domyślny układ** (po dodaniu i po „Ustaw domyślny”): na górze ikona encji w okrągłej ramce, pod nią nazwa w ramce, stan pracy, tarcza z temperaturą ustawioną i aktualną w środku, przyciski − / + po bokach dołu tarczy i tryby pod spodem.
+
 ## 0.4.1-beta.397
 
 - **Termostat — własne teksty**: w części **Stan pracy** podsekcja „Teksty” z polem dla każdego stanu `hvac_action` (Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony); puste pole = tekst domyślny.
