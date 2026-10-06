@@ -1,3 +1,8 @@
+## 0.4.1-beta.397
+
+- **Termostat — własne teksty**: w części **Stan pracy** podsekcja „Teksty” z polem dla każdego stanu `hvac_action` (Grzeje, Nagrzewa, Chłodzi, Osusza, Wentyluje, Odmraża, Bezczynny, Wyłączony); puste pole = tekst domyślny.
+- **Stan główny (tryb)**: część **Stan** termostatu pokazuje bieżący tryb (`hvac_mode`) — można ją włączyć w Grupa → Pokaż jako „Tryb (stan)”. W jej sekcji (i w sekcji Tryby) podsekcja „Teksty trybów” z własnym tekstem dla każdego trybu; tekst trybu „wyłączony” zastępuje też „Wył.” na środku tarczy, a teksty trybów są podpowiedziami przycisków trybów.
+
 ## 0.4.1-beta.396
 
 - **Termostat: części na tarczy**: po rozgrupowaniu na tarczę można nakładać inne części (np. temperaturę ustawioną, aktualną, przyciski) — tarcza nie odpycha ich i sama też nie jest odpychana. Pozostałe części dalej się nie nakładają.
