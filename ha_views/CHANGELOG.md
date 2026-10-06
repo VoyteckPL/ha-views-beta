@@ -1,3 +1,7 @@
+## 0.4.1-beta.365
+
+- **Przyciąganie do częściowo widocznych etykiet**: przy przybliżonym widoku plan zajmuje cały ekran (poza kartą), a „widoczny obszar” był liczony tylko z karty — etykiety widoczne na ekranie, ale poza kartą, były pomijane. Teraz liczy się cały ekran pod górnym paskiem; każdy obiekt choć częściowo widoczny jest celem przyciągania.
+
 ## 0.4.1-beta.364
 
 - **Przyciąganie słucha ustawień „Krawędzie” / „Środki”**: przy przeciąganiu etykiet wyłączone krawędzie nie przyciągają (także styk, odstęp 8 px i równe odstępy, które się na nich opierają), a wyłączone środki — środków.

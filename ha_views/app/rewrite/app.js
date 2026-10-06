@@ -2226,10 +2226,12 @@ function alignSelectedToBackground(where) {
 }
 // Snap targets shared by markers, Flows and rooms: every other marker / Flow, every room (its bounding box and
 // its corners, so irregular walls line up too) and the background. Nothing depends on where the drag starts.
-// Snapping uses only what is on screen: the part of the plan's viewport inside the window (zoomed phone view).
+// Snapping uses only what is on screen (partly visible objects count): the window below the top bar, within the area
+// the plan's card shows - a zoomed portrait plan may use the screen beyond the card (its clip margin).
 function visibleSceneRect() {
-  const v = els.viewport?.getBoundingClientRect() || els.scene.getBoundingClientRect();
-  return { left: Math.max(v.left, 0), top: Math.max(v.top, 0), right: Math.min(v.right, innerWidth), bottom: Math.min(v.bottom, innerHeight) };
+  const card = (els.sceneCard || els.viewport || els.scene).getBoundingClientRect(), margin = parseFloat(els.sceneCard?.style.getPropertyValue('--card-clip')) || 0;
+  const expanded = !!els.sceneCard?.classList.contains('portrait-zoom-expanded'), m = expanded ? margin : 0, bar = $('.topbar')?.getBoundingClientRect().bottom || 0;
+  return { left: Math.max(card.left - m, 0), top: Math.max(card.top - m, bar, 0), right: Math.min(card.right + m, innerWidth), bottom: Math.min(card.bottom + m, innerHeight) };
 }
 function rectOnScreen(r, view = visibleSceneRect()) { return r.right > view.left && r.left < view.right && r.bottom > view.top && r.top < view.bottom; }
 function guideTargets({ node = null, roomId = '' } = {}) {
