@@ -1510,6 +1510,22 @@ function startRoomLabelDrag(event) {
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startFreeResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
+  // Ungrouped, on a phone: only the active part moves at once. A finger landing on another part does not grab it - a
+  // tap makes it the active one (then it can be moved), a drag moves the plan - so passing fingers move nothing by mistake.
+  if (event.pointerType === 'touch' && selectedRoomId === room.id && !room.labelLinked && node.dataset.labelPart !== 'card' && !node.classList.contains('active-part')) {
+    event.preventDefault(); event.stopPropagation(); viewportPointerDown(event);
+    const sx = event.clientX, sy = event.clientY, t0 = performance.now(), id = event.pointerId, partName = node.dataset.labelPart;
+    const end = e => {
+      if (e.pointerId !== id) return; window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
+      if (e.type !== 'pointerup' || Math.hypot(e.clientX - sx, e.clientY - sy) >= 10 || performance.now() - t0 > 700 || touchesDown.size > 1) return;
+      const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 400);
+      selectedLabelPart = partName; panelPart = null; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n.dataset.labelPart === partName));
+      renderRoomLabels(); if ($('#room-editor')?.classList.contains('visible')) focusPartSection(partName);
+      requestAnimationFrame(() => requestAnimationFrame(() => { const box = partFocusBox(room, partName); if (box) focusSceneBoxOnMobile(box); }));
+    };
+    window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
+    return;
+  }
   if (node.dataset.labelPart !== 'card') {
     selectedLabelPart = node.dataset.labelPart; panelPart = null; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n === node));
     // The panel follows the touched part: its section opens and is marked (now, or when the panel opens).

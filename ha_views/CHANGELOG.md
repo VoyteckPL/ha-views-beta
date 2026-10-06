@@ -1,3 +1,7 @@
+## 0.4.1-beta.436
+
+- **Zabezpieczenie przed złapaniem nie tej części (telefon)**: w rozgrupowanym termostacie / etykiecie od razu przesuwa się tylko aktywna część (ta z kropkami w rogach). Palec położony na innej części jej nie łapie — przeciągnięcie przesuwa wtedy widok planu, a krótkie dotknięcie robi z niej aktywną część (zaznaczoną, z sekcją w panelu i przybliżeniem); dopiero wtedy da się ją przesunąć.
+
 ## 0.4.1-beta.435
 
 - **Tarcza bez marginesu także na szerokość**: tarcza nie ma już osobnej szerokości / wysokości ramki (to one dawały pusty margin po bokach) — jej obszar to zawsze sam rysunek. Kropki w rogach tarczy zmieniają jej rozmiar proporcjonalnie (powiększają / zmniejszają cały łuk), zamiast rozciągać pustą ramkę.
