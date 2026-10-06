@@ -1235,10 +1235,10 @@ function startFreeResize(event, handle) {
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
   const st = snapTargets(), view = visibleSceneRect(), useSnap = st.guides;
   const g = useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
-  const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top });
-  const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(n => n.getBoundingClientRect()).filter(r => r.width);
+  const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top, radius: r.radius });
+  const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(shapedRect).filter(r => r.width);
   if (useSnap) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
-  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view))] : [];
+  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
@@ -1280,7 +1280,7 @@ function startFreeResize(event, handle) {
     const vertical = [], horizontal = [], marks = [], hits = [];
     const add = (b, isX) => {
       if (!b || b.grid) return; const t = b.r || (b.t?.box ? { left: b.t.box.l + scene.left, right: b.t.box.r + scene.left, top: b.t.box.t + scene.top, bottom: b.t.box.b + scene.top } : null);
-      if (t) hits.push({ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, kind: b.t?.kind || 'label' });
+      if (t) hits.push({ l: t.left - scene.left, r: t.right - scene.left, t: t.top - scene.top, b: t.bottom - scene.top, radius: t.radius ?? b.t?.box?.radius, kind: b.t?.kind || 'label' });
       if (b.size && t) { if (isX) marks.push({ axis: 'x', from: px(r.left), to: px(r.right), at: py(r.bottom + 6) }, { axis: 'x', from: px(t.left), to: px(t.right), at: py(t.bottom + 6) }); else marks.push({ axis: 'y', from: py(r.top), to: py(r.bottom), at: px(r.right + 6) }, { axis: 'y', from: py(t.top), to: py(t.bottom), at: px(t.right + 6) }); return; }
       const kind = b.t?.kind || 'label';
       if (isX) vertical.push({ at: px(b.edge), kind, ...(t ? { from: py(Math.min(r.top, t.top)), to: py(Math.max(r.bottom, t.bottom)) } : {}) });
@@ -1342,9 +1342,9 @@ function startCardResize(event, handle) {
   const targets = useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
   const boxOf = r => ({ l: r.left - sceneRect.left, r: r.right - sceneRect.left, t: r.top - sceneRect.top, b: r.bottom - sceneRect.top });
   // A part also lines up with the other parts of its own label.
-  const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(n => n.getBoundingClientRect()).filter(r => r.width);
+  const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(shapedRect).filter(r => r.width);
   if (useSnap) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => targets.xs.push({ v: v - sceneRect.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => targets.ys.push({ v: v - sceneRect.top, kind: 'label', box: boxOf(r) })); });
-  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(n => n.getBoundingClientRect()).filter(r => r.width && rectOnScreen(r, view))] : [];
+  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
   const render = () => { renderRoomLabels(); return $(sel)?.getBoundingClientRect(); };
   const move = e => {
@@ -1433,7 +1433,7 @@ function startRoomLabelDrag(event) {
     const boxes = [
       ...(snapTargets().guides && snapTargets().labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null) : []),
       ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1]))
-    ].filter(other => rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), own: ownPart(other) })).filter(b => b.r - b.l > 1);
+    ].filter(other => rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), radius: shapedRect(other).radius, own: ownPart(other) })).filter(b => b.r - b.l > 1);
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
@@ -2529,6 +2529,8 @@ function visibleSceneRect() {
   const expanded = !!els.sceneCard?.classList.contains('portrait-zoom-expanded'), m = expanded ? margin : 0, bar = $('.topbar')?.getBoundingClientRect().bottom || 0;
   return { left: Math.max(card.left - m, 0), top: Math.max(card.top - m, bar, 0), right: Math.min(card.right + m, innerWidth), bottom: Math.min(card.bottom + m, innerHeight) };
 }
+// An element's box with its corner radius (screen px), so a highlighted snap target has exactly the element's shape.
+function shapedRect(node) { const r = node.getBoundingClientRect(), k = r.width / Math.max(1, node.offsetWidth), cs = getComputedStyle(node); const radius = node.classList.contains('marker') && node.style.borderRadius ? parseFloat(node.style.borderRadius) : parseFloat(cs.borderTopLeftRadius); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height, radius: /%$/.test(cs.borderTopLeftRadius) || /%$/.test(node.style.borderRadius || '') ? Math.min(r.width, r.height) / 2 : (radius || 0) * k }; }
 function rectOnScreen(r, view = visibleSceneRect()) { return r.right > view.left && r.left < view.right && r.bottom > view.top && r.top < view.bottom; }
 function guideTargets({ node = null, roomId = '' } = {}) {
   const scene = els.scene.getBoundingClientRect();
@@ -2541,9 +2543,9 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   if (t.flows) $$('.flow-marker', els.markers).forEach(other => elements.push([other, 'flow']));
   // Labels: a group as a whole, or each ungrouped part (not the label of the room / label being moved).
   if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other, 'label']));
-  const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [other.getBoundingClientRect(), kind]).filter(([r]) => onScreen(r)).filter(([r]) => r.width);
+  const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [shapedRect(other), kind]).filter(([r]) => onScreen(r)).filter(([r]) => r.width);
   // Every guide carries the box it comes from (the snapped-to object is highlighted).
-  const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top });
+  const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top, radius: r.radius });
   const xs = targets.flatMap(([r, kind]) => points(r.left, r.right).map(v => ({ v: v - scene.left, kind, box: boxOf(r), center: v === (r.left + r.right) / 2 })));
   const ys = targets.flatMap(([r, kind]) => points(r.top, r.bottom).map(v => ({ v: v - scene.top, kind, box: boxOf(r), center: v === (r.top + r.bottom) / 2 })));
   if (t.rooms) Object.values(roomsOf()).filter(room => room.id !== roomId && (room.points || []).length >= 3).forEach(room => {
@@ -2671,7 +2673,7 @@ function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
   const spanV = g => g.from != null ? `;top:${g.from}%;bottom:auto;height:${g.to - g.from}%` : '', spanH = g => g.from != null ? `;left:${g.from}%;right:auto;width:${g.to - g.from}%` : '';
   layer.innerHTML = vertical.map(g => `<span class="align-guide vertical${kind(g)}" style="left:${g.at}%${spanV(g)}"></span>`).join('') + horizontal.map(g => `<span class="align-guide horizontal${kind(g)}" style="top:${g.at}%${spanH(g)}"></span>`).join('')
     // The object snapped to gets a soft frame (in its kind's colour); boxes are px from the scene's top left.
-    + hits.map(b => { const sc = els.scene.getBoundingClientRect(), W = sc.width || 1, H = sc.height || 1; return `<span class="snap-target k-${b.kind || 'label'}" style="left:${b.l / W * 100}%;top:${b.t / H * 100}%;width:${(b.r - b.l) / W * 100}%;height:${(b.b - b.t) / H * 100}%"></span>`; }).join('')
+    + hits.map(b => { const sc = els.scene.getBoundingClientRect(), W = sc.width || 1, H = sc.height || 1; return `<span class="snap-target k-${b.kind || 'label'}" style="left:${b.l / W * 100}%;top:${b.t / H * 100}%;width:${(b.r - b.l) / W * 100}%;height:${(b.b - b.t) / H * 100}%${Number.isFinite(b.radius) ? `;border-radius:calc(${b.radius.toFixed(2)}px / var(--view-zoom,1))` : ''}"></span>`; }).join('')
     + marks.map(m => m.axis === 'x' ? `<span class="gap-mark x${m.kind ? ' k-' + m.kind : ''}" style="left:${m.from}%;width:${m.to - m.from}%;top:${m.at}%"></span>` : `<span class="gap-mark y${m.kind ? ' k-' + m.kind : ''}" style="top:${m.from}%;height:${m.to - m.from}%;left:${m.at}%"></span>`).join('');
 }
 // ---- Keep elements inside the background ("Granice tła", on by default) -------------------

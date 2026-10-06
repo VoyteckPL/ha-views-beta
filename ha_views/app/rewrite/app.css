@@ -1413,3 +1413,8 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .thermo-templates>label{flex:0 0 auto}
 .room-editor .thermo-templates{grid-template-columns:70px minmax(0,1fr) 0}
 .room-editor .thermo-templates .room-card-presets{flex-wrap:nowrap!important;gap:3px!important}
+/* Edit outlines lie exactly on the element (no offset) with its own corners, and the corner dots sit on its corners,
+   so what is seen while snapping is the element's real box - the same box the guide lines and highlights use. */
+.room-label-part.editable::after,.room-label-card.editable::after,.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{inset:0!important;border-radius:inherit!important}
+.card-handle.nw{left:0;top:0}.card-handle.ne{left:100%;top:0}.card-handle.sw{left:0;top:100%}.card-handle.se{left:100%;top:100%}
+.room-label-part.editable.selected.square::before,.room-label-card.editable.selected.square::before{top:0}

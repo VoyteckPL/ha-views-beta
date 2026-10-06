@@ -1,3 +1,8 @@
+## 0.4.1-beta.411
+
+- **Ramki edycji bez odstępu**: przerywane obrysy etykiet, termostatów, tekstów i ich części (żółty, niebieski zaznaczenia, zielony 1:1) leżą teraz dokładnie na krawędzi elementu, z jego zaokrągleniem, a kółeczka są dokładnie w jego rogach.
+- **Podświetlenie celu przyciągania ma kształt elementu**: ramka obiektu, do którego się przyciągasz, ma dokładnie jego wymiary i zaokrąglenie narożników (etykiety, części, markery), więc linie pomocnicze, obrys i podświetlenie wypadają w tych samych miejscach.
+
 ## 0.4.1-beta.410
 
 - **Kopiowanie stylu termostatu 1:1**: kopiuj / wklej styl przenosi teraz wszystkie ustawienia wyglądu — każdą część termostatu (tarcza, temperatury, stan pracy, przyciski, tryby, stan, nazwa, ikona) z rozmiarem, kolorami, tłem, ramką, jednostką, zaokrągleniem i tekstami, kolory stanu pracy, tarczę, grupowanie i układ części. Między dwoma termostatami wklejenie jest 1:1 (także położenie części); nazwa, encja i miejsce na planie zostają. Etykiety i pomieszczenia też kopiują teraz pełny wygląd części.
