@@ -1,3 +1,7 @@
+## 0.4.1-beta.374
+
+- Menu przyciągania: ikony „Przyciągaj do” w jednym rzędzie (po polsku dłuższy napis spychał ostatnią ikonę niżej, a napis wyglądał na wyrównany do dołu); menu dopasowuje szerokość do zawartości.
+
 ## 0.4.1-beta.373
 
 - Usunięty przycisk „Duplikuj” elementu (marker / wskaźnik, Flow, pomieszczenie / etykieta) z nagłówków ich popupów. Duplikowanie widoku zostaje.

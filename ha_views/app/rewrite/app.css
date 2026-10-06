@@ -1257,3 +1257,5 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .snap-menu .snap-row .snap-icons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
 .snap-menu .snap-row .snap-icon{width:28px;height:28px;font-size:15px}
 .snap-menu .grid-row{justify-content:flex-end}
+.snap-menu .snap-row .snap-icons{flex-wrap:nowrap}
+.snap-menu{width:max-content;max-width:calc(100vw - 16px)}
