@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-379">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-380">
 </head>
 <body>
   <header class="topbar">
@@ -95,7 +95,7 @@
           <div class="vm-field vm-toggle-row"><span><i class="mdi mdi-magnify-plus-outline"></i>Zoom poza edycją</span><button id="view-zoom-toggle" class="vm-icon" type="button" aria-pressed="true" title="Zoom poza edycją" aria-label="Zoom poza edycją"><i class="mdi mdi-magnify-plus-outline"></i></button></div>
           <label class="vm-field"><span><i class="mdi mdi-dock-right"></i>Panel edycji</span><select id="dock-side-select" aria-label="Panel edycji"><option value="right">Po prawej</option><option value="left">Po lewej</option></select></label>
           <label class="vm-field"><span><i class="mdi mdi-translate"></i>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">English</option><option value="pl">Polski</option></select></label>
-          <label class="vm-field" id="ha-start-row" hidden><span><i class="mdi mdi-home-import-outline"></i>Domyślny panel Home Assistant</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian (ustawienia HA)</option><option value="user">HA Views — moje konto</option><option value="device">HA Views — tylko to urządzenie</option></select></label>
+          <label class="vm-field" id="ha-start-row" hidden><span><i class="mdi mdi-home-import-outline"></i>Panel startowy HA</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian</option><option value="user">HA Views (konto)</option><option value="device">HA Views (urządzenie)</option></select></label>
           <button id="view-link" class="vm-tile vm-link" type="button" title="Kopiuj link do widoku" aria-label="Kopiuj link do widoku"><i class="mdi mdi-link-variant"></i><span>Kopiuj link do widoku</span><i class="mdi mdi-content-copy vm-chev"></i></button>
           <button id="view-delete" class="vm-danger" type="button" title="Usuń widok" aria-label="Usuń widok"><i class="mdi mdi-delete-outline"></i><span>Usuń widok</span></button>
         </div>
@@ -343,6 +343,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-379"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-380"></script>
 </body>
 </html>

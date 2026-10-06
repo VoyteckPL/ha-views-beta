@@ -1,3 +1,7 @@
+## 0.4.1-beta.380
+
+- Menu Widok → Opcje bez poziomego przewijania: długie nazwy ucinają się wielokropkiem zamiast poszerzać menu, przełącznik zoomu zawsze widoczny. Krótsze teksty: „Panel startowy HA” z opcjami „Bez zmian”, „HA Views (konto)”, „HA Views (urządzenie)”.
+
 ## 0.4.1-beta.379
 
 - **Menu Widok w stylu popupów**: mniejsze ikony (jak w popupach elementów), Tło / Opcje jako zwykłe wiersze zamiast dużych kafli, w Opcjach nazwa po lewej i lista po prawej; całe menu (także strona Tło) jest bardziej kompaktowe.

@@ -1294,3 +1294,8 @@ img.room-layer.room-glow.flat{will-change:opacity}
   .vm-formats button{height:32px;font-size:11px}.vm-size-row .vm-icon{height:36px}
   .vm-page[data-vm-page="options"] .vm-field select{flex-basis:160px;width:160px}
 }
+/* Options rows never widen the menu: a long name is cut with an ellipsis, the control keeps its place on the right. */
+.vm{overflow-x:hidden}
+.vm-page[data-vm-page="options"] .vm-field>span{overflow:hidden;text-overflow:ellipsis}
+.vm-page[data-vm-page="options"] .vm-field>span i{flex:0 0 auto}
+.vm-page[data-vm-page="options"] .vm-field>select,.vm-page[data-vm-page="options"] .vm-field>button{flex-shrink:0}
