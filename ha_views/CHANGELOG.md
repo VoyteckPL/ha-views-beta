@@ -1,3 +1,7 @@
+## 0.4.1-beta.389
+
+- **Suwak „Rozmiar” w grupie zmienia tylko zawartość**: ikona, nazwa i stan w środku zgrupowanej etykiety rosną / maleją, a ramka (tło i obramowanie) zostaje tej samej wielkości na planie. Ramka powiększa się tylko wtedy, gdy zawartość przestaje się w niej mieścić. Całą etykietę razem z ramką skalują kółeczka w rogach.
+
 ## 0.4.1-beta.388
 
 - **Szerokość i wysokość niezależnie**: zaznaczona etykieta i rozgrupowana część mają teraz kółeczka w rogach (proporcjonalne skalowanie) **i** kropki na środkach boków (tylko szerokość albo tylko wysokość, przeciwny bok zostaje w miejscu). Zgrupowana etykieta zapamiętuje swoją szerokość / wysokość ramki (nie mniejszą niż zawartość). Boki przyciągają się do linii innych elementów i do szerokości / wysokości innej etykiety lub części.

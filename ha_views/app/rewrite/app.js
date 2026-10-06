@@ -2056,7 +2056,12 @@ function onRoomEditorInput(event) {
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
   if (path === 'labelSizeUi') {
+    // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
+    // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.
+    const card = room.labelLinked && !(isIconRoom(room) && dashSpan(room)) ? document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`) : null, oldScale = clamp(Number(room.labelCardScale) || 1, .3, 4);
+    if (card && !input._frame) { input._frame = { w: card.offsetWidth * oldScale, h: card.offsetHeight * oldScale }; input.addEventListener('change', () => { delete input._frame; }, { once:true }); }
     room.labelCardScale = Math.round(clamp(value * labelScaleBase(room), .2, 4) * 1000) / 1000; room.updatedAt = new Date().toISOString();
+    if (input._frame) { const k = clamp(room.labelCardScale, .3, 4); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
