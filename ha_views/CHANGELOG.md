@@ -1,3 +1,10 @@
+## 0.6.0-beta.458
+
+- **Ramka grupy w rozgrupowanym zawsze zostaje jak w grupie**: usunięty wybór „Dopasuj do części” i cały wiersz „Ramka grupy”. Po rozgrupowaniu ramka i tło stoją w miejscu i mają rozmiar z grupy.
+- **Suwak Rozmiar nie rusza ramki także w rozgrupowanym**: zmienia tylko części, ramka zostaje tego samego rozmiaru na planie, tak jak w zgrupowanym. Po ponownym zgrupowaniu ramka ma ten sam rozmiar.
+- **Rozmiar grupy do 6×** (było 4,5×).
+- **Usunięty suwak „Margines” grupy.** Dotychczasowe ustawienie zostaje, więc istniejące ramki się nie zmieniają.
+
 ## 0.6.0-beta.457
 
 - **Rozgrupowanie i zgrupowanie bez zmian nic już nie przesuwa**: wcześniej położenia części były przy każdym przełączeniu zaokrąglane do pełnego piksela, więc ramka grupy minimalnie się zmieniała. Teraz, jeśli żadna część nie została ruszona, grupa wraca dokładnie taka, jaka była. Gdy coś przesuniesz, położenia są liczone z dokładnością 0,01 px.
