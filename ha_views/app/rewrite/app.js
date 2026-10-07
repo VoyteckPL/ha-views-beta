@@ -1122,7 +1122,7 @@ const actPath = (onPath, act) => onPath.replace(/On(?=[A-Z]|$)/, `_${act}`);
 const actWorking = act => !['idle','off'].includes(act);
 // The thermostat's "Stan" part shows its mode, so its look follows the mode (heat, auto, off…), each with its own
 // value ("…_m_heat…"); a mode without one takes the ON value, "off" the OFF one.
-const STATE_BY_MODE = /^labelState/;
+const STATE_BY_MODE = /^label(State|Modes)/; // "Stan" and "Tryby" follow the mode
 function sv(r, onKey, offKey, on) {
   if (r?.__mode && STATE_BY_MODE.test(onKey)) { const v = r[actPath(onKey, `m_${r.__mode}`)]; return v !== undefined && v !== '' && v !== null ? v : r.__mode !== 'off' ? r[onKey] : r[offKey]; }
   if (r?.__act) { const v = r[actPath(onKey, r.__act)]; return v !== undefined && v !== '' && v !== null ? v : actWorking(r.__act) ? r[onKey] : r[offKey]; }
@@ -1264,9 +1264,10 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
   // A change not yet confirmed by the device pulses; presets (eco, comfort, boost…) can follow as a second row.
   const tp = thermoPending.get(marker.entityId) || {};
   if (r.labelModes && (info.modes.length || (r.thermoPresets && info.presets.length))) {
-    const shown = thermoModesOrdered(r, info.modes), cycle = r.thermoModeLayout === 'cycle';
+    const shown = thermoModesOrdered(r, info.modes), cycle = r.thermoModeLayout === 'cycle', modeColor = m => ['auto','heat_cool'].includes(m) ? (r.thermoAutoColor || '#34D399') : thermoActColor(r, ({ heat:'heating', cool:'cooling', dry:'drying', fan_only:'fan', off:'off' })[m] || 'idle');
     const modeBtn = (m, target = m) => { const d = THERMO_MODES[m] || [m, 'mdi-thermostat'], own = String(r[`thermoModeIcon_${m}`] || '').trim().replace(/^mdi:/, 'mdi-'), icon = own ? (own.startsWith('mdi-') ? own : `mdi-${own}`) : d[1];
-      const c = m === info.mode ? (r[`thermoModeActive_${m}`] || (r.thermoModeAccent === false && r.thermoModeActiveColor ? r.thermoModeActiveColor : accent)) : thermoActColor(r, ({ heat:'heating', cool:'cooling', dry:'drying', fan_only:'fan', off:'off' })[m] || 'idle');
+      // The active button takes its mode's colour (not the work state's): heat stays orange while the boiler idles.
+      const c = m === info.mode ? (r[`thermoModeActive_${m}`] || (r.thermoModeAccent === false && r.thermoModeActiveColor ? r.thermoModeActiveColor : modeColor(m))) : modeColor(m);
       const ownColor = r[`thermoModeColor_${m}`] ? `;color:${esc(r[`thermoModeColor_${m}`])}` : ''; // this mode's icon colour (else the part's colour)
       const pend = tp.hvac_mode === m && info.realMode !== m ? ' pending' : '', label = cycle && target !== m ? `${thermoModeText(r, m)} → ${thermoModeText(r, target)}` : thermoModeText(r, m);
       return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}${pend}${cycle ? ' cycle' : ''}" data-thermo-mode="${esc(target)}" title="${esc(label)}" aria-label="${esc(label)}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}${ownColor}"><i class="mdi ${esc(icon)}"></i></button>`; };
@@ -1276,7 +1277,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
       else row = shown.map(m => modeBtn(m)).join('');
     }
     const presets = r.thermoPresets && !info.water ? info.presets.filter(p => r[`thermoPresetShow_${p}`] !== false) : [];
-    const presetRow = presets.length ? `<span class="thermo-preset-row">${presets.map(p => `<button type="button" class="thermo-preset-btn${p === info.preset ? ' on' : ''}${tp.preset_mode === p && info.realPreset !== p ? ' pending' : ''}" data-thermo-preset="${esc(p)}" style="--mode:${esc(accent)};${roomTextStyle(r, 'labelModes', on)}">${esc(thermoPresetText(r, p))}</button>`).join('')}</span>` : '';
+    const presetRow = presets.length ? `<span class="thermo-preset-row">${presets.map(p => `<button type="button" class="thermo-preset-btn${p === info.preset ? ' on' : ''}${tp.preset_mode === p && info.realPreset !== p ? ' pending' : ''}" data-thermo-preset="${esc(p)}" style="--mode:${esc(modeColor(info.mode))};${roomTextStyle(r, 'labelModes', on)}">${esc(thermoPresetText(r, p))}</button>`).join('')}</span>` : '';
     parts.modes = `<span class="thermo-modes-wrap">${row ? `<span class="thermo-mode-row${r.thermoModeFrame === false ? ' no-frame' : ''}" style="gap:${clamp(Number(r.thermoModeGap ?? 40), 0, 300) / 100}em;--mode-radius:${clamp(Number(r.thermoModeRadius ?? 30), 0, 50)}%">${row}</span>` : ''}${presetRow}</span>`;
   }
   return { accent, parts };
@@ -2563,7 +2564,7 @@ function onRoomEditorInput(event) {
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
   // Editing one mode's "Stan" look shows that mode, so the change is seen whatever mode the device is in now.
-  const modeEdit = isThermoRoom(room) && /^labelState\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
+  const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
   if (path === 'dashW' || path === 'dashH') {
     const span = dashSpan(room), g = dashGrid(); if (!span) return;
     const d = room.dash, w = clamp(Math.round(path === 'dashW' ? value : d.w), 1, g.cols), h = clamp(Math.round(path === 'dashH' ? value : d.h), 1, g.rows);

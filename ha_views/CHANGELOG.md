@@ -1,3 +1,10 @@
+## 0.6.0-beta.462
+
+- **Termostat: „Tryby” zależą od trybu, nie od pracy**:
+  - Aktywny przycisk trybu ma kolor swojego trybu: Grzanie zostaje pomarańczowe także wtedy, gdy piec jest bezczynny, a Auto jest zielone. Wcześniej brał kolor stanu pracy, więc przy bezczynnym piecu był szary. Własny „Kolor aktywnego” dla trybu nadal ma pierwszeństwo.
+  - Aktywny preset ma kolor bieżącego trybu.
+  - Część Tryby (kolor, przezroczystość, tło, ramka) ustawia się osobno dla każdego trybu, jak Stan, z przełącznikiem „Zależne od trybu”. Zmiana koloru trybu włącza jego podgląd.
+
 ## 0.6.0-beta.461
 
 - **Termostat, Stan według trybu, poprawka**: zmiana koloru (albo tła, ramki, przezroczystości) dla danego trybu od razu włącza podgląd tego trybu. Stan pokazuje wtedy jego nazwę i nowy kolor, a przycisk podglądu w nagłówku pokazuje nazwę trybu (kliknięcie wraca do stanu rzeczywistego). Wcześniej zmiana była niewidoczna, gdy urządzenie było w innym trybie, np. wyłączone.
