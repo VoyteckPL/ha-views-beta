@@ -1393,7 +1393,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   // A preview of one mode ("mode:heat", set while that mode's "Stan" colours are edited).
   const modePreview = isThermoRoom(r) && String(preview).startsWith('mode:') ? String(preview).slice(5) : '';
   if (modePreview) preview = modePreview === 'off' ? 'off' : 'on';
-  const realOn = roomLight(r).on, on = preview ? preview === 'on' : realOn, [x, y] = roomAnchor(r), tap = (isIconRoom(r) ? ' tappable' : '') + (interactive && r.id === selectedRoomId ? ' selected' : '');
+  const realOn = roomLight(r).on, on = preview ? preview === 'on' : realOn, [x, y] = roomAnchor(r), tap = ' tappable' + (interactive && r.id === selectedRoomId ? ' selected' : '');
   // The ON / OFF preview simulates the state text too.
   // A thermostat's ON / OFF preview shows its mode texts: "off", or the mode it would be in when on.
   const thermoPreview = modePreview || (isThermoRoom(r) && preview ? (() => { if (preview === 'off') return 'off'; const i = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); return i.mode && i.mode !== 'off' ? i.mode : i.modes.find(m => m !== 'off') || 'heat'; })() : null);

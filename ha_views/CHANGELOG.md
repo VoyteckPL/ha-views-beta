@@ -1,3 +1,7 @@
+## 0.6.1-beta.467
+
+- **Etykieta pomieszczenia jest klikalna**: dotknięcie ikony, nazwy albo stanu pomieszczenia wykonuje akcję pomieszczenia (np. włącza światło), także gdy etykieta stoi poza kształtem pokoju. Wcześniej działało tylko dotknięcie w środek pokoju.
+
 ## 0.6.1-beta.466
 
 - **4 nowe style tarczy** (razem 9):
