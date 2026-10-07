@@ -1,3 +1,8 @@
+## 0.4.1-beta.445
+
+- **Dodatkowe encje termostatu**: w „Ogólne” jest podsekcja **Dodatkowe encje** — wpisz / wybierz dowolną encję związaną z urządzeniem (np. ciśnienie wody, płomień, temperatura zasilania), maksymalnie cztery. Każda staje się osobną częścią termostatu z własną sekcją w panelu (nazwa sekcji = nazwa encji): pokazuje stan encji z jednostką, a w sekcji ustawisz tekst przed wartością (np. „Ciśnienie:”), jednostkę, zaokrąglenie, rozmiar, kolor, tło i ramkę. Ustawia się ją jak każdą rozgrupowaną część (przesuwanie, rozmiar, przyciąganie w grupie); w grupie pojawia się pod pozostałymi. Usuwa się ją krzyżykiem na liście. Stany „on / off” są pokazywane słowami, liczby z przecinkiem.
+- **Animacje termostatu na stałe**: menu „Animacje” w „Ogólne” zostało usunięte — animacje termostatu są zawsze zsynchronizowane, ze stałym cyklem 1,5 s.
+
 ## 0.4.1-beta.444
 
 Przyciski trybów termostatu — nowa logika (część „Tryby”):

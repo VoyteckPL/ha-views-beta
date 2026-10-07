@@ -1527,3 +1527,9 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .mode-order-tools{display:inline-flex;align-items:center;gap:4px}
 .mode-order-tools .room-card-preset{width:26px;min-width:26px;height:26px;padding:0}
 .mode-order-tools .room-card-preset:disabled{opacity:.3}
+/* Extra entities of a thermostat: their own section colours, and their rows in "Dodatkowe encje". */
+.part-x1{--part-color:#a3e635}.part-x2{--part-color:#38bdf8}.part-x3{--part-color:#f9a8d4}.part-x4{--part-color:#fcd34d}
+.extra-entity-row{display:flex!important;align-items:center;justify-content:space-between;gap:8px}
+.extra-entity-row label{display:flex;flex-direction:column;min-width:0}
+.extra-entity-row label small{color:#7f9cad;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.extra-entity-row .room-card-preset{width:26px;min-width:26px;height:26px;padding:0}
