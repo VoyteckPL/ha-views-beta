@@ -1,3 +1,8 @@
+## 0.6.0-beta.461
+
+- **Termostat, Stan według trybu, poprawka**: zmiana koloru (albo tła, ramki, przezroczystości) dla danego trybu od razu włącza podgląd tego trybu. Stan pokazuje wtedy jego nazwę i nowy kolor, a przycisk podglądu w nagłówku pokazuje nazwę trybu (kliknięcie wraca do stanu rzeczywistego). Wcześniej zmiana była niewidoczna, gdy urządzenie było w innym trybie, np. wyłączone.
+- Podgląd stanu pracy w nagłówku bierze kolor Stanu z trybu, który pokazuje, a nie z rzeczywistego.
+
 ## 0.6.0-beta.460
 
 - **Termostat: „Stan” zależy od trybu, nie od pracy**: część Stan pokazuje tryb (Grzanie, Auto, Wyłączony…), więc jej wygląd ustawia się teraz osobno dla każdego trybu urządzenia: kolor, przezroczystość, tło i ramka („Kolor · Grzanie”, „Kolor · Auto”, „Kolor · Wyłączony”). Przełącznik nazywa się „Zależne od trybu”. Tryb bez własnej wartości bierze dotychczasowy kolor ON, a Wyłączony kolor OFF, więc istniejące termostaty wyglądają tak samo. Pozostałe części (tarcza, ikona, stan pracy…) dalej zależą od stanu pracy.

@@ -1289,12 +1289,15 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   const previewAct = isThermoRoom(r) && String(preview).startsWith('act:') ? String(preview).slice(4) : '';
   if (isThermoRoom(r)) r.__act = previewAct || thermoActivity(climateInfo({ entityId: (r.entityIds || [])[0] || '' }));
   if (previewAct) preview = previewAct === 'off' ? 'off' : 'on'; // idle is still a mode that is on (just not working)
-  if (isThermoRoom(r)) { const info = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); r.__mode = String(preview).startsWith('mode:') ? String(preview).slice(5) : previewAct === 'off' ? 'off' : info.mode || (info.modes || [])[0] || ''; }
-  if (String(preview).startsWith('mode:')) preview = r.__mode === 'off' ? 'off' : 'on';
+  // A preview of one mode ("mode:heat", set while that mode's "Stan" colours are edited).
+  const modePreview = isThermoRoom(r) && String(preview).startsWith('mode:') ? String(preview).slice(5) : '';
+  if (modePreview) preview = modePreview === 'off' ? 'off' : 'on';
   const realOn = roomLight(r).on, on = preview ? preview === 'on' : realOn, [x, y] = roomAnchor(r), tap = (isIconRoom(r) ? ' tappable' : '') + (interactive && r.id === selectedRoomId ? ' selected' : '');
   // The ON / OFF preview simulates the state text too.
   // A thermostat's ON / OFF preview shows its mode texts: "off", or the mode it would be in when on.
-  const thermoPreview = isThermoRoom(r) && preview ? (() => { if (preview === 'off') return 'off'; const i = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); return i.mode && i.mode !== 'off' ? i.mode : i.modes.find(m => m !== 'off') || 'heat'; })() : null;
+  const thermoPreview = modePreview || (isThermoRoom(r) && preview ? (() => { if (preview === 'off') return 'off'; const i = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); return i.mode && i.mode !== 'off' ? i.mode : i.modes.find(m => m !== 'off') || 'heat'; })() : null);
+  // "Stan" follows the mode it shows: the previewed one, else the real one.
+  if (isThermoRoom(r)) { const info = climateInfo({ entityId: (r.entityIds || [])[0] || '' }); r.__mode = thermoPreview || (previewAct === 'off' ? 'off' : info.mode || (info.modes || [])[0] || ''); }
   const state = !r.labelState ? '' : thermoPreview ? thermoModeText(r, thermoPreview) : preview === 'off' ? roomOnOffWord(r, false) : preview === 'on' && !realOn ? roomOnOffWord(r, true) : roomLabelState(r);
   // Colours by value (a number entity): below / between / above two thresholds, for the icon and / or the state text.
   const ruleColor = roomRuleColor(r);
@@ -2559,6 +2562,8 @@ function onRoomEditorInput(event) {
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
+  // Editing one mode's "Stan" look shows that mode, so the change is seen whatever mode the device is in now.
+  const modeEdit = isThermoRoom(room) && /^labelState\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
   if (path === 'dashW' || path === 'dashH') {
     const span = dashSpan(room), g = dashGrid(); if (!span) return;
     const d = room.dash, w = clamp(Math.round(path === 'dashW' ? value : d.w), 1, g.cols), h = clamp(Math.round(path === 'dashH' ? value : d.h), 1, g.rows);
@@ -5200,6 +5205,13 @@ function syncHeadPreview(panel, actualOn) {
   button.hidden = !src; if (!src) return;
   const preview = src.dataset.value;
   // A thermostat: the button steps through its work states (the real one first), each previewed in turn.
+  if (src.dataset.acts && preview.startsWith('mode:')) {
+    const mode = preview.slice(5), name = translateValue(mode === 'off' ? 'Wyłączony' : THERMO_MODES[mode]?.[0] || mode);
+    button.dataset.previewPath = src.dataset.path; button.dataset.previewValue = ''; button.classList.add('active', 'with-text'); button.querySelector('i').className = 'mdi mdi-tune-variant';
+    button.title = `${translateValue('Podgląd')}: ${name}`; button.setAttribute('aria-label', button.title);
+    let text = button.querySelector('.head-preview-text'); if (!text) { text = document.createElement('span'); text.className = 'head-preview-text'; button.append(text); } text.textContent = name;
+    return;
+  }
   if (src.dataset.acts) {
     const acts = src.dataset.acts.split(',').filter(Boolean), shown = preview.startsWith('act:') ? preview.slice(4) : src.dataset.current, i = acts.indexOf(shown);
     const next = acts[(i + 1) % Math.max(1, acts.length)] || shown;
