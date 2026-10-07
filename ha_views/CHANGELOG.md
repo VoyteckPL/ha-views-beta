@@ -1,3 +1,9 @@
+## 0.4.1-beta.440
+
+- **Osobne przyciąganie wewnątrz grupy**: przesuwana / zmieniana rozmiarem część rozgrupowanego termostatu lub etykiety łapie się teraz tylko swojej grupy — pozostałych części (krawędzie i środki, ten sam rozmiar, 1:1), osi środka grupy i zewnętrznych krawędzi grupy — niezależnie od ustawień „Przyciągaj do” (wskaźniki, etykiety, pomieszczenia, siatka planu nie przeszkadzają). Wyłącza je tylko wyłączenie linii pomocniczych (albo Alt).
+- **Siatka grupy**: podczas przesuwania i zmiany rozmiaru części pojawia się delikatna fioletowa siatka grupy liczona od jej środka (z wyraźnymi osiami), na której może stanąć także skrajny element. Rośnie i maleje razem z grupą, przy oddaleniu robi się rzadsza; linie planu w tym czasie znikają. Inne części mają pierwszeństwo przed siatką, a proporcja 1:1 przed linią siatki.
+- **Przycisk grupowania w kolorze**: przycisk „Grupuj / Rozgrupuj” w nagłówku panelu jest fioletowy (jak siatka grupy), żeby odróżniał się od pozostałych.
+
 ## 0.4.1-beta.439
 
 - **Przycisk grupowania w nagłówku panelu**: przycisk „Grupuj / Rozgrupuj” przeniesiony z paska sekcji Grupa na górę panelu, obok przycisku „Ustaw domyślny” (przywróć fabryczne). Podświetlony, gdy etykieta jest zgrupowana; widoczny, gdy pokazane są co najmniej dwie części.

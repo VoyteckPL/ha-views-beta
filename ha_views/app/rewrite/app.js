@@ -1333,12 +1333,14 @@ function startFreeResize(event, handle) {
   const fx = sx > 0 ? rect0.left : rect0.right, fy = sy > 0 ? rect0.top : rect0.bottom, cx0 = (rect0.left + rect0.right) / 2, cy0 = (rect0.top + rect0.bottom) / 2;
   const posX = `${key}X`, posY = `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
-  const st = snapTargets(), view = visibleSceneRect(), useSnap = st.guides;
-  const g = useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
+  const groupMode = !isCard && !room.labelLinked, gctx = groupMode ? groupSnap(room, [node]) : null;
+  const st = groupMode ? { ...snapTargets(), edges: true, centers: true, labels: true } : snapTargets(), view = visibleSceneRect(), useSnap = st.guides;
+  const g = groupMode ? { xs: [...gctx.xs], ys: [...gctx.ys] } : useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
+  if (groupMode && useSnap) showGroupGrid(gctx);
   const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top, radius: r.radius });
   const own = isCard ? [] : $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node).map(shapedRect).filter(r => r.width);
-  if (useSnap) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
-  const sizes = useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
+  if (useSnap && !groupMode) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
+  const sizes = useSnap && groupMode ? own : useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
@@ -1351,7 +1353,7 @@ function startFreeResize(event, handle) {
         lines.forEach(t => { const v = (horizontal ? scene.left : scene.top) + t.v, d = Math.abs(edge - v); if (sign * (v - fixed) > 4 && d <= reach && (!best || d < best.d)) best = { d, edge: v, t }; });
         sizes.forEach(r => { const size = horizontal ? r.width : r.height, v = fixed + sign * size, d = Math.abs(edge - v); if (d <= reach && (!best || d < best.d)) best = { d, edge: v, r, size: true }; });
         // The grid holds a little longer than it catches (a firmer grip): a caught line is kept while the pointer stays near.
-        const held = gridHold[horizontal ? 'x' : 'y'], gl = held !== null && Math.abs(edge - held) <= (mobileView() ? 26 : 20) ? held : gridLineNear(edge, horizontal);
+        const held = gridHold[horizontal ? 'x' : 'y'], gl = groupMode ? null : held !== null && Math.abs(edge - held) <= (mobileView() ? 26 : 20) ? held : gridLineNear(edge, horizontal);
         gridHold[horizontal ? 'x' : 'y'] = null;
         if (gl !== null && sign * (gl - fixed) > 4) { const d = Math.abs(edge - gl); if (!best || d < best.d || best.d > 3) { best = { d, edge: gl, grid: true }; gridHold[horizontal ? 'x' : 'y'] = gl; } }
         return best; };
@@ -1359,7 +1361,9 @@ function startFreeResize(event, handle) {
       if (bx) ex = bx.edge; if (by) ey = by.edge;
       // 1:1 - only the side that caught nothing follows the other one.
       const W = Math.abs(ex - fx), H = Math.abs(ey - fy);
-      if (Math.abs(W - H) <= reach && !(bx && by)) { square = true; if (bx || (!by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
+      // A group's grid line gives way to 1:1 (only a real line - a part, an axis - holds against it).
+      const hard = b => b && !b.t?.grid;
+      if (Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
     }
     // The moving corner never leaves the plan.
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
@@ -1394,7 +1398,7 @@ function startFreeResize(event, handle) {
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return;
-    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []);
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
   };
@@ -1497,6 +1501,40 @@ function focusPartSection(part) {
   if (!target.open) target.open = true;
   requestAnimationFrame(() => target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
 }
+// Editing the parts of an ungrouped label / thermostat is its own little world: a part snaps only to the other parts
+// of the same group, to the group's centre axes and outer edges, and to the group's own fine grid (shown while moving or
+// resizing) - not to the plan's grid or other elements, whatever "Przyciągaj do" says (only switching the guides off stops it).
+const GROUP_GRID = 10; // group grid step, in the label's own px (grows and shrinks with the label)
+function groupSnap(room, exclude = []) {
+  const scene = els.scene.getBoundingClientRect(), id = CSS.escape(room.id);
+  const parts = $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n.offsetParent !== null), others = parts.filter(n => !exclude.includes(n));
+  const ref = parts[0], k = ref ? ref.getBoundingClientRect().width / Math.max(1, ref.offsetWidth) : 1;
+  let step = GROUP_GRID * k; while (step < 8) step *= 2; // zoomed out, the grid gets coarser (never denser than ~8 screen px)
+  const [axp, ayp] = roomAnchor(room), anchor = { x: scene.left + axp / 100 * scene.width, y: scene.top + ayp / 100 * scene.height };
+  const rects = parts.map(n => n.getBoundingClientRect()), orects = others.map(n => n.getBoundingClientRect());
+  const union = rs => rs.length ? { l: Math.min(...rs.map(r => r.left)), r: Math.max(...rs.map(r => r.right)), t: Math.min(...rs.map(r => r.top)), b: Math.max(...rs.map(r => r.bottom)) } : { l: anchor.x, r: anchor.x, t: anchor.y, b: anchor.y };
+  const u = union(rects), frame = union(orects), rel = b => ({ l: b.l - scene.left, r: b.r - scene.left, t: b.t - scene.top, b: b.b - scene.top });
+  const xs = [], ys = [];
+  orects.forEach(r => { const box = rel({ l: r.left, r: r.right, t: r.top, b: r.bottom }); [r.left, (r.left + r.right) / 2, r.right].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'label', own: true, center: i === 1, box })); [r.top, (r.top + r.bottom) / 2, r.bottom].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'label', own: true, center: i === 1, box })); });
+  xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true });
+  if (orects.length) { const fb = rel(frame); [frame.l, frame.r].forEach(v => xs.push({ v: v - scene.left, kind: 'group', own: true, box: fb })); [frame.t, frame.b].forEach(v => ys.push({ v: v - scene.top, kind: 'group', own: true, box: fb })); }
+  const pad = step * 6, area = { l: u.l - pad, r: u.r + pad, t: u.t - pad, b: u.b + pad };
+  for (let n = Math.ceil((area.l - anchor.x) / step); anchor.x + n * step <= area.r; n++) if (n) xs.push({ v: anchor.x + n * step - scene.left, kind: 'group', own: true, grid: true });
+  for (let n = Math.ceil((area.t - anchor.y) / step); anchor.y + n * step <= area.b; n++) if (n) ys.push({ v: anchor.y + n * step - scene.top, kind: 'group', own: true, grid: true });
+  return { scene, xs, ys, step, anchor, area, others };
+}
+// The group's grid drawn under the parts while one is moved / resized: fine lines every step, the centre axes stronger.
+function showGroupGrid(ctx) {
+  if (!ctx || !snapTargets().guides) return hideGroupGrid();
+  let el = $('#group-grid'); if (!el) { el = document.createElement('div'); el.id = 'group-grid'; el.setAttribute('aria-hidden', 'true'); els.scene.append(el); }
+  const z = ctx.scene.width / Math.max(1, els.scene.offsetWidth), a = ctx.area, L = (a.l - ctx.scene.left) / z, T = (a.t - ctx.scene.top) / z, W = (a.r - a.l) / z, H = (a.b - a.t) / z, st = ctx.step / z;
+  const ax = (ctx.anchor.x - a.l) / z, ay = (ctx.anchor.y - a.t) / z;
+  Object.assign(el.style, { left: `${L}px`, top: `${T}px`, width: `${W}px`, height: `${H}px` });
+  els.scene.classList.add('group-editing');
+  el.style.setProperty('--gax', `${ax}px`); el.style.setProperty('--gay', `${ay}px`); el.style.setProperty('--gst', `${st}px`);
+  el.style.setProperty('--gox', `${((ax % st) + st) % st}px`); el.style.setProperty('--goy', `${((ay % st) + st) % st}px`);
+}
+function hideGroupGrid() { $('#group-grid')?.remove(); els.scene?.classList.remove('group-editing'); }
 // Two fingers are a zoom, never a move: fingers on the screen are counted; a finger landing while one label is being
 // moved cancels that move (the label goes back where it was) and both fingers zoom / pan the plan instead.
 const touchesDown = new Map(); let activeLabelDrag = null;
@@ -1555,7 +1593,14 @@ function startRoomLabelDrag(event) {
   const [sx, sy] = scenePercentAt(event), [px, py] = partPct(key), grab = [sx - px, sy - py];
   // Guides only of this room: its outline edges and centre, the label anchor, and its label parts that stay in place.
   let guides = null;
+  const groupMode = key !== 'labelCard' && !room.labelLinked;
   const roomGuides = () => {
+    if (groupMode) {
+      const ctx = groupSnap(room, [node]), own = node.getBoundingClientRect(), [qx, qy] = partPct(key); showGroupGrid(ctx);
+      const boxes = ctx.others.map(o => { const r = o.getBoundingClientRect(); return { l: r.left - ctx.scene.left, r: r.right - ctx.scene.left, t: r.top - ctx.scene.top, b: r.bottom - ctx.scene.top, radius: shapedRect(o).radius, own: true }; });
+      return { group: true, scene: ctx.scene, xs: ctx.xs, ys: ctx.ys, boxes, roomBox: null, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
+        shiftX: (own.left + own.width / 2 - ctx.scene.left) - qx / 100 * ctx.scene.width, shiftY: (own.top + own.height / 2 - ctx.scene.top) - qy / 100 * ctx.scene.height };
+    }
     const scene = els.scene.getBoundingClientRect(), xs = isIconRoom(room) ? [ax] : room.points.map(p => p[0]), ys = isIconRoom(room) ? [ay] : room.points.map(p => p[1]), toX = v => v / 100 * scene.width, toY = v => v / 100 * scene.height;
     // Its own room's outline / anchor (room colour; an etykieta has only its point), its own parts that stay put
     // (label colour), and every other element: wskaźniki, Flow, other labels, rooms and the background.
@@ -1584,7 +1629,8 @@ function startRoomLabelDrag(event) {
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const place = e => {
     const [x, y] = scenePercentAt(e); if (!cameraPanning) { guides ||= roomGuides(); guides.onSettle = () => place(e); }
-    const snapped = guides?.boxes ? alignLabel(guides, snapPercent(x - grab[0]), snapPercent(y - grab[1]), e) : alignToGuides(guides, snapPercent(x - grab[0]), snapPercent(y - grab[1]), e);
+    const gp = v => groupMode ? v : snapPercent(v); // the plan's grid does not apply inside a group
+    const snapped = guides?.boxes ? alignLabel(guides, gp(x - grab[0]), gp(y - grab[1]), e) : alignToGuides(guides, gp(x - grab[0]), gp(y - grab[1]), e);
     const dx = Math.round((snapped.xPercent - ax) / 100 * w / k * 100) / 100 - startOffsets[key][0], dy = Math.round((snapped.yPercent - ay) / 100 * h / k * 100) / 100 - startOffsets[key][1];
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
     renderRoomLabels();
@@ -1599,7 +1645,7 @@ function startRoomLabelDrag(event) {
   };
   const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; place(e); camera.track(e); };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []);
+    if (e.pointerId !== event.pointerId) return; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
@@ -1624,7 +1670,7 @@ function startRoomLabelDrag(event) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   activeLabelDrag = { id: event.pointerId, x: event.clientX, y: event.clientY, cancel() {
-    activeLabelDrag = null; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []);
+    activeLabelDrag = null; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     try { els.scene.releasePointerCapture(event.pointerId); } catch {}
     Object.entries(before).forEach(([kk, v]) => { if (v === undefined) delete room[kk]; else room[kk] = v; }); renderRoomLabels();
@@ -2822,9 +2868,10 @@ function alignLabel(context, xPercent, yPercent, event) {
     const inRow = b => b[phi] > oc - ohalf * 1.5 && b[plo] < oc + ohalf * 1.5;
     const list = [];
     const add = (target, score, guide, marks = [], hits = [], reach = threshold) => { const d = Math.abs(c - target); if (d <= reach) list.push({ target, score: d + score, guide, marks, hits }); };
-    const edges = snapTargets().edges, centers = snapTargets().centers, spacing = snapTargets().spacing, centreReach = threshold * 1.7;
+    // Inside a group (ungrouped parts) everything of the group counts, whatever the plan's snap menu says.
+    const edges = context.group || snapTargets().edges, centers = context.group || snapTargets().centers, spacing = !context.group && snapTargets().spacing, centreReach = threshold * 1.7;
     boxes.forEach(b => {
-      const far = near(b) ? 0 : 3, span = [b[plo], b[phi]];
+      const far = context.group || near(b) ? 0 : 3, span = [b[plo], b[phi]];
       if (centers) add(b[mid], far + .2, { at: b[mid], span }, [], [b], centreReach);
       if (!edges) return;
       add(b[lo] + half, far, { at: b[lo], span }, [], [b]); add(b[hi] - half, far, { at: b[hi], span }, [], [b]);
@@ -2841,12 +2888,13 @@ function alignLabel(context, xPercent, yPercent, event) {
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
-    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center }) => offsets.forEach(o => add(v - o, 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid }) => offsets.forEach(o => add(v - o, grid ? 3.5 : 2, { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).
     const held = stuck && Math.abs(c - stuck.target);
-    if (stuck && held <= release && !list.some(item => Math.abs(c - item.target) < held - 1.5)) return stuck;
+    // A group's grid line never holds against a part of the group within reach (parts first, the grid fills the gaps).
+    if (stuck && held <= release && !(stuck.guide?.grid && list.some(item => !item.guide?.grid)) && !list.some(item => Math.abs(c - item.target) < held - 1.5)) return stuck;
     const best = list.sort((p, q) => p.score - q.score)[0] || null; motion.stick[axis] = best; return best;
   };
   const bx = solve('x', cx, hw, cy, hh), fx = bx ? bx.target : cx, by = solve('y', cy, hh, fx, hw), fy = by ? by.target : cy;
