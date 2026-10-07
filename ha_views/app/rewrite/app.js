@@ -1591,6 +1591,13 @@ function groupSnap(room, exclude = []) {
   if (o.frame) {
     xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true });
     if (orects.length) { const fb = rel(frame); [frame.l, frame.r].forEach(v => xs.push({ v: v - scene.left, kind: 'group', own: true, box: fb })); [frame.t, frame.b].forEach(v => ys.push({ v: v - scene.top, kind: 'group', own: true, box: fb })); }
+    // A room's label: its parts line up with the room's own shape too (its centre and outer edges, amber lines).
+    if (!isIconRoom(room) && (room.points || []).length >= 3) {
+      const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
+      const box = { l: Math.min(...px), r: Math.max(...px), t: Math.min(...py), b: Math.max(...py) };
+      [box.l, (box.l + box.r) / 2, box.r].forEach((v, i) => xs.push({ v, kind: 'room', room: true, own: true, center: i === 1, box, span: [box.t, box.b] }));
+      [box.t, (box.t + box.b) / 2, box.b].forEach((v, i) => ys.push({ v, kind: 'room', room: true, own: true, center: i === 1, box, span: [box.l, box.r] }));
+    }
   }
   const pad = step * 6, area = { l: u.l - pad, r: u.r + pad, t: u.t - pad, b: u.b + pad };
   // Snap lines over the whole visible screen (a part may be moved far from the others); the drawing stays near the parts.
@@ -3106,7 +3113,7 @@ function alignLabel(context, xPercent, yPercent, event) {
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
-    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid }) => offsets.forEach(o => add(v - o, grid ? 3.5 : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, own }) => offsets.forEach(o => add(v - o, grid ? 3.5 : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).

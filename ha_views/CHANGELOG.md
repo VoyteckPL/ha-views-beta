@@ -1,3 +1,8 @@
+## 0.6.0-beta.456
+
+- **Pomieszczenia: części etykiety przyciągają się do kształtu pokoju**: w rozgrupowanej etykiecie pomieszczenia ikona, nazwa i stan łapią środek i zewnętrzne krawędzie swojego pokoju (bursztynowe linie). Środek pokoju liczy się tak samo jak środek innej części. Działa przy włączonym „Środek i ramka” w magnesie grupy.
+- Pozostała logika grupy w pomieszczeniach działa tak samo jak w etykietach i termostatach: magnes grupy, siatka grupy, strzałki równych odstępów, kopiowanie stylu części i automatyczne grupowanie po zamknięciu panelu.
+
 ## 0.6.0-beta.455
 
 - **Grupowanie wraca samo po zakończeniu edycji**: rozgrupowana etykieta lub termostat jest znów grupowany, gdy zamkniesz jego panel, wybierzesz inny element, przełączysz widok albo wyjdziesz z trybu edycji. Działa to dokładnie jak ponowne kliknięcie „Grupa”: części zostają tam, gdzie je ustawiłeś. Etykieta z jedną widoczną częścią zostaje bez zmian.
