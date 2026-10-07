@@ -160,7 +160,7 @@ async def api_control(request):
     action = str(body.get("action", "")).strip()
     if not re.fullmatch(r"[a-z_]+\.[a-zA-Z0-9_]+", entity_id):
         return web.json_response({"ok": False, "error": "Invalid entity ID"}, status=400)
-    climate_actions = ("set_temperature", "set_hvac_mode", "set_preset_mode")
+    climate_actions = ("set_temperature", "set_hvac_mode", "set_preset_mode", "set_operation_mode")
     if not is_admin and not (
         (action in ("turn_on", "turn_off") and entity_id in _viewer_toggle_entities())
         or (action in climate_actions and entity_id in _viewer_thermostat_entities())
@@ -189,6 +189,12 @@ async def api_control(request):
             return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
         payload["hvac_mode" if action == "set_hvac_mode" else "preset_mode"] = value
         service_url = f"{HA_API}/services/climate/{action}"
+    elif action == "set_operation_mode" and domain == "water_heater":
+        value = str(body.get("value", "")).strip()
+        if not re.fullmatch(r"[A-Za-z0-9_ -]{1,40}", value):
+            return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
+        payload["operation_mode"] = value
+        service_url = f"{HA_API}/services/water_heater/set_operation_mode"
     else:
         return web.json_response({"ok": False, "error": "Unsupported action"}, status=400)
 

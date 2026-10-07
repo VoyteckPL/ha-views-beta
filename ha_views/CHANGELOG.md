@@ -1,3 +1,13 @@
+## 0.4.1-beta.444
+
+Przyciski trybów termostatu — nowa logika (część „Tryby”):
+- **Wybór i kolejność trybów**: sekcja **Tryby** — każdy tryb urządzenia z zaznaczeniem „pokaż” i strzałkami ↑ ↓; na planie tylko zaznaczone, w tej kolejności (także w „Ikony trybów”).
+- **Układ**: „Wszystkie przyciski” albo **„Jeden przycisk (następny tryb)”** — pokazuje bieżący tryb, dotknięcie przełącza na następny z wybranych (dobre na telefon i małe termostaty).
+- **Presety** (eco / komfort / boost…, gdy urządzenie je ma): „Pokaż presety” dodaje drugi rząd przycisków; dla każdego presetu „pokaż” i własna nazwa; aktywny podświetlony.
+- **Stan „w trakcie”**: wybrany tryb / preset pulsuje, dopóki urządzenie nie potwierdzi zmiany; jeśli w ciągu 15 s jej nie przyjmie, wraca poprzedni stan z komunikatem „Urządzenie nie przyjęło zmiany”.
+- **Potwierdzenie dla wybranych**: sekcja Potwierdzenie — „Pytaj” osobno dla każdego trybu (przy przełączaniu na niego) i presetu (np. Wyłączony, Boost). Dotychczasowe „pytaj przy włączeniu / wyłączeniu” działa, dopóki nie zaznaczysz trybów osobno.
+- **Bojler (water_heater)**: przyciski pokazują jego tryby pracy (eco, elektryczny, wydajny, wyłączony…) i przełączają je w Home Assistant.
+
 ## 0.4.1-beta.443
 
 - **Bez ramki karty przy przybliżeniu w edycji (komputer)**: gdy w edycji plan jest przybliżony i przesunięty poza krawędź, nie widać już tła i ramki karty planu w jej pierwotnym miejscu (rozmiarze 100%) — poza planem widać tylko tło strony.
