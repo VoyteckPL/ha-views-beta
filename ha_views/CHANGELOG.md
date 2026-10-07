@@ -1,3 +1,17 @@
+## 0.6.1-beta.466
+
+- **4 nowe style tarczy** (razem 9):
+  - **Neon**: cienka świecąca linia z mocną poświatą, przerywany tor i jasna główka na nastawie.
+  - **Półkole**: łuk 180°. Tarcza jest niższa, więc po zmianie warto przesunąć części w rozgrupowanym.
+  - **Kometa**: łuk z ogonem, który wygasa w stronę początku skali, i świecącą główką na nastawie.
+  - **Podziałka**: kreski co 1°, liczby co kilka stopni, cienki łuk nastawy przy krawędzi i trójkąt temperatury w pokoju.
+- **Ustawienia dla stylów** (pod wyborem stylu, tylko dla wybranego):
+  - Segmenty LED: liczba segmentów, przerwa między nimi.
+  - Chronograf: gęstość kresek (co 0,5° / 1° / 2°), liczby co 5°.
+  - Podwójny pierścień: kolor i grubość pierścienia pokoju.
+  - Termiczna: kolory zimny / środek / gorący, przygaszenie powyżej nastawy.
+  - Neon: siła poświaty. Kometa: długość ogona. Podziałka: liczby co ile stopni.
+
 ## 0.6.1-beta.465
 
 - **5 stylów tarczy termostatu** (Tarcza → Styl → Styl tarczy):

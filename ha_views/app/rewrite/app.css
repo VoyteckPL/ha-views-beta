@@ -1600,3 +1600,10 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .thermo-heat.lit{opacity:1}
 .thermo-knob.thermal{fill:#0b1a24;stroke-width:3.5}
 @media (prefers-reduced-motion: reduce){.thermo-seg.run{animation:none}}
+
+.thermo-tick-num{fill:#9fb0b9;text-anchor:middle;font-weight:500}
+.neon-track{stroke-dasharray:1.5 4;stroke-linecap:round}
+.thermo-neon{fill:none;stroke-linecap:round}
+.thermo-neon-head{fill:#ffffff}
+.thermo-comet{fill:none;stroke-linecap:butt}
+.thermo-comet-head{fill:#ffffff}
