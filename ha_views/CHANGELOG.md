@@ -1,3 +1,7 @@
+## 0.4.1-beta.438
+
+- **Kropki rozmiaru na komputerze we właściwym miejscu**: kropki w rogach zaznaczonego elementu podążają za planem w każdej klatce (otwarcie / zadokowanie panelu, zmiana rozmiaru okna, zoom), więc nie zostają w starym miejscu, przesunięte obok elementu; ich pozycja uwzględnia też skalowanie karty planu.
+
 ## 0.4.1-beta.437
 
 - **Zsynchronizowane animacje termostatu**: w sekcji „Ogólne” termostatu jest podsekcja **Animacje** z opcją **Synchronizuj animacje** (domyślnie włączona) i wspólnym **Czasem cyklu**. Pulsowanie / miganie ikony, wypełnienie środka tarczy, poświata łuku i animacja tekstu stanu pracy mają wtedy ten sam rytm i fazę — wszystkie są najmocniejsze (największe / najjaśniejsze / widoczne) w tym samym momencie.

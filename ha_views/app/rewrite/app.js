@@ -1292,7 +1292,8 @@ function fitCardHandles() {
   let layer = $('#handle-overlay'); const handles = $$('#room-labels .card-handle');
   if (!handles.length) { layer?.replaceChildren(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'handle-overlay'; layer.setAttribute('aria-hidden', 'true'); card.append(layer); }
-  const base = card.getBoundingClientRect(), keep = new Set();
+  // Placed against the layer's own box (whatever box it is laid out in on a computer or a phone).
+  const base = layer.getBoundingClientRect(), kx = base.width / Math.max(1, layer.offsetWidth) || 1, ky = base.height / Math.max(1, layer.offsetHeight) || 1, keep = new Set();
   handles.forEach(h => {
     const owner = h.parentElement, key = `${owner?.dataset.roomId}|${owner?.dataset.labelPart}|${h.dataset.corner}`, r = h.getBoundingClientRect(); keep.add(key);
     let proxy = [...layer.children].find(n => n.dataset.key === key);
@@ -1302,9 +1303,12 @@ function fitCardHandles() {
     }
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner;
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); proxy.hidden = !r.width || getComputedStyle(h).display === 'none';
-    proxy.style.left = `${(r.left + r.width / 2 - base.left).toFixed(1)}px`; proxy.style.top = `${(r.top + r.height / 2 - base.top).toFixed(1)}px`;
+    proxy.style.left = `${((r.left + r.width / 2 - base.left) / kx).toFixed(1)}px`; proxy.style.top = `${((r.top + r.height / 2 - base.top) / ky).toFixed(1)}px`;
   });
   [...layer.children].forEach(n => { if (!keep.has(n.dataset.key)) n.remove(); });
+  // Panels opening / docking, the window or the plan changing size move the plan without a re-render: while dots are
+  // shown they follow it every frame.
+  if (!fitCardHandles.frame) fitCardHandles.frame = requestAnimationFrame(() => { fitCardHandles.frame = 0; fitCardHandles(); });
 }
 // In edit mode a label part is dragged with the finger or mouse; it follows the grid (when on) and the camera follows it.
 // A corner dot of a label or of an ungrouped part: width and height change freely (the opposite corner stays put; Shift
