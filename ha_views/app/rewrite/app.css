@@ -1569,8 +1569,3 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .part-section .part-style-btn{opacity:.75}
 .part-section .part-style-btn:hover{opacity:1}
 .part-section .part-style-btn.paste{color:#a3e635;border-color:rgba(163,230,53,.45)}
-
-/* "Edytuj wnętrze": the group's frame shows dashed with its own corner dots */
-.room-label-backdrop.editing{outline:calc(1.2px / var(--view-zoom,1)) dashed rgba(167,139,250,.85);outline-offset:0}
-.room-label-backdrop .frame-handle{pointer-events:auto}
-#room-group-toggle.active{color:#c4b5fd;border-color:rgba(167,139,250,.6);background:rgba(167,139,250,.16)}

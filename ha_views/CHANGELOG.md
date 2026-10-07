@@ -1,3 +1,8 @@
+## 0.6.0-beta.454
+
+- **Cofnięte zmiany z bet 452–453** („Edytuj wnętrze”, ramka Auto / Własny rozmiar, przyciąganie ramki na zewnątrz, „Ułóż” zamiast układu). Grupowanie, rozgrupowanie, ramka i układy działają znów tak jak w becie 451. Kod aplikacji jest taki sam jak w 451.
+- Układy zapisane w 452–453 wczytują się normalnie. Ramka ustawiona tam jako „Własny rozmiar” działa jak dawny rozmiar ramki (najmniejszy rozmiar grupy).
+
 ## 0.6.0-beta.453
 
 - **Ramka grupy przyciąga się też na zewnątrz**: w „Edytuj wnętrze” kropki ramki przyciągają się do części w środku, a także do innych etykiet i termostatów, wskaźników, Flow, pomieszczeń i siatki tła. Zewnętrzne cele działają według głównego menu magnesu, a części według magnesu grupy. Bliższe obiekty mają pierwszeństwo, siatka najniższe. Alt (PC) zmienia rozmiar bez przyciągania.
