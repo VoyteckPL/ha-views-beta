@@ -1,3 +1,14 @@
+## 0.6.0-beta.449
+
+- **Przyciąganie w rozgrupowanym, własne ustawienia**: nowy przycisk magnesu obok „Grupa” w nagłówku panelu (widoczny, gdy etykieta lub termostat jest rozgrupowany). Otwiera menu „Przyciąganie w grupie”:
+  - włącznik całego przyciągania w grupie (niezależny od głównego menu magnesu),
+  - Części, Środek i ramka, Równe odstępy (nowe w grupie), Elementy planu (domyślnie wyłączone),
+  - Siatka: Wył. / S / M / L.
+- **Najbliższe obiekty mają pierwszeństwo**: z linii w zasięgu wygrywa ta od obiektu najbliżej przesuwanego, a nie od dalekiego. Środek ma pierwszeństwo przed krawędzią. Dotyczy też zmiany rozmiaru kropkami.
+- **Przyciąganie nie znika przy krawędzi**: gdy przesuwana część dojedzie do krawędzi kadru i plan zaczyna jechać, części dalej się przyciągają (bez siatki). Wcześniej linie wtedy znikały. Na telefonie pas, w którym rusza kamera, jest węższy (40 px zamiast 64 px).
+- **Linie liczone na bieżąco**: przy przesuwaniu części linie są przeliczane w każdym ruchu, więc zgadzają się także po rozepchnięciu innej części albo ruchu kamery.
+- **Rzadsza siatka grupy**: jej linie są zawsze co najmniej dwa zasięgi przyciągania od siebie, więc nie łapie w każdym miejscu i nie zagłusza części.
+
 ## 0.6.0-beta.448
 
 - **Nowa numeracja bet**: po wydaniu stabilnej 0.6.0 bety mają numer 0.6.0-beta.N (licznik bet idzie dalej). Ta wersja ma ten sam kod co 0.6.0.
