@@ -3079,11 +3079,30 @@ function alignLabel(context, xPercent, yPercent, event) {
   const vertical = [], horizontal = [], marks = [];
   if (bx?.guide) vertical.push(bx.guide.full ? { at: bx.guide.at / W * 100, kind: bx.guide.kind } : { at: bx.guide.at / W * 100, kind: bx.guide.kind || 'label', from: Math.min(bx.guide.span[0], fy - hh) / H * 100, to: Math.max(bx.guide.span[1], fy + hh) / H * 100 });
   if (by?.guide) horizontal.push(by.guide.full ? { at: by.guide.at / H * 100, kind: by.guide.kind } : { at: by.guide.at / H * 100, kind: by.guide.kind || 'label', from: Math.min(by.guide.span[0], fx - hw) / W * 100, to: Math.max(by.guide.span[1], fx + hw) / W * 100 });
-  (bx?.marks || []).forEach(([a, b, kind]) => marks.push({ axis: 'x', from: a / W * 100, to: b / W * 100, at: fy / H * 100, kind }));
-  (by?.marks || []).forEach(([a, b, kind]) => marks.push({ axis: 'y', from: a / H * 100, to: b / H * 100, at: fx / W * 100, kind }));
-  const hits = [...(bx?.hits || []), ...(by?.hits || [])].filter((b, i, all) => all.findIndex(o => o.l === b.l && o.t === b.t && o.r === b.r) === i);
+  // Equal gaps get small arrows (whatever the label snapped to): to both neighbours in its row, or along a run of three.
+  equalGapMarks(boxes, { l: fx - hw, r: fx + hw, t: fy - hh, b: fy + hh }).forEach(m => marks.push(m.axis === 'x'
+    ? { axis: 'x', from: m.from / W * 100, to: m.to / W * 100, at: m.at / H * 100, kind: 'spacing' }
+    : { axis: 'y', from: m.from / H * 100, to: m.to / H * 100, at: m.at / W * 100, kind: 'spacing' }));
+  const hits = [...(bx?.hits || []), ...(by?.hits || [])].filter(b => b.kind !== 'spacing').filter((b, i, all) => all.findIndex(o => o.l === b.l && o.t === b.t && o.r === b.r) === i);
   showAlignGuides(vertical, horizontal, marks, hits);
   return { xPercent, yPercent };
+}
+// The gaps around the moved box (me) that are equal: me in the middle of two neighbours, or me continuing the gap of
+// the two boxes before / after it. Rows are boxes overlapping me across; marks are px {axis, from, to, at}.
+function equalGapMarks(boxes, me) {
+  const marks = [], tol = .75, min = 2;
+  [['x', 'l', 'r', 't', 'b'], ['y', 't', 'b', 'l', 'r']].forEach(([axis, lo, hi, plo, phi]) => {
+    const across = (p, q) => Math.min(p[phi], q[phi]) - Math.max(p[plo], q[plo]);
+    const gap = (p, q) => ({ axis, from: p[hi], to: q[lo], at: across(p, q) > 0 ? (Math.max(p[plo], q[plo]) + Math.min(p[phi], q[phi])) / 2 : (p[plo] + p[phi] + q[plo] + q[phi]) / 4, size: q[lo] - p[hi] });
+    const before = of => boxes.filter(b => across(b, of) > 1 && b[hi] <= of[lo] + .5).sort((p, q) => q[hi] - p[hi])[0];
+    const after = of => boxes.filter(b => across(b, of) > 1 && b[lo] >= of[hi] - .5).sort((p, q) => p[lo] - q[lo])[0];
+    const a = before(me), b = after(me), ga = a && gap(a, me), gb = b && gap(me, b), found = [];
+    if (ga && gb && ga.size > min && Math.abs(ga.size - gb.size) <= tol) found.push(ga, gb);
+    const a2 = a && before(a), g2 = a2 && gap(a2, a); if (ga && g2 && ga.size > min && Math.abs(ga.size - g2.size) <= tol) found.push(g2, ga);
+    const b2 = b && after(b), h2 = b2 && gap(b, b2); if (gb && h2 && gb.size > min && Math.abs(gb.size - h2.size) <= tol) found.push(gb, h2);
+    found.forEach(g => { if (!marks.some(m => m.axis === g.axis && Math.abs(m.from - g.from) < .5 && Math.abs(m.to - g.to) < .5)) marks.push(g); });
+  });
+  return marks;
 }
 // A guide may be a full line or a segment (from / to, %), gap markers are short segments with end ticks.
 function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
@@ -3091,7 +3110,8 @@ function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
   // (never two lines side by side; the guide is the one that counts).
   const gg = $('#group-grid'); if (gg) { gg.style.setProperty('--gaxa', vertical.length ? '0' : '.5'); gg.style.setProperty('--gaya', horizontal.length ? '0' : '.5'); }
   // No double measuring lines (equal size / equal gap): the highlighted elements already show what was caught.
-  marks = [];
+  // Only the equal-gap arrows are drawn (no double measuring lines for sizes).
+  marks = marks.filter(m => m.kind === 'spacing');
   let layer = $('#align-guides');
   if (!vertical.length && !horizontal.length && !marks.length && !hits.length) { if (layer) layer.innerHTML = ''; return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'align-guides'; layer.setAttribute('aria-hidden', 'true'); els.scene.append(layer); }

@@ -1554,3 +1554,11 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .group-snap-menu .grid-preset{min-width:30px;height:26px;padding:0 6px;border-radius:7px;font-size:10px}
 .group-snap-menu .grid-preset.active{color:#ede9fe;border-color:#a78bfa;background:rgba(167,139,250,.25)}
 .group-snap-menu small{display:block;padding:6px 8px 2px;color:#6f8b99;font-size:10px}
+
+/* Equal gaps: small double arrows in the spacing colour */
+.gap-mark.k-spacing{--t:calc(2px / var(--view-zoom,1));--a:calc(5.5px / var(--view-zoom,1));z-index:2;background:#a3e635;box-shadow:0 0 calc(3px / var(--view-zoom,1)) rgba(163,230,53,.55)}
+.gap-mark.k-spacing::before,.gap-mark.k-spacing::after{width:0!important;height:0!important;background:none!important;border:var(--a) solid transparent}
+.gap-mark.x.k-spacing::before{left:calc(var(--a) * -.3);top:50%;transform:translateY(-50%);border-left-width:0;border-right:calc(var(--a) * 1.5) solid #a3e635}
+.gap-mark.x.k-spacing::after{right:calc(var(--a) * -.3);left:auto;top:50%;transform:translateY(-50%);border-right-width:0;border-left:calc(var(--a) * 1.5) solid #a3e635}
+.gap-mark.y.k-spacing::before{top:calc(var(--a) * -.3);left:50%;transform:translateX(-50%);border-top-width:0;border-bottom:calc(var(--a) * 1.5) solid #a3e635}
+.gap-mark.y.k-spacing::after{bottom:calc(var(--a) * -.3);top:auto;left:50%;transform:translateX(-50%);border-bottom-width:0;border-top:calc(var(--a) * 1.5) solid #a3e635}

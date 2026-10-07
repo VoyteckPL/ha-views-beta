@@ -1,3 +1,7 @@
+## 0.6.0-beta.450
+
+- **Strzałki równych odstępów**: przy przesuwaniu etykiety lub części rozgrupowanego elementu pojawiają się małe limonkowe strzałki ↔ w przerwach, które są równe. Dzieje się tak, gdy element stoi dokładnie pośrodku między dwoma sąsiadami albo powtarza odstęp dwóch elementów obok. Strzałki pokazują się niezależnie od tego, do czego element się przyciągnął, także razem ze zwykłymi liniami pomocniczymi.
+
 ## 0.6.0-beta.449
 
 - **Przyciąganie w rozgrupowanym, własne ustawienia**: nowy przycisk magnesu obok „Grupa” w nagłówku panelu (widoczny, gdy etykieta lub termostat jest rozgrupowany). Otwiera menu „Przyciąganie w grupie”:
