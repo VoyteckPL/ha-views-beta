@@ -1,3 +1,7 @@
+## 0.4.1-beta.443
+
+- **Bez ramki karty przy przybliżeniu w edycji (komputer)**: gdy w edycji plan jest przybliżony i przesunięty poza krawędź, nie widać już tła i ramki karty planu w jej pierwotnym miejscu (rozmiarze 100%) — poza planem widać tylko tło strony.
+
 ## 0.4.1-beta.442
 
 - **Siatka grupy także daleko od reszty**: część przesunięta daleko od pozostałych (np. ikona wysoko nad termostatem) łapie się linii siatki grupy w całym widocznym obszarze, a rysunek siatki podąża za przesuwaną częścią (wcześniej siatka kończyła się kilka oczek od grupy i dalej nic się nie łapało).
