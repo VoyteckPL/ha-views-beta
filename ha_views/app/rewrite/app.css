@@ -1487,3 +1487,10 @@ aside.editor.typing .typing-row{display:grid!important;margin:0!important}
 .card-handle-proxy::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 .card-handle-proxy.square{border-color:#4ade80}
 @media (pointer:coarse){.card-handle-proxy{width:16px;height:16px;margin:-8px 0 0 -8px}.card-handle-proxy::before{inset:-10px}}
+/* One rhythm: every effect is at its strongest in the middle of its cycle (bigger / brighter / shown), so effects
+   sharing a cycle (a synchronised thermostat) pulse and blink together. */
+@keyframes hv-icon-blink{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes thermo-blink{0%{opacity:0}50%{opacity:1}}
+@keyframes thermo-fade{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes thermo-fill-pulse{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes thermo-glow{0%,100%{opacity:.72}50%{opacity:1}}

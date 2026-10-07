@@ -1,3 +1,7 @@
+## 0.4.1-beta.437
+
+- **Zsynchronizowane animacje termostatu**: w sekcji „Ogólne” termostatu jest podsekcja **Animacje** z opcją **Synchronizuj animacje** (domyślnie włączona) i wspólnym **Czasem cyklu**. Pulsowanie / miganie ikony, wypełnienie środka tarczy, poświata łuku i animacja tekstu stanu pracy mają wtedy ten sam rytm i fazę — wszystkie są najmocniejsze (największe / najjaśniejsze / widoczne) w tym samym momencie.
+
 ## 0.4.1-beta.436
 
 - **Zabezpieczenie przed złapaniem nie tej części (telefon)**: w rozgrupowanym termostacie / etykiecie od razu przesuwa się tylko aktywna część (ta z kropkami w rogach). Palec położony na innej części jej nie łapie — przeciągnięcie przesuwa wtedy widok planu, a krótkie dotknięcie robi z niej aktywną część (zaznaczoną, z sekcją w panelu i przybliżeniem); dopiero wtedy da się ją przesunąć.
