@@ -1,3 +1,7 @@
+## 0.6.0-beta.460
+
+- **Termostat: „Stan” zależy od trybu, nie od pracy**: część Stan pokazuje tryb (Grzanie, Auto, Wyłączony…), więc jej wygląd ustawia się teraz osobno dla każdego trybu urządzenia: kolor, przezroczystość, tło i ramka („Kolor · Grzanie”, „Kolor · Auto”, „Kolor · Wyłączony”). Przełącznik nazywa się „Zależne od trybu”. Tryb bez własnej wartości bierze dotychczasowy kolor ON, a Wyłączony kolor OFF, więc istniejące termostaty wyglądają tak samo. Pozostałe części (tarcza, ikona, stan pracy…) dalej zależą od stanu pracy.
+
 ## 0.6.0-beta.459
 
 - **Przywrócone „Duplikuj”**: przycisk jest teraz w pierwszej sekcji panelu (Ogólne / Encja / Tekst i akcja / Encja i kierunek), w wierszu „Kopia”. Działa dla termostatów, etykiet, tekstów, pomieszczeń, markerów i Flow. Kopia ma cały wygląd i ustawienia i pojawia się lekko przesunięta, a jej panel od razu się otwiera.
