@@ -1,3 +1,8 @@
+## 0.4.1-beta.442
+
+- **Siatka grupy także daleko od reszty**: część przesunięta daleko od pozostałych (np. ikona wysoko nad termostatem) łapie się linii siatki grupy w całym widocznym obszarze, a rysunek siatki podąża za przesuwaną częścią (wcześniej siatka kończyła się kilka oczek od grupy i dalej nic się nie łapało).
+- **Bez dwóch linii obok siebie**: oś środka grupy w rysunku siatki jest delikatniejsza i chowa się w danym kierunku, gdy widać linię przyciągnięcia — zostaje jedna linia, ta, do której element faktycznie się złapał.
+
 ## 0.4.1-beta.441
 
 - **Komputer: przybliżanie i centrowanie przy krawędzi planu w edycji**: w trybie edycji przybliżony plan można przesunąć poza jego krawędź (o pół wolnego ekranu), więc zoom kółkiem przy elemencie na skraju planu nie jest już blokowany, a kliknięty element (etykieta, termostat, część, wskaźnik) płynnie przesuwa się na środek wolnego ekranu — także gdy leży przy samej krawędzi tła. Zoom się przy tym nie zmienia; przy 100% nic się nie przesuwa.

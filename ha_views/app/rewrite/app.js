@@ -1519,8 +1519,10 @@ function groupSnap(room, exclude = []) {
   xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true });
   if (orects.length) { const fb = rel(frame); [frame.l, frame.r].forEach(v => xs.push({ v: v - scene.left, kind: 'group', own: true, box: fb })); [frame.t, frame.b].forEach(v => ys.push({ v: v - scene.top, kind: 'group', own: true, box: fb })); }
   const pad = step * 6, area = { l: u.l - pad, r: u.r + pad, t: u.t - pad, b: u.b + pad };
-  for (let n = Math.ceil((area.l - anchor.x) / step); anchor.x + n * step <= area.r; n++) if (n) xs.push({ v: anchor.x + n * step - scene.left, kind: 'group', own: true, grid: true });
-  for (let n = Math.ceil((area.t - anchor.y) / step); anchor.y + n * step <= area.b; n++) if (n) ys.push({ v: anchor.y + n * step - scene.top, kind: 'group', own: true, grid: true });
+  // Snap lines over the whole visible screen (a part may be moved far from the others); the drawing stays near the parts.
+  const v = visibleSceneRect(), lines = { l: Math.min(area.l, v.left), r: Math.max(area.r, v.right), t: Math.min(area.t, v.top), b: Math.max(area.b, v.bottom) };
+  for (let n = Math.ceil((lines.l - anchor.x) / step); anchor.x + n * step <= lines.r; n++) if (n) xs.push({ v: anchor.x + n * step - scene.left, kind: 'group', own: true, grid: true });
+  for (let n = Math.ceil((lines.t - anchor.y) / step); anchor.y + n * step <= lines.b; n++) if (n) ys.push({ v: anchor.y + n * step - scene.top, kind: 'group', own: true, grid: true });
   return { scene, xs, ys, step, anchor, area, others };
 }
 // The group's grid drawn under the parts while one is moved / resized: fine lines every step, the centre axes stronger.
@@ -1625,11 +1627,12 @@ function startRoomLabelDrag(event) {
     return { scene, xs: gx, ys: gy, boxes, roomBox: rb, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
       shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
-  let moved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
+  let moved = false, alive = true; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const place = e => {
     const [x, y] = scenePercentAt(e); if (!cameraPanning) { guides ||= roomGuides(); guides.onSettle = () => place(e); }
     const gp = v => groupMode ? v : snapPercent(v); // the plan's grid does not apply inside a group
+    if (groupMode && guides) requestAnimationFrame(() => { if (alive) showGroupGrid(groupSnap(room)); }); // the drawn grid follows the part
     const snapped = guides?.boxes ? alignLabel(guides, gp(x - grab[0]), gp(y - grab[1]), e) : alignToGuides(guides, gp(x - grab[0]), gp(y - grab[1]), e);
     const dx = Math.round((snapped.xPercent - ax) / 100 * w / k * 100) / 100 - startOffsets[key][0], dy = Math.round((snapped.yPercent - ay) / 100 * h / k * 100) / 100 - startOffsets[key][1];
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
@@ -1645,7 +1648,7 @@ function startRoomLabelDrag(event) {
   };
   const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; place(e); camera.track(e); };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
+    if (e.pointerId !== event.pointerId) return; alive = false; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
@@ -1670,7 +1673,7 @@ function startRoomLabelDrag(event) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   activeLabelDrag = { id: event.pointerId, x: event.clientX, y: event.clientY, cancel() {
-    activeLabelDrag = null; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
+    activeLabelDrag = null; alive = false; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     try { els.scene.releasePointerCapture(event.pointerId); } catch {}
     Object.entries(before).forEach(([kk, v]) => { if (v === undefined) delete room[kk]; else room[kk] = v; }); renderRoomLabels();
@@ -2912,6 +2915,9 @@ function alignLabel(context, xPercent, yPercent, event) {
 }
 // A guide may be a full line or a segment (from / to, %), gap markers are short segments with end ticks.
 function showAlignGuides(vertical, horizontal, marks = [], hits = []) {
+  // While a guide line shows in one direction, the group grid's drawn centre axis in that direction steps back
+  // (never two lines side by side; the guide is the one that counts).
+  const gg = $('#group-grid'); if (gg) { gg.style.setProperty('--gaxa', vertical.length ? '0' : '.5'); gg.style.setProperty('--gaya', horizontal.length ? '0' : '.5'); }
   // No double measuring lines (equal size / equal gap): the highlighted elements already show what was caught.
   marks = [];
   let layer = $('#align-guides');
