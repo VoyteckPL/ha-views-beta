@@ -1,3 +1,7 @@
+## 0.4.1-beta.447
+
+- **Dodatkowe encje pokazują stan**: stan dodanej encji (np. ciśnienia) jest pobierany od razu po dodaniu i odświeżany razem z pozostałymi encjami widoku — zamiast kreski „–”; sekcja w panelu ma nazwę encji zamiast jej identyfikatora.
+
 ## 0.4.1-beta.446
 
 - **Dodatkowe encje — ta sama wyszukiwarka co dla termostatu**: w „Dodatkowe encje” jest teraz taka sama lista i wyszukiwarka jak przy głównej encji (pole „Szukaj nazwy lub encji…”, wyniki z nazwą, identyfikatorem i stanem, dodawanie przyciskiem +, usuwanie krzyżykiem) zamiast zwykłego pola z podpowiedziami.
