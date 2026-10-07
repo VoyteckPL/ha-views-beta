@@ -1,3 +1,7 @@
+## 0.6.0-beta.459
+
+- **Przywrócone „Duplikuj”**: przycisk jest teraz w pierwszej sekcji panelu (Ogólne / Encja / Tekst i akcja / Encja i kierunek), w wierszu „Kopia”. Działa dla termostatów, etykiet, tekstów, pomieszczeń, markerów i Flow. Kopia ma cały wygląd i ustawienia i pojawia się lekko przesunięta, a jej panel od razu się otwiera.
+
 ## 0.6.0-beta.458
 
 - **Ramka grupy w rozgrupowanym zawsze zostaje jak w grupie**: usunięty wybór „Dopasuj do części” i cały wiersz „Ramka grupy”. Po rozgrupowaniu ramka i tło stoją w miejscu i mają rozmiar z grupy.

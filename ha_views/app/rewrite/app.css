@@ -1569,3 +1569,9 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .part-section .part-style-btn{opacity:.75}
 .part-section .part-style-btn:hover{opacity:1}
 .part-section .part-style-btn.paste{color:#a3e635;border-color:rgba(163,230,53,.45)}
+
+/* "Duplikuj" in the general section */
+.control.dup-row{grid-template-columns:105px 1fr}
+.dup-btn{display:inline-flex;align-items:center;gap:7px;justify-self:start;height:30px;padding:0 12px;border:1px solid rgba(99,181,216,.35);border-radius:8px;background:#0d2635;color:#cfe6f0;font-size:12px;cursor:pointer}
+.dup-btn:hover{border-color:#20b9e7;color:#fff}
+.dup-btn .mdi{font-size:16px}
