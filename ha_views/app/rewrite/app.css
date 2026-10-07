@@ -1641,3 +1641,5 @@ body.dash-mode .scene:after{display:none}
 .room-label-card.dash-tile{white-space:nowrap}
 .room-label-card.dash-tile.editable::after{inset:0}
 .room-label-card.dash-tile.dash-lifted,.marker.dash-tile.dash-lifted{z-index:30;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
+.room-label-card.dash-loose.editable .room-card-part{cursor:grab;outline:calc(1px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))) dashed rgba(244,114,208,.6);outline-offset:calc(2px / (var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1)))}
+.room-label-card.dash-loose.editable .room-card-part.panel-part{outline-style:solid;outline-color:#f472d0}

@@ -1,3 +1,13 @@
+## 0.6.1-beta.472
+
+- **Poprawka: termostatu nie dało się przenieść na siatce.** Termostat (z animacjami) był przerysowywany w trakcie przeciągania, więc element pod palcem znikał i telefon przerywał gest. Kafelek wracał wtedy na stare miejsce. Teraz przenoszony kafelek nie jest przerysowywany, gest trzyma się planu, a przerwany gest zostawia kafelek tam, gdzie był pokazany.
+- **Rozgrupowanie na siatce**: przycisk „Grupa” w nagłówku panelu działa także na kafelku:
+  - Po rozgrupowaniu kafelek zostaje w swoich kratkach, a jego części (tarczę, przyciski, tryby, nazwę, ikonę) przesuwasz wewnątrz kafelka.
+  - Części zachowują skalę i miejsce, a przesunięcie jednej nie rusza pozostałych.
+  - Część przyciąga się do środka i wewnętrznych krawędzi kafelka oraz do środków i krawędzi innych części, z liniami pomocniczymi.
+  - Sam kafelek przenosisz, łapiąc go za puste miejsce.
+  - Po ponownym zgrupowaniu zawartość znowu dopasowuje się do kafelka.
+
 ## 0.6.1-beta.471
 
 - **Siatka: przytrzymaj, aby przenieść.** Na telefonie kafelek, który nie był zaznaczony, nie dawał się przeciągnąć: pierwszy ruch palca przesuwał widok, a na siatce nie ma czego przesuwać, więc kafelek wyglądał na zablokowany. Teraz wystarczy przytrzymać palec chwilę (ok. 0,3 s): kafelek się unosi i od razu jedzie za palcem. Szybkie przesunięcie dalej przewija widok, a dotknięcie zaznacza kafelek. Zaznaczony kafelek przesuwa się od razu, jak wcześniej.

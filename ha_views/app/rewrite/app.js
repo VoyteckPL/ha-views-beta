@@ -35,7 +35,7 @@ const TRANSLATIONS = {
     "Zoom poza edycją":"Zoom outside editing","Panel startowy HA":"HA start panel","Bez zmian":"Unchanged","HA Views (konto)":"HA Views (account)","HA Views (urządzenie)":"HA Views (device)","Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
     "Diagnostyka przesuwania":"Swipe diagnostics",
     "Kafelki na telefon — każdy element wypełnia całe kratki":"Tiles for phones — every element fills whole cells","Kolumny":"Columns","Odstęp":"Gap","Wiersze":"Rows","Krótszy widok":"Shorter view","Dłuższy widok":"Longer view","Dopasuj do ekranu":"Fit to the screen","Pokaż siatkę poza edycją":"Show the grid outside editing","Gradient":"Gradient","Drugi kolor":"Second colour","Kafelek":"Tile","Wypełnienie":"Fill",
-    "Siatka włączona — elementy wypełniają kratki":"Grid on — elements fill the cells","Siatka wyłączona":"Grid off","Widok dopasowany do ekranu":"View fitted to the screen","Siatka widoczna poza edycją":"Grid visible outside editing","Siatka ukryta poza edycją":"Grid hidden outside editing","Elementy zajmują te wiersze — przesuń je wyżej":"Elements use these rows — move them up first"
+    "Siatka włączona — elementy wypełniają kratki":"Grid on — elements fill the cells","Siatka wyłączona":"Grid off","Widok dopasowany do ekranu":"View fitted to the screen","Siatka widoczna poza edycją":"Grid visible outside editing","Siatka ukryta poza edycją":"Grid hidden outside editing","Elementy zajmują te wiersze — przesuń je wyżej":"Elements use these rows — move them up first","Rozgrupowano — przesuwaj części wewnątrz kafelka":"Ungrouped — move the parts inside the tile","Zgrupowano — zawartość dopasowana do kafelka":"Grouped — the content fits the tile"
   }
 };
 function translateValue(value) {
@@ -881,7 +881,7 @@ function dashItems(view = activeSceneView()) {
     ...Object.values(view?.entities || {}).map(m => ({ kind:'marker', id:m.id, obj:m }))];
 }
 // While an element is dragged / resized the others are shown where they would be pushed to (not saved yet).
-let dashPreview = null;
+let dashPreview = null, dashHeldId = ''; // dashHeldId: the tile under the finger is never rebuilt while it moves
 function dashCells(obj, view = activeSceneView()) {
   const d = dashPreview?.get(obj?.id) || obj?.dash; if (!d) return null; const g = dashGrid(view);
   const w = clamp(Math.round(d.w) || 1, 1, g.cols), c = clamp(Math.round(d.c) || 0, 0, g.cols - w), h = clamp(Math.round(d.h) || 1, 1, 40), r = Math.max(0, Math.round(d.r) || 0);
@@ -1032,7 +1032,7 @@ function dashDrag(event, kind, obj, onTap = null) {
   const px = e => { const s = els.scene.getBoundingClientRect(); return [(e.clientX - s.left) / Math.max(1, s.width) * 100, (e.clientY - s.top) / Math.max(1, s.height) * 100]; };
   const [gx0, gy0] = px(event), grab = [gx0 - (start.x + start.w / 2), gy0 - (start.y + start.h / 2)];
   let moved = false, target = cells, last = event;
-  node.classList.add('dash-lifted');
+  node.classList.add('dash-lifted'); if (kind === 'room') dashHeldId = id; try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const place = e => {
     last = e; const [x, y] = px(e), cx = x - grab[0], cy = y - grab[1], live = dashNode(kind, id) || node;
     const put = n => { n.style.left = `${cx}%`; n.style.top = `${cy}%`; n.style.setProperty('--ax', `${cx}%`); n.style.setProperty('--ay', `${cy}%`); };
@@ -1050,10 +1050,12 @@ function dashDrag(event, kind, obj, onTap = null) {
   const end = e => {
     if (e.pointerId !== event.pointerId) return; camera.stop();
     window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
+    dashHeldId = ''; try { els.scene.releasePointerCapture(event.pointerId); } catch {}
     const live = dashNode(kind, id) || node; live.classList.remove('dash-lifted', 'dash-moving');
     if (!moved) { dashPreview = null; renderDashGrid(); onTap?.(); return; }
     const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
-    if (e.type === 'pointercancel') { dashPreview = null; } else dashCommit(dashLayout(id, target));
+    // A gesture the phone broke off (long press, system gesture) still drops the tile where it was shown.
+    dashCommit(dashLayout(id, target));
     obj.updatedAt = new Date().toISOString(); dashAfterChange(); scheduleSave(true);
   };
   window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
@@ -1082,7 +1084,7 @@ function dashResize(event, kind, obj, corner) {
     if (e.pointerId !== event.pointerId) return; camera.stop();
     window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
     const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
-    if (e.type === 'pointercancel' || !dashPreview) dashPreview = null; else dashCommit(dashLayout(id, target));
+    if (!dashPreview) dashPreview = null; else dashCommit(dashLayout(id, target));
     obj.updatedAt = new Date().toISOString(); dashAfterChange(); scheduleSave(true);
   };
   window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
@@ -1096,6 +1098,64 @@ function dashHold(event, start) {
   const move = e => { if (e.pointerId === id && Math.hypot(e.clientX - sx, e.clientY - sy) > 8) stop(); };
   const timer = setTimeout(() => { stop(); if (touchesDown.size > 1) return; panGesture = null; viewSwipe = null; try { navigator.vibrate?.(12); } catch {} start(); }, 300);
   window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', stop, true); window.addEventListener('pointercancel', stop, true);
+}
+// ---- Ungrouped on the grid ("Grupa" off on a tile): the tile stays in its cells, its parts move freely inside it. The
+// content keeps the scale and centre it had (dashLoose = {k: scale per px of tile width, cx, cy, fill}), so moving one
+// part never shifts or rescales the others; grouped again, the content is fitted to the tile once more.
+function dashLooseScale(room, tileWpx) { const l = room.dashLoose; return clamp(l.k * tileWpx / (sceneScale || 1) * dashFill(room) / (l.fill || dashFill(room)), .02, 40); }
+function dashSetLoose(room, on) {
+  if (!on) { delete room.dashLoose; dashFit.delete(room.id); return; }
+  const card = $(`#room-labels .room-label-card.dash-tile[data-room-id="${CSS.escape(room.id)}"]`), span = dashSpan(room); if (!card || !span) return;
+  const lscale = parseFloat(card.style.getPropertyValue('--lscale')) || 1, tileWpx = span.w / 100 * (els.scene.offsetWidth || 1), rect = card.getBoundingClientRect(), k = rect.width / Math.max(1, card.offsetWidth);
+  let cx = 0, cy = 0;
+  if (!room.labelCardFree) {
+    // A label laid out in a row / column becomes a free one: every part keeps the place it has now.
+    const mx = rect.left + rect.width / 2, my = rect.top + rect.height / 2;
+    card.querySelectorAll(':scope > .room-card-part').forEach(node => { const key = partKey(node), r = node.getBoundingClientRect(); if (!key || !r.width) return; room[`${key}FX`] = Math.round((r.left + r.width / 2 - mx) / k * 100) / 100; room[`${key}FY`] = Math.round((r.top + r.height / 2 - my) / k * 100) / 100; });
+    room.labelCardFree = true;
+  } else [cx, cy] = card.__center || [0, 0];
+  room.dashLoose = { k: Math.round(lscale * (sceneScale || 1) / tileWpx * 1e6) / 1e6, cx: Math.round(cx * 100) / 100, cy: Math.round(cy * 100) / 100, fill: dashFill(room) };
+}
+// A part of a loose tile follows the finger inside its tile. It snaps (screen px reach) to the tile's centre lines and
+// inner edges and to the centres and edges of the other parts; the guides show what it caught.
+function dashPartDrag(event, room, partNode) {
+  const card = partNode.closest('.room-label-card'), key = partKey(partNode); if (!card || !key) return false;
+  event.preventDefault(); event.stopPropagation();
+  const part = partNode.dataset.labelPart, rect0 = card.getBoundingClientRect(), k = rect0.width / Math.max(1, card.offsetWidth), loose = room.dashLoose;
+  const W = card.offsetWidth, H = card.offsetHeight, fx0 = Number(room[`${key}FX`]) || 0, fy0 = Number(room[`${key}FY`]) || 0;
+  const hw = partNode.offsetWidth / 2, hh = partNode.offsetHeight / 2, margin = Math.min(W, H) * .06, reach = snapReach() / k;
+  const others = [...card.querySelectorAll(':scope > .room-card-part')].filter(n => n !== partNode).map(n => { const kk = partKey(n); return { x: (Number(room[`${kk}FX`]) || 0) - loose.cx, y: (Number(room[`${kk}FY`]) || 0) - loose.cy, hw: n.offsetWidth / 2, hh: n.offsetHeight / 2 }; });
+  // Candidate positions of the part's centre on one axis, with the line (card-local) shown for each.
+  const lines = (half, size, own, pick) => {
+    const out = [{ v: 0, at: 0, kind: 'group' }, { v: -size / 2 + margin + own, at: -size / 2 + margin, kind: 'group' }, { v: size / 2 - margin - own, at: size / 2 - margin, kind: 'group' }];
+    others.forEach(o => { const c = pick(o), h = half(o); out.push({ v: c, at: c, kind: 'label' }, { v: c - h + own, at: c - h, kind: 'label' }, { v: c + h - own, at: c + h, kind: 'label' }); });
+    return out;
+  };
+  const xs = lines(o => o.hw, W, hw, o => o.x), ys = lines(o => o.hh, H, hh, o => o.y);
+  const snap = (v, list, alt) => { if (alt) return [v, null]; let best = null; list.forEach(c => { const d = Math.abs(c.v - v); if (d <= reach && (!best || d < best.d)) best = { ...c, d }; }); return best ? [best.v, best] : [v, null]; };
+  panelPart = { roomId: room.id, part }; selectedLabelPart = part; card.querySelectorAll('.room-card-part').forEach(n => n.classList.toggle('panel-part', n === partNode));
+  let moved = false;
+  const move = e => {
+    if (e.pointerId !== event.pointerId) return;
+    if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; e.preventDefault();
+    const px = clamp(fx0 - loose.cx + (e.clientX - event.clientX) / k, -W / 2 + hw, W / 2 - hw), py = clamp(fy0 - loose.cy + (e.clientY - event.clientY) / k, -H / 2 + hh, H / 2 - hh);
+    const [sx, gx] = snap(px, xs, e.altKey), [sy, gy] = snap(py, ys, e.altKey);
+    room[`${key}FX`] = Math.round((sx + loose.cx) * 100) / 100; room[`${key}FY`] = Math.round((sy + loose.cy) * 100) / 100; renderRoomLabels();
+    // Guides across the tile, in scene %.
+    const sc = els.scene.getBoundingClientRect(), live = $(`#room-labels .room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect() || rect0, mx = live.left + live.width / 2, my = live.top + live.height / 2;
+    const toX = v => (mx + v * k - sc.left) / sc.width * 100, toY = v => (my + v * k - sc.top) / sc.height * 100;
+    showAlignGuides(gx ? [{ at: toX(gx.at), from: toY(-H / 2), to: toY(H / 2), kind: gx.kind }] : [], gy ? [{ at: toY(gy.at), from: toX(-W / 2), to: toX(W / 2), kind: gy.kind }] : []);
+  };
+  const end = e => {
+    if (e.pointerId !== event.pointerId) return;
+    window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
+    showAlignGuides([], []);
+    const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); }
+    renderRoomLabels(); if ($('#room-editor')?.classList.contains('visible')) focusPartSection(part);
+  };
+  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
+  return true;
 }
 // After the tiles changed: the plan may have grown, everything is drawn again, the open panel shows the new size.
 function dashAfterChange() {
@@ -1373,7 +1433,9 @@ function fitFreeCard(room, group) {
   const pad = parts.length > 1 ? clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60) : 0;
   const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
-  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  let cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  // A loose tile keeps the centre it had when it was ungrouped (moving one part does not shift the others).
+  if (card.classList.contains('dash-loose') && room.dashLoose) { cx = Number(room.dashLoose.cx) || 0; cy = Number(room.dashLoose.cy) || 0; } else card.__center = [cx, cy];
   // A tile keeps its size and the parts are centred in it.
   if (card.classList.contains('dash-tile')) { card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px'); }
   else { card.style.width = `${Math.round(maxX - minX + pad * 2.7)}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`; card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`); }
@@ -1666,14 +1728,14 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
     // On a grid view the card is its tile: exactly the tile's size, the content scaled to fill it (dashFitPass).
-    const pin = isIconRoom(r) && dashSpan(r), lscale = pin ? dashFit.get(r.id) || clamp(Number(r.labelCardScale) || 1, .3, 6) : clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
+    const pin = isIconRoom(r) && dashSpan(r), loose = pin && r.dashLoose && free, lscale = loose ? dashLooseScale(r, pin.w / 100 * (els.scene?.offsetWidth || 1)) : pin ? dashFit.get(r.id) || clamp(Number(r.labelCardScale) || 1, .3, 6) : clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const tileUnit = pin ? dashGeom().cw * toLocal / 96 : 1; // tile corners / frame: px of a 96 px wide tile
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${pin ? 0 : Number(r.labelCardX) || 0}px`, `--ly:${pin ? 0 : Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `width:${(pin.w * toLocal).toFixed(2)}px;height:${(pin.h * toLocalY).toFixed(2)}px;box-sizing:border-box;overflow:visible` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
       free || pin ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on, tileUnit)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
-    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${pin ? ' dash-tile' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
+    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${pin ? ' dash-tile' : ''}${loose ? ' dash-loose' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${cardLook(r, on)}"></div>` : '';
@@ -1690,7 +1752,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
 // Scales each tile's content to fill its tile (by the element's "Wypełnienie"); true when a scale changed (draw again).
 function dashFitPass(layer) {
   let changed = false;
-  layer.querySelectorAll('.room-label-card.dash-tile').forEach(card => {
+  layer.querySelectorAll('.room-label-card.dash-tile:not(.dash-loose)').forEach(card => {
     const room = roomsOf()[card.dataset.roomId], tile = card.getBoundingClientRect(); if (!room || !tile.width) return;
     const rects = [...card.querySelectorAll(':scope > .room-card-part')].map(n => n.getBoundingClientRect()).filter(r => r.width); if (!rects.length) return;
     const w = Math.max(...rects.map(r => r.right)) - Math.min(...rects.map(r => r.left)), h = Math.max(...rects.map(r => r.bottom)) - Math.min(...rects.map(r => r.top));
@@ -1712,6 +1774,8 @@ function renderRoomLabels(view = activeSceneView()) {
   Object.values(roomsOf(view)).filter(room => !grid || isIconRoom(room)).forEach(room => {
     const html = roomLabelMarkup(room, preview(room.id), editMode && !room.geometryLocked && !roomDraft); kept.add(room.id);
     let group = [...layer.children].find(node => node.dataset.labelGroup === room.id);
+    // The tile being moved keeps its nodes (a rebuilt node under the finger makes a phone break the touch off).
+    if (room.id === dashHeldId && group?.children.length) return;
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
     if (group.__html === html) return equalizeLabelFrames(room, group);
     // Only the position changed (the room or the label is being dragged): the existing nodes get the new
@@ -2102,6 +2166,9 @@ function startRoomLabelDrag(event) {
   }
   // Ungrouped: a tapped part is brought into view on its own (like picking its section in the panel), else the whole label.
   const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
+  // A part of an ungrouped tile moves inside its tile (the tile itself is moved by its empty area).
+  const loosePart = node.classList.contains('dash-loose') && event.target.closest('.room-card-part');
+  if (loosePart && (event.pointerType !== 'touch' || selectedRoomId === room.id)) return void dashPartDrag(event, room, loosePart);
   // A tile not picked yet on a phone: held still for a moment it is lifted and follows the finger (a swipe scrolls).
   if (node.dataset.labelPart === 'card' && isIconRoom(room) && dashSpan(room) && event.pointerType === 'touch' && selectedRoomId !== room.id) dashHold(event, () => dashDrag(event, 'room', room));
   if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); })) return;
@@ -2894,7 +2961,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on);
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
   const groupButton = $('#room-group-toggle');
-  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1 || !!dashSpan(room); /* on a grid a label is always one group */ groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
+  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; const grouped = dashSpan(room) ? !room.dashLoose : !!room.labelLinked; groupButton.hidden = shown <= 1; groupButton.classList.toggle('active', grouped); groupButton.setAttribute('aria-pressed', String(grouped)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
   if (!newlySelected) $$('.gauge-subsection > summary', content).forEach(node => { if (openSubs.has(node.textContent.trim())) node.parentElement.open = true; });
   const sections = $$('.editor-section', content);
@@ -3035,6 +3102,11 @@ function onRoomEditorClick(event) {
     const partKeys = ROOM_LABEL_PARTS.map(([, k]) => k);
     if (key === 'labelMinus' && isThermoRoom(room) && partToggle.closest('.group-tight')) room.labelPlus = !room.labelMinus;
     if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
+    if (key === 'labelLinked' && isIconRoom(room) && dashSpan(room)) {
+      // On the grid the tile stays grouped in its cells; "Grupa" lets its parts move inside it.
+      dashSetLoose(room, !room.dashLoose); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
+      notify(room.dashLoose ? 'Rozgrupowano — przesuwaj części wewnątrz kafelka' : 'Zgrupowano — zawartość dopasowana do kafelka'); return;
+    }
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
     const parts = partKeys;
@@ -7207,6 +7279,7 @@ function bindEvents() {
   // Touch gestures and desktop mouse dragging are deliberately separate.
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
+  els.scene?.addEventListener('dragstart', event => event.preventDefault()); // no picture dragging (breaks a touch off)
   window.addEventListener('pointerdown', trackTouchDown, true); window.addEventListener('pointermove', trackTouchMove, true); window.addEventListener('pointerup', trackTouchUp, true); window.addEventListener('pointercancel', trackTouchUp, true);
   ['touchstart','touchend','touchcancel'].forEach(type => window.addEventListener(type, syncTouches, { capture:true, passive:true }));
   document.addEventListener('visibilitychange', () => { if (document.hidden) resetTouches(); }); window.addEventListener('blur', resetTouches);
