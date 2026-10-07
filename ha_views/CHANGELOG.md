@@ -1,3 +1,11 @@
+## 0.6.0-beta.457
+
+- **Rozgrupowanie i zgrupowanie bez zmian nic już nie przesuwa**: wcześniej położenia części były przy każdym przełączeniu zaokrąglane do pełnego piksela, więc ramka grupy minimalnie się zmieniała. Teraz, jeśli żadna część nie została ruszona, grupa wraca dokładnie taka, jaka była. Gdy coś przesuniesz, położenia są liczone z dokładnością 0,01 px.
+- **Ramka grupy w rozgrupowanym** (Grupa → Ramka grupy, widoczne po rozgrupowaniu):
+  - „Zostaje jak w grupie” (domyślnie): ramka i tło mają rozmiar i miejsce takie jak w grupie i nie zmieniają się przy przesuwaniu części.
+  - „Dopasuj do części”: ramka obejmuje części na bieżąco, jak dotąd.
+  - Po ponownym zgrupowaniu ramka zachowuje się jak zawsze w grupie: obejmuje części, a ustawiony rozmiar ramki działa jako najmniejszy.
+
 ## 0.6.0-beta.456
 
 - **Pomieszczenia: części etykiety przyciągają się do kształtu pokoju**: w rozgrupowanej etykiecie pomieszczenia ikona, nazwa i stan łapią środek i zewnętrzne krawędzie swojego pokoju (bursztynowe linie). Środek pokoju liczy się tak samo jak środek innej części. Działa przy włączonym „Środek i ramka” w magnesie grupy.
