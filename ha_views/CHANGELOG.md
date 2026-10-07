@@ -1,3 +1,7 @@
+## 0.6.1-beta.464
+
+- **Nowa numeracja bet**: po wydaniu stabilnej 0.6.1 bety mają numer 0.6.1-beta.N (licznik bet idzie dalej). Ta wersja ma ten sam kod co 0.6.1.
+
 ## 0.6.0-beta.463
 
 - **Każdy tryb termostatu to osobna część** (jak Ikona):
