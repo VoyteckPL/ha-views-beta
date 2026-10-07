@@ -1088,6 +1088,15 @@ function dashResize(event, kind, obj, corner) {
   window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
   return true;
 }
+// Touch on a tile that is not selected: holding the finger still for a moment picks it up (it starts to move with the
+// finger at once); moving the finger before that scrolls the view as usual.
+function dashHold(event, start) {
+  const sx = event.clientX, sy = event.clientY, id = event.pointerId;
+  const stop = () => { clearTimeout(timer); window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', stop, true); window.removeEventListener('pointercancel', stop, true); };
+  const move = e => { if (e.pointerId === id && Math.hypot(e.clientX - sx, e.clientY - sy) > 8) stop(); };
+  const timer = setTimeout(() => { stop(); if (touchesDown.size > 1) return; panGesture = null; viewSwipe = null; try { navigator.vibrate?.(12); } catch {} start(); }, 300);
+  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', stop, true); window.addEventListener('pointercancel', stop, true);
+}
 // After the tiles changed: the plan may have grown, everything is drawn again, the open panel shows the new size.
 function dashAfterChange() {
   dashFitRows(); dashSyncRatio(activeSceneView()); renderDashGrid(); applyBackgroundTransform(); updateSceneGeometry(); renderMarkers();
@@ -2093,6 +2102,8 @@ function startRoomLabelDrag(event) {
   }
   // Ungrouped: a tapped part is brought into view on its own (like picking its section in the panel), else the whole label.
   const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
+  // A tile not picked yet on a phone: held still for a moment it is lifted and follows the finger (a swipe scrolls).
+  if (node.dataset.labelPart === 'card' && isIconRoom(room) && dashSpan(room) && event.pointerType === 'touch' && selectedRoomId !== room.id) dashHold(event, () => dashDrag(event, 'room', room));
   if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); })) return;
   // On a grid view a label moves by whole tiles (the others make room).
   if (node.dataset.labelPart === 'card' && isIconRoom(room) && dashSpan(room)) {
@@ -5204,6 +5215,8 @@ function touchSelectFirst(event, selected, select = null) {
 function startDrag(event) {
   if (!editMode || event.button !== 0) return;
   if (secondFingerToZoom(event)) return;
+  const held = model.entities[event.currentTarget.dataset.markerId];
+  if (held && dashSpan(held) && event.pointerType === 'touch' && selectedId !== held.id && !held.geometryLocked) dashHold(event, () => dashDrag(event, 'marker', held));
   if (touchSelectFirst(event, selectedId === event.currentTarget.dataset.markerId)) return; // a tap selects it (click)
   event.preventDefault(); const node = event.currentTarget, key = node.dataset.markerId, marker = model.entities[key];
   if (marker?.geometryLocked) return;

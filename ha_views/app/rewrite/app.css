@@ -1640,3 +1640,4 @@ body.dash-mode .scene:after{display:none}
 .room-label-card.dash-tile.dash-moving,.marker.dash-tile.dash-moving{transition:none;z-index:30;opacity:.92;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45))}
 .room-label-card.dash-tile{white-space:nowrap}
 .room-label-card.dash-tile.editable::after{inset:0}
+.room-label-card.dash-tile.dash-lifted,.marker.dash-tile.dash-lifted{z-index:30;filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}

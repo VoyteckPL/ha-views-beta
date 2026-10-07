@@ -1,3 +1,7 @@
+## 0.6.1-beta.471
+
+- **Siatka: przytrzymaj, aby przenieść.** Na telefonie kafelek, który nie był zaznaczony, nie dawał się przeciągnąć: pierwszy ruch palca przesuwał widok, a na siatce nie ma czego przesuwać, więc kafelek wyglądał na zablokowany. Teraz wystarczy przytrzymać palec chwilę (ok. 0,3 s): kafelek się unosi i od razu jedzie za palcem. Szybkie przesunięcie dalej przewija widok, a dotknięcie zaznacza kafelek. Zaznaczony kafelek przesuwa się od razu, jak wcześniej.
+
 ## 0.6.1-beta.470
 
 - **Nowy tryb tła: Siatka** (menu widoku → Tło → Siatka). To widok kafelkowy na telefon:
