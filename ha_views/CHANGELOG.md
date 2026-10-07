@@ -1,3 +1,7 @@
+## 0.6.0-beta.448
+
+- **Nowa numeracja bet**: po wydaniu stabilnej 0.6.0 bety mają numer 0.6.0-beta.N (licznik bet idzie dalej). Ta wersja ma ten sam kod co 0.6.0.
+
 ## 0.4.1-beta.447
 
 - **Dodatkowe encje pokazują stan**: stan dodanej encji (np. ciśnienia) jest pobierany od razu po dodaniu i odświeżany razem z pozostałymi encjami widoku — zamiast kreski „–”; sekcja w panelu ma nazwę encji zamiast jej identyfikatora.
