@@ -1,3 +1,16 @@
+## 0.6.0-beta.452
+
+- **Etykieta i termostat to zawsze jedna grupa** (etap 1 nowego modelu grupy):
+  - Przycisk „Grupa” w nagłówku panelu to teraz **„Edytuj wnętrze”**. Po włączeniu każdą część przesuwasz i zmieniasz jej rozmiar osobno. Przycisk ze znaczkiem ✓ kończy edycję.
+  - Edycja wnętrza kończy się też sama, gdy zamkniesz panel albo wybierzesz inny element. Wszystko zostaje tam, gdzie było ustawione.
+  - Etykiety rozgrupowane w starszych wersjach stają się grupą przy pierwszym wybraniu, bez przesunięcia części.
+  - Wejście w edycję wnętrza nie dodaje już tła ani ramki nazwie i stanowi.
+- **Ramka grupy: „Auto” albo „Własny rozmiar”** (Grupa → Rozmiar ramki):
+  - Auto: ramka obejmuje wszystkie części, z marginesem.
+  - Własny rozmiar: ramka ma własną szerokość i wysokość (suwaki albo kropki w rogach ramki w edycji wnętrza) i stoi w miejscu, gdy przesuwasz części. Części mogą wystawać poza nią. Części przyciągają się też do boków i środka takiej ramki.
+  - Brak ramki: wyłącz tło i ramkę grupy, jak dotąd.
+- **Kropki w rogach zgrupowanej etykiety lub termostatu skalują całość** (dotąd trzeba było trzymać Shift). Rozmiar ramki ustawiasz w edycji wnętrza.
+
 ## 0.6.0-beta.451
 
 - **Kopiowanie stylu między częściami**: w otwartej sekcji części (np. Nazwa, Stan, Temperatura aktualna, dodatkowa encja) na pasku sekcji jest mały przycisk „Kopiuj styl części”. Po skopiowaniu w każdej innej otwartej sekcji pojawia się zielony przycisk „Wklej styl części”, także w innej etykiecie lub termostacie.
