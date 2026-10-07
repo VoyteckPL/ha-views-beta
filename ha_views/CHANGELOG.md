@@ -1,3 +1,7 @@
+## 0.4.1-beta.441
+
+- **Komputer: przybliżanie i centrowanie przy krawędzi planu w edycji**: w trybie edycji przybliżony plan można przesunąć poza jego krawędź (o pół wolnego ekranu), więc zoom kółkiem przy elemencie na skraju planu nie jest już blokowany, a kliknięty element (etykieta, termostat, część, wskaźnik) płynnie przesuwa się na środek wolnego ekranu — także gdy leży przy samej krawędzi tła. Zoom się przy tym nie zmienia; przy 100% nic się nie przesuwa.
+
 ## 0.4.1-beta.440
 
 - **Osobne przyciąganie wewnątrz grupy**: przesuwana / zmieniana rozmiarem część rozgrupowanego termostatu lub etykiety łapie się teraz tylko swojej grupy — pozostałych części (krawędzie i środki, ten sam rozmiar, 1:1), osi środka grupy i zewnętrznych krawędzi grupy — niezależnie od ustawień „Przyciągaj do” (wskaźniki, etykiety, pomieszczenia, siatka planu nie przeszkadzają). Wyłącza je tylko wyłączenie linii pomocniczych (albo Alt).

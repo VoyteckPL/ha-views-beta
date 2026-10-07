@@ -3140,7 +3140,9 @@ function clampViewPan() {
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
   if (deskZoomExpanded()) {
     // The plan may move anywhere inside the free screen; larger than it, it always covers that area.
-    const R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect(), fit = (size, lo, hi) => size >= hi - lo ? [hi - size, lo] : [lo, hi - size];
+    // While editing, it may also go past its edges by half the free screen, so an element at the plan's edge can be
+    // brought to the middle of the screen.
+    const R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect(), fit = (size, lo, hi) => { const e = editMode ? (hi - lo) / 2 : 0; return size >= hi - lo ? [hi - size - e, lo + e] : [lo - e, hi - size + e]; };
     viewPanX = clamp(viewPanX, ...fit(els.scene.offsetWidth * viewZoom, R.left - vp.left, R.right - vp.left));
     viewPanY = clamp(viewPanY, ...fit(els.scene.offsetHeight * viewZoom, R.top - vp.top, R.bottom - vp.top));
     return;
@@ -4313,8 +4315,16 @@ function editorFreeBand() {
   const bottom = Math.min(editorTop, vr.bottom) - vr.top - 14;
   return { top, bottom, height: Math.max(60, bottom - top) };
 }
+// On a computer, zoomed in while editing: the selected element glides to the middle of the free screen (same zoom).
+function focusSceneBoxOnDesktop(points) {
+  if (mobileView() || !editMode || !points.length || !deskZoomExpanded()) return;
+  const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, xs = points.map(p => Number(p[0]) / 100 * W), ys = points.map(p => Number(p[1]) / 100 * H);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2, R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect();
+  glideCamera(viewZoom, (R.left + R.right) / 2 - vp.left - cx * viewZoom, (R.top + R.bottom) / 2 - vp.top - cy * viewZoom);
+}
 function focusSceneBoxOnMobile(points) {
-  if (!mobileView() || !editMode || !points.length) return;
+  if (!mobileView()) return focusSceneBoxOnDesktop(points);
+  if (!editMode || !points.length) return;
   const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
   const xs = points.map(p => Number(p[0]) / 100 * sceneWidth), ys = points.map(p => Number(p[1]) / 100 * sceneHeight);
   const boxW = Math.max(1, Math.max(...xs) - Math.min(...xs)), boxH = Math.max(1, Math.max(...ys) - Math.min(...ys));
@@ -4328,7 +4338,8 @@ function focusSceneBoxOnMobile(points) {
   glideCamera(nextZoom, viewW / 2 - centreX * nextZoom, targetY - centreY * nextZoom);
 }
 function focusScenePointOnMobile(xPercent, yPercent) {
-  if (!mobileView() || !editMode) return;
+  if (!mobileView()) return focusSceneBoxOnDesktop([[xPercent, yPercent]]);
+  if (!editMode) return;
   const marker = { xPercent, yPercent };
   // Deliberately closer than beta.52: selected markers remain clear of the
   // bottom editor even on the lowest part of a portrait background.
