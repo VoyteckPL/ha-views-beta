@@ -1583,3 +1583,20 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .thermo-mode-solo.pending{animation:thermo-pending 1s ease-in-out infinite}
 /* Mode parts: the modes' pink, like "Tryby" */
 [class*="part-mode_"]{--part-color:#f472b6}
+
+/* Dial styles */
+.thermo-seg{stroke-linecap:butt}
+.thermo-seg.lit.glow,.thermo-heat.lit.glow,.thermo-index.glow{filter:drop-shadow(0 0 .08em var(--accent))}
+.thermo-seg.run{animation:thermo-seg-run 1.5s ease-in-out infinite}
+@keyframes thermo-seg-run{0%,100%{opacity:1}50%{opacity:.3}}
+.thermo-cur-tick{stroke:#ffffff;stroke-width:2.2}
+.thermo-tick{stroke:#3a4a56;stroke-width:1}
+.thermo-tick.mid{stroke:#7d8e98;stroke-width:1.3}
+.thermo-tick.major{stroke:#dfe8ec;stroke-width:2}
+.thermo-index{stroke-linecap:round}
+.thermo-cur-tri{fill:#47c3f2}
+.thermo-room-arc{fill:none;stroke:#e6f6fd;stroke-linecap:round;opacity:.75}
+.thermo-heat{fill:none;stroke-linecap:butt;opacity:.22}
+.thermo-heat.lit{opacity:1}
+.thermo-knob.thermal{fill:#0b1a24;stroke-width:3.5}
+@media (prefers-reduced-motion: reduce){.thermo-seg.run{animation:none}}

@@ -1,3 +1,13 @@
+## 0.6.1-beta.465
+
+- **5 stylów tarczy termostatu** (Tarcza → Styl → Styl tarczy):
+  - **Klasyczna**: dotychczasowy łuk z uchwytem nastawy i kropką temperatury w pokoju.
+  - **Segmenty LED**: 44 segmenty zapalone do nastawy, coraz jaśniejsze w kolorze trybu. Odcinek między pokojem a nastawą pulsuje falą, gdy urządzenie pracuje. Biała kreska to pokój.
+  - **Chronograf**: skala z kreskami co 0,5° (dłuższe co 1° i 5°), wskaźnik nastawy na krawędzi, niebieski trójkąt temperatury w pokoju i cienki łuk „do dogrzania” podczas pracy.
+  - **Podwójny pierścień**: na zewnątrz cienki pierścień z temperaturą w pokoju, w środku gruby łuk nastawy z uchwytem.
+  - **Termiczna**: łuk w pełnym spektrum od zimnego do gorącego, przygaszony powyżej nastawy, z uchwytem w kolorze temperatury.
+  - Wszystkie mają tę samą wielkość i miejsce, więc zmiana stylu nie przesuwa układu. Działają z kolorami trybu, poświatą, kolorem toru i wypełnieniem środka. Kolory spektrum biorą się z kolorów grzania i chłodzenia.
+
 ## 0.6.1-beta.464
 
 - **Nowa numeracja bet**: po wydaniu stabilnej 0.6.1 bety mają numer 0.6.1-beta.N (licznik bet idzie dalej). Ta wersja ma ten sam kod co 0.6.1.
