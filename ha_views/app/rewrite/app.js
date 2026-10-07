@@ -1519,7 +1519,7 @@ function startFreeResize(event, handle) {
   const fx = sx > 0 ? rect0.left : rect0.right, fy = sy > 0 ? rect0.top : rect0.bottom, cx0 = (rect0.left + rect0.right) / 2, cy0 = (rect0.top + rect0.bottom) / 2;
   const posX = `${key}X`, posY = `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
-  const groupMode = !isCard && !room.labelLinked, gctx = groupMode ? groupSnap(room, [node]) : null;
+  const groupMode = !isCard && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1, gctx = groupMode ? groupSnap(room, [node]) : null;
   const gopts = groupSnapOpts(), st = groupMode ? { ...snapTargets(), edges: true, centers: true, labels: true } : snapTargets(), view = visibleSceneRect(), useSnap = groupMode ? gopts.on : st.guides;
   const g = groupMode ? { xs: [...gctx.xs], ys: [...gctx.ys] } : useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
   const planBoxes = groupMode && gopts.plan ? (p => { g.xs.push(...p.xs); g.ys.push(...p.ys); return p.boxes; })(groupPlanTargets(room, scene)) : [];
@@ -1848,7 +1848,7 @@ function startRoomLabelDrag(event) {
   const [sx, sy] = scenePercentAt(event), [px, py] = partPct(key), grab = [sx - px, sy - py];
   // Guides only of this room: its outline edges and centre, the label anchor, and its label parts that stay in place.
   let guides = null;
-  const groupMode = key !== 'labelCard' && !room.labelLinked;
+  const groupMode = key !== 'labelCard' && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1;
   const roomGuides = () => {
     if (groupMode) {
       // Worked out again on every move (the parts pushed apart, the camera), from the part as it is drawn now.
@@ -1876,7 +1876,8 @@ function startRoomLabelDrag(event) {
     const boxes = [
       ...(snapTargets().guides && snapTargets().labels ? $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== room.id && other.offsetParent !== null) : []),
       ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(other => !moving.includes(ROOM_LABEL_PARTS.find(([p]) => p === other.dataset.labelPart)?.[1]))
-    ].filter(other => ownPart(other) || rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), radius: shapedRect(other).radius, own: ownPart(other) })).filter(b => b.r - b.l > 1);
+    ].filter(other => ownPart(other) || rectOnScreen(other.getBoundingClientRect())).map(other => ({ ...boxOf(other), radius: shapedRect(other).radius, own: ownPart(other), kind: 'label' })).filter(b => b.r - b.l > 1);
+    if (snapTargets().guides) boxes.push(...guideBoxes({ xs: gx, ys: gy }, ['marker','flow']));
     const own = node.getBoundingClientRect(), [qx, qy] = partPct(key);
     // Centre and both edges of the dragged part line up with the edges and centres of the others. The visible box need
     // not be centred on the label's point (a free group is shifted to cover its parts): its offset is kept (shiftX/Y).
@@ -3188,8 +3189,15 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   return { scene, xs, ys, offsets: [...(t.centers ? [0] : []), ...(t.edges ? [-1, 1] : [])] };
 }
 function alignmentContext(node) {
-  const own = node.getBoundingClientRect();
-  return { ...guideTargets({ node }), halfW: own.width / 2, halfH: own.height / 2 };
+  const own = node.getBoundingClientRect(), targets = guideTargets({ node });
+  return { ...targets, boxes: guideBoxes(targets), halfW: own.width / 2, halfH: own.height / 2 };
+}
+// The objects behind the plan's guide lines (labels, markers, Flow), once each, with their kind: markers and Flow snap
+// like labels do (edges, centres, touching, equal gaps, nearest first) and their lines take the target's colour.
+function guideBoxes(targets, kinds = ['label','marker','flow']) {
+  const seen = new Map();
+  [...(targets.xs || []), ...(targets.ys || [])].forEach(t => { if (!t.box || !kinds.includes(t.kind)) return; const k = `${t.box.l.toFixed(1)}|${t.box.t.toFixed(1)}|${t.box.r.toFixed(1)}|${t.box.b.toFixed(1)}`; if (!seen.has(k)) seen.set(k, { ...t.box, kind: t.kind }); });
+  return [...seen.values()];
 }
 function alignToGuides(context, xPercent, yPercent, event) {
   if (cameraPanning || !context || event?.altKey || !snapTargets().guides || !context.scene.width || !context.scene.height) { showAlignGuides([], []); return { xPercent, yPercent }; }
@@ -3241,7 +3249,7 @@ function alignLabel(context, xPercent, yPercent, event) {
   const rb = context.roomBox, inside = !!rb && snapTargets().rooms && cx - hw >= rb.l - 1 && cx + hw <= rb.r + 1 && cy - hh >= rb.t - 1 && cy + hh <= rb.b + 1;
   const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
   // Other labels come in as boxes (segment lines, highlight); their copies among the general guides are skipped.
-  const guideValues = values => values.filter(item => item.own || item.kind !== 'label' || !item.box).filter(item => !inside || item.own || item.kind === 'label');
+  const guideValues = values => values.filter(item => item.own || !['label','marker','flow'].includes(item.kind) || !item.box || !boxes.length).filter(item => !inside || item.own || item.kind === 'label');
   // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
   const solve = (axis, c, half, oc, ohalf) => {
     const [lo, hi, mid, plo, phi] = axis === 'x' ? ['l','r','cx','t','b'] : ['t','b','cy','l','r'];
@@ -3255,10 +3263,11 @@ function alignLabel(context, xPercent, yPercent, event) {
     const edges = context.group || snapTargets().edges, centers = context.group || snapTargets().centers, spacing = context.group ? !!context.spacing : snapTargets().spacing, centreReach = threshold * 1.7;
     boxes.forEach(b => {
       const f = far(b), span = [b[plo], b[phi]];
-      if (centers) add(b[mid], f, { at: b[mid], span }, [], [b], centreReach);
+      const kind = b.kind;
+      if (centers) add(b[mid], f, { at: b[mid], span, kind }, [], [b], centreReach);
       if (!edges) return;
-      add(b[lo] + half, f + .4, { at: b[lo], span }, [], [b]); add(b[hi] - half, f + .4, { at: b[hi], span }, [], [b]);
-      add(b[hi] + half, f + 1.5, { at: b[hi], span }, [], [b]); add(b[lo] - half, f + 1.5, { at: b[lo], span }, [], [b]);
+      add(b[lo] + half, f + .4, { at: b[lo], span, kind }, [], [b]); add(b[hi] - half, f + .4, { at: b[hi], span, kind }, [], [b]);
+      add(b[hi] + half, f + 1.5, { at: b[hi], span, kind }, [], [b]); add(b[lo] - half, f + 1.5, { at: b[lo], span, kind }, [], [b]);
     });
     // "Odstępy" (own switch in the snap menu, own colour): repeat the gap of two neighbours in a row, or sit exactly
     // between two of them (equal gaps on both sides).
@@ -4451,7 +4460,7 @@ function startFlowDrag(event) {
     if (Math.hypot(dx,dy) > 3) moved = true;
     if (!moved) return;
     guides ||= alignmentContext(node); guides.onSettle = () => move(current);
-    ({ xPercent: flow.xPercent, yPercent: flow.yPercent } = alignToGuides(guides, snapPercent((current.clientX - rect.left) / Math.max(1, rect.width) * 100 - grab[0]), snapPercent((current.clientY - rect.top) / Math.max(1, rect.height) * 100 - grab[1]), current));
+    ({ xPercent: flow.xPercent, yPercent: flow.yPercent } = alignLabel(guides, snapPercent((current.clientX - rect.left) / Math.max(1, rect.width) * 100 - grab[0]), snapPercent((current.clientY - rect.top) / Math.max(1, rect.height) * 100 - grab[1]), current));
     camera.track(current);
     node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%';
     const fix = keepInBounds() && boundsShift(node); if (fix) { flow.xPercent = clamp(flow.xPercent + fix.x, 0, 100); flow.yPercent = clamp(flow.yPercent + fix.y, 0, 100); node.style.left = flow.xPercent + '%'; node.style.top = flow.yPercent + '%'; }
@@ -4949,7 +4958,7 @@ function startDrag(event) {
     if (Math.hypot(dx, dy) > 3 && !moved) { moved = true; els.editor.classList.add('marker-moving'); }
     if (!moved) return;
     guides ||= alignmentContext(node); guides.onSettle = () => move(e);
-    ({ xPercent: marker.xPercent, yPercent: marker.yPercent } = alignToGuides(guides, snapPercent((e.clientX - r.left) / Math.max(1, r.width) * 100 - grab[0]), snapPercent((e.clientY - r.top) / Math.max(1, r.height) * 100 - grab[1]), e));
+    ({ xPercent: marker.xPercent, yPercent: marker.yPercent } = alignLabel(guides, snapPercent((e.clientX - r.left) / Math.max(1, r.width) * 100 - grab[0]), snapPercent((e.clientY - r.top) / Math.max(1, r.height) * 100 - grab[1]), e));
     camera.track(e);
     const live = node.isConnected ? node : markerNode(key);
     if (live) { live.style.left = `${marker.xPercent}%`; live.style.top = `${marker.yPercent}%`; const fix = keepInBounds() && boundsShift(live); if (fix) { marker.xPercent = clamp(marker.xPercent + fix.x, 0, 100); marker.yPercent = clamp(marker.yPercent + fix.y, 0, 100); live.style.left = `${marker.xPercent}%`; live.style.top = `${marker.yPercent}%`; } } if (selectedId === key) syncSelection();

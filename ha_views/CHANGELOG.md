@@ -1,3 +1,13 @@
+## 0.6.1-beta.468
+
+- **Jeden mechanizm przyciągania dla wszystkiego**: etykiety, ikony, pomieszczenia, termostaty, markery i Flow przyciągają się tak samo jak części termostatu:
+  - krawędzie, środki, stykanie się i równe odstępy (z limonkowymi strzałkami),
+  - najbliższy obiekt ma pierwszeństwo, środek przed krawędzią,
+  - linia pomocnicza ma kolor obiektu, do którego element się przyciągnął.
+  Markery i Flow łapią też w szybkim ruchu, a nie dopiero po zwolnieniu.
+- **Poprawka: ikona pomieszczenia wyrównuje się do ikony z innego pomieszczenia.** Etykieta, w której widać tylko ikonę, przyciągała się wcześniej tylko do „swojej grupy”, więc nie było linii do innych ikon.
+- **Kolory w menu przyciągania**: ikony „Przyciągaj do” mają kolory swoich linii: etykiety różowe, pomieszczenia bursztynowe, wskaźniki niebieskie, Flow turkusowe, odstępy limonkowe. Przygaszone, gdy są wyłączone. Tak samo w magnesie grupy: części różowe, środek i ramka fioletowe, odstępy limonkowe, elementy planu niebieskie.
+
 ## 0.6.1-beta.467
 
 - **Etykieta pomieszczenia jest klikalna**: dotknięcie ikony, nazwy albo stanu pomieszczenia wykonuje akcję pomieszczenia (np. włącza światło), także gdy etykieta stoi poza kształtem pokoju. Wcześniej działało tylko dotknięcie w środek pokoju.

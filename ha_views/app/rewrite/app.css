@@ -1607,3 +1607,11 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .thermo-neon-head{fill:#ffffff}
 .thermo-comet{fill:none;stroke-linecap:butt}
 .thermo-comet-head{fill:#ffffff}
+/* Snap menus: each target in the colour of its guide lines (dim when off, bright when on) */
+.snap-icon[data-snap-key="labels"]{--kc:#f472d0}.snap-icon[data-snap-key="rooms"]{--kc:#ffb547}.snap-icon[data-snap-key="markers"]{--kc:#20b9e7}.snap-icon[data-snap-key="flows"]{--kc:#2dd4bf}.snap-icon[data-snap-key="spacing"]{--kc:#a3e635}
+.snap-icon[data-snap-key="labels"],.snap-icon[data-snap-key="rooms"],.snap-icon[data-snap-key="markers"],.snap-icon[data-snap-key="flows"],.snap-icon[data-snap-key="spacing"]{color:color-mix(in srgb,var(--kc) 55%,#5b6f7b)}
+.snap-icon[data-snap-key="labels"].active,.snap-icon[data-snap-key="rooms"].active,.snap-icon[data-snap-key="markers"].active,.snap-icon[data-snap-key="flows"].active,.snap-icon[data-snap-key="spacing"].active{color:var(--kc);border-color:color-mix(in srgb,var(--kc) 70%,transparent);background:color-mix(in srgb,var(--kc) 16%,transparent)}
+.group-snap-menu .gs-row[data-gsnap="parts"]{--kc:#f472d0}.group-snap-menu .gs-row[data-gsnap="frame"]{--kc:#c084fc}.group-snap-menu .gs-row[data-gsnap="spacing"]{--kc:#a3e635}.group-snap-menu .gs-row[data-gsnap="plan"]{--kc:#20b9e7}
+.group-snap-menu .gs-row > .mdi:first-child{color:color-mix(in srgb,var(--kc,#9fb6c3) 60%,#5b6f7b)}
+.group-snap-menu .gs-row.active > .mdi:first-child{color:var(--kc,#ede9fe)}
+.group-snap-menu .gs-grid .mdi{color:#c084fc}
