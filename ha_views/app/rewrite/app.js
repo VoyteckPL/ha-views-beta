@@ -2144,6 +2144,22 @@ function roomEntityRow(id, action) {
   const button = action === 'remove' ? `<button type="button" class="room-entity-action" data-room-remove="${escapeHtml(id)}" title="${escapeHtml(translateValue('Usuń encję'))}"><i class="mdi mdi-close"></i></button>` : `<button type="button" class="room-entity-action add" data-room-add="${escapeHtml(id)}" title="${escapeHtml(translateValue('Dodaj do pomieszczenia'))}"><i class="mdi mdi-plus"></i></button>`;
   return `<div class="room-entity${action === 'remove' ? ' added' : ''}"${action === 'add' ? ` data-room-add="${escapeHtml(id)}"` : ''}><div><strong data-no-i18n>${escapeHtml(roomEntityName(id))}</strong><code data-no-i18n>${escapeHtml(id)}${state ? ' · ' + escapeHtml(state) : ''}</code></div>${button}</div>`;
 }
+function renderExtraEntityResults() {
+  const box = $('#extra-entity-results'), input = $('#extra-entity-search'), room = roomsOf()[selectedRoomId]; if (!box || !input || !room) return;
+  const query = searchText(input.value), added = new Set([...(room.entityIds || []), ...EXTRA_PARTS.filter(([, k]) => room[k]).map(([, k]) => room[`${k}Entity`])]);
+  if (query.length < 2) { box.innerHTML = ''; return; }
+  if (!allEntitiesCache) { box.innerHTML = `<div class="room-entity-heading">${escapeHtml(translateValue('Wyszukiwanie encji…'))}</div>`; loadAllEntities().then(() => { if ($('#extra-entity-search') === input) renderExtraEntityResults(); }); return; }
+  const matches = allEntitiesCache.filter(entity => !added.has(entity.id) && (searchText(entity.id).includes(query) || searchText(entity.name).includes(query) || searchText(entity.integration).includes(query)))
+    .sort((a, b) => Number(b.enabled) - Number(a.enabled) || a.name.localeCompare(b.name)).slice(0, 40);
+  box.innerHTML = matches.length ? matches.map(entity => roomEntityRow(entity.id, 'add').replace(/data-room-add=/g, 'data-extra-add=')).join('') : `<div class="room-entity-heading">${escapeHtml(translateValue('Brak pasujących encji.'))}</div>`;
+}
+// A new extra entity: the first free slot, placed under the lowest part (in the group's layout and when ungrouped).
+function addExtraEntity(room, id) {
+  const slot = EXTRA_PARTS.find(([, k]) => !(room[k] && room[`${k}Entity`])); if (!slot || !id) return; const k = slot[1];
+  const shown = ROOM_LABEL_PARTS.filter(([, kk]) => room[kk] && kk !== k), low = suffix => Math.max(0, ...shown.map(([, kk]) => Number(room[`${kk}${suffix}`] ?? ROOM_DEFAULTS[`${kk}${suffix}`]) || 0));
+  Object.assign(room, { [k]: true, [`${k}Entity`]: id, [`${k}Y`]: Math.round(low('Y') + 40), [`${k}X`]: Number(room.labelNameX ?? 0) || 0, [`${k}FY`]: Math.round(low('FY') + 40), [`${k}FX`]: 0 });
+  room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
+}
 function renderRoomEntityResults() {
   const box = $('#room-entity-results'), input = $('#room-entity-search'), room = roomsOf()[selectedRoomId]; if (!box || !input || !room) return;
   const query = searchText(input.value), added = new Set(room.entityIds || []);
@@ -2176,8 +2192,8 @@ function roomEditorMarkup(room) {
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
     + (isThermoRoom(r) ? gaugeSubsection(escapeHtml(translateValue('Dodatkowe encje')), `<p class="flow-section-note">${escapeHtml(translateValue('Inne encje związane z urządzeniem (np. ciśnienie, temperatura wody). Każda dostaje swoją sekcję i można ją ustawić jak rozgrupowaną część.'))}</p>`
-        + EXTRA_PARTS.filter(([, k]) => r[k] && r[`${k}Entity`]).map(([, k]) => `<div class="control extra-entity-row"><label>${escapeHtml(extraEntityName(r[`${k}Entity`]))}<small>${escapeHtml(r[`${k}Entity`])}</small></label><button type="button" class="room-card-preset danger" data-extra-remove="${k}" title="${escapeHtml(translateValue('Usuń'))}"><i class="mdi mdi-close"></i></button></div>`).join('')
-        + (EXTRA_PARTS.some(([, k]) => !(r[k] && r[`${k}Entity`])) ? `<div class="control"><label>${escapeHtml(translateValue('Dodaj encję'))}</label><input type="text" list="extra-entity-list" data-path="__extraAdd" data-value-type="text" placeholder="${escapeHtml(translateValue('szukaj encji…'))}"><datalist id="extra-entity-list">${Object.keys(stateCache).sort().map(id => `<option value="${escapeHtml(id)}">${escapeHtml(extraEntityName(id))}</option>`).join('')}</datalist></div>` : '')) : '')
+        + `<div class="control room-entities-control"><div class="room-entity-list">${EXTRA_PARTS.filter(([, k]) => r[k] && r[`${k}Entity`]).map(([, k]) => roomEntityRow(r[`${k}Entity`], 'remove').replace(/data-room-remove="[^"]*"/, `data-extra-remove="${k}"`)).join('')}</div>`
+        + (EXTRA_PARTS.some(([, k]) => !(r[k] && r[`${k}Entity`])) ? `<label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="extra-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="extra-entity-results" class="room-entity-results"></div>` : '') + `</div>`) : '')
     + (isThermoRoom(r) ? gaugeSubsection(escapeHtml(translateValue('Stany pracy')), `<p class="flow-section-note">${escapeHtml(translateValue('Zaznacz stany, których używa to urządzenie — tylko one pojawią się w ustawieniach stanu pracy.'))}</p>` + (() => { const used = thermoActsUsed(r); return Object.keys(THERMO_ACTIONS).map(a => plainControl(THERMO_ACTIONS[a][0], `thermoActUse_${a}`, 'checkbox', used.includes(a), { refresh:true })).join(''); })()) : '')
     + `<div class="control room-entities-control label-entity"><div class="room-entity-list">${addedList}</div>`
     // A label has one entity: the search shows only while it has none.
@@ -2402,9 +2418,10 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   }));
   $$('input,select', content).forEach(input => {
     if (input.type === 'range' || input.type === 'color') { input.addEventListener('input', onRoomEditorInput); input.addEventListener('change', onRoomEditorInput); }
-    else if (input.id !== 'room-entity-search') input.addEventListener('change', onRoomEditorInput);
+    else if (input.id !== 'room-entity-search' && input.id !== 'extra-entity-search') input.addEventListener('change', onRoomEditorInput);
   });
   $('#room-entity-search')?.addEventListener('input', renderRoomEntityResults); renderRoomEntityResults();
+  $('#extra-entity-search')?.addEventListener('input', renderExtraEntityResults);
   content.scrollTop = scroll;
   panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
   if (pendingPartFocus?.roomId === room.id) { const part = pendingPartFocus.part; pendingPartFocus = null; requestAnimationFrame(() => focusPartSection(part)); }
@@ -2426,14 +2443,6 @@ function onRoomEditorInput(event) {
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
-  // A new extra entity: the first free slot, placed under the lowest part (in the group's layout and when ungrouped).
-  if (path === '__extraAdd') {
-    const id = String(value || '').trim(); if (!stateCache[id] || event.type !== 'change') return;
-    const slot = EXTRA_PARTS.find(([, k]) => !(room[k] && room[`${k}Entity`])); if (!slot) return; const k = slot[1];
-    const shown = ROOM_LABEL_PARTS.filter(([, kk]) => room[kk] && kk !== k), low = (suffix, def) => Math.max(...shown.map(([, kk]) => Number(room[`${kk}${suffix}`] ?? ROOM_DEFAULTS[`${kk}${suffix}`]) || 0), def);
-    Object.assign(room, { [k]: true, [`${k}Entity`]: id, [`${k}Y`]: Math.round(low('Y', 0) + 40), [`${k}X`]: Number(room.labelNameX ?? 0) || 0, [`${k}FY`]: Math.round(low('FY', 0) + 40), [`${k}FX`]: 0 });
-    room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
-  }
   if (path === 'dashW' || path === 'dashH') {
     const span = dashSpan(room), g = dashGrid(); if (!span) return;
     const d = room.dash, w = clamp(Math.round(path === 'dashW' ? value : d.w), 1, g.cols), h = clamp(Math.round(path === 'dashH' ? value : d.h), 1, g.rows);
@@ -2500,6 +2509,8 @@ function onThermoTemplateClick(event) {
 }
 function onRoomEditorClick(event) {
   if (onThermoTemplateClick(event)) return;
+  const extraAdd = event.target.closest('[data-extra-add]');
+  if (extraAdd) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (room) addExtraEntity(room, extraAdd.dataset.extraAdd); return; }
   const extraRemove = event.target.closest('[data-extra-remove]');
   if (extraRemove) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const k = extraRemove.dataset.extraRemove;

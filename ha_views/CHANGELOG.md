@@ -1,3 +1,7 @@
+## 0.4.1-beta.446
+
+- **Dodatkowe encje — ta sama wyszukiwarka co dla termostatu**: w „Dodatkowe encje” jest teraz taka sama lista i wyszukiwarka jak przy głównej encji (pole „Szukaj nazwy lub encji…”, wyniki z nazwą, identyfikatorem i stanem, dodawanie przyciskiem +, usuwanie krzyżykiem) zamiast zwykłego pola z podpowiedziami.
+
 ## 0.4.1-beta.445
 
 - **Dodatkowe encje termostatu**: w „Ogólne” jest podsekcja **Dodatkowe encje** — wpisz / wybierz dowolną encję związaną z urządzeniem (np. ciśnienie wody, płomień, temperatura zasilania), maksymalnie cztery. Każda staje się osobną częścią termostatu z własną sekcją w panelu (nazwa sekcji = nazwa encji): pokazuje stan encji z jednostką, a w sekcji ustawisz tekst przed wartością (np. „Ciśnienie:”), jednostkę, zaokrąglenie, rozmiar, kolor, tło i ramkę. Ustawia się ją jak każdą rozgrupowaną część (przesuwanie, rozmiar, przyciąganie w grupie); w grupie pojawia się pod pozostałymi. Usuwa się ją krzyżykiem na liście. Stany „on / off” są pokazywane słowami, liczby z przecinkiem.
