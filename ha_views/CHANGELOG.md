@@ -1,3 +1,10 @@
+## 0.6.0-beta.451
+
+- **Kopiowanie stylu między częściami**: w otwartej sekcji części (np. Nazwa, Stan, Temperatura aktualna, dodatkowa encja) na pasku sekcji jest mały przycisk „Kopiuj styl części”. Po skopiowaniu w każdej innej otwartej sekcji pojawia się zielony przycisk „Wklej styl części”, także w innej etykiecie lub termostacie.
+  - Przechodzi wygląd: kolory (także ON/OFF i według stanu pracy), rozmiar, grubość, przezroczystość, tło, ramka, kształt, animacje.
+  - Zostaje to, co jest własne dla części: położenie, rozmiar ramki, encja, teksty, wybrana ikona, jednostka i zaokrąglenie.
+  - Zamknięte sekcje nie mają tych przycisków, więc menu się nie zagęszcza.
+
 ## 0.6.0-beta.450
 
 - **Strzałki równych odstępów**: przy przesuwaniu etykiety lub części rozgrupowanego elementu pojawiają się małe limonkowe strzałki ↔ w przerwach, które są równe. Dzieje się tak, gdy element stoi dokładnie pośrodku między dwoma sąsiadami albo powtarza odstęp dwóch elementów obok. Strzałki pokazują się niezależnie od tego, do czego element się przyciągnął, także razem ze zwykłymi liniami pomocniczymi.

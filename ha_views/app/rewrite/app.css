@@ -1562,3 +1562,10 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .gap-mark.x.k-spacing::after{right:calc(var(--a) * -.3);left:auto;top:50%;transform:translateY(-50%);border-right-width:0;border-left:calc(var(--a) * 1.5) solid #a3e635}
 .gap-mark.y.k-spacing::before{top:calc(var(--a) * -.3);left:50%;transform:translateX(-50%);border-top-width:0;border-bottom:calc(var(--a) * 1.5) solid #a3e635}
 .gap-mark.y.k-spacing::after{bottom:calc(var(--a) * -.3);top:auto;left:50%;transform:translateX(-50%);border-bottom-width:0;border-top:calc(var(--a) * 1.5) solid #a3e635}
+
+/* Copy / paste a part's look: only on the open part section's bar */
+.part-section .part-style-tools{display:none;align-items:center;gap:4px}
+.part-section[open] > summary .part-style-tools{display:flex}
+.part-section .part-style-btn{opacity:.75}
+.part-section .part-style-btn:hover{opacity:1}
+.part-section .part-style-btn.paste{color:#a3e635;border-color:rgba(163,230,53,.45)}
