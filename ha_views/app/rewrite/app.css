@@ -1575,3 +1575,11 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .dup-btn{display:inline-flex;align-items:center;gap:7px;justify-self:start;height:30px;padding:0 12px;border:1px solid rgba(99,181,216,.35);border-radius:8px;background:#0d2635;color:#cfe6f0;font-size:12px;cursor:pointer}
 .dup-btn:hover{border-color:#20b9e7;color:#fff}
 .dup-btn .mdi{font-size:16px}
+
+/* A mode as its own part: the part draws the background / frame, the button only carries the icon */
+.thermo-mode-solo{all:unset;display:grid;place-items:center;width:1.2em;height:1.2em;line-height:1;cursor:pointer;box-sizing:border-box}
+.thermo-mode-solo .mdi{font-size:1.2em;line-height:1}
+.thermo-mode-solo:focus-visible{outline:2px solid #8fdfff;outline-offset:3px;border-radius:4px}
+.thermo-mode-solo.pending{animation:thermo-pending 1s ease-in-out infinite}
+/* Mode parts: the modes' pink, like "Tryby" */
+[class*="part-mode_"]{--part-color:#f472b6}

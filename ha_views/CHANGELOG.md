@@ -1,3 +1,11 @@
+## 0.6.0-beta.463
+
+- **Każdy tryb termostatu to osobna część** (jak Ikona):
+  - Grzanie, Auto, Wyłączony… mają własne sekcje w panelu („Tryb: Grzanie”) z rozmiarem, ikoną, kolorem i przezroczystością osobno dla aktywnego i nieaktywnego, tłem, ramką, zaokrągleniem i kopiowaniem stylu.
+  - Po rozgrupowaniu każdy tryb przesuwasz i zmieniasz mu rozmiar osobno. Dotknięcie przełącza tryb jak dotąd (z potwierdzeniem, jeśli jest włączone).
+  - Istniejące termostaty przechodzą na nowe części przy pierwszym wybraniu: każdy przycisk zostaje dokładnie w swoim miejscu, z dotychczasowymi kolorami, kolorem aktywnego i ramką.
+  - Sekcja „Tryby” zostaje dla listy trybów (pokaż / ukryj), presetów i potwierdzeń. Ukrycie trybu ukrywa jego część. Układ „Jeden przycisk” działa jak wcześniej, jako jeden przycisk.
+
 ## 0.6.0-beta.462
 
 - **Termostat: „Tryby” zależą od trybu, nie od pracy**:
