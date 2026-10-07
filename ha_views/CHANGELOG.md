@@ -1,3 +1,8 @@
+## 0.6.0-beta.453
+
+- **Ramka grupy przyciąga się też na zewnątrz**: w „Edytuj wnętrze” kropki ramki przyciągają się do części w środku, a także do innych etykiet i termostatów, wskaźników, Flow, pomieszczeń i siatki tła. Zewnętrzne cele działają według głównego menu magnesu, a części według magnesu grupy. Bliższe obiekty mają pierwszeństwo, siatka najniższe. Alt (PC) zmienia rozmiar bez przyciągania.
+- **„Ułóż” zamiast trybu układu** (Grupa → Ułóż: jedno pod drugim, obok siebie, ikona z lewej / z prawej): przycisk jednorazowo układa części, a potem każda zostaje na swoim miejscu w grupie i można ją dalej przesuwać w „Edytuj wnętrze”. Etykiety z układem jako trybem (starsze wersje) przy pierwszym wybraniu przechodzą na zwykłe miejsca części, bez przesunięcia. Etykieta przypięta do siatki pulpitu zachowuje układ jako tryb.
+
 ## 0.6.0-beta.452
 
 - **Etykieta i termostat to zawsze jedna grupa** (etap 1 nowego modelu grupy):
