@@ -1,3 +1,7 @@
+## 0.6.0-beta.455
+
+- **Grupowanie wraca samo po zakończeniu edycji**: rozgrupowana etykieta lub termostat jest znów grupowany, gdy zamkniesz jego panel, wybierzesz inny element, przełączysz widok albo wyjdziesz z trybu edycji. Działa to dokładnie jak ponowne kliknięcie „Grupa”: części zostają tam, gdzie je ustawiłeś. Etykieta z jedną widoczną częścią zostaje bez zmian.
+
 ## 0.6.0-beta.454
 
 - **Cofnięte zmiany z bet 452–453** („Edytuj wnętrze”, ramka Auto / Własny rozmiar, przyciąganie ramki na zewnątrz, „Ułóż” zamiast układu). Grupowanie, rozgrupowanie, ramka i układy działają znów tak jak w becie 451. Kod aplikacji jest taki sam jak w 451.

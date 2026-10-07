@@ -1018,6 +1018,14 @@ function keepLabelPlaceOnRegroup(room) {
     room.labelCardFree = true;
   }
 }
+// Ungrouping is for arranging the parts: when the label / thermostat is left (panel closed, another element picked,
+// edit mode or view left) it is grouped again, as with the "Grupa" button - every part stays where it was placed.
+// A label showing one part (ungrouped by itself) stays as it is.
+function regroupOnLeave(room) {
+  if (!room || room.labelLinked || room.labelAutoUngrouped || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) return false;
+  if (!$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`)) return false;
+  keepLabelPlaceOnRegroup(room); room.labelLinked = true; room.updatedAt = new Date().toISOString(); scheduleSave(true); return true;
+}
 // A group left with one visible part is ungrouped (so that part has resize handles), remembering it was a group;
 // showing a second part again rebuilds that group with its arrangement, around where the visible part stands now.
 function autoUngroupLabel(room) {
@@ -2444,7 +2452,7 @@ function roomEditorMarkup(room) {
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
   const newlySelected = selectedRoomId !== id;
-  if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; }
+  if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; if (regroupOnLeave(roomsOf()[selectedRoomId])) renderRoomLabels(); }
   // A group left with a single visible part (made before parts ungrouped themselves) is ungrouped in place.
   if (room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) { autoUngroupLabel(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); }
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
@@ -2502,7 +2510,7 @@ function closeRoomEditor() {
   selectedCorner = null;
   const panel = $('#room-editor'); if (!panel) return;
   if (mobileView() && editMode && panel.classList.contains('visible')) requestAnimationFrame(applyViewTransform);
-  const had = selectedRoomId; selectedRoomId = null; panelPart = null; roomPreviewOn = ''; delete panel.dataset.dragged;
+  const had = selectedRoomId; regroupOnLeave(roomsOf()[had]); selectedRoomId = null; panelPart = null; roomPreviewOn = ''; delete panel.dataset.dragged;
   panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
 }
 function onRoomEditorInput(event) {
