@@ -1,3 +1,8 @@
+## 0.6.1-beta.469
+
+- **Poprawka: zablokowana edycja na telefonie.** Gdy telefon „zgubił” oderwanie palca (gest systemowy, powiadomienie, przejście aplikacji w tło), aplikacja liczyła dalej ten palec jako dotykający ekranu. Każde kolejne dotknięcie było wtedy brane za drugi palec (zoom), więc nie dało się nic zaznaczyć ani otworzyć panelu aż do zamknięcia aplikacji. Teraz licznik palców naprawia się sam: przy pierwszym palcu, przy każdym zdarzeniu dotyku i gdy aplikacja traci fokus.
+- **Poprawka: minimalna zmiana rozmiaru po rozgrupowaniu i zgrupowaniu.** Dokładne przywrócenie grupy nie działało, gdy termostat miał włączone części, których nie widać (np. pusty rząd presetów albo tryb, którego urządzenie nie ma). Grupa liczyła się wtedy od nowa i przesuwała o ułamek piksela przy każdym przełączeniu. Teraz porównywane są części faktycznie narysowane.
+
 ## 0.6.1-beta.468
 
 - **Jeden mechanizm przyciągania dla wszystkiego**: etykiety, ikony, pomieszczenia, termostaty, markery i Flow przyciągają się tak samo jak części termostatu:

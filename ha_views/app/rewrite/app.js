@@ -1022,17 +1022,19 @@ function keepLabelPlaceOnRegroup(room) {
   const id = CSS.escape(room.id), centre = node => { const r = node.getBoundingClientRect(); return [(r.left + r.right) / 2, (r.top + r.bottom) / 2, r]; };
   if (room.labelLinked) {
     const card = document.querySelector(`.room-label-card[data-room-id="${id}"]`), parts = {};
-    ROOM_LABEL_PARTS.forEach(([part, key]) => { const node = card?.querySelector(`.room-card-part.${part}`); if (!node) return; const [cx, cy] = centre(node); room[`${key}X`] = toOffsetX(cx); room[`${key}Y`] = toOffsetY(cy); parts[key] = [room[`${key}X`], room[`${key}Y`], room[`${key}FX`], room[`${key}FY`]]; });
+    ROOM_LABEL_PARTS.forEach(([part, key]) => { const node = card?.querySelector(`.room-card-part.${part}`); if (!node || !node.getBoundingClientRect().width) return; const [cx, cy] = centre(node); room[`${key}X`] = toOffsetX(cx); room[`${key}Y`] = toOffsetY(cy); parts[key] = [room[`${key}X`], room[`${key}Y`], room[`${key}FX`], room[`${key}FY`]]; });
     // What the group was, to be put back exactly when it is grouped again with no part moved; and its frame, which
     // stays as it was while ungrouped (unless "Dopasuj do części" is chosen).
     room.labelRegroupSnap = { x: room.labelCardX, y: room.labelCardY, free: !!room.labelCardFree, scale: Number(room.labelCardScale) || 1, parts };
     if (card?.offsetWidth) { const [fx, fy] = centre(card); room.labelUngroupFrame = { w: card.offsetWidth, h: card.offsetHeight, x: toOffsetX(fx), y: toOffsetY(fy) }; }
   } else {
     const snap = room.labelRegroupSnap; delete room.labelRegroupSnap;
-    const shownKeys = ROOM_LABEL_PARTS.filter(([, key]) => room[key]).map(([, key]) => key);
+    // The parts drawn now (not every switched-on key: an empty presets row or a mode the device lacks draws nothing).
+    const shownKeys = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width).map(partKey).filter(Boolean);
+    const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
     const kept = room.labelUngroupFrame; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
-    if (snap?.free && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
+    if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
       return; // nothing was moved: the group is exactly what it was
@@ -1794,13 +1796,24 @@ function hideGroupGrid() { $('#group-grid')?.remove(); els.scene?.classList.remo
 // moved cancels that move (the label goes back where it was) and both fingers zoom / pan the plan instead.
 const touchesDown = new Map(); let activeLabelDrag = null;
 function trackTouchDown(event) {
-  if (event.pointerType !== 'touch') return; touchesDown.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  if (event.pointerType !== 'touch') return;
+  if (event.isPrimary) { touchesDown.clear(); if (activeLabelDrag && activeLabelDrag.id !== event.pointerId) activeLabelDrag = null; } // the first finger down: no other finger can be on the screen
+  touchesDown.set(event.pointerId, { x: event.clientX, y: event.clientY });
   const drag = activeLabelDrag; if (!drag || drag.id === event.pointerId) return;
   drag.cancel(); const p = touchesDown.get(drag.id) || { x: drag.x, y: drag.y };
   viewportPointerDown({ pointerId: drag.id, pointerType: 'touch', isPrimary: true, clientX: p.x, clientY: p.y, button: 0, target: els.scene, preventDefault() {}, stopPropagation() {} });
 }
 function trackTouchMove(event) { if (touchesDown.has(event.pointerId)) touchesDown.set(event.pointerId, { x: event.clientX, y: event.clientY }); }
 function trackTouchUp(event) { touchesDown.delete(event.pointerId); }
+// The phone can lose a finger's "up" (a system gesture, a notification, the app going to the background). A finger
+// that stayed on the list would make every later touch a "second finger" (a zoom), and editing would seem frozen.
+// The real number of fingers comes with every touch event: the list never holds more, and is empty when none are down.
+function syncTouches(event) {
+  const n = event.touches ? event.touches.length : 0;
+  if (!n) { touchesDown.clear(); if (activeLabelDrag && event.type !== 'touchstart') activeLabelDrag = null; return; }
+  while (touchesDown.size > n) touchesDown.delete(touchesDown.keys().next().value); // the oldest entries are the lost ones
+}
+function resetTouches() { touchesDown.clear(); activeLabelDrag = null; }
 // A second finger on a label / dot / marker goes to the plan's zoom (true when it was handed over).
 function secondFingerToZoom(event) {
   if (event.pointerType !== 'touch' || touchesDown.size < 2 || !editMode) return false;
@@ -6898,6 +6911,8 @@ function bindEvents() {
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
   window.addEventListener('pointerdown', trackTouchDown, true); window.addEventListener('pointermove', trackTouchMove, true); window.addEventListener('pointerup', trackTouchUp, true); window.addEventListener('pointercancel', trackTouchUp, true);
+  ['touchstart','touchend','touchcancel'].forEach(type => window.addEventListener(type, syncTouches, { capture:true, passive:true }));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) resetTouches(); }); window.addEventListener('blur', resetTouches);
   els.scene?.addEventListener('pointerdown', viewportPointerDown);
   // Zoomed out below the plan's size (editing on a phone) the fingers may also land on the empty space around it.
   els.viewport?.addEventListener('pointerdown', event => { if (!els.scene?.contains(event.target)) viewportPointerDown(event); });
