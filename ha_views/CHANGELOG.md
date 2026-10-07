@@ -1,3 +1,7 @@
+## 0.4.1-beta.439
+
+- **Przycisk grupowania w nagłówku panelu**: przycisk „Grupuj / Rozgrupuj” przeniesiony z paska sekcji Grupa na górę panelu, obok przycisku „Ustaw domyślny” (przywróć fabryczne). Podświetlony, gdy etykieta jest zgrupowana; widoczny, gdy pokazane są co najmniej dwie części.
+
 ## 0.4.1-beta.438
 
 - **Kropki rozmiaru na komputerze we właściwym miejscu**: kropki w rogach zaznaczonego elementu podążają za planem w każdej klatce (otwarcie / zadokowanie panelu, zmiana rozmiaru okna, zoom), więc nie zostają w starym miejscu, przesunięte obok elementu; ich pozycja uwzględnia też skalowanie karty planu.
