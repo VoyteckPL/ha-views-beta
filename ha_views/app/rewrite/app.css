@@ -1615,3 +1615,28 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .group-snap-menu .gs-row > .mdi:first-child{color:color-mix(in srgb,var(--kc,#9fb6c3) 60%,#5b6f7b)}
 .group-snap-menu .gs-row.active > .mdi:first-child{color:var(--kc,#ede9fe)}
 .group-snap-menu .gs-grid .mdi{color:#c084fc}
+/* ---- Siatka (tile grid background) */
+.vm-zone-title .vm-switch{margin-left:auto}
+.vm-switch{position:relative;width:40px;height:22px;padding:0;border:1px solid rgba(99,181,216,.35);border-radius:999px;background:#0d2e3e;cursor:pointer}
+.vm-switch i{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#8fa9b7;transition:transform .15s,background .15s}
+.vm-switch.active{border-color:#20b9e7;background:rgba(32,185,231,.3)}.vm-switch.active i{transform:translateX(18px);background:#80e9ff}
+.vm-grid-body{display:grid;gap:6px}.vm-grid-zone:not(.on) .vm-grid-body{opacity:.45;pointer-events:none}
+.vm-grid-rows{display:grid;grid-template-columns:minmax(0,1fr) 34px 30px 34px 34px 34px;align-items:center;gap:5px;color:#c6d8e1;font-size:11px}
+.vm-grid-rows b{text-align:center;color:#80e9ff;font-size:13px}.vm-grid-rows .vm-icon{width:34px;height:30px;font-size:17px}
+#dash-show.active{border-color:#20b9e7;background:rgba(32,185,231,.2);color:#80e9ff}
+.vm-gradient-row{display:grid;grid-template-columns:auto 40px 16px minmax(0,1fr);align-items:center;gap:7px}.vm-gradient-row>i{color:#8fe3fb;font-size:15px}
+.vm-gradient-row input[type=range]{width:100%;accent-color:var(--cyan,#20b9e7)}.vm-gradient-color{width:40px;height:28px;padding:0;border:1px solid rgba(99,181,216,.3);border-radius:8px;background:none}
+.vm-gradient-row.off{opacity:.45;pointer-events:none}
+.dash-size-row{display:block!important}.dash-size-row>span{display:block;margin-bottom:6px}
+.dash-sizes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.dash-size{display:grid;justify-items:center;gap:3px;height:auto;padding:6px 0 4px;border:1px solid rgba(99,181,216,.3);border-radius:9px;background:#0d2e3e;color:#b8eafa}
+.dash-size i{display:block;width:calc(var(--w) * 7px + (var(--w) - 1) * 2px);height:calc(var(--h) * 7px + (var(--h) - 1) * 2px);border-radius:2px;background:currentColor;opacity:.75}
+.dash-size small{font-size:10px}.dash-size.active{border-color:#20b9e7;background:rgba(32,185,231,.2);color:#80e9ff}
+/* The plan's 1% grid and alignment guides make no sense on tiles. */
+body.dash-mode .scene:after{display:none}
+#dash-grid.quiet .dash-cell{border-style:solid;border-color:rgba(143,223,255,.12);background:rgba(255,255,255,.025)}
+#dash-grid .dash-target{transition:left .12s,top .12s,width .12s,height .12s}
+.room-label-card.dash-tile,.marker.dash-tile{transition:left .18s ease,top .18s ease}
+.room-label-card.dash-tile.dash-moving,.marker.dash-tile.dash-moving{transition:none;z-index:30;opacity:.92;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45))}
+.room-label-card.dash-tile{white-space:nowrap}
+.room-label-card.dash-tile.editable::after{inset:0}

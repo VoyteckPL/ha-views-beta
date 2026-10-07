@@ -1,3 +1,27 @@
+## 0.6.1-beta.470
+
+- **Nowy tryb tła: Siatka** (menu widoku → Tło → Siatka). To widok kafelkowy na telefon:
+  - Plan dzieli się na kratki, domyślnie 4 kolumny. Każdy element (etykieta, termostat, tekst, wskaźnik) zajmuje całe kratki.
+  - Zawartość sama skaluje się do kafelka, więc nie trzeba niczego skalować ręcznie.
+  - Tło grupy jest tłem kafelka.
+- **Ustawianie kafelków**:
+  - Przeciągnięty element wskakuje w kratki. Gdy upuścisz go na zajęte miejsce, pozostałe elementy rozsuwają się w dół (jak w Home Assistant).
+  - Kropki w rogach zmieniają rozmiar o całe kratki.
+  - W panelu jest sekcja „Kafelek” z gotowymi rozmiarami (1×1 … 4×2) i suwakiem „Wypełnienie”.
+- **Format telefonu**:
+  - Po włączeniu siatka wypełnia cały ekran telefonu.
+  - „+ / −” przy wierszach wydłuża lub skraca widok, a dłuższy widok przewija się palcem w górę i w dół. Przesunięcie w bok dalej zmienia widok.
+  - Na komputerze widok jest wyśrodkowany jak ekran telefonu.
+  - „Dopasuj do ekranu” dopasowuje wiersze do bieżącego telefonu.
+- **Ustawienia siatki**:
+  - Liczba kolumn (2–8) i odstęp między kafelkami.
+  - Siatka jest widoczna w edycji. Poza edycją można ją włączyć przyciskiem z kratką.
+- **Po włączeniu siatki**:
+  - Istniejące elementy układają się w najbliższych kratkach, a nowe trafiają na pierwsze wolne miejsce.
+  - Etykiety na siatce są zawsze zgrupowane.
+  - Pomieszczenia i Flow są ukryte na widoku z siatką i znikają z okna dodawania. Wracają po wyłączeniu siatki.
+- **Gradient tła**: kolor tła może przechodzić w drugi kolor, z ustawianym kierunkiem (Tło → Kolor → Gradient).
+
 ## 0.6.1-beta.469
 
 - **Poprawka: zablokowana edycja na telefonie.** Gdy telefon „zgubił” oderwanie palca (gest systemowy, powiadomienie, przejście aplikacji w tło), aplikacja liczyła dalej ten palec jako dotykający ekranu. Każde kolejne dotknięcie było wtedy brane za drugi palec (zoom), więc nie dało się nic zaznaczyć ani otworzyć panelu aż do zamknięcia aplikacji. Teraz licznik palców naprawia się sam: przy pierwszym palcu, przy każdym zdarzeniu dotyku i gdy aplikacja traci fokus.
