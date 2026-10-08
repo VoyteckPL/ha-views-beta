@@ -1,3 +1,7 @@
+## 0.6.1-beta.476
+
+- **Przycisk Grupa nie przeskakuje**: w nagłówku panelu przycisk grupowania stoi zawsze w tym samym miejscu, a magnes przyciągania w grupie pojawia się po rozgrupowaniu z jego lewej strony. Wcześniej to przycisk grupy przesuwał się w lewo.
+
 ## 0.6.1-beta.475
 
 - **Dociąganie do skrzyżowań grubych linii** (nowy przycisk w menu przyciągania, w wierszu „Grube linie co”, domyślnie wyłączony). Gdy jest włączony, przy wyjściu z trybu edycji każda zgrupowana etykieta i termostat, których rogi leżą blisko skrzyżowań grubych linii (do 1/5 grubej kratki), dostaje rogi dokładnie na tych skrzyżowaniach:
