@@ -1,3 +1,9 @@
+## 0.6.1-beta.500
+
+- **Siatka główna do 48 stref, domyślnie 36**: liczbę stref w poziomie można ustawić od 1 do 48 (wcześniej do 24).
+  - Nowy widok zaczyna z 36 strefami.
+  - Widoki, które już istniały, zachowują liczbę stref, jaką pokazywały dotąd.
+
 ## 0.6.1-beta.499
 
 - **Termostat bez „Układ” i „Styl”**: w sekcji Grupa termostatu nie ma już przycisków gotowych układów (jedno pod drugim, obok siebie…) ani stylów (bez tła, ciemne, jasne, szkło). Termostat ma swobodny układ i własny wygląd. Etykiety mają te przyciski bez zmian.

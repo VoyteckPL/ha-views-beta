@@ -569,6 +569,14 @@ function bringIntoScene(item) {
 // grid is always symmetric (a line through the centre) and scales with the plan. Resize dots snap to these lines.
 // The grid's shape (fine size, zones, "Rozmiar po grubych liniach") is kept per view: a view's own value, else the one
 // set before grids were per view.
+// Zones across: 36 for a view that has none set yet (up to 48).
+const GRID_ZONES_DEFAULT = 36, GRID_ZONES_MAX = 48;
+// Views made before the zone count was per view keep the count they showed (the one set for all views then).
+function migrateGridZonesPerView() {
+  const legacy = model.settings?.gridZones; if (!legacy || model.settings.gridZonesPerViewV1) return false;
+  Object.values(model.views || {}).forEach(view => { if (view?.grid?.gridZones === undefined) (view.grid ||= {}).gridZones = { x: Number(legacy.x) || 4 }; });
+  model.settings.gridZonesPerViewV1 = true; return true;
+}
 function gridOpt(key) { const v = activeSceneView()?.grid?.[key]; return v !== undefined ? v : model.settings?.[key]; }
 function setGridOpt(key, value) { const view = activeSceneView(); if (view) (view.grid ||= {})[key] = value; else model.settings[key] = value; }
 function gridVisual() { const step = Number(gridOpt('snapStep')) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
@@ -577,7 +585,8 @@ function gridVisual() { const step = Number(gridOpt('snapStep')) || .25; return 
 // plan's bottom edge). The fine grid divides every zone into equal square cells of about the S / M / L size, so its
 // lines always meet the thick ones.
 function gridZones(w = els.scene?.offsetWidth || 1, h = els.scene?.offsetHeight || 1) {
-  const m = gridOpt('gridZones') || {}, x = clamp(Math.round(Number(m.x) || 4), 1, 24);
+  // The zone count is the view's own (a new view starts at the default, not at another view's count).
+  const view = activeSceneView(), m = (view ? view.grid?.gridZones : model.settings?.gridZones) || {}, x = clamp(Math.round(Number(m.x) || GRID_ZONES_DEFAULT), 1, GRID_ZONES_MAX);
   return { x, y: h / (w / x) };
 }
 function gridLayout(w, h) {
@@ -6952,7 +6961,7 @@ function bindEvents() {
   $('#major-fit')?.addEventListener('click', event => { event.stopPropagation(); setGridOpt('majorFit', !gridOpt('majorFit')); syncGridGeometry(); scheduleSave(true); notify(gridOpt('majorFit') ? 'Rozmiar etykiet i termostatów zmienia się tylko po grubych liniach siatki' : 'Rozmiar etykiet i termostatów zmienia się swobodnie'); });
   $$('[data-major-axis]').forEach(box => box.addEventListener('click', event => {
     const step = Number(event.target.closest('[data-major-step]')?.dataset.majorStep); if (!step) return; event.stopPropagation();
-    const m = { ...(gridOpt('gridZones') || {}) }; m.x = clamp(gridZones().x + step, 1, 24); delete m.y; setGridOpt('gridZones', m);
+    const m = { ...(gridOpt('gridZones') || {}) }; m.x = clamp(gridZones().x + step, 1, GRID_ZONES_MAX); delete m.y; setGridOpt('gridZones', m);
     syncGridGeometry(); scheduleSave(true);
   }));
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
@@ -7321,7 +7330,7 @@ async function boot() {
   try { localStorage.setItem(LANGUAGE_CACHE_KEY, uiLanguage); } catch {}
   applyLanguage();
   const roomLabelsMigrated = Object.values(model.views || {}).flatMap(view => Object.values(view.rooms || {})).map(migrateRoomLabel).some(Boolean);
-  const multiMigrated = ensureMultiViewModel() || roomLabelsMigrated; const gridPresetMigrated = migrateGridPresetSteps(); applySnapUi(); applyBoundsUi(); renderViewSelector();
+  const multiMigrated = ensureMultiViewModel() || roomLabelsMigrated; const gridPresetMigrated = migrateGridPresetSteps() | migrateGridZonesPerView(); applySnapUi(); applyBoundsUi(); renderViewSelector();
   Object.values(model.views).flatMap(view => Object.values(view.entities || {})).forEach(m => {
     m.type = ['badge','gauge','icon','horseshoe','thermostat'].includes(m.type) ? m.type : 'badge'; m.style = normalizedStyle(m.type, m.style);
     m.stateOnLabel ??= ''; m.stateOffLabel ??= ''; m.iconMode ||= 'auto'; m.iconName ??= ''; m.iconOn ??= ''; m.iconOff ??= ''; m.iconVariantEnabled ??= Boolean(m.iconOn || m.iconOff);
