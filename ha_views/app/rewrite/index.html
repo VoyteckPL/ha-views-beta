@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-473">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-474">
 </head>
 <body>
   <header class="topbar">
@@ -104,6 +104,10 @@
     <div class="top-actions">
       <div id="snap-menu" class="compact-menu snap-menu">
         <div class="grid-row"><button id="snap-toggle" type="button" class="snap-icon grid-toggle" title="Siatka włączona" aria-label="Siatka włączona"><i class="mdi mdi-grid"></i><b id="grid-status" hidden>ON</b></button><div class="grid-presets" role="group" aria-label="Wielkość siatki"><button type="button" class="grid-preset active" data-grid-step="0.25">S</button><button type="button" class="grid-preset" data-grid-step="1">M</button><button type="button" class="grid-preset" data-grid-step="4">L</button></div></div>
+        <div class="grid-major-row"><span>Grube linie co</span>
+          <div class="major-step" data-major-axis="x" title="Grube linie pionowe co tyle kratek" aria-label="Grube linie pionowe co tyle kratek"><button type="button" data-major-step="-1" aria-label="Mniej">−</button><i class="mdi mdi-arrow-left-right"></i><b>5</b><button type="button" data-major-step="1" aria-label="Więcej">+</button></div>
+          <div class="major-step" data-major-axis="y" title="Grube linie poziome co tyle kratek" aria-label="Grube linie poziome co tyle kratek"><button type="button" data-major-step="-1" aria-label="Mniej">−</button><i class="mdi mdi-arrow-up-down"></i><b>5</b><button type="button" data-major-step="1" aria-label="Więcej">+</button></div>
+        </div>
         
         
         
@@ -117,6 +121,7 @@
           <button type="button" class="snap-icon" data-snap-key="rooms" title="Pomieszczenia"><i class="mdi mdi-floor-plan"></i></button>
           <button type="button" class="snap-icon" data-snap-key="markers" title="Wskaźniki"><i class="mdi mdi-gauge"></i></button>
           <button type="button" class="snap-icon" data-snap-key="flows" title="Flow"><i class="mdi mdi-chevron-triple-right"></i></button>
+          <button type="button" class="snap-icon" data-snap-key="major" title="Grube linie siatki"><i class="mdi mdi-grid-large"></i></button>
         </div></div>
         <div class="snap-group snap-row"><span>Wyrównuj po</span><div class="snap-icons">
           <button type="button" class="snap-icon" data-snap-key="centers" title="Środki"><i class="mdi mdi-plus-circle-outline"></i></button>
@@ -349,6 +354,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-473"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-474"></script>
 </body>
 </html>

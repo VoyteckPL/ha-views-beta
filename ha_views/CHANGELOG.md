@@ -1,3 +1,9 @@
+## 0.6.1-beta.474
+
+- **Grube linie siatki co tyle samo w obu kierunkach**: grube linie liczone są w kratkach od środka planu, więc na planie 9:16 tworzą kwadraty. Wcześniej poziome grube linie dzieliły wysokość na ćwiartki, a pionowe szerokość.
+- **„Grube linie co”** w menu przyciągania (magnes): dwa małe przełączniki −/+ ustawiają, co ile kratek idą grube linie w poziomie (↔) i w pionie (↕). Domyślnie co 5 kratek.
+- **Przyciąganie do grubych linii** (nowa ikona w „Przyciągaj do”, domyślnie włączona): rogi, krawędzie i środki etykiet, termostatów, tekstów i wskaźników łapią najbliższą grubą linię (przy przesuwaniu i przy zmianie rozmiaru kropkami). Mają pierwszeństwo przed innymi liniami planu, ale nie przed sąsiednimi elementami. Linia pomocnicza jest jasnoniebieska. Gdy ta opcja jest wyłączona, elementy przyciągają się do zwykłej siatki jak wcześniej.
+
 ## 0.6.1-beta.473
 
 - **Wycofano tryb „Siatka”** (beta.470–472) i gradient tła. Aplikacja jest taka jak w 0.6.1-beta.469. Ustawienia zapisane przez siatkę (kratki elementów, ustawienia siatki widoku, gradient) są ignorowane.
