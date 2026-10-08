@@ -1,3 +1,10 @@
+## 0.6.1-beta.480
+
+- **Przycisk „Rozmiar tylko po grubych liniach siatki”** (menu magnesu, wiersz „Strefy”) zastępuje dociąganie przy wyjściu z edycji. Gdy jest włączony, kropki w rogach etykiety lub termostatu przeskakują tylko po grubych liniach:
+  - trzymany róg ustawia się na najbliższym skrzyżowaniu,
+  - przeciągany róg przechodzi od linii do linii, więc grupa zawsze zajmuje całe strefy (najmniej jedną).
+  Zawartość dopasowuje się do strefy proporcjonalnie (zmniejsza się, gdy się nie mieści, i wraca do swojego rozmiaru przy powiększaniu), a ramka wypełnia całe pole. Linie, po których idzie rozmiar, są podświetlone.
+
 ## 0.6.1-beta.479
 
 - **Suwak „Margines” wrócił** do sekcji Grupa, pod suwakiem „Rozmiar”: odstęp między ramką grupy a jej częściami (0–60 px), dla etykiet i termostatów. Nie ma go, gdy widoczna jest tylko jedna część (wtedy grupa nie ma ramki).
