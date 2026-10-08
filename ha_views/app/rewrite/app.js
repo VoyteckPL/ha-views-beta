@@ -1562,6 +1562,7 @@ function startFreeResize(event, handle) {
   const rect0 = node.getBoundingClientRect(), k = rect0.width / Math.max(1, node.offsetWidth);
   const keep = [node.style.minWidth, node.style.minHeight]; node.style.minWidth = ''; node.style.minHeight = '';
   const natW = node.offsetWidth, natH = node.offsetHeight; [node.style.minWidth, node.style.minHeight] = keep;
+  const cardScale0 = clamp(Number(room.labelCardScale) || 1, .3, 6);
   const cs = getComputedStyle(node), hasPad = room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '';
   const fixedPad = !isCard && (node.dataset.labelPart === 'icon' || hasPad), padX = fixedPad ? (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) || 0 : 0, padY = fixedPad ? (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) || 0 : 0;
   const startSize = isCard ? 1 : Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`];
@@ -1608,8 +1609,12 @@ function startFreeResize(event, handle) {
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
     if (isCard) {
-      lw = Math.max(natW, lw); lh = Math.max(natH, lh);
-      room.labelCardW = lw <= natW + .5 ? 0 : Math.round(lw * 10) / 10; room.labelCardH = lh <= natH + .5 ? 0 : Math.round(lh * 10) / 10;
+      // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
+      // its size and place relative to the others - as if the finished group were scaled down.
+      const minF = .3 / cardScale0, f = clamp(Math.min(1, lw / natW, lh / natH), minF, 1);
+      lw = Math.max(natW * f, lw); lh = Math.max(natH * f, lh);
+      room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
+      room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10;
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
       const cw = Math.max(1, natW - padX), ch = Math.max(1, natH - padY), minScale = 6 / startSize;
@@ -1621,6 +1626,8 @@ function startFreeResize(event, handle) {
     ex = fx + sx * lw * k; ey = fy + sy * lh * k;
     room[posX] = Math.round((startX + ((fx + ex) / 2 - cx0) / planToScreen) * 100) / 100; room[posY] = Math.round((startY + ((fy + ey) / 2 - cy0) / planToScreen) * 100) / 100;
     renderRoomLabels();
+    // A scaled group (a free one is shifted by its parts' centre, which scales too) is put back on the corner held still.
+    if (isCard && room.labelCardScale !== cardScale0) { const q = $(sel)?.getBoundingClientRect(); if (q) { const dx = fx - (sx > 0 ? q.left : q.right), dy = fy - (sy > 0 ? q.top : q.bottom); if (Math.abs(dx) > .2 || Math.abs(dy) > .2) { room[posX] = Math.round((room[posX] + dx / planToScreen) * 100) / 100; room[posY] = Math.round((room[posY] + dy / planToScreen) * 100) / 100; renderRoomLabels(); } } }
     const r = $(sel)?.getBoundingClientRect() || rect0, Ws = scene.width || 1, Hs = scene.height || 1, px = v => (v - scene.left) / Ws * 100, py = v => (v - scene.top) / Hs * 100;
     const vertical = [], horizontal = [], marks = [], hits = [];
     const add = (b, isX) => {

@@ -1,3 +1,7 @@
+## 0.6.1-beta.477
+
+- **Zmniejszanie grupy kropkami poniżej zawartości**: gdy ramka termostatu lub etykiety dojdzie do zawartości, dalsze ciągnięcie kropki zmniejsza całą grupę proporcjonalnie. Wszystkie części maleją razem i zachowują wzajemne położenie, jakby cały termostat był pomniejszony. Wcześniej ramka zatrzymywała się na marginesach. Przeciwny róg stoi w miejscu. Najmniejszy rozmiar to 0,3 skali grupy.
+
 ## 0.6.1-beta.476
 
 - **Przycisk Grupa nie przeskakuje**: w nagłówku panelu przycisk grupowania stoi zawsze w tym samym miejscu, a magnes przyciągania w grupie pojawia się po rozgrupowaniu z jego lewej strony. Wcześniej to przycisk grupy przesuwał się w lewo.
