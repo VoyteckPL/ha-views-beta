@@ -5169,8 +5169,11 @@ function dragCamera(onPan) {
   let last = null, frame = 0, since = 0;
   const step = now => {
     frame = 0; if (!last || !sceneCameraActive()) return;
-    // Gentle: speed grows with the depth into the edge zone (squared) and ramps up over ~0.6 s after reaching it.
-    const v = visibleSceneBand(), zone = mobileView() ? 40 : 48, push = d => d < zone ? Math.pow((zone - Math.max(0, d)) / zone, 2) * 6.5 : 0;
+    // Gentle: speed grows with the depth into the edge zone (squared) and ramps up over ~0.6 s after reaching it. On a
+    // phone the zone is the strip along the edge; with a mouse only the area past the visible plan (the pointer taken out
+    // of it), so an element can be put right at the edge without the view running away.
+    const v = visibleSceneBand(), touch = mobileView(), zone = touch ? 40 : 48;
+    const push = d => touch ? (d < zone ? Math.pow((zone - Math.max(0, d)) / zone, 2) * 6.5 : 0) : (d < 0 ? Math.pow(Math.min(1, -d / zone), 2) * 6.5 : 0);
     let vx = push(last.clientX - v.left) - push(v.right - last.clientX), vy = push(last.clientY - v.top) - push(v.bottom - last.clientY);
     if (!vx && !vy) { since = 0; return; }
     since ||= now; const ramp = Math.min(1, .25 + (now - since) / 800); vx *= ramp; vy *= ramp;

@@ -1,3 +1,7 @@
+## 0.6.1-beta.501
+
+- **Komputer: widok nie ucieka przy krawędzi**: przy przeciąganiu myszą widok przesuwa się dopiero wtedy, gdy wyjedziesz kursorem poza widoczny plan. Wcześniej przesuwał się już przy zbliżeniu do krawędzi, więc nie dało się postawić elementu tuż przy niej. Im dalej poza plan, tym szybciej przesuwa się widok. Na telefonie bez zmian, czyli pasek przy krawędzi.
+
 ## 0.6.1-beta.500
 
 - **Siatka główna do 48 stref, domyślnie 36**: liczbę stref w poziomie można ustawić od 1 do 48 (wcześniej do 24).
