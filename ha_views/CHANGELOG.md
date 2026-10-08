@@ -1,3 +1,7 @@
+## 0.6.1-beta.503
+
+- **Cofnięte zmiany z 0.6.1-beta.501 i 0.6.1-beta.502**: kamera znów jedzie za myszką, gdy przy przeciąganiu dojedziesz do krawędzi widocznego planu. Wybór elementu na powiększonym planie znów go centruje, tak jak w 0.6.1-beta.500.
+
 ## 0.6.1-beta.502
 
 - **Komputer: widok nie centruje się sam**: kliknięcie albo złapanie elementu lub części termostatu na powiększonym planie nie przesuwa już widoku, żeby wyśrodkować element. To centrowanie trwało jeszcze w trakcie przeciągania, więc widok powoli odjeżdżał.
