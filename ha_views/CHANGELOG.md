@@ -1,3 +1,8 @@
+## 0.6.1-beta.485
+
+- **Przesuwanie po grubych liniach**: przy włączonym „Rozmiar tylko po grubych liniach siatki” przesuwany termostat lub etykieta przeskakuje lewym górnym rogiem po skrzyżowaniach grubych linii, więc grupa ustawiona w strefach zawsze zajmuje całe strefy. Linie, na których stoi, są podświetlone. Po upuszczeniu zostaje dokładnie na skrzyżowaniu. Alt przesuwa swobodnie.
+- **Kamera podąża za kropką zmiany rozmiaru**: gdy kropka w rogu termostatu lub etykiety wyjdzie poza widoczny obszar, widok przesuwa się za nią (jak przy przesuwaniu elementu), a rozmiar zmienia się dalej.
+
 ## 0.6.1-beta.484
 
 - **„Pokaż” termostatu w trzech rzędach**, w tej samej kolejności co sekcje poniżej:

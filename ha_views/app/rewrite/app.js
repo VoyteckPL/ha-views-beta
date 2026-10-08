@@ -1614,9 +1614,13 @@ function startFreeResize(event, handle) {
   if (useSnap && !groupMode) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
   const sizes = useSnap && groupMode ? [...(gopts.parts ? own : []), ...planBoxes.map(b => ({ left: b.l + scene.left, right: b.r + scene.left, top: b.t + scene.top, bottom: b.b + scene.top, width: b.r - b.l, height: b.b - b.t, radius: b.radius }))] : useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
+  const camera = dragCamera(last => move(last));
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
-    let ex = (sx > 0 ? rect0.right : rect0.left) + e.clientX - event.clientX, ey = (sy > 0 ? rect0.bottom : rect0.top) + e.clientY - event.clientY;
+    // The camera may have moved the plan since the dot was grabbed (it follows a dot taken past the screen's edge): the
+    // pointer is taken back into the plan's position at the start, where every other value of this resize lives.
+    const now = els.scene.getBoundingClientRect(), shX = now.left - scene.left, shY = now.top - scene.top; camera.track(e);
+    let ex = (sx > 0 ? rect0.right : rect0.left) + e.clientX - shX - event.clientX, ey = (sy > 0 ? rect0.bottom : rect0.top) + e.clientY - shY - event.clientY;
     let bx = null, by = null, square = false;
     if (zones?.xs.length && zones.ys.length) {
       // The moving corner: the nearest thick line past the fixed one (at least one zone).
@@ -1680,8 +1684,8 @@ function startFreeResize(event, handle) {
     room[posX] = Math.round((startX + ((fx + ex) / 2 - cx0) / planToScreen) * 100) / 100; room[posY] = Math.round((startY + ((fy + ey) / 2 - cy0) / planToScreen) * 100) / 100;
     renderRoomLabels();
     // A scaled group (a free one is shifted by its parts' centre, which scales too) is put back on the corner held still.
-    if (isCard && room.labelCardScale !== cardScale0) { const q = $(sel)?.getBoundingClientRect(); if (q) { const dx = fx - (sx > 0 ? q.left : q.right), dy = fy - (sy > 0 ? q.top : q.bottom); if (Math.abs(dx) > .2 || Math.abs(dy) > .2) { room[posX] = Math.round((room[posX] + dx / planToScreen) * 100) / 100; room[posY] = Math.round((room[posY] + dy / planToScreen) * 100) / 100; renderRoomLabels(); } } }
-    const r = $(sel)?.getBoundingClientRect() || rect0, Ws = scene.width || 1, Hs = scene.height || 1, px = v => (v - scene.left) / Ws * 100, py = v => (v - scene.top) / Hs * 100;
+    if (isCard && room.labelCardScale !== cardScale0) { const q = $(sel)?.getBoundingClientRect(); if (q) { const dx = fx - (sx > 0 ? q.left : q.right) + shX, dy = fy - (sy > 0 ? q.top : q.bottom) + shY; if (Math.abs(dx) > .2 || Math.abs(dy) > .2) { room[posX] = Math.round((room[posX] + dx / planToScreen) * 100) / 100; room[posY] = Math.round((room[posY] + dy / planToScreen) * 100) / 100; renderRoomLabels(); } } }
+    const r1 = $(sel)?.getBoundingClientRect(), r = r1 ? { left: r1.left - shX, right: r1.right - shX, top: r1.top - shY, bottom: r1.bottom - shY, width: r1.width, height: r1.height } : rect0, Ws = scene.width || 1, Hs = scene.height || 1, px = v => (v - scene.left) / Ws * 100, py = v => (v - scene.top) / Hs * 100;
     const vertical = [], horizontal = [], marks = [], hits = [];
     const add = (b, isX) => {
       if (!b || b.grid) return; const t = b.r || (b.t?.box ? { left: b.t.box.l + scene.left, right: b.t.box.r + scene.left, top: b.t.box.t + scene.top, bottom: b.t.box.b + scene.top } : null);
@@ -1697,7 +1701,7 @@ function startFreeResize(event, handle) {
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return;
-    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
+    camera.stop(); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
@@ -2011,7 +2015,7 @@ function startRoomLabelDrag(event) {
     return { scene, xs: gx, ys: gy, boxes, roomBox: rb, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
       shiftX: (own.left + own.width / 2 - scene.left) - qx / 100 * scene.width, shiftY: (own.top + own.height / 2 - scene.top) - qy / 100 * scene.height };
   };
-  let moved = false, alive = true; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
+  let moved = false, alive = true, zoneMoved = false; const camera = dragCamera(e => { clearTimeout(guides?.motion?.timer); guides = null; place(e); });
   try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const place = e => {
     const [x, y] = scenePercentAt(e);
@@ -2019,10 +2023,25 @@ function startRoomLabelDrag(event) {
     else if (!cameraPanning) { guides ||= roomGuides(); guides.onSettle = () => place(e); }
     const gp = v => groupMode ? v : snapPercent(v); // the plan's grid does not apply inside a group
     if (groupMode && guides) requestAnimationFrame(() => { if (alive) showGroupGrid(groupSnap(room)); }); // the drawn grid follows the part
-    const snapped = guides?.boxes ? alignLabel(guides, gp(x - grab[0]), gp(y - grab[1]), e) : alignToGuides(guides, gp(x - grab[0]), gp(y - grab[1]), e);
+    // "Rozmiar tylko po grubych liniach": a group moves from crossing to crossing of the thick lines (below).
+    const zoneMove = key === 'labelCard' && room.labelLinked && majorSizing() && !e.altKey; zoneMoved = zoneMove;
+    const snapped = zoneMove ? { xPercent: x - grab[0], yPercent: y - grab[1] } : guides?.boxes ? alignLabel(guides, gp(x - grab[0]), gp(y - grab[1]), e) : alignToGuides(guides, gp(x - grab[0]), gp(y - grab[1]), e);
     const dx = Math.round((snapped.xPercent - ax) / 100 * w / k * 100) / 100 - startOffsets[key][0], dy = Math.round((snapped.yPercent - ay) / 100 * h / k * 100) / 100 - startOffsets[key][1];
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
     renderRoomLabels();
+    if (zoneMove) {
+      // Its top-left corner goes to the nearest crossing (a group sized in zones then covers whole zones again).
+      const sc = els.scene.getBoundingClientRect(), card = $(`#room-labels .room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(), lines = gridMajorLines(sc.width, sc.height);
+      if (card?.width && lines.xs.length && lines.ys.length) {
+        const near = (list, v) => list.reduce((b, l) => Math.abs(l - v) < Math.abs(b - v) ? l : b, list[0]), toPlan = sc.width / w * k;
+        const tx = near(lines.xs, card.left - sc.left), ty = near(lines.ys, card.top - sc.top);
+        room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (tx - (card.left - sc.left)) / toPlan) * 1000) / 1000;
+        room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (ty - (card.top - sc.top)) / toPlan) * 1000) / 1000;
+        renderRoomLabels();
+        const W = sc.width || 1, H = sc.height || 1, cw = card.width, ch = card.height;
+        showAlignGuides([{ at: tx / W * 100, kind: 'major' }, { at: (tx + cw) / W * 100, kind: 'major' }], [{ at: ty / H * 100, kind: 'major' }, { at: (ty + ch) / H * 100, kind: 'major' }]);
+      }
+    }
     if (key !== 'labelCard' && !room.labelLinked) keepApart(room, key, node.dataset.labelPart);
     if (isIconRoom(room) && key === 'labelCard' && room.labelLinked && dashGrid().on) { const box = cardBoxPct(room); if (box) renderDashGrid(dashTarget(box, room.dash && dashSpan(room) ? room.dash : null)); }
     // "Granice tła": the label (the whole group, or the one part being moved) stays inside the background.
@@ -2046,7 +2065,8 @@ function startRoomLabelDrag(event) {
     }
     let [fx, fy] = partPct(key);
     // An icon has no shape: a moved group becomes its new position, so later centring, guides and copies use it.
-    if (isIconRoom(room) && key === 'labelCard') {
+    // A group put on a crossing keeps its offset as it is (turned into its point it would be rounded off the crossing).
+    if (isIconRoom(room) && key === 'labelCard' && !zoneMoved) {
       // On the dashboard grid the group snaps to whole cells (keeping its size in cells once pinned).
       const box = dashGrid().on && room.labelLinked ? cardBoxPct(room) : null;
       if (box) { const keep = room.dash; room.dash = dashTarget(box, keep && dashSpan(room) ? keep : null); const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
