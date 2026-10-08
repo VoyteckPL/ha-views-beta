@@ -1490,7 +1490,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}${r.labelCardExact ? ' exact' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${cardLook(r, on)}"></div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
-  const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : shownParts[0];
+  const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : '';
   return backdrop + layeredParts(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, thermo?.active?.[part] ?? on);
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
@@ -1799,7 +1799,7 @@ function startCardResize(event, handle) {
 }
 let pendingPartFocus = null;
 // In the label / thermostat panel, the section of the part being edited is opened, marked and scrolled into view.
-function markPartSection(part) { const content = $('#room-editor-content'); if (!content) return null; $$('.part-section.current', content).forEach(d => d.classList.remove('current')); const target = part && content.querySelector(`details.part-section.part-${CSS.escape(part)}`); target?.classList.add('current'); return target; }
+function markPartSection(part) { const content = $('#room-editor-content'); if (!content) return null; $$('.part-section.current', content).forEach(d => d.classList.remove('current')); const target = part ? content.querySelector(`details.part-section.part-${CSS.escape(part)}`) : null; target?.classList.add('current'); return target; }
 // A part picked on the plan: only its section is open, with its subsections listed but closed (also when moving on to
 // another part); picking the same part again leaves the section as it is.
 function focusPartSection(part) {
@@ -1817,7 +1817,6 @@ function focusPartSection(part) {
 const GROUP_GRID = 10; // group grid step (M), in the label's own px (grows and shrinks with the label)
 // Its own settings (the magnet on the panel's head, saved for the whole dashboard): on / off, and what a part snaps to.
 const GROUP_SNAP_DEFAULTS = Object.freeze({ on: true, parts: true, frame: true, spacing: true, grid: 'M', plan: false });
-const GROUP_GRID_STEPS = { S: 5, M: GROUP_GRID, L: 20 };
 function groupSnapOpts() { return { ...GROUP_SNAP_DEFAULTS, ...(model.settings?.groupSnap || {}) }; }
 const snapReach = () => mobileView() ? 10 : 7;
 // How far another object lies from the moved one (screen px, 0 when touching or overlapping). Of the lines within
@@ -1827,9 +1826,10 @@ const nearness = gap => Math.min(4, gap / 60);
 function groupSnap(room, exclude = []) {
   const o = groupSnapOpts(), scene = els.scene.getBoundingClientRect(), id = CSS.escape(room.id);
   const parts = $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n.offsetParent !== null), others = parts.filter(n => !exclude.includes(n) && !exclude.includes(n.dataset.labelPart));
-  const ref = parts[0], k = ref ? ref.getBoundingClientRect().width / Math.max(1, ref.offsetWidth) : 1, grid = o.grid in GROUP_GRID_STEPS;
+  // One grid size for every group (no S / M / L): on or off.
+  const ref = parts[0], k = ref ? ref.getBoundingClientRect().width / Math.max(1, ref.offsetWidth) : 1, grid = o.grid !== 'off';
   // Zoomed out the grid gets coarser: its lines stay at least twice the snap reach apart, so it never catches everywhere.
-  let step = (GROUP_GRID_STEPS[o.grid] || GROUP_GRID) * k; const minStep = Math.max(16, snapReach() * 2); while (step < minStep) step *= 2;
+  let step = GROUP_GRID * k; const minStep = Math.max(16, snapReach() * 2); while (step < minStep) step *= 2;
   const [axp, ayp] = roomAnchor(room), anchor = { x: scene.left + axp / 100 * scene.width, y: scene.top + ayp / 100 * scene.height };
   const rects = parts.map(n => n.getBoundingClientRect()), orects = others.map(n => n.getBoundingClientRect());
   const union = rs => rs.length ? { l: Math.min(...rs.map(r => r.left)), r: Math.max(...rs.map(r => r.right)), t: Math.min(...rs.map(r => r.top)), b: Math.max(...rs.map(r => r.bottom)) } : { l: anchor.x, r: anchor.x, t: anchor.y, b: anchor.y };
@@ -1837,7 +1837,16 @@ function groupSnap(room, exclude = []) {
   const xs = [], ys = [];
   if (o.parts) orects.forEach(r => { const box = rel({ l: r.left, r: r.right, t: r.top, b: r.bottom }); [r.left, (r.left + r.right) / 2, r.right].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'label', own: true, center: i === 1, box })); [r.top, (r.top + r.bottom) / 2, r.bottom].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'label', own: true, center: i === 1, box })); });
   if (o.frame) {
-    xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true });
+    // The thermostat's / label's frame while ungrouped (the frame it kept, drawn behind the parts): its centre lines and
+    // edges come first for every part (the dial lands exactly in the middle of the frame). Without one, the label's point.
+    const kept = room.labelUngroupFrame, toScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
+    const drawn = $(`.room-label-backdrop[data-room-id="${id}"]`)?.getBoundingClientRect(); // the frame as drawn, when it has a background or border
+    const fr = drawn?.width ? { l: drawn.left, r: drawn.right, t: drawn.top, b: drawn.bottom } : kept && Number(kept.w) > 0 ? (() => { const cx = anchor.x + Number(kept.x) * toScreen, cy = anchor.y + Number(kept.y) * toScreen, hw = Number(kept.w) * toScreen * clamp(Number(room.labelCardScale) || 1, .3, 6) / 2, hh = Number(kept.h) * toScreen * clamp(Number(room.labelCardScale) || 1, .3, 6) / 2; return { l: cx - hw, r: cx + hw, t: cy - hh, b: cy + hh }; })() : null;
+    if (fr) {
+      const fbox = rel(fr);
+      [fr.l, (fr.l + fr.r) / 2, fr.r].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'group', own: true, frame: true, center: i === 1, box: fbox }));
+      [fr.t, (fr.t + fr.b) / 2, fr.b].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'group', own: true, frame: true, center: i === 1, box: fbox }));
+    } else { xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true }); }
     if (orects.length) { const fb = rel(frame); [frame.l, frame.r].forEach(v => xs.push({ v: v - scene.left, kind: 'group', own: true, box: fb })); [frame.t, frame.b].forEach(v => ys.push({ v: v - scene.top, kind: 'group', own: true, box: fb })); }
     // A room's label: its parts line up with the room's own shape too (its centre and outer edges, amber lines).
     if (!isIconRoom(room) && (room.points || []).length >= 3) {
@@ -1870,7 +1879,7 @@ function groupSnapMenuMarkup() {
   const row = (key, icon, label) => `<button type="button" class="gs-row${o[key] ? ' active' : ''}" data-gsnap="${key}" aria-pressed="${!!o[key]}"><i class="mdi ${icon}"></i><span>${t(label)}</span><i class="mdi mdi-check gs-check"></i></button>`;
   return `<div class="gs-head"><span>${t('Przyciąganie w grupie')}</span><button type="button" class="gs-master${o.on ? ' active' : ''}" data-gsnap="on" aria-pressed="${o.on}">${o.on ? 'ON' : 'OFF'}</button></div>`
     + `<div class="gs-body${o.on ? '' : ' off'}">` + row('parts', 'mdi-shape-outline', 'Części') + row('frame', 'mdi-crosshairs', 'Środek i ramka') + row('spacing', 'mdi-arrow-expand-horizontal', 'Równe odstępy') + row('plan', 'mdi-floor-plan', 'Elementy planu')
-    + `<div class="gs-grid"><span><i class="mdi mdi-grid"></i>${t('Siatka')}</span><div class="grid-presets" role="group">${['off', 'S', 'M', 'L'].map(g => `<button type="button" class="grid-preset${o.grid === g ? ' active' : ''}" data-gsnap-grid="${g}">${g === 'off' ? t('Wył.') : g}</button>`).join('')}</div></div>`
+    + `<button type="button" class="gs-row${o.grid !== 'off' ? ' active' : ''}" data-gsnap-grid="${o.grid !== 'off' ? 'off' : 'M'}" aria-pressed="${o.grid !== 'off'}"><i class="mdi mdi-grid"></i><span>${t('Siatka')}</span><i class="mdi mdi-check gs-check"></i></button>`
     + (mobileView() ? '' : `<small>${t('Alt — przesuwanie bez przyciągania')}</small>`) + `</div>`;
 }
 function closeGroupSnapMenu() { $('#group-snap-menu')?.remove(); document.removeEventListener('pointerdown', groupSnapMenuOutside, true); }
@@ -2949,6 +2958,7 @@ function onRoomEditorClick(event) {
     const partKeys = ROOM_LABEL_PARTS.map(([, k]) => k);
     if (key === 'labelMinus' && isThermoRoom(room) && partToggle.closest('.group-tight')) room.labelPlus = !room.labelMinus;
     if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
+    if (key === 'labelLinked' && room.labelLinked) { selectedLabelPart = ''; panelPart = null; } // ungrouped: no part picked yet, all only outlined
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
     const parts = partKeys;
@@ -3457,7 +3467,7 @@ function alignLabel(context, xPercent, yPercent, event) {
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
-    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, own, major }) => offsets.forEach(o => add(v - o, grid ? 3.5 : major ? 1.2 : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, own, major, frame }) => offsets.forEach(o => add(v - o, grid ? 3.5 : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).

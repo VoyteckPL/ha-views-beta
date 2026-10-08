@@ -1,3 +1,10 @@
+## 0.6.1-beta.486
+
+- **Rozgrupowanie bez zaznaczonej części**: po kliknięciu „Grupa” (rozgrupuj) żadna część nie jest wybrana. Wszystkie części mają tylko obrys, bez kropek. Część wybierasz dotknięciem.
+- **Środek ramki termostatu**: rozgrupowane części przyciągają się do środka i krawędzi ramki, którą termostat ma w czasie rozgrupowania. Środek ramki ma pierwszeństwo, więc tarczę da się ustawić dokładnie pośrodku termostatu. Wcześniej „środkiem” był punkt etykiety, który przy przesuniętej ramce nie leżał w jej środku, więc pionowej linii środka ramki nie było.
+- **Jedna siatka w grupie**: w menu magnesu grupy zamiast S / M / L jest jeden przełącznik „Siatka”.
+- Poprawka: błąd JS przy otwieraniu panelu, gdy żadna część nie była wybrana.
+
 ## 0.6.1-beta.485
 
 - **Przesuwanie po grubych liniach**: przy włączonym „Rozmiar tylko po grubych liniach siatki” przesuwany termostat lub etykieta przeskakuje lewym górnym rogiem po skrzyżowaniach grubych linii, więc grupa ustawiona w strefach zawsze zajmuje całe strefy. Linie, na których stoi, są podświetlone. Po upuszczeniu zostaje dokładnie na skrzyżowaniu. Alt przesuwa swobodnie.
