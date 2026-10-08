@@ -3038,7 +3038,9 @@ function onRoomEditorClick(event) {
     }
     room.updatedAt = new Date().toISOString(); renderRooms();
     if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part) keepApart(room, key, part); }
-    openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
+    openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
+    if (key === 'labelLinked' && !room.labelLinked) requestAnimationFrame(() => requestAnimationFrame(() => fitLabelFrameOnDesktop(room)));
+    return;
   }
   const layoutButton = event.target.closest('[data-card-layout]'), styleButton = event.target.closest('[data-card-style]'), alignButton = event.target.closest('[data-card-align]');
   if (layoutButton || styleButton || alignButton) {
@@ -3778,6 +3780,20 @@ function syncCardClip() {
 }
 // On a computer a zoomed plan (any format, image or colour) uses the whole free screen - from the top bar down, between
 // the window edge and the edit panel - not only its card, so there is more room to work.
+// On a computer, "Rozgrupuj": the camera glides to the whole label / thermostat frame, as big as fits with a 5% margin
+// on every side of the screen area, so all its parts can be edited.
+function fitLabelFrameOnDesktop(room) {
+  if (mobileView() || !editMode || !room) return;
+  const id = CSS.escape(room.id), frame = $(`.room-label-backdrop[data-room-id="${id}"]`) || $(`.room-label-card[data-room-id="${id}"]`);
+  const fr = frame?.getBoundingClientRect(), sc = els.scene.getBoundingClientRect(); if (!fr?.width || !sc.width) return;
+  // The frame in plan px (unzoomed) and the screen area it is fitted into: the visible plan (its card, below the top bar,
+  // without the docked panel).
+  const l = (fr.left - sc.left) / viewZoom, t = (fr.top - sc.top) / viewZoom, w = fr.width / viewZoom, h = fr.height / viewZoom;
+  const vp = els.viewport.getBoundingClientRect(), D = deskZoomRegion();
+  const area = { left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) };
+  const zoom = clamp(Math.min((area.right - area.left) * .9 / w, (area.bottom - area.top) * .9 / h), zoomFloor(), 4);
+  glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
+}
 function deskZoomExpanded() { return !mobileView() && viewZoom > 1.001; }
 function deskZoomRegion() {
   const bar = $('.topbar')?.getBoundingClientRect().bottom || 0, dock = $('#edit-dock');

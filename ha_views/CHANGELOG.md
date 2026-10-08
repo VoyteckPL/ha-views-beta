@@ -1,3 +1,7 @@
+## 0.6.1-beta.504
+
+- **Komputer: „Rozgrupuj” pokazuje cały termostat**: po kliknięciu „Rozgrupuj” kamera płynnie dopasowuje widok do ramki termostatu albo etykiety. Ramka staje na środku widocznego planu, możliwie duża, z marginesem 5% z każdej strony, więc widać wszystkie części do edycji. Na telefonie bez zmian.
+
 ## 0.6.1-beta.503
 
 - **Cofnięte zmiany z 0.6.1-beta.501 i 0.6.1-beta.502**: kamera znów jedzie za myszką, gdy przy przeciąganiu dojedziesz do krawędzi widocznego planu. Wybór elementu na powiększonym planie znów go centruje, tak jak w 0.6.1-beta.500.
