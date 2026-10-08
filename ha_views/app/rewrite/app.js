@@ -427,7 +427,7 @@ async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
   closeCompactMenus(); closeEditor(); closeMoreInfo(); closeRoomEditor(); cancelRoomDrawing(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
-  await loadBackgrounds(true, false, null, 2500); await nightImageReady(); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
+  await loadBackgrounds(true, false, null, 2500); await nightImageReady(); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); applySnapUi(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
   prebuildSwipePreviews(60);
 }
@@ -543,7 +543,7 @@ function applySnapUi() {
   els.body.classList.toggle('snap-enabled', enabled);
   if (els.snapToggle) { els.snapToggle.classList.toggle('active', enabled); els.snapToggle.title = translateValue(enabled ? 'Siatka włączona' : 'Siatka wyłączona'); els.snapToggle.setAttribute('aria-label', els.snapToggle.title); }
   if (els.gridStatus) els.gridStatus.textContent = enabled ? 'ON' : 'OFF';
-  const step = clamp(model.settings?.snapStep || .25, .25, 4);
+  const step = clamp(gridOpt('snapStep') || .25, .25, 4);
   els.scene?.style.setProperty('--grid-minor', `${step}%`);
   els.scene?.style.setProperty('--grid-major', `${step * 5}%`);
   els.scene?.style.setProperty('--grid-vis', `${gridVisual()}%`); syncGridGeometry();
@@ -565,18 +565,22 @@ function bringIntoScene(item) {
 }
 // The visible edit grid: L = 10 % of the plan (as before), M = 5 %, S = 2,5 %. Lines start at the plan's edges, so the
 // grid is always symmetric (a line through the centre) and scales with the plan. Resize dots snap to these lines.
-function gridVisual() { const step = Number(model.settings?.snapStep) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
-// Edit grid in zones: the thick lines split the whole plan into equal zones, N across and M down ("Strefy" in the snap
-// menu; M follows the plan's shape when not set, so the zones come out nearly square), always from edge to edge. The fine
-// grid divides every zone into equal cells of about the S / M / L size, so its lines always meet the thick ones.
+// The grid's shape (fine size, zones, "Rozmiar po grubych liniach") is kept per view: a view's own value, else the one
+// set before grids were per view.
+function gridOpt(key) { const v = activeSceneView()?.grid?.[key]; return v !== undefined ? v : model.settings?.[key]; }
+function setGridOpt(key, value) { const view = activeSceneView(); if (view) (view.grid ||= {})[key] = value; else model.settings[key] = value; }
+function gridVisual() { const step = Number(gridOpt('snapStep')) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
+// Edit grid in square zones: the thick lines split the plan's width into N equal columns ("Strefy" in the snap menu) and
+// run down the whole plan at the same spacing from the top, so every zone is a square (the last row may be cut by the
+// plan's bottom edge). The fine grid divides every zone into equal square cells of about the S / M / L size, so its
+// lines always meet the thick ones.
 function gridZones(w = els.scene?.offsetWidth || 1, h = els.scene?.offsetHeight || 1) {
-  const m = model.settings?.gridZones || {}, x = clamp(Math.round(Number(m.x) || 4), 1, 24);
-  return { x, y: clamp(Math.round(Number(m.y) || Math.round(h / (w / x)) || 1), 1, 40), auto: !Number(m.y) };
+  const m = gridOpt('gridZones') || {}, x = clamp(Math.round(Number(m.x) || 4), 1, 24);
+  return { x, y: h / (w / x) };
 }
 function gridLayout(w, h) {
-  const { x, y } = gridZones(w, h), zx = w / x, zy = h / y, target = w * gridVisual() / 100;
-  const kx = Math.max(1, Math.round(zx / target)), ky = Math.max(1, Math.round(zy / target));
-  return { x, y, zx, zy, fx: zx / kx, fy: zy / ky };
+  const { x, y } = gridZones(w, h), z = w / x, k = Math.max(1, Math.round(z / (w * gridVisual() / 100)));
+  return { x, y, zx: z, zy: z, fx: z / k, fy: z / k };
 }
 function syncGridGeometry() {
   // Guide and edit lines are one device pixel thin, whatever the screen density.
@@ -586,11 +590,11 @@ function syncGridGeometry() {
   const L = gridLayout(w, h);
   scene.style.setProperty('--grid-px', `${L.fx}px`); scene.style.setProperty('--grid-py', `${L.fy}px`); scene.style.setProperty('--grid-ox', '0px'); scene.style.setProperty('--grid-oy', '0px');
   // The centre lines are drawn strong only where they are thick lines too (an even number of zones).
-  scene.style.setProperty('--cxa', L.x % 2 ? '0' : '.62'); scene.style.setProperty('--cya', L.y % 2 ? '0' : '.62');
+  const midRow = (h / 2) / L.zy; scene.style.setProperty('--cxa', L.x % 2 ? '0' : '.62'); scene.style.setProperty('--cya', Math.abs(midRow - Math.round(midRow)) < .01 ? '.62' : '0');
   scene.style.setProperty('--maj-x', `${L.zx}px`); scene.style.setProperty('--maj-y', `${L.zy}px`); scene.style.setProperty('--maj-ox', '-.75px'); scene.style.setProperty('--maj-oy', '-.75px');
   const label = (axis, v) => { const out = $(`[data-major-axis="${axis}"] b`); if (out) out.textContent = String(v); };
-  label('x', L.x); label('y', L.y);
-  const fit = $('#major-fit'); if (fit) { fit.classList.toggle('active', !!model.settings?.majorFit); fit.setAttribute('aria-pressed', String(!!model.settings?.majorFit)); }
+  label('x', L.x);
+  const fit = $('#major-fit'); if (fit) { fit.classList.toggle('active', !!gridOpt('majorFit')); fit.setAttribute('aria-pressed', String(!!gridOpt('majorFit'))); }
 }
 // The grid's lines (px from the plan's left / top edge, for a plan w × h px): the thick ones, or the fine ones.
 function gridLines(w, h, major = true) {
@@ -602,7 +606,7 @@ function gridLines(w, h, major = true) {
 function gridMajorLines(w, h) { return gridLines(w, h, true); }
 // "Rozmiar po grubych liniach" (button in the snap menu): the corner dots of a label / thermostat group move from one thick
 // grid line to the next only, so its size is always whole zones.
-function majorSizing() { return !!model.settings?.majorFit && model.settings?.snapEnabled !== false; }
+function majorSizing() { return !!gridOpt('majorFit') && model.settings?.snapEnabled !== false; }
 // How far a resized edge is caught by a grid line - and held by it, the same distance, so letting go of a line never
 // makes the edge jump further than it was caught.
 function gridReach() { return mobileView() ? 12 : 9; }
@@ -613,7 +617,7 @@ function gridLineNear(v, horizontal) {
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
-  const step = Number(model.settings?.snapStep) || .25;
+  const step = Number(gridOpt('snapStep')) || .25;
   return clamp(Math.round(value / step) * step, 0, 100);
 }
 // ---- Rooms: polygons on the plan that light up with their entities -------------------
@@ -6879,15 +6883,15 @@ function bindEvents() {
   $('#bounds-toggle')?.addEventListener('click', () => { model.settings ||= {}; model.settings.keepInBounds = !keepInBounds(); applyBoundsUi(); scheduleSave(true); notify(keepInBounds() ? 'Elementy nie wyjdą poza tło' : 'Elementy mogą wychodzić poza tło'); });
   applyBoundsUi();
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
-  // "Strefy": − / + changes how many equal zones the thick lines make across (columns) or down (rows).
-  $('#major-fit')?.addEventListener('click', event => { event.stopPropagation(); model.settings.majorFit = !model.settings.majorFit; syncGridGeometry(); scheduleSave(true); notify(model.settings.majorFit ? 'Rozmiar etykiet i termostatów zmienia się tylko po grubych liniach siatki' : 'Rozmiar etykiet i termostatów zmienia się swobodnie'); });
+  // "Strefy": − / + changes how many square zones the thick lines make across (columns); rows follow at the same size.
+  $('#major-fit')?.addEventListener('click', event => { event.stopPropagation(); setGridOpt('majorFit', !gridOpt('majorFit')); syncGridGeometry(); scheduleSave(true); notify(gridOpt('majorFit') ? 'Rozmiar etykiet i termostatów zmienia się tylko po grubych liniach siatki' : 'Rozmiar etykiet i termostatów zmienia się swobodnie'); });
   $$('[data-major-axis]').forEach(box => box.addEventListener('click', event => {
     const step = Number(event.target.closest('[data-major-step]')?.dataset.majorStep); if (!step) return; event.stopPropagation();
-    const axis = box.dataset.majorAxis, z = gridZones(), m = { ...(model.settings.gridZones || {}) }; m[axis] = clamp(z[axis] + step, 1, axis === 'x' ? 24 : 40); if (axis === 'x' && z.auto) delete m.y; model.settings.gridZones = m;
+    const m = { ...(gridOpt('gridZones') || {}) }; m.x = clamp(gridZones().x + step, 1, 24); delete m.y; setGridOpt('gridZones', m);
     syncGridGeometry(); scheduleSave(true);
   }));
   els.gridPresets.forEach(button => button.addEventListener('click', () => {
-    model.settings.snapStep = Number(button.dataset.gridStep);
+    setGridOpt('snapStep', Number(button.dataset.gridStep));
     applySnapUi(); scheduleSave(true);
   }));
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });

@@ -1,3 +1,8 @@
+## 0.6.1-beta.492
+
+- **Kwadratowa siatka**: grube linie zawsze tworzą kwadraty. Liczba stref w poziomie wyznacza bok kwadratu (szerokość planu podzielona przez liczbę kolumn). Rzędy idą w dół przez cały plan w tym samym rozmiarze, więc ostatni rząd może być ucięty dolną krawędzią planu. Drobne kratki też są kwadratowe. Ustawienie liczby rzędów zniknęło, bo wynika z kolumn.
+- **Siatka zapamiętywana per widok**: liczba stref, rozmiar S / M / L i „Rozmiar tylko po grubych liniach” zapisują się osobno dla każdego widoku. Widok, w którym nic nie zmieniałeś, bierze dotychczasowe ustawienia.
+
 ## 0.6.1-beta.491
 
 - **Margines grupy tylko tam, gdzie działa**: suwak „Margines” w sekcji Grupa znika, gdy ramka ma własny rozmiar, np. po rozgrupowaniu i ponownym zgrupowaniu albo po zmianie rozmiaru po grubych liniach siatki. Taką ramkę ustawiasz kropkami, więc margines nic by nie zmienił. Gdy ramka dopasowuje się do części, suwak zostaje i dalej zmienia odstęp od ramki.
