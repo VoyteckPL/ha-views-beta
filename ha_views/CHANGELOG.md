@@ -1,3 +1,8 @@
+## 0.6.1-beta.502
+
+- **Komputer: widok nie centruje się sam**: kliknięcie albo złapanie elementu lub części termostatu na powiększonym planie nie przesuwa już widoku, żeby wyśrodkować element. To centrowanie trwało jeszcze w trakcie przeciągania, więc widok powoli odjeżdżał.
+- Złapanie elementu do przesunięcia lub zmiany rozmiaru zatrzymuje każde trwające przesuwanie widoku, także na telefonie.
+
 ## 0.6.1-beta.501
 
 - **Komputer: widok nie ucieka przy krawędzi**: przy przeciąganiu myszą widok przesuwa się dopiero wtedy, gdy wyjedziesz kursorem poza widoczny plan. Wcześniej przesuwał się już przy zbliżeniu do krawędzi, więc nie dało się postawić elementu tuż przy niej. Im dalej poza plan, tym szybciej przesuwa się widok. Na telefonie bez zmian, czyli pasek przy krawędzi.

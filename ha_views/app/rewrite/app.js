@@ -1579,6 +1579,7 @@ function fitCardHandles() {
 // than its content. Each moving side snaps to the lines of other elements on screen and to the width / height of another
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
+  stopCameraGlide(); // picking something up stops any camera glide (the view never moves under the finger / mouse)
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   const zoneSize = majorSizing() && !!handle.closest('.room-label-card'); // "Rozmiar po grubych liniach": no free scaling with Shift
   if ((event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
@@ -1990,6 +1991,7 @@ function secondFingerToZoom(event) {
   event.preventDefault(); event.stopPropagation(); viewportPointerDown(event); return true;
 }
 function startRoomLabelDrag(event) {
+  stopCameraGlide();
   if (secondFingerToZoom(event)) return;
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startFreeResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
@@ -4712,6 +4714,7 @@ function renderFlows() {
   existing.forEach(node => { if (!kept.has(node)) node.remove(); });
 }
 function startFlowDrag(event) {
+  stopCameraGlide();
   if (!editMode || event.button !== 0) return;
   closeCompactMenus();
   const flow = activeSceneView()?.flows?.[event.currentTarget.dataset.flowId]; if (!flow || flow.geometryLocked) return;
@@ -5003,15 +5006,10 @@ function editorFreeBand() {
   const bottom = Math.min(editorTop, vr.bottom) - vr.top - 14;
   return { top, bottom, height: Math.max(60, bottom - top) };
 }
-// On a computer, zoomed in while editing: the selected element glides to the middle of the free screen (same zoom).
-function focusSceneBoxOnDesktop(points) {
-  if (mobileView() || !editMode || !points.length || !deskZoomExpanded()) return;
-  const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, xs = points.map(p => Number(p[0]) / 100 * W), ys = points.map(p => Number(p[1]) / 100 * H);
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2, R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect();
-  glideCamera(viewZoom, (R.left + R.right) / 2 - vp.left - cx * viewZoom, (R.top + R.bottom) / 2 - vp.top - cy * viewZoom);
-}
+// On a computer the camera stays where it is: selecting or picking up an element (or a part of it) never moves the view
+// (it used to glide the element to the middle, which went on while the element was being dragged).
 function focusSceneBoxOnMobile(points) {
-  if (!mobileView()) return focusSceneBoxOnDesktop(points);
+  if (!mobileView()) return;
   if (!editMode || !points.length) return;
   const sceneWidth = els.scene.offsetWidth || 1, sceneHeight = els.scene.offsetHeight || 1;
   const xs = points.map(p => Number(p[0]) / 100 * sceneWidth), ys = points.map(p => Number(p[1]) / 100 * sceneHeight);
@@ -5026,7 +5024,7 @@ function focusSceneBoxOnMobile(points) {
   glideCamera(nextZoom, viewW / 2 - centreX * nextZoom, targetY - centreY * nextZoom);
 }
 function focusScenePointOnMobile(xPercent, yPercent) {
-  if (!mobileView()) return focusSceneBoxOnDesktop([[xPercent, yPercent]]);
+  if (!mobileView()) return;
   if (!editMode) return;
   const marker = { xPercent, yPercent };
   // Deliberately closer than beta.52: selected markers remain clear of the
@@ -5213,6 +5211,7 @@ function touchSelectFirst(event, selected, select = null) {
   return true;
 }
 function startDrag(event) {
+  stopCameraGlide();
   if (!editMode || event.button !== 0) return;
   if (secondFingerToZoom(event)) return;
   if (touchSelectFirst(event, selectedId === event.currentTarget.dataset.markerId)) return; // a tap selects it (click)
