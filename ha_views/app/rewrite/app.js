@@ -3463,6 +3463,7 @@ function alignLabel(context, xPercent, yPercent, event) {
   // labels (with "Etykiety" on) - not to other rooms, markers, Flow or the background. Out of the room: to everything.
   const rb = context.roomBox, inside = !!rb && snapTargets().rooms && cx - hw >= rb.l - 1 && cx + hw <= rb.r + 1 && cy - hh >= rb.t - 1 && cy + hh <= rb.b + 1;
   const boxes = context.boxes.map(b => ({ ...b, cx: (b.l + b.r) / 2, cy: (b.t + b.b) / 2 }));
+  const holds = (b, me) => !b.edge && b.l <= me.l + .5 && b.r >= me.r - .5 && b.t <= me.t + .5 && b.b >= me.b - .5;
   // Other labels come in as boxes (segment lines, highlight); their copies among the general guides are skipped.
   const guideValues = values => values.filter(item => item.own || !['label','marker','flow'].includes(item.kind) || !item.box || !boxes.length).filter(item => !inside || item.own || item.kind === 'label');
   // axis 'x': position along x, rows are found on y; axis 'y' the other way round.
@@ -3486,7 +3487,9 @@ function alignLabel(context, xPercent, yPercent, event) {
     });
     // "Odstępy" (own switch in the snap menu, own colour): repeat the gap of two neighbours in a row, or sit exactly
     // between two of them (equal gaps on both sides).
-    const row = spacing ? boxes.filter(inRow).sort((p, q) => p[lo] - q[lo]) : [];
+    // A box the label lies wholly inside (e.g. a value placed in the dial) counts with its two inner edges instead: equal
+    // gaps from its edge to the label and on to the next part, or exactly between its edge and another part inside it.
+    const row = spacing ? boxes.flatMap(b => holds(b, me) ? [{ ...b, [hi]: b[lo], edge: true }, { ...b, [lo]: b[hi], edge: true }] : [b]).filter(inRow).sort((p, q) => p[lo] - q[lo]) : [];
     for (let i = 0; i + 1 < row.length; i++) {
       const a = row[i], b = row[i + 1], g = b[lo] - a[hi]; if (g <= 0) continue; const sf = Math.min(far(a), far(b));
       add(b[hi] + g + half, sf + .8, null, [[a[hi], b[lo], 'spacing'], [b[hi], b[hi] + g, 'spacing']], [{ ...a, kind: 'spacing' }, { ...b, kind: 'spacing' }]);
@@ -3518,7 +3521,8 @@ function alignLabel(context, xPercent, yPercent, event) {
   if (bx?.guide) vertical.push(bx.guide.full ? { at: bx.guide.at / W * 100, kind: bx.guide.kind } : { at: bx.guide.at / W * 100, kind: bx.guide.kind || 'label', from: Math.min(bx.guide.span[0], fy - hh) / H * 100, to: Math.max(bx.guide.span[1], fy + hh) / H * 100 });
   if (by?.guide) horizontal.push(by.guide.full ? { at: by.guide.at / H * 100, kind: by.guide.kind } : { at: by.guide.at / H * 100, kind: by.guide.kind || 'label', from: Math.min(by.guide.span[0], fx - hw) / W * 100, to: Math.max(by.guide.span[1], fx + hw) / W * 100 });
   // Equal gaps get small arrows (whatever the label snapped to): to both neighbours in its row, or along a run of three.
-  equalGapMarks(boxes, { l: fx - hw, r: fx + hw, t: fy - hh, b: fy + hh }).forEach(m => marks.push(m.axis === 'x'
+  const fin = { l: fx - hw, r: fx + hw, t: fy - hh, b: fy + hh };
+  equalGapMarks(boxes.flatMap(b => holds(b, fin) ? [{ ...b, b: b.t, edge: true }, { ...b, t: b.b, edge: true }, { ...b, r: b.l, edge: true }, { ...b, l: b.r, edge: true }] : [b]), fin).forEach(m => marks.push(m.axis === 'x'
     ? { axis: 'x', from: m.from / W * 100, to: m.to / W * 100, at: m.at / H * 100, kind: 'spacing' }
     : { axis: 'y', from: m.from / H * 100, to: m.to / H * 100, at: m.at / W * 100, kind: 'spacing' }));
   const hits = [...(bx?.hits || []), ...(by?.hits || [])].filter(b => b.kind !== 'spacing').filter((b, i, all) => all.findIndex(o => o.l === b.l && o.t === b.t && o.r === b.r) === i);

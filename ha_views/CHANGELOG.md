@@ -1,3 +1,7 @@
+## 0.6.1-beta.490
+
+- **Równe odstępy wewnątrz tarczy**: część położona w całości w innej części, np. temperatura w tarczy, liczy odstępy od wewnętrznych krawędzi tej części. Limonkowe strzałki pokazują równy odstęp od krawędzi tarczy do temperatury i dalej do kolejnej części. Część można też postawić dokładnie pośrodku między krawędzią tarczy a inną częścią w środku.
+
 ## 0.6.1-beta.489
 
 - **Siatka grupy z punktami orientacyjnymi**: po rozgrupowaniu siatka termostatu i etykiety ma cienkie linie i co 4 kratki grubsze. Grube linie są liczone od środka ramki, a fioletowe osie wyznaczają sam środek. Przy przeciąganiu grube linie przyciągają trochę chętniej niż cienkie. Siatka zanika dalej od części niż wcześniej.
