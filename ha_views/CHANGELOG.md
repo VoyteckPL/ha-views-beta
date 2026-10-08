@@ -1,3 +1,14 @@
+## 0.6.1-beta.487
+
+- **Prostsze przyciąganie w grupie**: magnes grupy ma 4 przełączniki, każdy w swoim kolorze linii:
+  - **Ramka** (fioletowa): środek ramki termostatu lub etykiety, a potem jej krawędzie. Środek ma pierwszeństwo.
+  - **Części** (różowa): środki i krawędzie innych części.
+  - **Równe odstępy** (limonkowe strzałki): równe odstępy między częściami, także do krawędzi ramki. Część można postawić dokładnie pośrodku między krawędzią ramki a np. tarczą.
+  - **Siatka** (błękitna): siatka grupy liczona od środka ramki.
+  „Elementy planu” zniknęły z przyciągania w grupie.
+- **Części nie wyjeżdżają poza ramkę**: w rozgrupowanej etykiecie lub termostacie część zatrzymuje się na krawędzi ramki, przy przesuwaniu i przy zmianie rozmiaru kropkami.
+- **Jedna widoczna część zachowuje ramkę i tło**: grupa z jedną widoczną częścią nie chowa już tła, ramki i marginesu. Włączasz je i wyłączasz przyciskami w sekcji Grupa. Taka grupa nie rozgrupowuje się sama. Istniejące etykiety z jedną częścią wyglądają jak dotąd (tło i ramka wyłączone), a po pokazaniu drugiej części wracają ich poprzednie ustawienia.
+
 ## 0.6.1-beta.486
 
 - **Rozgrupowanie bez zaznaczonej części**: po kliknięciu „Grupa” (rozgrupuj) żadna część nie jest wybrana. Wszystkie części mają tylko obrys, bez kropek. Część wybierasz dotknięciem.

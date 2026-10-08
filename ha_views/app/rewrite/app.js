@@ -1002,6 +1002,16 @@ function roomIconFrameStyle(r, on = false) {
 function migrateRoomLabel(room) {
   // beta.258–260: a typed icon name meant "own icon"; it is now the explicit "Własna ikona MDI" source.
   let changed = false;
+  // beta.487: a label showing one part keeps its group background / frame / margin (switched with the Group's buttons);
+  // before, they were simply not drawn. Labels like that are given exactly the look they had (switched off), and the
+  // previous values are kept to come back when a second part is shown again.
+  if (room && !room.soloFrameV2) {
+    room.soloFrameV2 = true; changed = true;
+    if (ROOM_LABEL_PARTS.filter(([, k]) => room[k] ?? ROOM_DEFAULTS[k]).length === 1 && (room.labelCardBg || room.labelCardBorder || Number(room.labelCardPadding))) {
+      room.soloSaved = { labelCardBg: !!room.labelCardBg, labelCardBorder: !!room.labelCardBorder, labelCardPadding: room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding };
+      room.labelCardBg = false; room.labelCardBorder = false; room.labelCardPadding = 0;
+    }
+  }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
@@ -1178,7 +1188,7 @@ function fitFreeCard(room, group) {
   // The group hugs the parts that are shown (a hidden part leaves no empty space): sized to their box, and the box's
   // centre offset is moved onto the card, so the shown parts stay exactly where they are on the plan.
   const parts = [...card.children].map(node => [node, partKey(node)]).filter(([, key]) => key); if (!parts.length) return;
-  const pad = parts.length > 1 ? clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60) : 0;
+  const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
   // A group centred on its frame (grouped again with the frame it kept): the frame's size, its centre on the group's point.
@@ -1437,7 +1447,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
 function roomLabelMarkup(room, preview = '', interactive = false) {
   const r = withoutOnOff({ ...ROOM_DEFAULTS, ...room });
   // One visible part: no group background, frame or margin (it would be a second frame around the part's own).
-  if (ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1) Object.assign(r, { labelCardBg:false, labelCardBorder:false, labelCardPadding:0 }); if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
+  if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
   // A thermostat's preview shows one of its work states ("act:heating"); its look follows the work state.
   const previewAct = isThermoRoom(r) && String(preview).startsWith('act:') ? String(preview).slice(4) : '';
   if (isThermoRoom(r)) r.__act = previewAct || thermoActivity(climateInfo({ entityId: (r.entityIds || [])[0] || '' }));
@@ -1614,6 +1624,7 @@ function startFreeResize(event, handle) {
   if (useSnap && !groupMode) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
   const sizes = useSnap && groupMode ? [...(gopts.parts ? own : []), ...planBoxes.map(b => ({ left: b.l + scene.left, right: b.r + scene.left, top: b.t + scene.top, bottom: b.b + scene.top, width: b.r - b.l, height: b.b - b.t, radius: b.radius }))] : useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
+  const partFrame = !isCard && !room.labelLinked ? groupFrameRect(room, scene) : null;
   const camera = dragCamera(last => move(last));
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
@@ -1660,8 +1671,9 @@ function startFreeResize(event, handle) {
       const hard = b => b && !b.t?.grid;
       if (Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
     }
-    // The moving corner never leaves the plan.
+    // The moving corner never leaves the plan - nor, for a part of an ungrouped label, the group's frame.
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
+    if (partFrame) { ex = clamp(ex, partFrame.l, partFrame.r); ey = clamp(ey, partFrame.t, partFrame.b); }
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
     if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
@@ -1707,6 +1719,16 @@ function startFreeResize(event, handle) {
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
+// Ungrouped, a part stays inside the group's frame (the frame kept from the group): moved back in when it would stick out.
+function keepInFrame(room, key, part) {
+  const sc = els.scene.getBoundingClientRect(), fr = groupFrameRect(room, sc), node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${part}"]`); if (!fr || !node) return false;
+  const r = node.getBoundingClientRect(); if (!r.width) return false;
+  const fit = (lo, hi, a, b) => b - a > hi - lo ? (lo + hi) / 2 - (a + b) / 2 : a < lo ? lo - a : b > hi ? hi - b : 0;
+  const dx = fit(fr.l, fr.r, r.left, r.right), dy = fit(fr.t, fr.b, r.top, r.bottom); if (Math.abs(dx) < .01 && Math.abs(dy) < .01) return false;
+  const toPlan = sc.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
+  room[`${key}X`] = Math.round(((Number(room[`${key}X`]) || 0) + dx / toPlan) * 100) / 100; room[`${key}Y`] = Math.round(((Number(room[`${key}Y`]) || 0) + dy / toPlan) * 100) / 100;
+  renderRoomLabels(); return true;
 }
 // Icon, name and state never overlap: a dragged part that runs into another one stops touching it
 // (it is pushed out the shortest way, so it slides along the other part's side).
@@ -1816,13 +1838,22 @@ function focusPartSection(part) {
 // resizing) - not to the plan's grid or other elements, whatever "Przyciągaj do" says (only switching the guides off stops it).
 const GROUP_GRID = 10; // group grid step (M), in the label's own px (grows and shrinks with the label)
 // Its own settings (the magnet on the panel's head, saved for the whole dashboard): on / off, and what a part snaps to.
-const GROUP_SNAP_DEFAULTS = Object.freeze({ on: true, parts: true, frame: true, spacing: true, grid: 'M', plan: false });
-function groupSnapOpts() { return { ...GROUP_SNAP_DEFAULTS, ...(model.settings?.groupSnap || {}) }; }
+const GROUP_SNAP_DEFAULTS = Object.freeze({ on: true, parts: true, frame: true, spacing: true, grid: 'M' });
+function groupSnapOpts() { return { ...GROUP_SNAP_DEFAULTS, ...(model.settings?.groupSnap || {}), plan: false }; } // "Elementy planu" is gone from the group's snapping
 const snapReach = () => mobileView() ? 10 : 7;
 // How far another object lies from the moved one (screen px, 0 when touching or overlapping). Of the lines within
 // reach, those of nearer objects win over those of far ones.
 function boxGap(a, b) { return Math.hypot(Math.max(0, b.l - a.r, a.l - b.r), Math.max(0, b.t - a.b, a.t - b.b)); }
 const nearness = gap => Math.min(4, gap / 60);
+// The frame an ungrouped label / thermostat keeps (screen px): as drawn behind the parts, else from the kept frame.
+function groupFrameRect(room, scene = els.scene.getBoundingClientRect()) {
+  const id = CSS.escape(room.id), drawn = $(`.room-label-backdrop[data-room-id="${id}"]`)?.getBoundingClientRect();
+  if (drawn?.width) return { l: drawn.left, r: drawn.right, t: drawn.top, b: drawn.bottom };
+  const kept = room.labelUngroupFrame; if (!kept || !(Number(kept.w) > 0)) return null;
+  const [axp, ayp] = roomAnchor(room), toScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6);
+  const cx = scene.left + axp / 100 * scene.width + Number(kept.x) * toScreen, cy = scene.top + ayp / 100 * scene.height + Number(kept.y) * toScreen, hw = Number(kept.w) * toScreen * lsc / 2, hh = Number(kept.h) * toScreen * lsc / 2;
+  return { l: cx - hw, r: cx + hw, t: cy - hh, b: cy + hh };
+}
 function groupSnap(room, exclude = []) {
   const o = groupSnapOpts(), scene = els.scene.getBoundingClientRect(), id = CSS.escape(room.id);
   const parts = $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n.offsetParent !== null), others = parts.filter(n => !exclude.includes(n) && !exclude.includes(n.dataset.labelPart));
@@ -1836,35 +1867,28 @@ function groupSnap(room, exclude = []) {
   const u = union(rects), frame = union(orects), rel = b => ({ l: b.l - scene.left, r: b.r - scene.left, t: b.t - scene.top, b: b.b - scene.top });
   const xs = [], ys = [];
   if (o.parts) orects.forEach(r => { const box = rel({ l: r.left, r: r.right, t: r.top, b: r.bottom }); [r.left, (r.left + r.right) / 2, r.right].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'label', own: true, center: i === 1, box })); [r.top, (r.top + r.bottom) / 2, r.bottom].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'label', own: true, center: i === 1, box })); });
+  // Ramka (purple): the frame's centre lines first, then its edges. Its edges are also boxes for equal gaps (a part right
+  // between the frame's edge and another part). Without a kept frame, the label's point.
+  const fr = groupFrameRect(room, scene), frameBoxes = [];
   if (o.frame) {
-    // The thermostat's / label's frame while ungrouped (the frame it kept, drawn behind the parts): its centre lines and
-    // edges come first for every part (the dial lands exactly in the middle of the frame). Without one, the label's point.
-    const kept = room.labelUngroupFrame, toScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
-    const drawn = $(`.room-label-backdrop[data-room-id="${id}"]`)?.getBoundingClientRect(); // the frame as drawn, when it has a background or border
-    const fr = drawn?.width ? { l: drawn.left, r: drawn.right, t: drawn.top, b: drawn.bottom } : kept && Number(kept.w) > 0 ? (() => { const cx = anchor.x + Number(kept.x) * toScreen, cy = anchor.y + Number(kept.y) * toScreen, hw = Number(kept.w) * toScreen * clamp(Number(room.labelCardScale) || 1, .3, 6) / 2, hh = Number(kept.h) * toScreen * clamp(Number(room.labelCardScale) || 1, .3, 6) / 2; return { l: cx - hw, r: cx + hw, t: cy - hh, b: cy + hh }; })() : null;
     if (fr) {
       const fbox = rel(fr);
-      [fr.l, (fr.l + fr.r) / 2, fr.r].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'group', own: true, frame: true, center: i === 1, box: fbox }));
-      [fr.t, (fr.t + fr.b) / 2, fr.b].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'group', own: true, frame: true, center: i === 1, box: fbox }));
-    } else { xs.push({ v: anchor.x - scene.left, kind: 'group', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'group', own: true, center: true }); }
-    if (orects.length) { const fb = rel(frame); [frame.l, frame.r].forEach(v => xs.push({ v: v - scene.left, kind: 'group', own: true, box: fb })); [frame.t, frame.b].forEach(v => ys.push({ v: v - scene.top, kind: 'group', own: true, box: fb })); }
-    // A room's label: its parts line up with the room's own shape too (its centre and outer edges, amber lines).
-    if (!isIconRoom(room) && (room.points || []).length >= 3) {
-      const px = room.points.map(p => p[0] / 100 * scene.width), py = room.points.map(p => p[1] / 100 * scene.height);
-      const box = { l: Math.min(...px), r: Math.max(...px), t: Math.min(...py), b: Math.max(...py) };
-      [box.l, (box.l + box.r) / 2, box.r].forEach((v, i) => xs.push({ v, kind: 'room', room: true, own: true, center: i === 1, box, span: [box.t, box.b] }));
-      [box.t, (box.t + box.b) / 2, box.b].forEach((v, i) => ys.push({ v, kind: 'room', room: true, own: true, center: i === 1, box, span: [box.l, box.r] }));
-    }
+      [fr.l, (fr.l + fr.r) / 2, fr.r].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'frame', own: true, frame: true, center: i === 1, box: fbox }));
+      [fr.t, (fr.t + fr.b) / 2, fr.b].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'frame', own: true, frame: true, center: i === 1, box: fbox }));
+    } else { xs.push({ v: anchor.x - scene.left, kind: 'frame', own: true, center: true }); ys.push({ v: anchor.y - scene.top, kind: 'frame', own: true, center: true }); }
   }
+  if (fr && (o.frame || o.spacing)) { const b = rel(fr); frameBoxes.push({ ...b, b: b.t, kind: 'frame', own: true, edge: true }, { ...b, t: b.b, kind: 'frame', own: true, edge: true }, { ...b, r: b.l, kind: 'frame', own: true, edge: true }, { ...b, l: b.r, kind: 'frame', own: true, edge: true }); }
+  // The group's grid (blue) is counted from the frame's centre, so its lines run through the middle of the frame.
+  const origin = fr ? { x: (fr.l + fr.r) / 2, y: (fr.t + fr.b) / 2 } : anchor;
   const pad = step * 6, area = { l: u.l - pad, r: u.r + pad, t: u.t - pad, b: u.b + pad };
   // Snap lines over the whole visible screen (a part may be moved far from the others); the drawing stays near the parts.
   // While the camera carries the part, the grid does not catch (it would hold the part back in jerks).
   if (grid && !cameraPanning) {
     const v = visibleSceneRect(), lines = { l: Math.min(area.l, v.left), r: Math.max(area.r, v.right), t: Math.min(area.t, v.top), b: Math.max(area.b, v.bottom) };
-    for (let n = Math.ceil((lines.l - anchor.x) / step); anchor.x + n * step <= lines.r; n++) if (n) xs.push({ v: anchor.x + n * step - scene.left, kind: 'group', own: true, grid: true });
-    for (let n = Math.ceil((lines.t - anchor.y) / step); anchor.y + n * step <= lines.b; n++) if (n) ys.push({ v: anchor.y + n * step - scene.top, kind: 'group', own: true, grid: true });
+    for (let n = Math.ceil((lines.l - origin.x) / step); origin.x + n * step <= lines.r; n++) if (n) xs.push({ v: origin.x + n * step - scene.left, kind: 'ggrid', own: true, grid: true });
+    for (let n = Math.ceil((lines.t - origin.y) / step); origin.y + n * step <= lines.b; n++) if (n) ys.push({ v: origin.y + n * step - scene.top, kind: 'ggrid', own: true, grid: true });
   }
-  return { scene, xs, ys, step, anchor, area, others: o.parts ? others : [], grid };
+  return { scene, xs, ys, step, anchor: origin, area, others: o.parts ? others : [], grid, frame: fr, frameBoxes };
 }
 // The magnet next to "Grupa" (only while the label is ungrouped) opens the group's snap options.
 function syncGroupSnapButton(room = roomsOf()[selectedRoomId]) {
@@ -1878,7 +1902,7 @@ function groupSnapMenuMarkup() {
   const o = groupSnapOpts(), t = text => escapeHtml(translateValue(text));
   const row = (key, icon, label) => `<button type="button" class="gs-row${o[key] ? ' active' : ''}" data-gsnap="${key}" aria-pressed="${!!o[key]}"><i class="mdi ${icon}"></i><span>${t(label)}</span><i class="mdi mdi-check gs-check"></i></button>`;
   return `<div class="gs-head"><span>${t('Przyciąganie w grupie')}</span><button type="button" class="gs-master${o.on ? ' active' : ''}" data-gsnap="on" aria-pressed="${o.on}">${o.on ? 'ON' : 'OFF'}</button></div>`
-    + `<div class="gs-body${o.on ? '' : ' off'}">` + row('parts', 'mdi-shape-outline', 'Części') + row('frame', 'mdi-crosshairs', 'Środek i ramka') + row('spacing', 'mdi-arrow-expand-horizontal', 'Równe odstępy') + row('plan', 'mdi-floor-plan', 'Elementy planu')
+    + `<div class="gs-body${o.on ? '' : ' off'}">` + row('frame', 'mdi-crop-square', 'Ramka') + row('parts', 'mdi-shape-outline', 'Części') + row('spacing', 'mdi-arrow-expand-horizontal', 'Równe odstępy')
     + `<button type="button" class="gs-row${o.grid !== 'off' ? ' active' : ''}" data-gsnap-grid="${o.grid !== 'off' ? 'off' : 'M'}" aria-pressed="${o.grid !== 'off'}"><i class="mdi mdi-grid"></i><span>${t('Siatka')}</span><i class="mdi mdi-check gs-check"></i></button>`
     + (mobileView() ? '' : `<small>${t('Alt — przesuwanie bez przyciągania')}</small>`) + `</div>`;
 }
@@ -1996,6 +2020,7 @@ function startRoomLabelDrag(event) {
       const boxes = ctx.others.map(o => { const r = o.getBoundingClientRect(); return { l: r.left - ctx.scene.left, r: r.right - ctx.scene.left, t: r.top - ctx.scene.top, b: r.bottom - ctx.scene.top, radius: shapedRect(o).radius, own: true }; });
       const xs = [...ctx.xs], ys = [...ctx.ys];
       if (opts.plan) { const plan = groupPlanTargets(room, ctx.scene); xs.push(...plan.xs); ys.push(...plan.ys); boxes.push(...plan.boxes); }
+      boxes.push(...ctx.frameBoxes); // the frame's edges: equal gaps to them, a part right between an edge and another part
       return { group: true, spacing: opts.spacing, scene: ctx.scene, xs, ys, boxes, roomBox: null, offsets: [0, -1, 1], halfW: own.width / 2, halfH: own.height / 2, precise: true,
         shiftX: (own.left + own.width / 2 - ctx.scene.left) - qx / 100 * ctx.scene.width, shiftY: (own.top + own.height / 2 - ctx.scene.top) - qy / 100 * ctx.scene.height };
     }
@@ -2051,7 +2076,7 @@ function startRoomLabelDrag(event) {
         showAlignGuides([{ at: tx / W * 100, kind: 'major' }, { at: (tx + cw) / W * 100, kind: 'major' }], [{ at: ty / H * 100, kind: 'major' }, { at: (ty + ch) / H * 100, kind: 'major' }]);
       }
     }
-    if (key !== 'labelCard' && !room.labelLinked) keepApart(room, key, node.dataset.labelPart);
+    if (key !== 'labelCard' && !room.labelLinked) { keepApart(room, key, node.dataset.labelPart); keepInFrame(room, key, node.dataset.labelPart); }
     if (isIconRoom(room) && key === 'labelCard' && room.labelLinked && dashGrid().on) { const box = cardBoxPct(room); if (box) renderDashGrid(dashTarget(box, room.dash && dashSpan(room) ? room.dash : null)); }
     // "Granice tła": the label (the whole group, or the one part being moved) stays inside the background.
     if (keepInBounds()) {
@@ -2739,7 +2764,6 @@ function roomEditorMarkup(room) {
   const presetRow = (attr, items, active) => `<div class="room-card-presets">${items.map(([value, title, icon]) => `<button type="button" class="room-card-preset${active === value ? ' active' : ''}" ${attr}="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${icon ? `<i class="mdi ${icon}"></i>` : `<span class="room-card-swatch ${value}"></span>`}</button>`).join('')}</div>`;
   // Group section. With only one part shown there is nothing to group: the group's background / frame are not drawn
   // (stored settings stay and come back with a second part) and their options are hidden.
-  const solo = ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1;
   const toggleButton = (key, title, mdi, extra = '') => `<button type="button" class="room-card-preset${extra}${r[key] ? ' active' : ''}" data-part-toggle="${key}" aria-pressed="${!!r[key]}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${mdi}"></i></button>`;
   const row = (title, body) => `<div class="control room-card-row"><label>${escapeHtml(translateValue(title))}</label><div class="room-card-presets">${body}</div></div>`;
   const radius = control('Zaokrąglenie','labelCardRadius','range',clamp(Number(r.labelCardRadius) || 0, 0, 80),{ min:0, max:60, step:1, suffix:'px', integer:true });
@@ -2759,10 +2783,9 @@ function roomEditorMarkup(room) {
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
-    // Margin between the group's frame and its parts (not with one part shown: then there is no group frame).
-    + (solo ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
-    + (solo ? note(translateValue('Widoczna jest jedna część — tło i ramka grupy nie są rysowane. Wrócą, gdy pokażesz drugą część.'))
-      : (r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
+    // Margin between the group's frame and its parts.
+    + control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true })
+    + ((r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
           ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
             + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
@@ -2772,7 +2795,7 @@ function roomEditorMarkup(room) {
     + `</div>`, [
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
       ...(isThermoRoom(r) ? [] : [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(r) ? 'Podpis' : 'Stan', isTextRoom(r) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']]),
-      ...(solo ? [] : [['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']])]);
+      ['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
   // Sections in the order of "Pokaż": icon, name, mode text, the thermostat's parts, each mode button, extra entities.
   const sectionOrder = [...ROOM_LABEL_PARTS.slice(0, 3), ...THERMO_PARTS, ...MODE_PARTS, ...EXTRA_PARTS];
   const label = group + sectionOrder.map(partSection).join('');
@@ -2786,7 +2809,6 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   if (newlySelected) { preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; if (regroupOnLeave(roomsOf()[selectedRoomId])) renderRoomLabels(); }
   if (newlySelected && migrateModeParts(room)) { room.updatedAt = new Date().toISOString(); renderRoomLabels(); scheduleSave(true); }
   // A group left with a single visible part (made before parts ungrouped themselves) is ungrouped in place.
-  if (room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) { autoUngroupLabel(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); }
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
@@ -2962,7 +2984,9 @@ function onRoomEditorClick(event) {
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
     const parts = partKeys;
-    if (parts.includes(key) && room[key] && room.labelLinked && parts.filter(k => room[k]).length === 2) autoUngroupLabel(room);
+    // A label from before beta.487 shown with one part had no group background / frame / margin drawn: showing a second
+    // part brings them back as they were (since then they stay, switched on / off with the Group's buttons).
+    if (parts.includes(key) && !room[key] && room.soloSaved && parts.filter(k => room[k]).length === 1) { Object.assign(room, room.soloSaved); delete room.soloSaved; }
     // Showing a part again: an automatically ungrouped label becomes the group it was; otherwise the shown part is
     // moved off the parts it would cover.
     const showing = parts.includes(key) && !room[key];
