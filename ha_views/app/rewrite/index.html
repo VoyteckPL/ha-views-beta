@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-472">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-473">
 </head>
 <body>
   <header class="topbar">
@@ -85,27 +85,6 @@
             <div class="vm-size-row">
               <label><input id="canvas-width" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Szerokość"></label><span>×</span><label><input id="canvas-height" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Wysokość"></label>
               <button id="canvas-resize-start" class="vm-icon" type="button" title="Ustaw rozmiar na ekranie" aria-label="Ustaw rozmiar na ekranie"><i class="mdi mdi-resize-bottom-right"></i></button>
-            </div>
-            <div class="vm-gradient-row">
-              <label class="vm-check"><input id="bg-gradient-toggle" type="checkbox"><span>Gradient</span></label>
-              <input id="bg-gradient-color" class="vm-gradient-color" type="color" value="#03101A" title="Drugi kolor" aria-label="Drugi kolor">
-              <i class="mdi mdi-rotate-right" aria-hidden="true"></i><input id="bg-gradient-angle" type="range" min="0" max="345" step="15" value="180" title="Kierunek" aria-label="Kierunek">
-            </div>
-          </section>
-          <section class="vm-zone vm-grid-zone">
-            <div class="vm-zone-title"><i class="mdi mdi-view-grid-outline"></i><b>Siatka</b><button id="dash-toggle" class="vm-switch" type="button" role="switch" aria-pressed="false" title="Siatka" aria-label="Siatka"><i></i></button></div>
-            <small class="vm-colour-note">Kafelki na telefon — każdy element wypełnia całe kratki</small>
-            <div class="vm-grid-body">
-              <div class="vm-range"><i class="mdi mdi-view-column-outline" title="Kolumny" aria-hidden="true"></i><input id="dash-cols" type="range" min="2" max="8" step="1" value="4" aria-label="Kolumny"><output>4</output><span></span></div>
-              <div class="vm-range"><i class="mdi mdi-arrow-split-vertical" title="Odstęp" aria-hidden="true"></i><input id="dash-gap" type="range" min="0" max="8" step=".5" value="3" aria-label="Odstęp"><output>3</output><span></span></div>
-              <div class="vm-grid-rows">
-                <span>Wiersze</span>
-                <button id="dash-rows-minus" class="vm-icon" type="button" title="Krótszy widok" aria-label="Krótszy widok"><i class="mdi mdi-minus"></i></button>
-                <b id="dash-rows-value">8</b>
-                <button id="dash-rows-plus" class="vm-icon" type="button" title="Dłuższy widok" aria-label="Dłuższy widok"><i class="mdi mdi-plus"></i></button>
-                <button id="dash-fit" class="vm-icon" type="button" title="Dopasuj do ekranu" aria-label="Dopasuj do ekranu"><i class="mdi mdi-cellphone-screenshot"></i></button>
-                <button id="dash-show" class="vm-icon" type="button" title="Pokaż siatkę poza edycją" aria-label="Pokaż siatkę poza edycją"><i class="mdi mdi-grid"></i></button>
-              </div>
             </div>
           </section>
           <span id="background-status" class="vm-status"></span>
@@ -370,6 +349,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-472"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-473"></script>
 </body>
 </html>

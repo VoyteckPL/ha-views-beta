@@ -33,9 +33,7 @@ const TRANSLATIONS = {
     "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Ściemniaj tło wg słońca":"Dim the background with the sun","Jasność w nocy":"Night brightness","Zaczyna ściemniać, gdy słońce na":"Starts dimming with the sun at","Pełna noc, gdy słońce na":"Full night with the sun at","Chłodny odcień nocą":"Cool tint at night","Ściemnienie":"Dimming","słońce":"sun","Edycja":"Editing","Przenieś panel na drugą stronę":"Move the panel to the other side","Kliknij element, aby go edytować.":"Click an element to edit it.","Nowe elementy dodasz z menu plus lub z menu integracji.":"Add new elements from the plus menu or the integrations menu.","Usuń narożnik":"Remove corner","Ostatnia zmiana":"Last changed","7 dni":"7 days","Tekst / przycisk":"Text / button","Tekst":"Text","Tekst i akcja":"Text and action","Podpis":"Caption","Termostat":"Thermostat","Tarcza":"Dial","Temperatura ustawiona":"Target temperature","Przycisk −":"− button","Przycisk +":"+ button","Nazwa termostatu":"Thermostat name","Dodano termostat":"Thermostat added","Grubość łuku":"Arc width","Kolory trybów":"Mode colours","Poświata podczas pracy":"Glow while working","Kolor wg trybu":"Colour by mode","Szablony":"Templates","Szablon":"Template","Pusty":"Empty","Wczytaj szablon":"Load template","Usuń szablon":"Delete template","Zapisz aktualny układ jako szablon":"Save the current layout as a template","Zapisano szablon":"Template saved","Usunięto szablon":"Template deleted","Wczytano szablon":"Template loaded","Maks. 5 szablonów — usuń któryś koszem":"Max. 5 templates — delete one with the bin","Kolory stanu pracy":"Activity colours","Kropka temperatury aktualnej":"Current temperature dot","Uchwyt temperatury ustawionej":"Target temperature handle","Teksty":"Texts","Teksty trybów":"Mode texts","Tryb (stan)":"Mode (state)","Przywrócono domyślny wygląd termostatu":"Thermostat look restored to default","Utwórz termostat":"Create thermostat","Utwórz tekst":"Create text","Ogrzewanie / klimatyzacja — temperatura, tryby, sterowanie":"Heating / AC — temperature, modes, control","Grzanie":"Heat","Chłodzenie":"Cool","Grzanie / chłodzenie":"Heat / cool","Osuszanie":"Dry","Wentylator":"Fan","Wyłączony":"Off","Grzeje":"Heating","Nagrzewa":"Preheating","Chłodzi":"Cooling","Osusza":"Drying","Wentyluje":"Fan","Odmraża":"Defrosting","Bezczynny":"Idle","Ustawiona":"Target","Niedostępny":"Unavailable","Wył.":"Off","Błąd termostatu":"Thermostat error","Encja nie ma tego atrybutu":"The entity does not have this attribute","Atrybuty":"Attributes","Stan pracy (grzeje / bezczynny)":"Activity (heating / idle)","Temperatura aktualna":"Current temperature","Przyciski − / +":"− / + buttons","Tryby":"Modes","Zakres min / max":"Min / max range","Wilgotność":"Humidity","Preset":"Preset","Inne atrybuty":"Other attributes","Kolory":"Colours","Tor tarczy":"Dial track","Skala zawartości":"Content scale","Zaokrąglenie":"Corner radius","Akcja po dotknięciu":"Action on tap","Dodano tekst":"Text added","Napis z akcją — widok, strona HA, link":"Text with an action — view, HA page, link","Co ma się stać po dotknięciu tekstu w trybie przeglądania. Zmienisz to potem w panelu.":"What a tap on the text does in view mode. You can change it later in the panel.","Przejdź do widoku":"Go to view","Otwórz stronę Home Assistant":"Open a Home Assistant page","Otwórz link":"Open a link","Adres w HA":"HA path","Link":"Link","W nowej karcie":"In a new tab","Dodano tekst — przeciągnij go w wybrane miejsce":"Text added — drag it into place","Link do tego widoku":"Link to this view","Kopiuj link do widoku":"Copy link to this view","Skopiowano do schowka. Otwiera HA Views od razu na tym widoku — w przeglądarce, w zakładce albo w akcji „navigate” innego dashboardu.":"Copied to the clipboard. It opens HA Views directly on this view — in a browser, a bookmark or a “navigate” action of another dashboard.","Skopiuj link. Otwiera HA Views od razu na tym widoku — w przeglądarce, w zakładce albo w akcji „navigate” innego dashboardu.":"Copy the link. It opens HA Views directly on this view — in a browser, a bookmark or a “navigate” action of another dashboard.","OK":"OK","HA Views Beta":"HA Views Beta","stabilna wersja HA Views":"the stable HA Views","Beta":"Beta","Używane przez":"Used by","Usunąć tło używane przez drugą wersję?":"Delete a background used by the other version?","Zmienić nazwę tła używanego przez drugą wersję?":"Rename a background used by the other version?","Jasność":"Brightness","Przywróć 100%":"Reset to 100%","Widok":"View","Opcje":"Options","Obraz":"Image","Wgraj tło":"Upload background","Zmień nazwę pliku tła":"Rename background file","Auto — przełącza encja":"Auto — switched by the entity","Kolor zamiast obrazu":"Colour instead of an image","Wybór koloru zastąpi obraz":"Choosing a colour replaces the image","Tło w kolorze":"Colour background","Szerokość":"Width","Wysokość":"Height","Ustaw rozmiar na ekranie":"Set the size on screen","Przeciągnij kółka, aby ustawić rozmiar":"Drag the circles to set the size","Tło tego widoku":"This view's background","Ustaw jako tło tego widoku":"Use as this view's background","Tło nocne tego widoku":"This view's night background","Ustaw jako tło nocne tego widoku":"Use as this view's night background","Zmień nazwę":"Rename","Pobierz":"Download","Ustawiono tło widoku":"View background set","Zmień nazwę pliku tła?":"Rename background file?","Zmienić nazwę tła wersji stabilnej?":"Rename a stable-version background?","Zmień mimo to":"Rename anyway","Zmieniono nazwę tła":"Background renamed","Zmień":"Change","Używane w stabilnej wersji — usunięcie wymaga potwierdzenia":"Used by the stable version — deleting needs confirmation","Usunąć tło wersji stabilnej?":"Delete a stable-version background?","Usuń mimo to":"Delete anyway","Tego nie da się cofnąć.":"This cannot be undone.","Tryb tła":"Background mode","Automatycznie wg encji":"Automatic by entity","Zawsze dzień":"Always day","Zawsze noc":"Always night","Zawsze noc — encja nie jest używana":"Always night — the entity is not used","Zawsze dzień — encja nie jest używana":"Always day — the entity is not used","Pliki tła":"Background files","Usuń nieużywane":"Remove unused","plików":"files","plik":"file","pliki":"files","nieużywane":"unused","Nieużywane":"Unused","Stabilna":"Stable","noc":"night","dzień":"day","Używane w stabilnej wersji — usuń je tam":"Used by the stable version — remove it there","Usuń plik":"Delete file","Brak wgranych teł.":"No uploaded backgrounds.","Wczytywanie…":"Loading…","Usunąć plik tła?":"Delete background file?","Usunąć nieużywane tła?":"Remove unused backgrounds?","Usunięto plik tła":"Background file deleted","Tło nocne":"Night background","Bez tła nocnego":"No night background","Wgraj tło nocne":"Upload night background","Przełącza encja":"Switched by entity","Encja przełączająca tło nocne":"Entity that switches the night background","Dzień":"Day","Noc":"Night","Podgląd: dzień":"Preview: day","Podgląd: noc":"Preview: night","Podgląd tła":"Background preview","Teraz: noc":"Now: night","Teraz: dzień":"Now: day","podgląd":"preview","Najpierw ustaw tło dzienne":"Set the day background first","Ustawiono tło nocne":"Night background set","Wgrywanie…":"Uploading…","Intensywność ON":"ON intensity","Intensywność OFF":"OFF intensity","Obrót":"Rotation","Obróć zaznaczony":"Rotate selected","Obróć o 90° w lewo":"Rotate 90° left","Obróć o 15° w lewo":"Rotate 15° left","Obróć o 15° w prawo":"Rotate 15° right","Obróć o 90° w prawo":"Rotate 90° right","Bez obrotu":"No rotation","Obrót płynny":"Smooth rotation","Przyciąganie i siatka":"Snapping and grid","Przyciąganie w grupie":"Snapping in the group","Kopiuj styl części":"Copy part style","Tryb":"Mode","aktywny":"active","Styl tarczy":"Dial style","Neon":"Neon","Półkole":"Half circle","Kometa":"Comet","Podziałka":"Scale","Liczba segmentów":"Segments","Przerwa":"Gap","Gęstość kresek":"Tick density","Liczby co 5°":"Numbers every 5°","Kolor pokoju":"Room colour","Grubość pierścienia pokoju":"Room ring width","Zimny":"Cold","Środek":"Middle","Gorący":"Hot","Przygaszenie powyżej nastawy":"Dimmed above the set point","Poświata":"Glow","Długość ogona":"Tail length","Liczby co":"Numbers every","Klasyczna":"Classic","Segmenty LED":"LED segments","Chronograf":"Chronograph","Podwójny pierścień":"Twin ring","Termiczna":"Thermal","nieaktywny":"inactive","Inny gdy aktywny":"Different when active","Kopia":"Copy","Duplikuj termostat":"Duplicate thermostat","Duplikuj tekst":"Duplicate text","Zostaje jak w grupie":"Stays as in the group","Ramka grupy":"Group frame","Dopasuj do części":"Fit to the parts","Wklej styl części":"Paste part style","Skopiowano styl części":"Part style copied","Wklejono styl części":"Part style pasted","Części":"Parts","Środek i ramka":"Centre and frame","Równe odstępy":"Equal spacing","Elementy planu":"Plan elements","Alt — przesuwanie bez przyciągania":"Alt — move without snapping","Linie pomocnicze":"Guides","Tylko elementy widoczne na ekranie":"Only elements visible on screen","Przyciągaj do":"Snap to","Tło (środek i krawędzie)":"Background (centre and edges)","Punkty":"Points","Wyrównuj po":"Align by","Środki":"Centres","Krawędzie":"Edges","Animacja":"Animation","Rodzaj":"Type","Obrót":"Spin","Pulsowanie":"Pulse","Miganie":"Blink","Kołysanie":"Swing","Czas cyklu":"Cycle time","Kierunek":"Direction","W prawo":"Clockwise","W lewo":"Counter-clockwise","Tylko gdy ON":"Only when ON","Prędkość z encji (%)":"Speed from entity (%)","Odstępy — pośrodku między dwiema etykietami i równe odstępy":"Spacing — exactly between two labels and equal gaps","Wyrównaj zaznaczony do tła":"Align selected to background","Do lewej krawędzi tła":"To the left edge","Wyśrodkuj w poziomie":"Centre horizontally","Do prawej krawędzi tła":"To the right edge","Do górnej krawędzi tła":"To the top edge","Wyśrodkuj w pionie":"Centre vertically","Do dolnej krawędzi tła":"To the bottom edge","Dodaj Flow":"Add Flow","Dodano Flow — wybierz encję albo zostaw bez encji":"Flow added — choose an entity or leave it without one","Usuń encję":"Remove entity","Podgląd: włączony":"Preview: on","Podgląd: wyłączony":"Preview: off","Tempo to stała prędkość strzałek (1× = 150 px/s) — nie zależy od rozmiaru, odstępu ani liczby, więc Flow z tym samym tempem jadą identycznie.":"Tempo is a constant arrow speed (1\u00d7 = 75 px/s) \u2014 it does not depend on size, spacing or count, so Flows with the same tempo move identically.","Ramka i pozycja":"Frame and position","Szerokość ramki":"Frame width","Strzałki":"Arrows","Długość strzałki":"Arrow length","Ramka to obszar Flow na planie, liczony wzdłuż kierunku strzałek. Szerokość ramki jest też wysokością strzałek. Uchwyty zaznaczenia zmieniają to samo.":"The frame is the Flow area on the plan, measured along the arrow direction. The frame width is also the arrow height. The selection handles change the same values.","W animacji „Przepływ” strzałki wypełniają całą ramkę, więc liczba nie ma znaczenia.":"With the “Flow” animation the arrows fill the whole frame, so the count does not matter.","Strzałki są wyśrodkowane w ramce; to, co się nie mieści, jest przycinane. Liczba i odstęp nie zmieniają ramki. Ujemny odstęp wsuwa strzałki jedna w drugą (gęściej).":"Arrows are centred in the frame; what does not fit is clipped. Count and spacing do not change the frame. A negative spacing nests the arrows into each other (denser).","Tempo pulsowania nie zależy od rozmiaru Flow.":"The pulse tempo does not depend on the Flow size.","Ustaw tę animację w pozostałych Flow tej encji":"Apply this animation to the other Flows of this entity","Ustawiono tę samą animację w innych Flow tej encji":"Same animation applied to other Flows of this entity","Granice tła":"Background bounds","Elementy nie wychodzą poza tło":"Elements stay inside the background","Elementy nie wyjdą poza tło":"Elements will stay inside the background","Elementy mogą wychodzić poza tło":"Elements may go outside the background","Edytuj ikonę":"Edit icon","Usuń ikonę":"Remove icon","Dodaj ikonę":"Add icon","Ikona pomieszczenia to zwykły marker typu Ikona z pełnym edytorem (kolory ON/OFF, obrys, tło, ramka, rozmiar, kolory wg wartości). Świeci, gdy pomieszczenie jest zapalone, a dotknięcie wykonuje akcję pomieszczenia.":"The room icon is a regular Icon marker with the full editor (ON/OFF colours, outline, background, border, size, colours by value). It is lit while the room is on, and tapping it runs the room action.","Dodano ikonę pomieszczenia — przeciągnij ją w wybrane miejsce":"Room icon added — drag it where you want it","Usunięto ikonę pomieszczenia":"Room icon removed","Markery":"Markers","Pomieszczenia":"Rooms","Markery, Flow i pomieszczenia tego widoku":"Markers, Flows and rooms of this view","Rozjaśnij — jak światło lampy: plan jaśnieje w kolorze poświaty, ciemne miejsca najmocniej.":"Lighten — like lamp light: the plan brightens in the glow colour, dark areas the most.","Miękkie światło — delikatne ocieplenie, plan zachowuje swoje kolory i kontrast.":"Soft light — a gentle tint, the plan keeps its colours and contrast.","Nakładka — mocniejszy efekt: jasne miejsca jaśnieją, ciemne ciemnieją, kolor jest wyraźny.":"Overlay — a stronger effect: light areas get lighter, dark areas darker, the colour is clear.","Zwykłe — płaski, półprzezroczysty kolor położony na plan.":"Normal — a flat, semi-transparent colour laid over the plan.","Geometria zablokowana — kliknij, aby odblokować":"Geometry locked — click to unlock","Zablokuj geometrię":"Lock geometry","Zablokowano geometrię":"Geometry locked","Odblokowano geometrię":"Geometry unlocked","Podgląd":"Preview","Rzeczywisty stan":"Actual state","Włączony":"On","Wyłączony":"Off","Usuń z pomieszczenia":"Remove from room","Dodaj do pomieszczenia":"Add to room","Z tego widoku":"From this view","Wpisz co najmniej 2 znaki.":"Type at least 2 characters.","Wyszukiwanie encji…":"Searching entities…","Brak — wyszukaj encję poniżej.":"None — search for an entity below.","Szukaj nazwy lub encji…":"Search name or entity…","Geometria jest zablokowana (kłódka u góry).":"The geometry is locked (padlock at the top).","Duplikuj pomieszczenie":"Duplicate room","Kopiuj styl pomieszczenia":"Copy room style","Wklej styl pomieszczenia":"Paste room style","Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu":"Room style copied — paste it into another room","Wklejono styl pomieszczenia":"Room style pasted","Przywrócić domyślny wygląd?":"Restore the default look?","Wygląd i akcja dotknięcia pomieszczenia wrócą do domyślnych. Kształt, nazwa i encje zostaną.":"The room look and tap action return to defaults. Shape, name and entities stay.","Przywrócono domyślny wygląd pomieszczenia":"Room look restored to default","kopia":"copy","Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce":"Room copied — drag it where you want it","Naprawiono błędny domyślny panel HA — ustaw go ponownie w menu widoku":"Fixed an invalid HA default panel — set it again in the view menu","Domyślny panel Home Assistant":"Home Assistant default panel","Bez zmian (ustawienia HA)":"Unchanged (HA settings)","HA Views — moje konto":"HA Views — my account","HA Views — tylko to urządzenie":"HA Views — this device only","HA Views jest teraz domyślnym panelem na Twoim koncie":"HA Views is now the default panel for your account","HA Views jest domyślnym panelem na tym urządzeniu":"HA Views is the default panel on this device","Przywrócono domyślny panel z ustawień Home Assistant":"Restored the default panel from Home Assistant settings","Otwieraj HA Views po starcie Home Assistant (to urządzenie)":"Open HA Views when Home Assistant starts (this device)","Ta opcja działa tylko w HA Views otwartym z panelu Home Assistant":"This option only works when HA Views is opened from the Home Assistant sidebar","HA Views będzie otwierać się po starcie Home Assistant na tym urządzeniu":"HA Views will open when Home Assistant starts on this device","Po starcie Home Assistant znów otworzy się domyślny dashboard":"Home Assistant will open its default dashboard again","Brak akcji":"No action","Przełącz światło":"Toggle the light","Nic":"Nothing","To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji":"This room has no entities yet — choose them in edit mode","Błąd przełączania: ":"Toggle error: ","Pomieszczenie":"Room","Dodaj pomieszczenie":"Add room","Klikaj kolejne narożniki pomieszczenia":"Click the corners of the room one by one","Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt":"Click the first point or “Done” to close the shape","Cofnij punkt":"Undo point","Gotowe":"Done","Usuń pomieszczenie":"Delete room","Dodano pomieszczenie — wybierz encje, które je zapalają":"Room added — choose the entities that light it up","Pomieszczenie musi mieć co najmniej 3 narożniki":"A room needs at least 3 corners","Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.":"This view has no entities yet — add e.g. a light via Integrations or type an entity below.","Brak encji":"No entities","Zapalają je encje":"Lit by entities","Inne encje":"Other entities","Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).":"The room lights up when any of the selected entities is on (light, plug, motion, open door…).","Wygląd":"Appearance","Efekt":"Effect","Poświata kolorem":"Colour glow","Zapalony obraz":"Lit image","Obraz zapalony":"Lit image","— wybierz —":"— choose —","Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.":"Upload a second version of the plan as a background (e.g. a render with the lights on) and choose it here — the room reveals it only inside its shape. The image should have the same framing as the plan.","Kolor ze światła":"Colour from the light","Mieszanie":"Blending","Rozjaśnij":"Lighten","Miękkie światło":"Soft light","Nakładka":"Overlay","Zwykłe":"Normal","Jasność ze światła":"Brightness from the light","Intensywność":"Intensity","Miękkość krawędzi":"Edge softness","Podgląd włączonego":"Preview as on","Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).":"Drag a corner to move it. The small dot on an edge adds a corner. Double-click a corner to remove it. Drag the inside to move the whole room. Corners snap to the walls of other rooms (Alt disables).","Usunąć pomieszczenie?":"Delete room?","Usunięto pomieszczenie":"Room deleted","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Zoom poza edycją":"Zoom outside editing","Panel startowy HA":"HA start panel","Bez zmian":"Unchanged","HA Views (konto)":"HA Views (account)","HA Views (urządzenie)":"HA Views (device)","Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
-    "Diagnostyka przesuwania":"Swipe diagnostics",
-    "Kafelki na telefon — każdy element wypełnia całe kratki":"Tiles for phones — every element fills whole cells","Kolumny":"Columns","Odstęp":"Gap","Wiersze":"Rows","Krótszy widok":"Shorter view","Dłuższy widok":"Longer view","Dopasuj do ekranu":"Fit to the screen","Pokaż siatkę poza edycją":"Show the grid outside editing","Gradient":"Gradient","Drugi kolor":"Second colour","Kafelek":"Tile","Wypełnienie":"Fill",
-    "Siatka włączona — elementy wypełniają kratki":"Grid on — elements fill the cells","Siatka wyłączona":"Grid off","Widok dopasowany do ekranu":"View fitted to the screen","Siatka widoczna poza edycją":"Grid visible outside editing","Siatka ukryta poza edycją":"Grid hidden outside editing","Elementy zajmują te wiersze — przesuń je wyżej":"Elements use these rows — move them up first","Rozgrupowano — przesuwaj części wewnątrz kafelka":"Ungrouped — move the parts inside the tile","Zgrupowano — zawartość dopasowana do kafelka":"Grouped — the content fits the tile"
+    "Diagnostyka przesuwania":"Swipe diagnostics"
   }
 };
 function translateValue(value) {
@@ -299,18 +297,9 @@ function openBackgroundMenu(hint = '') {
   els.backgroundBar.classList.toggle('onboarding', Boolean(hint));
   els.bgStatus.textContent = hint;
 }
-// A colour background, or a gradient from it to a second colour ("Gradient" in the background menu).
-function viewBackgroundCss(view) {
-  const colour = view?.backgroundColor || '', g = view?.backgroundGradient;
-  if (colour && g?.on && /^#[0-9a-f]{6}$/i.test(g.color2 || '')) return `linear-gradient(${clamp(Number(g.angle) || 0, 0, 360)}deg,${colour},${g.color2})`;
-  return colour || 'linear-gradient(145deg,#0d2838,#0a1c27)';
-}
 function applyBackgroundColour() {
-  const view = activeSceneView(), colour = view?.backgroundColor || '', g = view?.backgroundGradient || {};
-  els.scene.style.background = ''; els.scene.style.setProperty('background', viewBackgroundCss(view), colour ? 'important' : '');
-  const gt = $('#bg-gradient-toggle'), gc = $('#bg-gradient-color'), ga = $('#bg-gradient-angle');
-  if (gt) gt.checked = !!g.on; if (gc && /^#[0-9a-f]{6}$/i.test(g.color2 || '')) gc.value = g.color2; if (ga && document.activeElement !== ga) ga.value = String(Number(g.angle ?? 180));
-  $('.vm-gradient-row')?.classList.toggle('off', !colour); applyDashUi();
+  const colour = activeSceneView()?.backgroundColor || '';
+  els.scene.style.background = colour || 'linear-gradient(145deg,#0d2838,#0a1c27)';
   if (els.bgColor) els.bgColor.value = colour || '#0d2838';
   if (els.bgColorToggle) els.bgColorToggle.style.background = colour || '#0d2838';
   if (els.emptyColor) els.emptyColor.value = colour || '#0d2838';
@@ -857,344 +846,60 @@ function partFocusBox(room, part) {
   return [[l - padX, t - padY], [rr + padX, t - padY], [rr + padX, b + padY], [l - padX, b + padY]];
 }
 function roomAnchor(room) { const pin = isIconRoom(room) && dashSpan(room); return pin ? [pin.x + pin.w / 2, pin.y + pin.h / 2] : isIconRoom(room) ? [Number(room.x) || 50, Number(room.y) || 50] : roomLabelAnchor(room.points || []); }
-// ---- "Siatka": a background mode for phones. The view is a grid of cols × rows tiles (a gap between them, in % of the
-// plan's width); every element (label, thermostat, text, gauge) fills whole tiles and its content is scaled to fit the
-// tile by itself. Dropping an element on taken tiles pushes the others down; the view grows downwards when needed and
-// scrolls when it is longer than the screen. An element's tiles: room.dash / marker.dash = {c, r, w, h}.
-const DASH_PHONE_RATIO = 9 / 19.5; // one screen of a phone (a computer has no phone screen to fit to)
-function dashGrid(view = activeSceneView()) {
-  const g = view?.dashGrid || {};
-  return { on: !!g.on && !view?.background, cols: clamp(Math.round(Number(g.cols) || 4), 1, 12), rows: clamp(Math.round(Number(g.rows) || 8), 1, 80), gap: clamp(Number(g.gap ?? 3), 0, 10),
-    rowH: clamp(Number(g.rowH) || 1, .4, 2.5), show: !!g.show, screen: clamp(Number(g.screen) || DASH_PHONE_RATIO, .2, 2) };
-}
-// Height of the plan in units of 1% of its width (a column is cw wide, a row cw × rowH high).
-function dashUnits(g) { const cw = (100 - g.gap * (g.cols + 1)) / g.cols; return { cw, H: g.rows * cw * g.rowH + (g.rows + 1) * g.gap }; }
-function dashRatio(view = activeSceneView()) { const { H } = dashUnits(dashGrid(view)); return 100 / Math.max(1, H); }
+// ---- Dashboard grid ("Siatka dashboardu"): a per-view grid of cols × rows cells (gap in plan px), shown in edit
+// mode; a grouped label dropped on it snaps to whole cells and its group fills them (room.dash = {c, r, w, h}).
+const DASH_GRID_ENABLED = false; // the dashboard grid is switched off for now (its menu entry was removed)
+function dashGrid(view = activeSceneView()) { const g = view?.dashGrid || {}; return { on: DASH_GRID_ENABLED && !!g.on, cols: clamp(Math.round(Number(g.cols) || 3), 1, 24), rows: clamp(Math.round(Number(g.rows) || 8), 1, 24), gap: clamp(Number(g.gap ?? 8), 0, 80) }; }
 function dashGeom(view = activeSceneView()) {
-  const g = dashGrid(view), { cw, H } = dashUnits(g);
-  return { ...g, gx: g.gap, gy: g.gap / H * 100, cw, ch: cw * g.rowH / H * 100 };
+  const g = dashGrid(view), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
+  const gx = g.gap * k / W * 100, gy = g.gap * k / H * 100;
+  return { ...g, gx, gy, cw: (100 - gx * (g.cols + 1)) / g.cols, ch: (100 - gy * (g.rows + 1)) / g.rows };
 }
-// Elements on the grid: labels / thermostats / texts (rooms of kind icon) and gauges (markers). Rooms with a shape and
-// Flow are hidden on a grid view.
-function dashItems(view = activeSceneView()) {
-  return [...Object.values(view?.rooms || {}).filter(r => isIconRoom(r) && !r.draft).map(r => ({ kind:'room', id:r.id, obj:r })),
-    ...Object.values(view?.entities || {}).map(m => ({ kind:'marker', id:m.id, obj:m }))];
+// The scene-% box of a pinned label (null when the grid is off or the label is not pinned).
+function dashSpan(room, view = activeSceneView()) {
+  const d = room?.dash; if (!d || !room.labelLinked) return null; const g = dashGeom(view); if (!g.on) return null;
+  const c = clamp(Math.round(d.c) || 0, 0, g.cols - 1), r = clamp(Math.round(d.r) || 0, 0, g.rows - 1), w = clamp(Math.round(d.w) || 1, 1, g.cols - c), h = clamp(Math.round(d.h) || 1, 1, g.rows - r);
+  return { x: g.gx + c * (g.cw + g.gx), y: g.gy + r * (g.ch + g.gy), w: w * g.cw + (w - 1) * g.gx, h: h * g.ch + (h - 1) * g.gy, c, r, cw: w, ch: h };
 }
-// While an element is dragged / resized the others are shown where they would be pushed to (not saved yet).
-let dashPreview = null, dashHeldId = ''; // dashHeldId: the tile under the finger is never rebuilt while it moves
-function dashCells(obj, view = activeSceneView()) {
-  const d = dashPreview?.get(obj?.id) || obj?.dash; if (!d) return null; const g = dashGrid(view);
-  const w = clamp(Math.round(d.w) || 1, 1, g.cols), c = clamp(Math.round(d.c) || 0, 0, g.cols - w), h = clamp(Math.round(d.h) || 1, 1, 40), r = Math.max(0, Math.round(d.r) || 0);
-  return { c, r, w, h };
-}
-function dashRect(cells, view = activeSceneView()) {
-  const g = dashGeom(view), { c, r, w, h } = cells;
-  return { x: g.gx + c * (g.cw + g.gx), y: g.gy + r * (g.ch + g.gy), w: w * g.cw + (w - 1) * g.gx, h: h * g.ch + (h - 1) * g.gy };
-}
-// The scene-% box of an element on the grid (null when the grid is off or the element has no tiles).
-function dashSpan(obj, view = activeSceneView()) {
-  if (!dashGrid(view).on || !obj) return null; if (obj.points && !(isIconRoom(obj) && obj.labelLinked)) return null;
-  const cells = dashCells(obj, view); if (!cells) return null; const box = dashRect(cells, view);
-  return { ...box, c: cells.c, r: cells.r, cw: cells.w, ch: cells.h };
-}
-// Cells a box (scene %) lands on: its size in whole cells (kept when given) and the nearest start cell.
+// Cells a box (scene %) lands on: its size in whole cells (kept when already pinned) and the nearest start cell.
 function dashTarget(box, keep, view = activeSceneView()) {
   const g = dashGeom(view), stepX = g.cw + g.gx, stepY = g.ch + g.gy;
-  const w = clamp(keep?.w || Math.round((box.w + g.gx) / stepX) || 1, 1, g.cols), h = clamp(keep?.h || Math.round((box.h + g.gy) / stepY) || 1, 1, 40);
+  const w = clamp(keep?.w || Math.round((box.w + g.gx) / stepX) || 1, 1, g.cols), h = clamp(keep?.h || Math.round((box.h + g.gy) / stepY) || 1, 1, g.rows);
   const cx = box.x + box.w / 2, cy = box.y + box.h / 2;
-  const c = clamp(Math.round((cx - g.gx - (w * g.cw + (w - 1) * g.gx) / 2) / stepX), 0, g.cols - w), r = Math.max(0, Math.round((cy - g.gy - (h * g.ch + (h - 1) * g.gy) / 2) / stepY));
+  const c = clamp(Math.round((cx - g.gx - (w * g.cw + (w - 1) * g.gx) / 2) / stepX), 0, g.cols - w), r = clamp(Math.round((cy - g.gy - (h * g.ch + (h - 1) * g.gy) / 2) / stepY), 0, g.rows - h);
   return { c, r, w, h };
 }
-const dashHit = (a, b) => a.c < b.c + b.w && b.c < a.c + a.w && a.r < b.r + b.h && b.r < a.r + a.h;
-// The layout after `id` is put on `cells`: every element it overlaps is pushed down below it, and so on (the others
-// keep their order). Returns a Map id → cells for every element on the grid.
-function dashLayout(id, cells, view = activeSceneView()) {
-  const out = new Map(), placed = [{ id, ...cells }]; out.set(id, cells);
-  const rest = dashItems(view).filter(it => it.id !== id && it.obj.dash).map(it => ({ id: it.id, ...dashCells({ dash: it.obj.dash }, view) })).sort((a, b) => a.r - b.r || a.c - b.c);
-  rest.forEach(it => {
-    let r = it.r;
-    for (let guard = 0; guard < 200; guard++) {
-      const hit = placed.filter(p => dashHit({ ...it, r }, p)); if (!hit.length) break;
-      r = Math.max(...hit.map(p => p.r + p.h));
-    }
-    const next = { c: it.c, r, w: it.w, h: it.h }; placed.push({ id: it.id, ...next }); out.set(it.id, next);
-  });
-  return out;
+function cardBoxPct(room) {
+  const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`), s = els.scene.getBoundingClientRect(); if (!card || !s.width) return null;
+  const r = card.getBoundingClientRect(); return { x: (r.left - s.left) / s.width * 100, y: (r.top - s.top) / s.height * 100, w: r.width / s.width * 100, h: r.height / s.height * 100 };
 }
-// The first free place for w × h tiles (row by row), below everything when the grid is full.
-function dashFreeSpot(w, h, view = activeSceneView(), skip = '') {
-  const g = dashGrid(view); w = clamp(w, 1, g.cols);
-  const taken = dashItems(view).filter(it => it.id !== skip && it.obj.dash).map(it => dashCells({ dash: it.obj.dash }, view));
-  for (let r = 0; r < 200; r++) for (let c = 0; c + w <= g.cols; c++) { const cell = { c, r, w, h }; if (!taken.some(t => dashHit(cell, t))) return cell; }
-  return { c: 0, r: Math.max(0, ...taken.map(t => t.r + t.h)), w, h };
-}
-// Rows needed for the elements; the view grows to hold them (it never shrinks by itself).
-function dashFitRows(view = activeSceneView()) {
-  const g = view?.dashGrid; if (!g) return false;
-  const need = Math.max(0, ...dashItems(view).filter(it => it.obj.dash).map(it => { const d = dashCells({ dash: it.obj.dash }, view); return d.r + d.h; }));
-  if (need > dashGrid(view).rows) { g.rows = need; dashSyncRatio(view); return true; }
-  return false;
-}
-// Commits a layout (from dashLayout) to the elements.
-function dashCommit(layout, view = activeSceneView()) {
-  const items = new Map(dashItems(view).map(it => [it.id, it.obj]));
-  layout.forEach((cells, id) => { const obj = items.get(id); if (obj) obj.dash = { ...cells }; });
-  dashPreview = null; dashFitRows(view);
-}
-// Fewer columns: every element is put again in order (row by row), each on the first tiles free for it.
-function dashReflow(view = activeSceneView()) {
-  const items = dashItems(view).filter(it => it.obj.dash).sort((a, b) => a.obj.dash.r - b.obj.dash.r || a.obj.dash.c - b.obj.dash.c), saved = items.map(it => it.obj.dash);
-  items.forEach(it => { delete it.obj.dash; }); const g = dashGrid(view);
-  items.forEach((it, i) => { const d = saved[i], w = clamp(d.w, 1, g.cols), c = Math.min(d.c, g.cols - w), taken = dashItems(view).filter(o => o.obj.dash).map(o => o.obj.dash);
-    const want = { c, r: d.r, w, h: d.h }; it.obj.dash = taken.some(t => dashHit(want, t)) ? dashFreeSpot(w, d.h, view, it.id) : want; });
-}
-// The plan takes the grid's proportions (like a colour background of that size).
-function dashSyncRatio(view = activeSceneView()) { if (!view?.dashGrid) return; view.solidCanvasRatio = dashRatio(view); delete view.solidCanvasSize; }
-// One screen: rows (and their height) chosen so the grid fills the screen of this phone exactly.
-function dashScreenRatio() {
-  if (!mobileView()) return DASH_PHONE_RATIO;
-  const card = els.sceneCard, width = Math.max(1, card?.parentElement?.clientWidth || innerWidth);
-  return width / Math.max(160, sceneAvailHeight());
-}
-function dashFitScreen(view = activeSceneView()) {
-  if (!view) return; view.dashGrid ||= {}; const g = dashGrid({ ...view, background: '' }), screen = dashScreenRatio(), cw = (100 - g.gap * (g.cols + 1)) / g.cols, target = 100 / screen;
-  const rows = Math.max(1, Math.round((target - g.gap) / (cw + g.gap))), rowH = clamp(((target - g.gap * (rows + 1)) / rows) / cw, .4, 2.5);
-  Object.assign(view.dashGrid, { rows, rowH: Math.round(rowH * 1e4) / 1e4, screen: Math.round(screen * 1e4) / 1e4 });
-  dashFitRows(view); dashSyncRatio(view);
-}
-// Every element gets tiles (switching the grid on): the nearest tiles to where it stands, its size from its look;
-// overlaps are pushed down. Labels without a background get the tile background.
-function dashPinAll(view = activeSceneView()) {
-  const g = dashGeom(view), stepX = g.cw + g.gx, stepY = g.ch + g.gy;
-  dashItems(view).filter(it => !it.obj.dash).sort((a, b) => dashItemPoint(a.obj)[1] - dashItemPoint(b.obj)[1]).forEach(it => {
-    const [w, h] = dashDefaultSize(it.obj), [x, y] = dashItemPoint(it.obj);
-    const c = clamp(Math.round((x - g.gx) / stepX - w / 2), 0, g.cols - w), r = Math.max(0, Math.round((y - g.gy) / stepY - h / 2));
-    if (it.kind === 'room') dashPrepareRoom(it.obj);
-    dashCommit(dashLayout(it.id, { c, r, w, h }, view), view);
-  });
-}
-function dashItemPoint(obj) { return obj.points ? [Number(obj.x) || 50, Number(obj.y) || 50] : [Number(obj.xPercent) || 50, Number(obj.yPercent) || 50]; }
-// A new element's size in tiles: a thermostat 2 × 2, a gauge 2 × 2, a label or text 1 × 1.
-function dashDefaultSize(obj) { return isThermoRoom(obj) ? [2, 2] : obj.points ? [1, 1] : [2, 2]; }
-// A label on the grid is always one group (its parts cannot be moved apart) and shows the tile behind it.
-function dashPrepareRoom(room) {
-  if (!room.labelLinked) { if ($(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`)) keepLabelPlaceOnRegroup(room); room.labelLinked = true; }
-  if (!room.labelCardBg && !room.labelCardBorder) room.labelCardBg = true;
-  room.labelCardX = 0; room.labelCardY = 0;
-}
-// Content scale of each element on the grid (worked out after drawing: the content fills its tile).
-const dashFit = new Map();
-function dashFill(obj) { return clamp((Number(obj?.dashFillPct) || (obj?.points ? 80 : 100)) / 100, .3, 1); } // a gauge has its own margin
-function setDashGrid(change) {
-  const view = activeSceneView(); if (!view) return; const wasOn = dashGrid(view).on;
-  view.dashGrid = { ...(view.dashGrid || {}), ...change };
-  if (change.on && !wasOn) { if (!view.dashGrid.screen) dashFitScreen(view); dashPinAll(view); }
-  dashFitRows(view); dashSyncRatio(view); dashFit.clear();
-  applyDashUi(); applyBackgroundTransform(); updateSceneGeometry(); renderMarkers();
-  if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
+function pinToDash(room) {
+  const box = cardBoxPct(room); if (!box) return false;
+  room.dash = dashTarget(box, null); const span = dashSpan(room); if (!span) return false;
+  room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; return true;
 }
 function applyDashUi() {
-  const g = dashGrid(), zone = $('.vm-grid-zone'); els.body?.classList.toggle('dash-mode', g.on);
-  if (!zone) return;
-  const toggle = $('#dash-toggle'); toggle?.classList.toggle('active', g.on); toggle?.setAttribute('aria-pressed', String(g.on));
-  zone.classList.toggle('on', g.on);
-  [['#dash-cols', g.cols], ['#dash-gap', g.gap]].forEach(([sel, v]) => { const input = $(sel); if (input && document.activeElement !== input) { input.value = v; const out = input.parentElement?.querySelector('output'); if (out) out.textContent = sel === '#dash-gap' ? `${v}` : `${v}`; } });
-  const rows = $('#dash-rows-value'); if (rows) rows.textContent = String(g.rows);
-  $('#dash-show')?.classList.toggle('active', g.show);
+  const g = dashGrid(), button = $('#dash-toggle'); if (!button) return;
+  button.classList.toggle('active', g.on); const status = $('#dash-status'); if (status) status.textContent = g.on ? 'ON' : 'OFF';
+  $('#dash-size-row')?.classList.toggle('off', !g.on);
+  [['#dash-cols', g.cols], ['#dash-rows', g.rows], ['#dash-gap', g.gap]].forEach(([sel, v]) => { const input = $(sel); if (input && document.activeElement !== input) input.value = v; });
+}
+function setDashGrid(change) {
+  const view = activeSceneView(); if (!view) return; view.dashGrid = { ...dashGrid(view), ...change };
+  applyDashUi(); renderRooms(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
 }
 function renderDashGrid(target = null) {
+  applyDashUi();
   const view = activeSceneView(), g = dashGeom(view); let layer = $('#dash-grid');
-  if (!g.on || !els.scene || (!editMode && !g.show)) { layer?.remove(); return; }
+  if (!editMode || !g.on || !els.scene) { layer?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-grid'; layer.setAttribute('aria-hidden', 'true'); els.scene.insertBefore(layer, $('#rooms') || null); }
-  layer.classList.toggle('quiet', !editMode);
-  const key = [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3), g.cw.toFixed(3), g.ch.toFixed(3)].join('|');
+  const key = [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
   if (layer.__key !== key) {
     layer.__key = key;
     layer.innerHTML = Array.from({ length: g.cols * g.rows }, (_, i) => { const c = i % g.cols, r = Math.floor(i / g.cols); return `<span class="dash-cell" style="left:${g.gx + c * (g.cw + g.gx)}%;top:${g.gy + r * (g.ch + g.gy)}%;width:${g.cw}%;height:${g.ch}%"></span>`; }).join('') + '<span class="dash-target"></span>';
   }
   const t = layer.querySelector('.dash-target');
-  if (t) { t.style.display = target ? 'block' : 'none'; if (target) { const b = dashRect(target, view); Object.assign(t.style, { left:`${b.x}%`, top:`${b.y}%`, width:`${b.w}%`, height:`${b.h}%` }); } }
-}
-// ---- Moving and resizing on the grid. The element follows the finger; the tiles it would land on are shown, and the
-// others step aside (pushed down) live. Released, everything takes its new tiles.
-function dashObj(kind, id, view = activeSceneView()) { return kind === 'room' ? view?.rooms?.[id] : view?.entities?.[id]; }
-function dashNode(kind, id) { return kind === 'room' ? $(`#room-labels .room-label-card[data-room-id="${CSS.escape(id)}"]`) : markerNode(id); }
-// Draws every element where the preview puts it (a marker is restyled in place, not rebuilt).
-function dashRedraw(skip = '') {
-  renderRoomLabels();
-  $$('.marker', els.markers).forEach(node => { const m = model.entities[node.dataset.markerId]; if (m && node.dataset.markerId !== skip) applyMarkerStyle(node, m); });
-  syncSelection();
-}
-function dashDrag(event, kind, obj, onTap = null) {
-  const node = dashNode(kind, obj.id); if (!node) return false;
-  event.preventDefault(); event.stopPropagation();
-  const scene0 = els.scene.getBoundingClientRect(), start = dashSpan(obj), cells = dashCells(obj), id = obj.id;
-  const px = e => { const s = els.scene.getBoundingClientRect(); return [(e.clientX - s.left) / Math.max(1, s.width) * 100, (e.clientY - s.top) / Math.max(1, s.height) * 100]; };
-  const [gx0, gy0] = px(event), grab = [gx0 - (start.x + start.w / 2), gy0 - (start.y + start.h / 2)];
-  let moved = false, target = cells, last = event;
-  node.classList.add('dash-lifted'); if (kind === 'room') dashHeldId = id; try { els.scene.setPointerCapture(event.pointerId); } catch {}
-  const place = e => {
-    last = e; const [x, y] = px(e), cx = x - grab[0], cy = y - grab[1], live = dashNode(kind, id) || node;
-    const put = n => { n.style.left = `${cx}%`; n.style.top = `${cy}%`; n.style.setProperty('--ax', `${cx}%`); n.style.setProperty('--ay', `${cy}%`); };
-    put(live);
-    const next = dashTarget({ x: cx - start.w / 2, y: cy - start.h / 2, w: start.w, h: start.h }, cells);
-    if (next.c !== target.c || next.r !== target.r || !dashPreview) {
-      target = next; dashPreview = dashLayout(id, target); dashPreview.delete(id);
-      // Pushed below the last row: the grid shows the rows they would need.
-      dashRedraw(id); put(dashNode(kind, id) || live);
-    }
-    renderDashGrid(target);
-  };
-  const camera = dragCamera(e => place(e));
-  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 5) return; if (!moved) { moved = true; node.classList.add('dash-moving'); } place(e); camera.track(e); e.preventDefault(); };
-  const end = e => {
-    if (e.pointerId !== event.pointerId) return; camera.stop();
-    window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
-    dashHeldId = ''; try { els.scene.releasePointerCapture(event.pointerId); } catch {}
-    const live = dashNode(kind, id) || node; live.classList.remove('dash-lifted', 'dash-moving');
-    if (!moved) { dashPreview = null; renderDashGrid(); onTap?.(); return; }
-    const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
-    // A gesture the phone broke off (long press, system gesture) still drops the tile where it was shown.
-    dashCommit(dashLayout(id, target));
-    obj.updatedAt = new Date().toISOString(); dashAfterChange(); scheduleSave(true);
-  };
-  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
-  void scene0; return true;
-}
-// A corner dot of a tile: the tile grows / shrinks by whole tiles towards the finger (the opposite corner stays).
-function dashResize(event, kind, obj, corner) {
-  const cells0 = dashCells(obj); if (!cells0) return false;
-  event.preventDefault(); event.stopPropagation();
-  const id = obj.id, g = dashGeom(), stepX = g.cw + g.gx, stepY = g.ch + g.gy, west = corner.includes('w'), north = corner.includes('n');
-  const fixC = west ? cells0.c + cells0.w - 1 : cells0.c, fixR = north ? cells0.r + cells0.h - 1 : cells0.r;
-  let target = cells0;
-  const camera = dragCamera(e => size(e));
-  const size = e => {
-    const s = els.scene.getBoundingClientRect(), x = (e.clientX - s.left) / Math.max(1, s.width) * 100, y = (e.clientY - s.top) / Math.max(1, s.height) * 100;
-    // The moving edge goes to the nearest tile boundary.
-    const left = g.gx + fixC * stepX, right = left + g.cw, top = g.gy + fixR * stepY, bottom = top + g.ch;
-    const w = west ? clamp(Math.round((right - x + g.gx) / stepX), 1, fixC + 1) : clamp(Math.round((x - left + g.gx) / stepX), 1, g.cols - fixC);
-    const h = north ? clamp(Math.round((bottom - y + g.gy) / stepY), 1, fixR + 1) : clamp(Math.round((y - top + g.gy) / stepY), 1, 40);
-    const next = { c: west ? fixC - w + 1 : fixC, r: north ? fixR - h + 1 : fixR, w, h };
-    if (next.c === target.c && next.r === target.r && next.w === target.w && next.h === target.h && dashPreview) return;
-    target = next; dashPreview = dashLayout(id, target); dashFit.delete(id); dashRedraw(); renderDashGrid(target);
-  };
-  const move = e => { if (e.pointerId !== event.pointerId) return; size(e); camera.track(e); e.preventDefault(); };
-  const end = e => {
-    if (e.pointerId !== event.pointerId) return; camera.stop();
-    window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
-    const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
-    if (!dashPreview) dashPreview = null; else dashCommit(dashLayout(id, target));
-    obj.updatedAt = new Date().toISOString(); dashAfterChange(); scheduleSave(true);
-  };
-  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
-  return true;
-}
-// Touch on a tile that is not selected: holding the finger still for a moment picks it up (it starts to move with the
-// finger at once); moving the finger before that scrolls the view as usual.
-function dashHold(event, start) {
-  const sx = event.clientX, sy = event.clientY, id = event.pointerId;
-  const stop = () => { clearTimeout(timer); window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', stop, true); window.removeEventListener('pointercancel', stop, true); };
-  const move = e => { if (e.pointerId === id && Math.hypot(e.clientX - sx, e.clientY - sy) > 8) stop(); };
-  const timer = setTimeout(() => { stop(); if (touchesDown.size > 1) return; panGesture = null; viewSwipe = null; try { navigator.vibrate?.(12); } catch {} start(); }, 300);
-  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', stop, true); window.addEventListener('pointercancel', stop, true);
-}
-// ---- Ungrouped on the grid ("Grupa" off on a tile): the tile stays in its cells, its parts move freely inside it. The
-// content keeps the scale and centre it had (dashLoose = {k: scale per px of tile width, cx, cy, fill}), so moving one
-// part never shifts or rescales the others; grouped again, the content is fitted to the tile once more.
-function dashLooseScale(room, tileWpx) { const l = room.dashLoose; return clamp(l.k * tileWpx / (sceneScale || 1) * dashFill(room) / (l.fill || dashFill(room)), .02, 40); }
-function dashSetLoose(room, on) {
-  if (!on) { delete room.dashLoose; dashFit.delete(room.id); return; }
-  const card = $(`#room-labels .room-label-card.dash-tile[data-room-id="${CSS.escape(room.id)}"]`), span = dashSpan(room); if (!card || !span) return;
-  const lscale = parseFloat(card.style.getPropertyValue('--lscale')) || 1, tileWpx = span.w / 100 * (els.scene.offsetWidth || 1), rect = card.getBoundingClientRect(), k = rect.width / Math.max(1, card.offsetWidth);
-  let cx = 0, cy = 0;
-  if (!room.labelCardFree) {
-    // A label laid out in a row / column becomes a free one: every part keeps the place it has now.
-    const mx = rect.left + rect.width / 2, my = rect.top + rect.height / 2;
-    card.querySelectorAll(':scope > .room-card-part').forEach(node => { const key = partKey(node), r = node.getBoundingClientRect(); if (!key || !r.width) return; room[`${key}FX`] = Math.round((r.left + r.width / 2 - mx) / k * 100) / 100; room[`${key}FY`] = Math.round((r.top + r.height / 2 - my) / k * 100) / 100; });
-    room.labelCardFree = true;
-  } else [cx, cy] = card.__center || [0, 0];
-  room.dashLoose = { k: Math.round(lscale * (sceneScale || 1) / tileWpx * 1e6) / 1e6, cx: Math.round(cx * 100) / 100, cy: Math.round(cy * 100) / 100, fill: dashFill(room) };
-}
-// A part of a loose tile follows the finger inside its tile. It snaps (screen px reach) to the tile's centre lines and
-// inner edges and to the centres and edges of the other parts; the guides show what it caught.
-function dashPartDrag(event, room, partNode) {
-  const card = partNode.closest('.room-label-card'), key = partKey(partNode); if (!card || !key) return false;
-  event.preventDefault(); event.stopPropagation();
-  const part = partNode.dataset.labelPart, rect0 = card.getBoundingClientRect(), k = rect0.width / Math.max(1, card.offsetWidth), loose = room.dashLoose;
-  const W = card.offsetWidth, H = card.offsetHeight, fx0 = Number(room[`${key}FX`]) || 0, fy0 = Number(room[`${key}FY`]) || 0;
-  const hw = partNode.offsetWidth / 2, hh = partNode.offsetHeight / 2, margin = Math.min(W, H) * .06, reach = snapReach() / k;
-  const others = [...card.querySelectorAll(':scope > .room-card-part')].filter(n => n !== partNode).map(n => { const kk = partKey(n); return { x: (Number(room[`${kk}FX`]) || 0) - loose.cx, y: (Number(room[`${kk}FY`]) || 0) - loose.cy, hw: n.offsetWidth / 2, hh: n.offsetHeight / 2 }; });
-  // Candidate positions of the part's centre on one axis, with the line (card-local) shown for each.
-  const lines = (half, size, own, pick) => {
-    const out = [{ v: 0, at: 0, kind: 'group' }, { v: -size / 2 + margin + own, at: -size / 2 + margin, kind: 'group' }, { v: size / 2 - margin - own, at: size / 2 - margin, kind: 'group' }];
-    others.forEach(o => { const c = pick(o), h = half(o); out.push({ v: c, at: c, kind: 'label' }, { v: c - h + own, at: c - h, kind: 'label' }, { v: c + h - own, at: c + h, kind: 'label' }); });
-    return out;
-  };
-  const xs = lines(o => o.hw, W, hw, o => o.x), ys = lines(o => o.hh, H, hh, o => o.y);
-  const snap = (v, list, alt) => { if (alt) return [v, null]; let best = null; list.forEach(c => { const d = Math.abs(c.v - v); if (d <= reach && (!best || d < best.d)) best = { ...c, d }; }); return best ? [best.v, best] : [v, null]; };
-  panelPart = { roomId: room.id, part }; selectedLabelPart = part; card.querySelectorAll('.room-card-part').forEach(n => n.classList.toggle('panel-part', n === partNode));
-  let moved = false;
-  const move = e => {
-    if (e.pointerId !== event.pointerId) return;
-    if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; e.preventDefault();
-    const px = clamp(fx0 - loose.cx + (e.clientX - event.clientX) / k, -W / 2 + hw, W / 2 - hw), py = clamp(fy0 - loose.cy + (e.clientY - event.clientY) / k, -H / 2 + hh, H / 2 - hh);
-    const [sx, gx] = snap(px, xs, e.altKey), [sy, gy] = snap(py, ys, e.altKey);
-    room[`${key}FX`] = Math.round((sx + loose.cx) * 100) / 100; room[`${key}FY`] = Math.round((sy + loose.cy) * 100) / 100; renderRoomLabels();
-    // Guides across the tile, in scene %.
-    const sc = els.scene.getBoundingClientRect(), live = $(`#room-labels .room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect() || rect0, mx = live.left + live.width / 2, my = live.top + live.height / 2;
-    const toX = v => (mx + v * k - sc.left) / sc.width * 100, toY = v => (my + v * k - sc.top) / sc.height * 100;
-    showAlignGuides(gx ? [{ at: toX(gx.at), from: toY(-H / 2), to: toY(H / 2), kind: gx.kind }] : [], gy ? [{ at: toY(gy.at), from: toX(-W / 2), to: toX(W / 2), kind: gy.kind }] : []);
-  };
-  const end = e => {
-    if (e.pointerId !== event.pointerId) return;
-    window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', end, true); window.removeEventListener('pointercancel', end, true);
-    showAlignGuides([], []);
-    const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 300);
-    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); }
-    renderRoomLabels(); if ($('#room-editor')?.classList.contains('visible')) focusPartSection(part);
-  };
-  window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
-  return true;
-}
-// After the tiles changed: the plan may have grown, everything is drawn again, the open panel shows the new size.
-function dashAfterChange() {
-  dashFitRows(); dashSyncRatio(activeSceneView()); renderDashGrid(); applyBackgroundTransform(); updateSceneGeometry(); renderMarkers();
-  if (selectedRoomId && $('#room-editor')?.classList.contains('visible')) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex));
-  else if (selectedId && els.editor?.classList.contains('visible')) openEditor(openSectionIndex(els.editorContent, editorOpenSectionIndex));
-}
-// New elements on a grid view (a label finished in its wizard, a gauge just added) take the first free tiles.
-function dashEnsure(view = activeSceneView()) {
-  if (!dashGrid(view).on) return false; let changed = false;
-  dashItems(view).filter(it => !it.obj.dash).forEach(it => {
-    const [w, h] = dashDefaultSize(it.obj); if (it.kind === 'room') dashPrepareRoom(it.obj);
-    it.obj.dash = dashFreeSpot(w, h, view, it.id); changed = true;
-  });
-  if (dashFitRows(view)) changed = true;
-  // The plan keeps the grid's proportions (also a view saved before its rows changed).
-  const geometry = Math.abs((Number(view.solidCanvasRatio) || 0) - dashRatio(view)) > 1e-4; if (geometry) dashSyncRatio(view);
-  if (changed) scheduleSave(true);
-  if (geometry || changed) requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); });
-  return changed;
-}
-// A copy on a grid view stands right below its original (the elements below make room).
-function dashPlaceCopy(original, copy) {
-  const cells = dashGrid().on && dashCells(original); if (!cells) return;
-  dashCommit(dashLayout(copy.id, { ...cells, r: cells.r + cells.h })); dashSyncRatio(activeSceneView()); applyBackgroundTransform();
-}
-// The panel's "Kafelek" row: ready sizes (in tiles) and how much of its tile the content fills.
-const DASH_SIZES = [[1,1],[2,1],[1,2],[2,2],[3,1],[3,2],[4,1],[4,2]];
-function dashEditorRows(obj, title = true) {
-  const cells = dashCells(obj); if (!cells || !dashGrid().on) return '';
-  const cols = dashGrid().cols, sizes = DASH_SIZES.filter(([w]) => w <= cols);
-  return `<div class="control dash-size-row">${title ? `<span>${escapeHtml(translateValue('Kafelek'))}</span>` : ''}<div class="dash-sizes">${sizes.map(([w, h]) => `<button type="button" class="dash-size${cells.w === w && cells.h === h ? ' active' : ''}" data-dash-size="${w}x${h}" title="${w} × ${h}" aria-label="${w} × ${h}"><i style="--w:${w};--h:${h}"></i><small>${w}×${h}</small></button>`).join('')}</div></div>`
-    + control('Wypełnienie', 'dashFillPct', 'range', Math.round(dashFill(obj) * 100), { min: 30, max: 100, step: 1, suffix: '%', integer: true });
-}
-function setDashSize(w, h) {
-  const view = activeSceneView(), room = selectedRoomId && roomsOf()[selectedRoomId], obj = room && $('#room-editor')?.classList.contains('visible') ? room : model.entities[selectedId]; if (!obj) return;
-  const cells = dashCells(obj); if (!cells) return; const g = dashGrid(view);
-  w = clamp(w, 1, g.cols); const target = { c: clamp(cells.c, 0, g.cols - w), r: cells.r, w, h };
-  dashCommit(dashLayout(obj.id, target, view), view); dashFit.delete(obj.id); obj.updatedAt = new Date().toISOString(); dashAfterChange(); scheduleSave(true);
+  if (t) { t.style.display = target ? 'block' : 'none'; if (target) Object.assign(t.style, { left:`${g.gx + target.c * (g.cw + g.gx)}%`, top:`${g.gy + target.r * (g.ch + g.gy)}%`, width:`${target.w * g.cw + (target.w - 1) * g.gx}%`, height:`${target.h * g.ch + (target.h - 1) * g.gy}%` }); }
 }
 function roomLabelAnchor(points) {
   let a = 0, cx = 0, cy = 0;
@@ -1433,21 +1138,18 @@ function fitFreeCard(room, group) {
   const pad = parts.length > 1 ? clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60) : 0;
   const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
-  let cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  // A loose tile keeps the centre it had when it was ungrouped (moving one part does not shift the others).
-  if (card.classList.contains('dash-loose') && room.dashLoose) { cx = Number(room.dashLoose.cx) || 0; cy = Number(room.dashLoose.cy) || 0; } else card.__center = [cx, cy];
-  // A tile keeps its size and the parts are centred in it.
-  if (card.classList.contains('dash-tile')) { card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px'); }
-  else { card.style.width = `${Math.round(maxX - minX + pad * 2.7)}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`; card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`); }
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  card.style.width = `${Math.round(maxX - minX + pad * 2.7)}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`;
+  card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`);
   parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${(Number(room[`${key}FX`]) || 0) - cx}px,${(Number(room[`${key}FY`]) || 0) - cy}px)`; });
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
-function cardLook(r, on, unit = 1) {
+function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
-  return [`border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80) * unit}px`,
+  return [`border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px`,
     r.labelCardBg ? `background:${rgba(cardPick('labelCardBgState', 'labelCardBg', 'Color') || '#081822', clamp(Number(cardPick('labelCardBgState', 'labelCardBg', 'Opacity') ?? .62), 0, 1))}` : '',
     // The frame is drawn inside the card (inset shadow), so a thicker ON / OFF frame never changes the card's size.
-    `box-shadow:${[r.labelCardBorder ? `inset 0 0 0 ${clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Width')) || 1, .5, 12) * unit}px ${rgba(cardPick('labelCardBorderState', 'labelCardBorder', 'Color') || '#FFFFFF', clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Opacity') ?? .3), 0, 1))}` : '', r.labelCardBg && r.labelCardShadow !== false ? `0 ${6 * unit}px ${18 * unit}px rgba(0,0,0,.25)` : ''].filter(Boolean).join(',') || 'none'}`].filter(Boolean).join(';');
+    `box-shadow:${[r.labelCardBorder ? `inset 0 0 0 ${clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Width')) || 1, .5, 12)}px ${rgba(cardPick('labelCardBorderState', 'labelCardBorder', 'Color') || '#FFFFFF', clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Opacity') ?? .3), 0, 1))}` : '', r.labelCardBg && r.labelCardShadow !== false ? '0 6px 18px rgba(0,0,0,.25)' : ''].filter(Boolean).join(',') || 'none'}`].filter(Boolean).join(';');
 }
 // Only entities that switch on and off (lights, switches, binary sensors…) have ON / OFF look options;
 // for the others (a temperature sensor…) the label always uses the plain colours.
@@ -1685,7 +1387,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
 function roomLabelMarkup(room, preview = '', interactive = false) {
   const r = withoutOnOff({ ...ROOM_DEFAULTS, ...room });
   // One visible part: no group background, frame or margin (it would be a second frame around the part's own).
-  if (ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1 && !(isIconRoom(r) && dashSpan(r))) Object.assign(r, { labelCardBg:false, labelCardBorder:false, labelCardPadding:0 }); if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
+  if (ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length <= 1) Object.assign(r, { labelCardBg:false, labelCardBorder:false, labelCardPadding:0 }); if (r.draft || !ROOM_LABEL_PARTS.some(([, k]) => r[k]) || (!isIconRoom(r) && (r.points || []).length < 3)) return '';
   // A thermostat's preview shows one of its work states ("act:heating"); its look follows the work state.
   const previewAct = isThermoRoom(r) && String(preview).startsWith('act:') ? String(preview).slice(4) : '';
   if (isThermoRoom(r)) r.__act = previewAct || thermoActivity(climateInfo({ entityId: (r.entityIds || [])[0] || '' }));
@@ -1727,15 +1429,13 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     }).join('');
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
-    // On a grid view the card is its tile: exactly the tile's size, the content scaled to fill it (dashFitPass).
-    const pin = isIconRoom(r) && dashSpan(r), loose = pin && r.dashLoose && free, lscale = loose ? dashLooseScale(r, pin.w / 100 * (els.scene?.offsetWidth || 1)) : pin ? dashFit.get(r.id) || clamp(Number(r.labelCardScale) || 1, .3, 6) : clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
-    const tileUnit = pin ? dashGeom().cw * toLocal / 96 : 1; // tile corners / frame: px of a 96 px wide tile
-    const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${pin ? 0 : Number(r.labelCardX) || 0}px`, `--ly:${pin ? 0 : Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
-      pin ? `width:${(pin.w * toLocal).toFixed(2)}px;height:${(pin.h * toLocalY).toFixed(2)}px;box-sizing:border-box;overflow:visible` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
-      free || pin ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on, tileUnit)].join(';') + accentVar;
+    const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
+    const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
+      pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
+      free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
-    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${pin ? ' dash-tile' : ''}${loose ? ' dash-loose' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
+    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${cardLook(r, on)}"></div>` : '';
@@ -1749,33 +1449,15 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     return `<div class="room-label-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
-// Scales each tile's content to fill its tile (by the element's "Wypełnienie"); true when a scale changed (draw again).
-function dashFitPass(layer) {
-  let changed = false;
-  layer.querySelectorAll('.room-label-card.dash-tile:not(.dash-loose)').forEach(card => {
-    const room = roomsOf()[card.dataset.roomId], tile = card.getBoundingClientRect(); if (!room || !tile.width) return;
-    const rects = [...card.querySelectorAll(':scope > .room-card-part')].map(n => n.getBoundingClientRect()).filter(r => r.width); if (!rects.length) return;
-    const w = Math.max(...rects.map(r => r.right)) - Math.min(...rects.map(r => r.left)), h = Math.max(...rects.map(r => r.bottom)) - Math.min(...rects.map(r => r.top));
-    const fill = dashFill(room), f = Math.min(tile.width * fill / Math.max(1, w), tile.height * fill / Math.max(1, h)), cur = parseFloat(card.style.getPropertyValue('--lscale')) || 1;
-    if (Math.abs(f - 1) > .01) { dashFit.set(room.id, clamp(cur * f, .02, 40)); changed = true; }
-  });
-  if (changed) dashFitPass.depth = (dashFitPass.depth || 0) + 1;
-  if (dashFitPass.depth > 3) { dashFitPass.depth = 0; return false; }
-  if (!changed) dashFitPass.depth = 0;
-  return changed;
-}
 function renderRoomLabels(view = activeSceneView()) {
   const layer = $('#room-labels'); if (!layer) return;
   const preview = id => editMode && id === selectedRoomId ? roomPreviewOn : '';
   // Each room's label sits in its own wrapper (display:contents) and is rebuilt only when its markup changed,
   // so dragging one room never re-creates (and flashes) the labels and icons of the others.
-  const kept = new Set(), grid = dashGrid(view).on;
-  // A grid view shows only labels, thermostats and texts (rooms with a shape are hidden there).
-  Object.values(roomsOf(view)).filter(room => !grid || isIconRoom(room)).forEach(room => {
+  const kept = new Set();
+  Object.values(roomsOf(view)).forEach(room => {
     const html = roomLabelMarkup(room, preview(room.id), editMode && !room.geometryLocked && !roomDraft); kept.add(room.id);
     let group = [...layer.children].find(node => node.dataset.labelGroup === room.id);
-    // The tile being moved keeps its nodes (a rebuilt node under the finger makes a phone break the touch off).
-    if (room.id === dashHeldId && group?.children.length) return;
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
     if (group.__html === html) return equalizeLabelFrames(room, group);
     // Only the position changed (the room or the label is being dragged): the existing nodes get the new
@@ -1789,7 +1471,7 @@ function renderRoomLabels(view = activeSceneView()) {
     equalizeLabelFrames(room, group);
   });
   [...layer.children].forEach(node => { if (!kept.has(node.dataset.labelGroup)) node.remove(); });
-  renderDashGrid(); if (grid && dashFitPass(layer)) return renderRoomLabels(view); fitCardHandles();
+  renderDashGrid(); fitCardHandles();
 }
 // Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so
 // the dots are drawn in a layer above the plan card (not clipped) - a dot on the plan's edge shows past it.
@@ -1822,7 +1504,6 @@ function fitCardHandles() {
 // than its content. Each moving side snaps to the lines of other elements on screen and to the width / height of another
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
-  const tile = handle.closest('.room-label-card.dash-tile'); if (tile && roomsOf()[tile.dataset.roomId]) return void dashResize(event, 'room', roomsOf()[tile.dataset.roomId], handle.dataset.corner);
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   if (event.shiftKey || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
@@ -2166,17 +1847,7 @@ function startRoomLabelDrag(event) {
   }
   // Ungrouped: a tapped part is brought into view on its own (like picking its section in the panel), else the whole label.
   const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
-  // A part of an ungrouped tile moves inside its tile (the tile itself is moved by its empty area).
-  const loosePart = node.classList.contains('dash-loose') && event.target.closest('.room-card-part');
-  if (loosePart && (event.pointerType !== 'touch' || selectedRoomId === room.id)) return void dashPartDrag(event, room, loosePart);
-  // A tile not picked yet on a phone: held still for a moment it is lifted and follows the finger (a swipe scrolls).
-  if (node.dataset.labelPart === 'card' && isIconRoom(room) && dashSpan(room) && event.pointerType === 'touch' && selectedRoomId !== room.id) dashHold(event, () => dashDrag(event, 'room', room));
   if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); })) return;
-  // On a grid view a label moves by whole tiles (the others make room).
-  if (node.dataset.labelPart === 'card' && isIconRoom(room) && dashSpan(room)) {
-    const fresh = selectedRoomId !== room.id;
-    return void dashDrag(event, 'room', room, () => { if (fresh) { skipRoomFocus = true; try { openRoomEditor(room.id); } finally { skipRoomFocus = false; } } requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); });
-  }
   event.preventDefault(); event.stopPropagation();
   // The editor opens on a tap only (release without moving); grabbing and dragging right away just moves the label.
   const newlySelected = selectedRoomId !== room.id;
@@ -2239,6 +1910,7 @@ function startRoomLabelDrag(event) {
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
     renderRoomLabels();
     if (key !== 'labelCard' && !room.labelLinked) keepApart(room, key, node.dataset.labelPart);
+    if (isIconRoom(room) && key === 'labelCard' && room.labelLinked && dashGrid().on) { const box = cardBoxPct(room); if (box) renderDashGrid(dashTarget(box, room.dash && dashSpan(room) ? room.dash : null)); }
     // "Granice tła": the label (the whole group, or the one part being moved) stays inside the background.
     if (keepInBounds()) {
       const id = CSS.escape(room.id), held = room.labelLinked || key === 'labelCard' ? $(`.room-label-card[data-room-id="${id}"]`) : $(`.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`);
@@ -2261,7 +1933,10 @@ function startRoomLabelDrag(event) {
     let [fx, fy] = partPct(key);
     // An icon has no shape: a moved group becomes its new position, so later centring, guides and copies use it.
     if (isIconRoom(room) && key === 'labelCard') {
-      { room.x = Math.round(clamp(fx, 0, 100) * 100) / 100; room.y = Math.round(clamp(fy, 0, 100) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
+      // On the dashboard grid the group snaps to whole cells (keeping its size in cells once pinned).
+      const box = dashGrid().on && room.labelLinked ? cardBoxPct(room) : null;
+      if (box) { const keep = room.dash; room.dash = dashTarget(box, keep && dashSpan(room) ? keep : null); const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
+      else { room.x = Math.round(clamp(fx, 0, 100) * 100) / 100; room.y = Math.round(clamp(fy, 0, 100) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
       [fx, fy] = [room.x, room.y]; renderDashGrid(); renderRoomLabels();
     }
     room.updatedAt = new Date().toISOString(); scheduleSave(true);
@@ -2279,11 +1954,11 @@ function startRoomLabelDrag(event) {
   window.addEventListener('pointerup', clearActive, true); window.addEventListener('pointercancel', clearActive, true);
 }
 function renderRooms() {
-  syncRoomIconStates(); dashEnsure();
+  syncRoomIconStates();
   const layer = $('#rooms'); if (!layer) return;
   // A room being moved shows only its outline and label (no light / state effect), so nothing flickers while it
   // is rebuilt on every step; the effect fades back in when the room is dropped.
-  const view = activeSceneView(), grid = dashGrid(view).on, rooms = grid ? [] : Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId);
+  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId);
   const width = els.scene.offsetWidth || 1, height = els.scene.offsetHeight || 1, kept = new Set();
   const backdrop = sceneBackdrop();
   rooms.forEach(room => {
@@ -2306,7 +1981,7 @@ function renderRooms() {
   });
   $$('.room-layer', layer).forEach(node => { if (!kept.has(node.dataset.roomId)) node.remove(); });
   // Outlines go above all the lights; rebuilt only when their markup changes.
-  const outlines = (grid ? [] : Object.values(roomsOf(view))).map(room => roomOutlineMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '')).join('');
+  const outlines = Object.values(roomsOf(view)).map(room => roomOutlineMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '')).join('');
   let outlineBox = layer.querySelector('.room-outlines'); if (!outlineBox) { outlineBox = document.createElement('div'); outlineBox.className = 'room-outlines'; }
   if (outlineBox.__html !== outlines) { outlineBox.innerHTML = outlines; outlineBox.__html = outlines; }
   if (layer.lastElementChild !== outlineBox) layer.append(outlineBox);
@@ -2391,7 +2066,7 @@ function pointInPolygon([x, y], points) {
   }
   return inside;
 }
-function roomAt(point) { if (dashGrid().on) return null; return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); }
+function roomAt(point) { return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); }
 // ---- Drawing a new room
 function startRoomDrawing() {
   if (!editMode) return;
@@ -2927,9 +2602,13 @@ function roomEditorMarkup(room) {
       + radius);
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isThermoRoom(r) ? row('Pokaż', THERMO_WIZARD_PARTS.map(([key, title, mdi]) => toggleButton(key, title, mdi)).join('')) : '')
-    + (icon && dashSpan(r) ? dashEditorRows(r) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
+    + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     + (solo ? note(translateValue('Widoczna jest jedna część — tło i ramka grupy nie są rysowane. Wrócą, gdy pokażesz drugą część.'))
       : (r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
+        + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
+          ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
+            + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
+          : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '')
         + row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join(''))
         + bgSub + borderSub)
     + `</div>`, [
@@ -2961,7 +2640,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on);
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
   const groupButton = $('#room-group-toggle');
-  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; const grouped = dashSpan(room) ? !room.dashLoose : !!room.labelLinked; groupButton.hidden = shown <= 1; groupButton.classList.toggle('active', grouped); groupButton.setAttribute('aria-pressed', String(grouped)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
+  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1; groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
   if (!newlySelected) $$('.gauge-subsection > summary', content).forEach(node => { if (openSubs.has(node.textContent.trim())) node.parentElement.open = true; });
   const sections = $$('.editor-section', content);
@@ -3017,6 +2696,14 @@ function onRoomEditorInput(event) {
   const showMode = /^thermoModeShow_(.+)$/.exec(path); if (showMode && room.thermoModeParts && MODE_PART_LIST.includes(showMode[1])) room[`labelMode_${showMode[1]}`] = input.type === 'checkbox' ? input.checked : !!value;
   // Editing one mode's "Stan" look shows that mode, so the change is seen whatever mode the device is in now.
   const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
+  if (path === 'dashW' || path === 'dashH') {
+    const span = dashSpan(room), g = dashGrid(); if (!span) return;
+    const d = room.dash, w = clamp(Math.round(path === 'dashW' ? value : d.w), 1, g.cols), h = clamp(Math.round(path === 'dashH' ? value : d.h), 1, g.rows);
+    room.dash = { c: clamp(d.c, 0, g.cols - w), r: clamp(d.r, 0, g.rows - h), w, h }; const s2 = dashSpan(room);
+    room.x = Math.round((s2.x + s2.w / 2) * 100) / 100; room.y = Math.round((s2.y + s2.h / 2) * 100) / 100; room.updatedAt = new Date().toISOString();
+    const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value;
+    renderRooms(); if (event.type === 'change') scheduleSave(true); return;
+  }
   if (path === 'labelSizeUi') {
     // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
     // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.
@@ -3095,6 +2782,12 @@ function onRoomEditorClick(event) {
     if (i < 0 || j < 0 || j >= list.length) return; [list[i], list[j]] = [list[j], list[i]];
     room.thermoModesOrder = list; room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
+  const dashPin = event.target.closest('[data-dash-pin]'), dashUnpin = event.target.closest('[data-dash-unpin]');
+  if (dashPin || dashUnpin) {
+    event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
+    if (dashPin) pinToDash(room); else { const [x, y] = roomAnchor(room); room.x = Math.round(x * 100) / 100; room.y = Math.round(y * 100) / 100; delete room.dash; }
+    room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
+  }
   const partToggle = event.target.closest('[data-part-toggle]');
   if (partToggle) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;
@@ -3102,11 +2795,6 @@ function onRoomEditorClick(event) {
     const partKeys = ROOM_LABEL_PARTS.map(([, k]) => k);
     if (key === 'labelMinus' && isThermoRoom(room) && partToggle.closest('.group-tight')) room.labelPlus = !room.labelMinus;
     if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
-    if (key === 'labelLinked' && isIconRoom(room) && dashSpan(room)) {
-      // On the grid the tile stays grouped in its cells; "Grupa" lets its parts move inside it.
-      dashSetLoose(room, !room.dashLoose); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
-      notify(room.dashLoose ? 'Rozgrupowano — przesuwaj części wewnątrz kafelka' : 'Zgrupowano — zawartość dopasowana do kafelka'); return;
-    }
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
     const parts = partKeys;
@@ -3253,11 +2941,11 @@ async function resetRoomStyle() {
 function duplicateRoom() {
   const view = activeSceneView(), room = view?.rooms?.[selectedRoomId]; if (!room) return;
   const id = 'room_' + uid(), now = new Date().toISOString(), copy = clone(room);
-  if (isIconRoom(room)) { Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, x: clamp((Number(room.x) || 50) + 3, 0, 100), y: clamp((Number(room.y) || 50) + 3, 0, 100), geometryLocked:false, createdAt:now, updatedAt:now }); view.rooms[id] = copy; dashPlaceCopy(room, copy); renderRooms(); openRoomEditor(id); scheduleSave(true); return notify('Utworzono kopię etykiety'); }
+  if (isIconRoom(room)) { Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, x: clamp((Number(room.x) || 50) + 3, 0, 100), y: clamp((Number(room.y) || 50) + 3, 0, 100), geometryLocked:false, createdAt:now, updatedAt:now }); view.rooms[id] = copy; renderRooms(); openRoomEditor(id); scheduleSave(true); return notify('Utworzono kopię etykiety'); }
   const xs = room.points.map(p => p[0]), ys = room.points.map(p => p[1]);
   const dx = Math.max(...xs) + 3 <= 100 ? 3 : -3, dy = Math.max(...ys) + 3 <= 100 ? 3 : -3;
   Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, points: room.points.map(([x, y]) => [clamp(x + dx, 0, 100), clamp(y + dy, 0, 100)]), geometryLocked:false, createdAt:now, updatedAt:now });
-  view.rooms[id] = copy; dashPlaceCopy(room, copy); renderRooms(); openRoomEditor(id); scheduleSave(true); notify(isIconRoom(copy) ? 'Utworzono kopię etykiety' : 'Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce');
+  view.rooms[id] = copy; renderRooms(); openRoomEditor(id); scheduleSave(true); notify(isIconRoom(copy) ? 'Utworzono kopię etykiety' : 'Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce');
 }
 // ---- Room icon: a regular "icon" marker bound to the room (full marker editor, drag, lock, styles).
 // Its entity is virtual ("room.<room id>"): ON while the room is lit, OFF otherwise; tapping it runs the room action.
@@ -3688,7 +3376,7 @@ function mobileView() { return matchMedia('(max-width: 900px) and (pointer: coar
 function viewZoomLocked() { return !editMode && !!activeSceneView()?.viewZoomLock; }
 // The "Zoom poza edycją" switch shows the current view's own setting.
 function syncZoomToggle() { const button = $('#view-zoom-toggle'); if (!button) return; const on = !activeSceneView()?.viewZoomLock; button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on)); button.innerHTML = `<i class="mdi ${on ? 'mdi-magnify-plus-outline' : 'mdi-magnify-remove-outline'}"></i>`; }
-function sceneCameraActive() { return mobileView() || editMode || viewZoom > 1.001 || tallGrid(); }
+function sceneCameraActive() { return mobileView() || editMode || viewZoom > 1.001; }
 function mobileWidePanorama() {
   return mobileView() && layoutViewportHeight() > innerWidth && els.image.naturalWidth > els.image.naturalHeight;
 }
@@ -3778,10 +3466,6 @@ let stableViewportHeight = 0;
 function typingOnPhone() { const el = document.activeElement; return mobileView() && !!el?.matches?.('input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=button]),textarea,[contenteditable="true"]'); }
 let stableViewportWidth = 0;
 function keyboardOpen() { const h = window.visualViewport?.height || innerHeight; return mobileView() && stableViewportHeight > 0 && innerWidth === stableViewportWidth && h < stableViewportHeight - 90; }
-// The height a plan can use on screen: from its card's place on the page down to the bottom of the window.
-function sceneAvailHeight() { const top = (els.sceneCard?.getBoundingClientRect().top || 0) + (window.scrollY || 0); return Math.max(160, layoutViewportHeight() - top - (mobileView() ? 8 : 10)); }
-// A grid view longer than the screen: shown one screen high and scrolled (the camera moves it up and down).
-function tallGrid() { return dashGrid().on && !!els.scene && els.scene.offsetHeight > els.viewport.clientHeight + 2; }
 function layoutViewportHeight() {
   const h = window.visualViewport?.height || innerHeight;
   // A rotation (new width) or an ordinary small change (browser bars) is taken over; a keyboard-sized shrink while the
@@ -3793,7 +3477,7 @@ function updateSceneGeometry() {
   const hasImage = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0;
   // A new background is still loading: keep the current geometry instead of briefly collapsing to the colour ratio.
   if (!hasImage && currentBackground && !els.image.hidden && !els.image.complete) return;
-  const solidRatio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .05, 4);
+  const solidRatio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4);
   const width = hasImage ? els.image.naturalWidth : solidRatio * 100, height = hasImage ? els.image.naturalHeight : 100, ratio = width / height;
   const panorama = mobileWidePanorama();
   let renderedWidth;
@@ -3808,9 +3492,7 @@ function updateSceneGeometry() {
     els.scene.style.width = '100%';
     renderedWidth = els.scene.clientWidth;
     els.scene.style.height = `${renderedWidth / ratio}px`;
-    // A grid view longer than the screen shows one screen of it (scrolled by the camera).
-    const shown = !hasImage && dashGrid().on ? Math.min(renderedWidth / ratio, sceneAvailHeight()) : renderedWidth / ratio;
-    els.viewport.style.height = `${shown}px`; els.viewport.style.aspectRatio = shown < renderedWidth / ratio - 1 ? 'auto' : `${width} / ${height}`;
+    els.viewport.style.height = `${renderedWidth / ratio}px`; els.viewport.style.aspectRatio = `${width} / ${height}`;
   }
   els.scene.style.aspectRatio = `${width} / ${height}`;
   els.scene.style.minHeight = '0px'; els.scene.style.maxHeight = 'none';
@@ -3883,7 +3565,7 @@ function clampViewPan() {
     viewPanX = clamp(viewPanX, Math.min(0, freeX), Math.max(0, freeX)); viewPanY = clamp(viewPanY, Math.min(0, freeY) - editSheetCover(), Math.max(0, freeY));
     return;
   }
-  if (viewZoom <= minViewZoom() && !panorama && !tallGrid()) { viewPanX = 0; viewPanY = 0; return; }
+  if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
   if (deskZoomExpanded()) {
     // The plan may move anywhere inside the free screen; larger than it, it always covers that area.
     // While editing, it may also go past its edges by half the free screen, so an element at the plan's edge can be
@@ -3969,13 +3651,11 @@ function applyBackgroundTransform() {
     if (currentBackground) { card.style.width = '100%'; card.style.marginLeft = '0'; card.style.marginRight = '0'; }
     else {
       // Colour background: largest whole canvas of the chosen size that fits the workspace (like an image).
-      const ratio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .05, 4), parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth), grid = dashGrid();
+      const ratio = clamp(activeSceneView()?.solidCanvasRatio || 16 / 9, .25, 4), parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth);
       // The card's place on the page, not on screen: a scrolled page must not make the fitted card taller (and scroll more).
       if (!mobileView() && window.scrollY) window.scrollTo(0, 0);
       const availableHeight = Math.max(160, layoutViewportHeight() - (card.getBoundingClientRect().top + (window.scrollY || 0)) - 10);
-      // A grid view uses the whole width of a phone (a longer one scrolls); on a computer it is one phone screen high.
-      const width = grid.on ? (mobileView() ? parentWidth : Math.min(parentWidth, availableHeight * Math.max(ratio, grid.screen))) : Math.min(parentWidth, availableHeight * ratio);
-      card.style.width = `${(width / parentWidth) * 100}%`; card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';
+      card.style.width = `${(Math.min(parentWidth, availableHeight * ratio) / parentWidth) * 100}%`; card.style.marginLeft = 'auto'; card.style.marginRight = 'auto';
     }
     els.image.style.objectFit = 'fill'; els.image.style.transform = '';
     requestAnimationFrame(updateSceneGeometry);
@@ -4442,7 +4122,7 @@ function thermoTap(marker, button) {
   thermoPending.set(id, { ...pending, temperature: Math.round(next * 100) / 100 }); renderMarkerState(id, stateCache[id] || {}); if (roomUsesEntity(id)) renderRooms();
   clearTimeout(thermoTimers.get(id)); thermoTimers.set(id, setTimeout(() => { const value = thermoPending.get(id)?.temperature; if (value === undefined) return; thermoSend(marker, 'set_temperature', value); thermoClearLater(id); }, 700));
 }
-function applyMarkerStyle(node, marker, ctx = null) {
+function applyMarkerStyle(node, marker) {
   const s = marker.style, baseContentScale = Number(s.baseContentScale) || 1, contentScale = clamp(baseContentScale * (Number(s.contentScale) || 1), .4, Math.max(5.5, baseContentScale * 5));
   const displayY = marker.yPercent, kind = stateKind(marker), stateSuffix = kind === 'on' ? 'On' : kind === 'off' ? 'Off' : '', rule = valueRuleResult(marker);
   const backgroundColor = rule?.apply.background ? rule.color : s.backgroundStateEnabled && stateSuffix ? s[`background${stateSuffix}Color`] : s.backgroundColor;
@@ -4459,13 +4139,6 @@ function applyMarkerStyle(node, marker, ctx = null) {
     borderRadius: s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${s.radius}px`
   });
   if (marker.type === 'thermostat') node.style.setProperty('--thermo-k', String(contentScale));
-  // On a grid view the marker is its tile: the box covers the tile and its content is scaled to fill it.
-  // (ctx: a swipe preview of another view, with its own plan size.)
-  const gview = ctx?.view || activeSceneView(), pin = dashGrid(gview).on ? dashSpan(marker, gview) : null; node.classList.toggle('dash-tile', !!pin);
-  if (pin) {
-    const tw = pin.w / 100 * (ctx?.w || els.scene.offsetWidth || 1), th = pin.h / 100 * (ctx?.h || els.scene.offsetHeight || 1), k = Math.max(.01, Math.min(tw / (Number(s.width) || 120), th / (Number(s.height) || 70)) * dashFill(marker));
-    Object.assign(node.style, { left: `${pin.x + pin.w / 2}%`, top: `${pin.y + pin.h / 2}%`, width: `${tw / k}px`, height: `${th / k}px`, transform: '', display: '' }); node.style.setProperty('--scene-scale', String(k));
-  } else { node.style.removeProperty('--scene-scale'); node.style.display = dashGrid(gview).on ? 'none' : ''; }
   const outlineNode = $('.marker-outline', node);
   const outlineRadius = s.shape === 'circle' ? '50%' : s.shape === 'square' ? '0px' : `${Math.max(0, Number(s.radius) || 0) + Math.max(0, Number(borderWidth) || 0)}px`;
   if (outlineNode) Object.assign(outlineNode.style, { inset: `-${borderWidth}px`, border: s.showBorder && borderWidth > 0 ? `${borderWidth}px solid ${rgba(borderColor, borderOpacity)}` : '0 solid transparent', borderRadius: outlineRadius });
@@ -4670,7 +4343,7 @@ function openMoreInfo(entityId) {
 }
 
 function renderMarkers() {
-  const previous = selectedId; dashEnsure();
+  const previous = selectedId;
   // Flow nodes are reconciled in place by renderFlows() so running animations are not restarted.
   [...els.markers.children].forEach(node => { if (!node.classList.contains('flow-marker')) node.remove(); });
   Object.values(model.entities).forEach(marker => {
@@ -4765,7 +4438,7 @@ function placeFlowNode(node, flow, duration) {
   node.style.setProperty('--flow-duration', duration.toFixed(3) + 's'); node.style.setProperty('--flow-delay', (-((Date.now() / 1000) % duration)).toFixed(3) + 's');
 }
 function renderFlows() {
-  const flows = dashGrid().on ? [] : Object.values(activeSceneView()?.flows || {}), existing = new Map($$('.flow-marker', els.markers).map(node => [node.dataset.flowId, node])), kept = new Set();
+  const flows = Object.values(activeSceneView()?.flows || {}), existing = new Map($$('.flow-marker', els.markers).map(node => [node.dataset.flowId, node])), kept = new Set();
   flows.forEach(flow => {
     const built = buildFlowNode(flow); if (!built) return;
     const { node, signature, duration, durationKey } = built;
@@ -4961,7 +4634,7 @@ function duplicateMarker() {
   const marker = model.entities[selectedId]; if (!marker || marker.roomId) return;
   const now = new Date().toISOString(), copy = clone(marker), text = isTextId(marker.entityId), id = text ? `${TEXT_DOMAIN}.${uid()}` : uid();
   Object.assign(copy, { id, entityId: text ? id : marker.entityId, xPercent: clamp(Number(marker.xPercent) + 4, 0, 100), yPercent: clamp(Number(marker.yPercent) + 4, 0, 100), geometryLocked: false, createdAt: now, updatedAt: now });
-  model.entities[id] = copy; dashPlaceCopy(marker, copy); renderMarkers(); renderAdded(); scheduleSave(true); selectMarker(id); notify('Utworzono kopię markera — przeciągnij ją w wybrane miejsce');
+  model.entities[id] = copy; renderMarkers(); renderAdded(); scheduleSave(true); selectMarker(id); notify('Utworzono kopię markera — przeciągnij ją w wybrane miejsce');
 }
 // Several Flow objects may use the same entity; a duplicate keeps the whole style and gets its own id.
 function duplicateFlow() {
@@ -5096,8 +4769,6 @@ function focusSceneBoxOnMobile(points) {
   const nextZoom = clamp(Math.min(viewW * .86 / boxW, freeH / boxH), Math.min(minViewZoom() + .001, Math.max(zoomFloor(), Math.min(viewW * .86 / boxW, freeH / boxH))), 2.35);
   const centreX = (Math.min(...xs) + Math.max(...xs)) / 2, centreY = (Math.min(...ys) + Math.max(...ys)) / 2;
   const targetY = freeTop + freeH / 2;
-  // A grid view is not zoomed in on a tile: it only scrolls the tile above the panel (zoomed out if it is too tall).
-  if (dashGrid().on) { const z = clamp(Math.min(1, freeH * .94 / boxH), zoomFloor(), 1); return glideCamera(z, (viewW - sceneWidth * z) / 2, targetY - centreY * z); }
   glideCamera(nextZoom, viewW / 2 - centreX * nextZoom, targetY - centreY * nextZoom);
 }
 function focusScenePointOnMobile(xPercent, yPercent) {
@@ -5287,12 +4958,9 @@ function touchSelectFirst(event, selected, select = null) {
 function startDrag(event) {
   if (!editMode || event.button !== 0) return;
   if (secondFingerToZoom(event)) return;
-  const held = model.entities[event.currentTarget.dataset.markerId];
-  if (held && dashSpan(held) && event.pointerType === 'touch' && selectedId !== held.id && !held.geometryLocked) dashHold(event, () => dashDrag(event, 'marker', held));
   if (touchSelectFirst(event, selectedId === event.currentTarget.dataset.markerId)) return; // a tap selects it (click)
   event.preventDefault(); const node = event.currentTarget, key = node.dataset.markerId, marker = model.entities[key];
   if (marker?.geometryLocked) return;
-  if (dashSpan(marker)) { node.dataset.dragged = '0'; return void dashDrag(event, 'marker', marker, () => { if (selectedId !== key) selectMarker(key); }); }
   const start = { x: event.clientX, y: event.clientY, px: marker.xPercent, py: marker.yPercent }; let moved = false, guides = null;
   const r0 = els.scene.getBoundingClientRect(), grab = [(event.clientX - r0.left) / Math.max(1, r0.width) * 100 - Number(start.px), (event.clientY - r0.top) / Math.max(1, r0.height) * 100 - Number(start.py)];
   const dropGuides = () => { clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; guides = null; };
@@ -5626,7 +5294,7 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
   const textEl = isTextId(marker.entityId);
   els.editorTitle.textContent = textEl ? (marker.textValue || marker.displayName || translateValue('Tekst / przycisk')) : marker.displayName; els.editorEntity.textContent = textEl ? translateValue('Tekst / przycisk') : marker.entityId; els.editorIntegration.textContent = `Integracja: ${marker.integrationName || 'Home Assistant'}`;
   if (els.editorIntegrationIcon) els.editorIntegrationIcon.innerHTML = integrationIconMarkupFor(marker.sourceDomain || marker.entityId.split('.')[0], marker.integrationName || marker.sourceDomain, 'editor-brand-icon');
-  els.editorContent.innerHTML = (dashSpan(marker) ? section(translateValue('Kafelek'), dashEditorRows(marker, false)) : '') + editorMarkup(marker); syncLinkedSizes(els.editorContent); syncHeadPreview(els.editor, stateKind(marker) === 'on');
+  els.editorContent.innerHTML = editorMarkup(marker); syncLinkedSizes(els.editorContent); syncHeadPreview(els.editor, stateKind(marker) === 'on');
   if (marker.type === 'badge') compactBadgeEditor(els.editorContent, marker);
   // No ON / OFF choices (state-dependent colours, ON / OFF texts and icons) for entities that do not switch on and off.
   if (!markerHasOnOff(marker)) $$('[data-path]', els.editorContent).forEach(input => { if (/StateEnabled$|(On|Off)(Color|Opacity|Width)$|^state(On|Off)Label$|^icon(On|Off)$|^iconVariantEnabled$/.test(input.dataset.path)) { const row = input.closest('.control'); if (row) row.style.display = 'none'; } });
@@ -6039,7 +5707,7 @@ function renderAddDialog(part = 'all') {
     $('#add-sub', els.addDialog).textContent = translateValue(state.step === 'type' ? 'Wybierz, co chcesz dodać' : 'Wybierz encję dla tego elementu');
     $('#add-step-type', els.addDialog).innerHTML = chosen ? `<button type="button" class="add-back" data-add-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button><span class="add-step-chip"><span class="add-thumb" data-thumb="${chosen.key}"></span><b>${escapeHtml(translateValue(chosen.label))}</b></span>` : '';
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
-    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !dashGrid().on || !['room','flow'].includes(type.key)).map(type => { // a grid view has no rooms or Flow
+    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
       return `<button type="button" class="add-card${state.type === type.key ? ' sel' : ''}${allowed ? '' : ' off'}" data-add-type="${type.key}" ${allowed ? '' : 'disabled'}>${entity && recommended === type.key ? `<span class="add-tag">★ ${escapeHtml(translateValue('Polecane'))}</span>` : ''}<span class="add-thumb" data-thumb="${type.key}"></span><b>${escapeHtml(translateValue(type.label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`;
     }).join('');
@@ -6464,7 +6132,7 @@ function setBackgroundBrightness(key, value, save) {
 // A colour background has its own size (W × H, only the proportion matters on screen): typical presets,
 // own numbers, or dragging the circles on the scene edges. An image background always uses the image size.
 function canvasSizeOf(view = activeSceneView()) {
-  const size = view?.solidCanvasSize, ratio = clamp(view?.solidCanvasRatio || 16 / 9, .05, 4);
+  const size = view?.solidCanvasSize, ratio = clamp(view?.solidCanvasRatio || 16 / 9, .25, 4);
   if (size && Number(size.w) > 0 && Number(size.h) > 0 && Math.abs(size.w / size.h - ratio) < .01) return { w: Math.round(size.w), h: Math.round(size.h) };
   return ratio >= 1 ? { w: Math.round(1080 * ratio), h: 1080 } : { w: 1080, h: Math.round(1080 / ratio) };
 }
@@ -6594,7 +6262,7 @@ function viewportPointerDown(event) {
   viewPointers.set(event.pointerId, { x:event.clientX, y:event.clientY }); lastPointerActivity = performance.now();
   // The plan's own GPU layer only when the touch can move it (pan / pinch). At 100% a single finger cannot pan, and a
   // layer created at the touch was dropped again by the cube turn's first frame (the card showed one tile of the plan).
-  if ((viewPointers.size > 1 && !viewZoomLocked()) || Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama() || tallGrid()) setGestureLayer(true);
+  if ((viewPointers.size > 1 && !viewZoomLocked()) || Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama()) setGestureLayer(true);
   if (!swipeBusy && !viewSwipe && !hanging) resetStuckSwipe(false);
   viewSwipe = mobileView() && !editMode && viewTransitionMode() !== 'off' && event.pointerType !== 'mouse' && viewPointers.size === 1 && model.viewOrder.length > 1 ? { id:event.pointerId, x:event.clientX, y:event.clientY, t:Date.now(), panX:viewPanX, target:event.target, start:performance.now(), lastMove:performance.now() } : null;
   if (hanging && viewSwipe && swipePreview) { const carry = hanging.lastDx || 0; Object.assign(viewSwipe, { x:event.clientX - carry, tracking:true, direction:hanging.direction, lastDx:carry, maxDx:Math.abs(carry) }); swipeLog(`przejęcie zawieszonego gestu (${Math.round(carry)} px)`); }
@@ -6606,7 +6274,7 @@ function viewportPointerDown(event) {
     panGesture = null; event.preventDefault();
   } else {
     const marker = event.target.closest('.marker');
-    const canPan = Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama() || tallGrid();
+    const canPan = Math.abs(viewZoom - minViewZoom()) > .001 || mobileWidePanorama();
     // In viewing mode a drag beginning on a marker is still a panorama; only a short tap opens More Info.
     if (canPan && (!editMode || !marker)) {
       panGesture = { id:event.pointerId, x:event.clientX, y:event.clientY, panX:viewPanX, panY:viewPanY, marker, moved:false };
@@ -6627,15 +6295,7 @@ function viewportPointerMove(event) {
     const [a,b] = [...viewPointers.values()], distance = Math.hypot(a.x-b.x,a.y-b.y), next = clamp(pinchGesture.zoom * distance / Math.max(1,pinchGesture.distance),zoomFloor(),4), ratio = next / pinchGesture.zoom;
     viewZoom = next; viewPanX = pinchGesture.x - (pinchGesture.x-pinchGesture.panX)*ratio; viewPanY = pinchGesture.y - (pinchGesture.y-pinchGesture.panY)*ratio; applyViewTransform(); event.preventDefault();
   } else if (panGesture?.id === event.pointerId) {
-    let dx = event.clientX - panGesture.x; const dy = event.clientY - panGesture.y;
-    // A long grid view at 100% scrolls up and down only; a sideways swipe still switches the view.
-    if (panGesture.axis === undefined && tallGrid() && viewZoom <= minViewZoom() + .001) {
-      if (Math.hypot(dx, dy) < 8) return;
-      panGesture.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      if (panGesture.axis === 'x') { panGesture = null; if (viewSwipe?.id === event.pointerId) trackViewSwipe(event); return; }
-      if (viewSwipe?.id === event.pointerId) viewSwipe = null;
-    }
-    if (panGesture.axis === 'y') dx = 0;
+    const dx = event.clientX - panGesture.x, dy = event.clientY - panGesture.y;
     if (Math.hypot(dx, dy) > 6) { panGesture.moved = true; if (panGesture.marker) panGesture.marker.dataset.dragged = '1'; }
     const wantedPanX = panGesture.panX + dx;
     viewPanX = wantedPanX; viewPanY = panGesture.panY + dy; applyViewTransform();
@@ -6731,19 +6391,13 @@ function swipeImage(name) {
 function swipeGeometry(view, image) {
   const card = els.sceneCard, parentWidth = Math.max(1, card.parentElement?.clientWidth || innerWidth), cardTop = card.getBoundingClientRect().top;
   const screenHeight = layoutViewportHeight(), border = 2, designWidth = Number(model.settings?.designWidth) || DESIGN_WIDTH;
-  const hasImage = Boolean(image?.naturalWidth && image?.naturalHeight), ratio = hasImage ? image.naturalWidth / image.naturalHeight : clamp(view.solidCanvasRatio || 16 / 9, .05, 4);
+  const hasImage = Boolean(image?.naturalWidth && image?.naturalHeight), ratio = hasImage ? image.naturalWidth / image.naturalHeight : clamp(view.solidCanvasRatio || 16 / 9, .25, 4);
   if (hasImage && mobileView() && layoutViewportHeight() > innerWidth && image.naturalWidth > image.naturalHeight) {
     const viewportHeight = Math.max(180, screenHeight - cardTop - 1 - 8), sceneWidth = Math.round(viewportHeight * ratio), viewportWidth = parentWidth - border;
     const panStart = clamp(view.backgroundTransforms?.[view.background]?.mobilePanStart ?? .5, 0, 1);
     return { cardWidth: parentWidth, cardLeft: 0, viewportHeight, viewportWidth, sceneWidth, sceneHeight: viewportHeight, panX: -Math.max(0, sceneWidth - viewportWidth) * panStart, scale: sceneWidth / designWidth, panorama: sceneWidth - viewportWidth > 1 };
   }
-  const grid = !hasImage && dashGrid(view), avail = Math.max(160, screenHeight - cardTop - 8);
-  if (grid?.on) {
-    // A grid view: as wide as the view itself is shown (a phone's whole width), one screen of it when it is longer.
-    const cardWidth = mobileView() ? parentWidth : Math.min(parentWidth, avail * Math.max(ratio, grid.screen)), sceneWidth = cardWidth - border, sceneHeight = sceneWidth / ratio;
-    return { cardWidth, cardLeft: (parentWidth - cardWidth) / 2, viewportHeight: Math.min(sceneHeight, avail), sceneWidth, sceneHeight, panX: 0, scale: sceneWidth / designWidth };
-  }
-  const cardWidth = Math.min(parentWidth, avail * ratio), sceneWidth = cardWidth - border, sceneHeight = sceneWidth / ratio;
+  const cardWidth = Math.min(parentWidth, Math.max(160, screenHeight - cardTop - 8) * ratio), sceneWidth = cardWidth - border, sceneHeight = sceneWidth / ratio;
   return { cardWidth, cardLeft: (parentWidth - cardWidth) / 2, viewportHeight: sceneHeight, sceneWidth, sceneHeight, panX: 0, scale: sceneWidth / designWidth };
 }
 function buildSwipePreview(targetId) {
@@ -6752,7 +6406,7 @@ function buildSwipePreview(targetId) {
   const wrap = document.createElement('div'); wrap.className = 'scene-card swipe-preview'; wrap.setAttribute('data-no-i18n', ''); wrap.setAttribute('aria-hidden', 'true'); wrap.hidden = true;
   const viewport = document.createElement('div'); viewport.className = 'swipe-preview-viewport';
   const scene = document.createElement('div'); scene.className = 'scene swipe-preview-scene';
-  scene.style.background = viewBackgroundCss(view);
+  scene.style.background = view.backgroundColor || 'linear-gradient(145deg,#0d2838,#0a1c27)';
   viewport.append(scene); wrap.append(viewport); els.sceneCard.parentElement.append(wrap);
   const preview = { element: wrap, targetId, viewport, scene, geometry: null };
   const layout = image => {
@@ -6771,9 +6425,9 @@ function buildSwipePreview(targetId) {
   const addMarkers = () => {
     if (!wrap.isConnected) return;
     const layer = document.createElement('div'); layer.className = 'markers';
-    Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker, { view, w: preview.geometry?.sceneWidth, h: preview.geometry?.sceneHeight }); layer.append(node); });
-    Object.values(dashGrid(view).on ? {} : view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
-    const rooms = dashGrid(view).on ? [] : Object.values(view.rooms || {}).filter(room => (room.points || []).length >= 3);
+    Object.values(view.entities || {}).forEach(marker => { const node = document.createElement('div'); node.className = `marker ${marker.type}`; node.innerHTML = markerHtml(marker); applyMarkerStyle(node, marker); layer.append(node); });
+    Object.values(view.flows || {}).forEach(flow => { const built = buildFlowNode(flow); if (built) { placeFlowNode(built.node, flow, built.duration); layer.append(built.node); } });
+    const rooms = Object.values(view.rooms || {}).filter(room => (room.points || []).length >= 3);
     if (rooms.length) { const roomLayer = document.createElement('div'); roomLayer.className = 'rooms'; const w = preview.geometry?.sceneWidth || 1, h = preview.geometry?.sceneHeight || 1;
       // The cube turn cannot keep up with live SVG blurs (the glows popped in only at its end): cached bitmaps, the same
       // ones the view itself uses; the live markup (own ids) only until they are ready.
@@ -6919,7 +6573,7 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
   pendingSwipe = 0;
 }
 function startDesktopPan(event) {
-  if (mobileView() || event.button !== 0 || (viewZoom <= 1.001 && !tallGrid())) return;
+  if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;
   const marker = event.target.closest('.marker');
   if (editMode && marker) return;
   const start = { x:event.clientX, y:event.clientY, panX:viewPanX, panY:viewPanY, marker, moved:false };
@@ -7007,28 +6661,8 @@ function bindEvents() {
   $('#bg-manager')?.addEventListener('click', event => { if (event.target.id === 'bg-manager') closeBackgroundManager(); const name = event.target.closest('[data-bg-delete]')?.dataset.bgDelete; if (name) deleteBackgroundFiles([name]); const act = event.target.closest('[data-bg-action]'); if (act) backgroundFileAction(act.dataset.bgAction, act.dataset.name); });
   document.addEventListener('keydown', event => { if (event.key !== 'Escape') return; if ($('#bg-manager')?.classList.contains('visible') && !els.confirmBox.classList.contains('visible')) closeBackgroundManager(); });
   $('#bg-manager-clean')?.addEventListener('click', () => deleteBackgroundFiles(bgManagerItems.filter(item => !backgroundUses(item.name).length).map(item => item.name), true));
-  // "Siatka" (background menu): on / off, columns, gap, rows (+ / −, fit to this phone's screen), grid shown outside editing.
-  $('#dash-toggle')?.addEventListener('click', () => {
-    const view = activeSceneView(); if (!view) return; const on = !dashGrid().on;
-    if (on && view.background) setBackgroundColour(view.backgroundColor || '#0D2838');
-    setDashGrid({ on }); notify(on ? 'Siatka włączona — elementy wypełniają kratki' : 'Siatka wyłączona');
-  });
-  [['#dash-cols','cols'],['#dash-gap','gap']].forEach(([sel, key]) => {
-    const input = $(sel); if (!input) return;
-    input.addEventListener('input', () => { const out = input.parentElement?.querySelector('output'); if (out) out.textContent = input.value; });
-    input.addEventListener('change', () => { const v = Number(input.value); if (!Number.isFinite(v)) return; const view = activeSceneView(); if (key === 'cols' && view) dashItems(view).forEach(it => { if (it.obj.dash) it.obj.dash.w = Math.min(it.obj.dash.w, v); }); setDashGrid({ [key]: v }); if (key === 'cols' && view) { dashReflow(view); setDashGrid({}); } });
-  });
-  $('#dash-rows-plus')?.addEventListener('click', () => setDashGrid({ rows: dashGrid().rows + 1 }));
-  $('#dash-rows-minus')?.addEventListener('click', () => {
-    const view = activeSceneView(), need = Math.max(1, ...dashItems(view).filter(it => it.obj.dash).map(it => { const d = dashCells({ dash: it.obj.dash }, view); return d.r + d.h; }));
-    if (dashGrid().rows - 1 < need) { notify('Elementy zajmują te wiersze — przesuń je wyżej'); return; }
-    setDashGrid({ rows: dashGrid().rows - 1 });
-  });
-  $('#dash-fit')?.addEventListener('click', () => { const view = activeSceneView(); if (!view) return; dashFitScreen(view); setDashGrid({}); notify('Widok dopasowany do ekranu'); });
-  $('#dash-show')?.addEventListener('click', () => { setDashGrid({ show: !dashGrid().show }); notify(dashGrid().show ? 'Siatka widoczna poza edycją' : 'Siatka ukryta poza edycją'); });
-  const gradient = () => { const view = activeSceneView(); if (!view) return; view.backgroundGradient = { on: !!$('#bg-gradient-toggle')?.checked, color2: String($('#bg-gradient-color')?.value || '#03101A').toUpperCase(), angle: Number($('#bg-gradient-angle')?.value) || 0 }; applyBackgroundColour(); scheduleSave(true); };
-  ['#bg-gradient-toggle','#bg-gradient-color','#bg-gradient-angle'].forEach(sel => $(sel)?.addEventListener('input', gradient));
-  document.addEventListener('click', event => { const b = event.target.closest('[data-dash-size]'); if (!b || !editMode) return; event.preventDefault(); const [w, h] = b.dataset.dashSize.split('x').map(Number); setDashSize(w, h); });
+  $('#dash-toggle')?.addEventListener('click', () => { setDashGrid({ on: !dashGrid().on }); notify(dashGrid().on ? 'Siatka dashboardu włączona — upuść grupę etykiety na kratki' : 'Siatka dashboardu wyłączona'); });
+  [['#dash-cols','cols'],['#dash-rows','rows'],['#dash-gap','gap']].forEach(([sel, key]) => $(sel)?.addEventListener('change', event => { const v = Number(event.target.value); if (Number.isFinite(v)) setDashGrid({ [key]: v }); }));
   $('#bounds-toggle')?.addEventListener('click', () => { model.settings ||= {}; model.settings.keepInBounds = !keepInBounds(); applyBoundsUi(); scheduleSave(true); notify(keepInBounds() ? 'Elementy nie wyjdą poza tło' : 'Elementy mogą wychodzić poza tło'); });
   applyBoundsUi();
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });
@@ -7270,16 +6904,12 @@ function bindEvents() {
   els.viewport?.addEventListener('dblclick', event => { if (roomDraft || performance.now() - handleTapAt < 800 || event.target.closest?.('.room-handle, #room-edit-layer') || viewZoomLocked()) return; if (sceneCameraActive()) setViewZoom(viewZoom > 1 ? 1 : 2, event.clientX, event.clientY); });
   els.viewport?.addEventListener('wheel', event => {
     if (mobileView()) return;
-    event.preventDefault();
-    // A long grid view scrolls with the wheel (Ctrl + wheel still zooms).
-    if (tallGrid() && !event.ctrlKey && viewZoom <= minViewZoom() + .001) { stopCameraGlide(); viewPanY -= event.deltaY; applyViewTransform(); return; }
-    if (viewZoomLocked()) return;
+    event.preventDefault(); if (viewZoomLocked()) return;
     setViewZoom(viewZoom * Math.exp(-event.deltaY * .0015), event.clientX, event.clientY);
   }, { passive: false });
   // Touch gestures and desktop mouse dragging are deliberately separate.
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
-  els.scene?.addEventListener('dragstart', event => event.preventDefault()); // no picture dragging (breaks a touch off)
   window.addEventListener('pointerdown', trackTouchDown, true); window.addEventListener('pointermove', trackTouchMove, true); window.addEventListener('pointerup', trackTouchUp, true); window.addEventListener('pointercancel', trackTouchUp, true);
   ['touchstart','touchend','touchcancel'].forEach(type => window.addEventListener(type, syncTouches, { capture:true, passive:true }));
   document.addEventListener('visibilitychange', () => { if (document.hidden) resetTouches(); }); window.addEventListener('blur', resetTouches);
@@ -7315,7 +6945,6 @@ function bindEvents() {
 function startResize(event) {
   const marker = model.entities[selectedId];
   if (!editMode || !marker || marker.geometryLocked || event.button !== 0 || (event.buttons & 1) !== 1) return;
-  if (dashSpan(marker)) return void dashResize(event, 'marker', marker, event.currentTarget.dataset.handle);
   event.preventDefault(); event.stopPropagation();
   const handle = event.currentTarget.dataset.handle, scale = sceneScale || 1, node = markerNode(marker.id);
   if (!node) return;

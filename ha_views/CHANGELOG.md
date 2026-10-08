@@ -1,3 +1,7 @@
+## 0.6.1-beta.473
+
+- **Wycofano tryb „Siatka”** (beta.470–472) i gradient tła. Aplikacja jest taka jak w 0.6.1-beta.469. Ustawienia zapisane przez siatkę (kratki elementów, ustawienia siatki widoku, gradient) są ignorowane.
+
 ## 0.6.1-beta.472
 
 - **Poprawka: termostatu nie dało się przenieść na siatce.** Termostat (z animacjami) był przerysowywany w trakcie przeciągania, więc element pod palcem znikał i telefon przerywał gest. Kafelek wracał wtedy na stare miejsce. Teraz przenoszony kafelek nie jest przerysowywany, gest trzyma się planu, a przerwany gest zostawia kafelek tam, gdzie był pokazany.
