@@ -1,3 +1,7 @@
+## 0.6.1-beta.496
+
+- **Tłumaczenia termostatu**: w wersji angielskiej przetłumaczone są sekcja „Stan pracy” (Work state) i złożone etykiety w trybach, np. „Kolor · aktywny” → „Colour · active”, „Przezrocz.”, „Grubość”. Każda etykieta złożona z kropką tłumaczy się teraz po obu stronach.
+
 ## 0.6.1-beta.495
 
 - **Stany pracy jako lista**: w sekcji „Ogólne” stany pracy wybierasz z rozwijanej listy, a kafelki zniknęły.
