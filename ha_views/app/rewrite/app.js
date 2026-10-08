@@ -33,7 +33,7 @@ const TRANSLATIONS = {
     "Układ został zmieniony na innym urządzeniu — wczytano najnowszą wersję. Ostatnia zmiana z tego urządzenia nie została zapisana.":"The layout was changed on another device — the latest version was loaded. The last change from this device was not saved.","Układ zmieniono na innym urządzeniu":"Layout changed on another device","Wczytaj":"Load","Wczytano zmiany z innego urządzenia":"Loaded changes from another device","Ściemniaj tło wg słońca":"Dim the background with the sun","Jasność w nocy":"Night brightness","Zaczyna ściemniać, gdy słońce na":"Starts dimming with the sun at","Pełna noc, gdy słońce na":"Full night with the sun at","Chłodny odcień nocą":"Cool tint at night","Ściemnienie":"Dimming","słońce":"sun","Edycja":"Editing","Przenieś panel na drugą stronę":"Move the panel to the other side","Kliknij element, aby go edytować.":"Click an element to edit it.","Nowe elementy dodasz z menu plus lub z menu integracji.":"Add new elements from the plus menu or the integrations menu.","Usuń narożnik":"Remove corner","Ostatnia zmiana":"Last changed","7 dni":"7 days","Tekst / przycisk":"Text / button","Tekst":"Text","Tekst i akcja":"Text and action","Podpis":"Caption","Termostat":"Thermostat","Tarcza":"Dial","Temperatura ustawiona":"Target temperature","Przycisk −":"− button","Przycisk +":"+ button","Nazwa termostatu":"Thermostat name","Dodano termostat":"Thermostat added","Grubość łuku":"Arc width","Kolory trybów":"Mode colours","Poświata podczas pracy":"Glow while working","Kolor wg trybu":"Colour by mode","Szablony":"Templates","Szablon":"Template","Pusty":"Empty","Wczytaj szablon":"Load template","Usuń szablon":"Delete template","Zapisz aktualny układ jako szablon":"Save the current layout as a template","Zapisano szablon":"Template saved","Usunięto szablon":"Template deleted","Wczytano szablon":"Template loaded","Maks. 5 szablonów — usuń któryś koszem":"Max. 5 templates — delete one with the bin","Kolory stanu pracy":"Activity colours","Kropka temperatury aktualnej":"Current temperature dot","Uchwyt temperatury ustawionej":"Target temperature handle","Teksty":"Texts","Teksty trybów":"Mode texts","Tryb (stan)":"Mode (state)","Przywrócono domyślny wygląd termostatu":"Thermostat look restored to default","Utwórz termostat":"Create thermostat","Utwórz tekst":"Create text","Ogrzewanie / klimatyzacja — temperatura, tryby, sterowanie":"Heating / AC — temperature, modes, control","Grzanie":"Heat","Chłodzenie":"Cool","Grzanie / chłodzenie":"Heat / cool","Osuszanie":"Dry","Wentylator":"Fan","Wyłączony":"Off","Grzeje":"Heating","Nagrzewa":"Preheating","Chłodzi":"Cooling","Osusza":"Drying","Wentyluje":"Fan","Odmraża":"Defrosting","Bezczynny":"Idle","Ustawiona":"Target","Niedostępny":"Unavailable","Wył.":"Off","Błąd termostatu":"Thermostat error","Encja nie ma tego atrybutu":"The entity does not have this attribute","Atrybuty":"Attributes","Stan pracy (grzeje / bezczynny)":"Activity (heating / idle)","Temperatura aktualna":"Current temperature","Przyciski − / +":"− / + buttons","Tryby":"Modes","Zakres min / max":"Min / max range","Wilgotność":"Humidity","Preset":"Preset","Inne atrybuty":"Other attributes","Kolory":"Colours","Tor tarczy":"Dial track","Skala zawartości":"Content scale","Zaokrąglenie":"Corner radius","Akcja po dotknięciu":"Action on tap","Dodano tekst":"Text added","Napis z akcją — widok, strona HA, link":"Text with an action — view, HA page, link","Co ma się stać po dotknięciu tekstu w trybie przeglądania. Zmienisz to potem w panelu.":"What a tap on the text does in view mode. You can change it later in the panel.","Przejdź do widoku":"Go to view","Otwórz stronę Home Assistant":"Open a Home Assistant page","Otwórz link":"Open a link","Adres w HA":"HA path","Link":"Link","W nowej karcie":"In a new tab","Dodano tekst — przeciągnij go w wybrane miejsce":"Text added — drag it into place","Link do tego widoku":"Link to this view","Kopiuj link do widoku":"Copy link to this view","Skopiowano do schowka. Otwiera HA Views od razu na tym widoku — w przeglądarce, w zakładce albo w akcji „navigate” innego dashboardu.":"Copied to the clipboard. It opens HA Views directly on this view — in a browser, a bookmark or a “navigate” action of another dashboard.","Skopiuj link. Otwiera HA Views od razu na tym widoku — w przeglądarce, w zakładce albo w akcji „navigate” innego dashboardu.":"Copy the link. It opens HA Views directly on this view — in a browser, a bookmark or a “navigate” action of another dashboard.","OK":"OK","HA Views Beta":"HA Views Beta","stabilna wersja HA Views":"the stable HA Views","Beta":"Beta","Używane przez":"Used by","Usunąć tło używane przez drugą wersję?":"Delete a background used by the other version?","Zmienić nazwę tła używanego przez drugą wersję?":"Rename a background used by the other version?","Jasność":"Brightness","Przywróć 100%":"Reset to 100%","Widok":"View","Opcje":"Options","Obraz":"Image","Wgraj tło":"Upload background","Zmień nazwę pliku tła":"Rename background file","Auto — przełącza encja":"Auto — switched by the entity","Kolor zamiast obrazu":"Colour instead of an image","Wybór koloru zastąpi obraz":"Choosing a colour replaces the image","Tło w kolorze":"Colour background","Szerokość":"Width","Wysokość":"Height","Ustaw rozmiar na ekranie":"Set the size on screen","Przeciągnij kółka, aby ustawić rozmiar":"Drag the circles to set the size","Tło tego widoku":"This view's background","Ustaw jako tło tego widoku":"Use as this view's background","Tło nocne tego widoku":"This view's night background","Ustaw jako tło nocne tego widoku":"Use as this view's night background","Zmień nazwę":"Rename","Pobierz":"Download","Ustawiono tło widoku":"View background set","Zmień nazwę pliku tła?":"Rename background file?","Zmienić nazwę tła wersji stabilnej?":"Rename a stable-version background?","Zmień mimo to":"Rename anyway","Zmieniono nazwę tła":"Background renamed","Zmień":"Change","Używane w stabilnej wersji — usunięcie wymaga potwierdzenia":"Used by the stable version — deleting needs confirmation","Usunąć tło wersji stabilnej?":"Delete a stable-version background?","Usuń mimo to":"Delete anyway","Tego nie da się cofnąć.":"This cannot be undone.","Tryb tła":"Background mode","Automatycznie wg encji":"Automatic by entity","Zawsze dzień":"Always day","Zawsze noc":"Always night","Zawsze noc — encja nie jest używana":"Always night — the entity is not used","Zawsze dzień — encja nie jest używana":"Always day — the entity is not used","Pliki tła":"Background files","Usuń nieużywane":"Remove unused","plików":"files","plik":"file","pliki":"files","nieużywane":"unused","Nieużywane":"Unused","Stabilna":"Stable","noc":"night","dzień":"day","Używane w stabilnej wersji — usuń je tam":"Used by the stable version — remove it there","Usuń plik":"Delete file","Brak wgranych teł.":"No uploaded backgrounds.","Wczytywanie…":"Loading…","Usunąć plik tła?":"Delete background file?","Usunąć nieużywane tła?":"Remove unused backgrounds?","Usunięto plik tła":"Background file deleted","Tło nocne":"Night background","Bez tła nocnego":"No night background","Wgraj tło nocne":"Upload night background","Przełącza encja":"Switched by entity","Encja przełączająca tło nocne":"Entity that switches the night background","Dzień":"Day","Noc":"Night","Podgląd: dzień":"Preview: day","Podgląd: noc":"Preview: night","Podgląd tła":"Background preview","Teraz: noc":"Now: night","Teraz: dzień":"Now: day","podgląd":"preview","Najpierw ustaw tło dzienne":"Set the day background first","Ustawiono tło nocne":"Night background set","Wgrywanie…":"Uploading…","Intensywność ON":"ON intensity","Intensywność OFF":"OFF intensity","Obrót":"Rotation","Obróć zaznaczony":"Rotate selected","Obróć o 90° w lewo":"Rotate 90° left","Obróć o 15° w lewo":"Rotate 15° left","Obróć o 15° w prawo":"Rotate 15° right","Obróć o 90° w prawo":"Rotate 90° right","Bez obrotu":"No rotation","Obrót płynny":"Smooth rotation","Przyciąganie i siatka":"Snapping and grid","Przyciąganie w grupie":"Snapping in the group","Kopiuj styl części":"Copy part style","Tryb":"Mode","aktywny":"active","Styl tarczy":"Dial style","Neon":"Neon","Półkole":"Half circle","Kometa":"Comet","Podziałka":"Scale","Liczba segmentów":"Segments","Przerwa":"Gap","Gęstość kresek":"Tick density","Liczby co 5°":"Numbers every 5°","Kolor pokoju":"Room colour","Grubość pierścienia pokoju":"Room ring width","Zimny":"Cold","Środek":"Middle","Gorący":"Hot","Przygaszenie powyżej nastawy":"Dimmed above the set point","Poświata":"Glow","Długość ogona":"Tail length","Liczby co":"Numbers every","Klasyczna":"Classic","Segmenty LED":"LED segments","Chronograf":"Chronograph","Podwójny pierścień":"Twin ring","Termiczna":"Thermal","nieaktywny":"inactive","Inny gdy aktywny":"Different when active","Kopia":"Copy","Duplikuj termostat":"Duplicate thermostat","Duplikuj tekst":"Duplicate text","Zostaje jak w grupie":"Stays as in the group","Ramka grupy":"Group frame","Dopasuj do części":"Fit to the parts","Wklej styl części":"Paste part style","Skopiowano styl części":"Part style copied","Wklejono styl części":"Part style pasted","Części":"Parts","Środek i ramka":"Centre and frame","Równe odstępy":"Equal spacing","Elementy planu":"Plan elements","Alt — przesuwanie bez przyciągania":"Alt — move without snapping","Linie pomocnicze":"Guides","Tylko elementy widoczne na ekranie":"Only elements visible on screen","Przyciągaj do":"Snap to","Tło (środek i krawędzie)":"Background (centre and edges)","Punkty":"Points","Wyrównuj po":"Align by","Środki":"Centres","Krawędzie":"Edges","Animacja":"Animation","Rodzaj":"Type","Obrót":"Spin","Pulsowanie":"Pulse","Miganie":"Blink","Kołysanie":"Swing","Czas cyklu":"Cycle time","Kierunek":"Direction","W prawo":"Clockwise","W lewo":"Counter-clockwise","Tylko gdy ON":"Only when ON","Prędkość z encji (%)":"Speed from entity (%)","Odstępy — pośrodku między dwiema etykietami i równe odstępy":"Spacing — exactly between two labels and equal gaps","Wyrównaj zaznaczony do tła":"Align selected to background","Do lewej krawędzi tła":"To the left edge","Wyśrodkuj w poziomie":"Centre horizontally","Do prawej krawędzi tła":"To the right edge","Do górnej krawędzi tła":"To the top edge","Wyśrodkuj w pionie":"Centre vertically","Do dolnej krawędzi tła":"To the bottom edge","Dodaj Flow":"Add Flow","Dodano Flow — wybierz encję albo zostaw bez encji":"Flow added — choose an entity or leave it without one","Usuń encję":"Remove entity","Podgląd: włączony":"Preview: on","Podgląd: wyłączony":"Preview: off","Tempo to stała prędkość strzałek (1× = 150 px/s) — nie zależy od rozmiaru, odstępu ani liczby, więc Flow z tym samym tempem jadą identycznie.":"Tempo is a constant arrow speed (1\u00d7 = 75 px/s) \u2014 it does not depend on size, spacing or count, so Flows with the same tempo move identically.","Ramka i pozycja":"Frame and position","Szerokość ramki":"Frame width","Strzałki":"Arrows","Długość strzałki":"Arrow length","Ramka to obszar Flow na planie, liczony wzdłuż kierunku strzałek. Szerokość ramki jest też wysokością strzałek. Uchwyty zaznaczenia zmieniają to samo.":"The frame is the Flow area on the plan, measured along the arrow direction. The frame width is also the arrow height. The selection handles change the same values.","W animacji „Przepływ” strzałki wypełniają całą ramkę, więc liczba nie ma znaczenia.":"With the “Flow” animation the arrows fill the whole frame, so the count does not matter.","Strzałki są wyśrodkowane w ramce; to, co się nie mieści, jest przycinane. Liczba i odstęp nie zmieniają ramki. Ujemny odstęp wsuwa strzałki jedna w drugą (gęściej).":"Arrows are centred in the frame; what does not fit is clipped. Count and spacing do not change the frame. A negative spacing nests the arrows into each other (denser).","Tempo pulsowania nie zależy od rozmiaru Flow.":"The pulse tempo does not depend on the Flow size.","Ustaw tę animację w pozostałych Flow tej encji":"Apply this animation to the other Flows of this entity","Ustawiono tę samą animację w innych Flow tej encji":"Same animation applied to other Flows of this entity","Granice tła":"Background bounds","Elementy nie wychodzą poza tło":"Elements stay inside the background","Elementy nie wyjdą poza tło":"Elements will stay inside the background","Elementy mogą wychodzić poza tło":"Elements may go outside the background","Edytuj ikonę":"Edit icon","Usuń ikonę":"Remove icon","Dodaj ikonę":"Add icon","Ikona pomieszczenia to zwykły marker typu Ikona z pełnym edytorem (kolory ON/OFF, obrys, tło, ramka, rozmiar, kolory wg wartości). Świeci, gdy pomieszczenie jest zapalone, a dotknięcie wykonuje akcję pomieszczenia.":"The room icon is a regular Icon marker with the full editor (ON/OFF colours, outline, background, border, size, colours by value). It is lit while the room is on, and tapping it runs the room action.","Dodano ikonę pomieszczenia — przeciągnij ją w wybrane miejsce":"Room icon added — drag it where you want it","Usunięto ikonę pomieszczenia":"Room icon removed","Markery":"Markers","Pomieszczenia":"Rooms","Markery, Flow i pomieszczenia tego widoku":"Markers, Flows and rooms of this view","Rozjaśnij — jak światło lampy: plan jaśnieje w kolorze poświaty, ciemne miejsca najmocniej.":"Lighten — like lamp light: the plan brightens in the glow colour, dark areas the most.","Miękkie światło — delikatne ocieplenie, plan zachowuje swoje kolory i kontrast.":"Soft light — a gentle tint, the plan keeps its colours and contrast.","Nakładka — mocniejszy efekt: jasne miejsca jaśnieją, ciemne ciemnieją, kolor jest wyraźny.":"Overlay — a stronger effect: light areas get lighter, dark areas darker, the colour is clear.","Zwykłe — płaski, półprzezroczysty kolor położony na plan.":"Normal — a flat, semi-transparent colour laid over the plan.","Geometria zablokowana — kliknij, aby odblokować":"Geometry locked — click to unlock","Zablokuj geometrię":"Lock geometry","Zablokowano geometrię":"Geometry locked","Odblokowano geometrię":"Geometry unlocked","Podgląd":"Preview","Rzeczywisty stan":"Actual state","Włączony":"On","Wyłączony":"Off","Usuń z pomieszczenia":"Remove from room","Dodaj do pomieszczenia":"Add to room","Z tego widoku":"From this view","Wpisz co najmniej 2 znaki.":"Type at least 2 characters.","Wyszukiwanie encji…":"Searching entities…","Brak — wyszukaj encję poniżej.":"None — search for an entity below.","Szukaj nazwy lub encji…":"Search name or entity…","Geometria jest zablokowana (kłódka u góry).":"The geometry is locked (padlock at the top).","Duplikuj pomieszczenie":"Duplicate room","Kopiuj styl pomieszczenia":"Copy room style","Wklej styl pomieszczenia":"Paste room style","Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu":"Room style copied — paste it into another room","Wklejono styl pomieszczenia":"Room style pasted","Przywrócić domyślny wygląd?":"Restore the default look?","Wygląd i akcja dotknięcia pomieszczenia wrócą do domyślnych. Kształt, nazwa i encje zostaną.":"The room look and tap action return to defaults. Shape, name and entities stay.","Przywrócono domyślny wygląd pomieszczenia":"Room look restored to default","kopia":"copy","Utworzono kopię pomieszczenia — przeciągnij ją w wybrane miejsce":"Room copied — drag it where you want it","Naprawiono błędny domyślny panel HA — ustaw go ponownie w menu widoku":"Fixed an invalid HA default panel — set it again in the view menu","Domyślny panel Home Assistant":"Home Assistant default panel","Bez zmian (ustawienia HA)":"Unchanged (HA settings)","HA Views — moje konto":"HA Views — my account","HA Views — tylko to urządzenie":"HA Views — this device only","HA Views jest teraz domyślnym panelem na Twoim koncie":"HA Views is now the default panel for your account","HA Views jest domyślnym panelem na tym urządzeniu":"HA Views is the default panel on this device","Przywrócono domyślny panel z ustawień Home Assistant":"Restored the default panel from Home Assistant settings","Otwieraj HA Views po starcie Home Assistant (to urządzenie)":"Open HA Views when Home Assistant starts (this device)","Ta opcja działa tylko w HA Views otwartym z panelu Home Assistant":"This option only works when HA Views is opened from the Home Assistant sidebar","HA Views będzie otwierać się po starcie Home Assistant na tym urządzeniu":"HA Views will open when Home Assistant starts on this device","Po starcie Home Assistant znów otworzy się domyślny dashboard":"Home Assistant will open its default dashboard again","Brak akcji":"No action","Przełącz światło":"Toggle the light","Nic":"Nothing","To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji":"This room has no entities yet — choose them in edit mode","Błąd przełączania: ":"Toggle error: ","Pomieszczenie":"Room","Dodaj pomieszczenie":"Add room","Klikaj kolejne narożniki pomieszczenia":"Click the corners of the room one by one","Kliknij pierwszy punkt albo „Gotowe”, aby zamknąć kształt":"Click the first point or “Done” to close the shape","Cofnij punkt":"Undo point","Gotowe":"Done","Usuń pomieszczenie":"Delete room","Dodano pomieszczenie — wybierz encje, które je zapalają":"Room added — choose the entities that light it up","Pomieszczenie musi mieć co najmniej 3 narożniki":"A room needs at least 3 corners","Ten widok nie ma jeszcze encji — dodaj np. światło przez Integracje albo wpisz encję poniżej.":"This view has no entities yet — add e.g. a light via Integrations or type an entity below.","Brak encji":"No entities","Zapalają je encje":"Lit by entities","Inne encje":"Other entities","Pomieszczenie świeci, gdy włączona jest dowolna z wybranych encji (światło, gniazdko, ruch, otwarte drzwi…).":"The room lights up when any of the selected entities is on (light, plug, motion, open door…).","Wygląd":"Appearance","Efekt":"Effect","Poświata kolorem":"Colour glow","Zapalony obraz":"Lit image","Obraz zapalony":"Lit image","— wybierz —":"— choose —","Wgraj jako tło drugą wersję planu (np. render z włączonymi światłami) i wybierz ją tutaj — pomieszczenie odsłoni ją tylko w swoim kształcie. Obraz powinien mieć ten sam kadr co plan.":"Upload a second version of the plan as a background (e.g. a render with the lights on) and choose it here — the room reveals it only inside its shape. The image should have the same framing as the plan.","Kolor ze światła":"Colour from the light","Mieszanie":"Blending","Rozjaśnij":"Lighten","Miękkie światło":"Soft light","Nakładka":"Overlay","Zwykłe":"Normal","Jasność ze światła":"Brightness from the light","Intensywność":"Intensity","Miękkość krawędzi":"Edge softness","Podgląd włączonego":"Preview as on","Przeciągnij narożnik, aby go przesunąć. Mały punkt na krawędzi dodaje nowy narożnik. Dwuklik na narożniku go usuwa. Przeciągnij wnętrze, aby przesunąć całe pomieszczenie. Narożniki przyciągają się do ścian innych pomieszczeń (Alt wyłącza).":"Drag a corner to move it. The small dot on an edge adds a corner. Double-click a corner to remove it. Drag the inside to move the whole room. Corners snap to the walls of other rooms (Alt disables).","Usunąć pomieszczenie?":"Delete room?","Usunięto pomieszczenie":"Room deleted","Kolory wg wartości":"Colours by value","Dolny próg":"Lower threshold","Górny próg":"Upper threshold","Kolor poniżej":"Colour below","Kolor pomiędzy":"Colour between","Kolor od górnego":"Colour from upper","Płynne przejście":"Smooth blend","Koloruj ikonę":"Colour the icon","Koloruj wartość":"Colour the value","Koloruj łuk":"Colour the arc","Koloruj tło":"Colour the background","Koloruj ramkę":"Colour the border","Ikona poniżej":"Icon below","Ikona pomiędzy":"Icon between","Ikona od górnego":"Icon from upper","Puste pole ikony = zwykła ikona markera.":"Empty icon field = the marker’s normal icon.","Stan encji nie jest liczbą — kolory wg wartości nie działają dla tej encji.":"The entity state is not a number — colours by value do not apply to this entity.","Teraz: poniżej dolnego progu.":"Now: below the lower threshold.","Teraz: pomiędzy progami.":"Now: between the thresholds.","Teraz: od górnego progu.":"Now: at or above the upper threshold.","Połączono z nowszymi zmianami z innego urządzenia":"Merged with newer changes from another device","Układ został zmieniony na innym urządzeniu":"The layout was changed on another device",
     "Zarządzaj widokiem":"Manage view","Tło widoku":"View background","Ustaw tło":"Set background","Wstecz":"Back","Podgląd wybranego tła":"Selected background preview",
     "Zoom poza edycją":"Zoom outside editing","Panel startowy HA":"HA start panel","Bez zmian":"Unchanged","HA Views (konto)":"HA Views (account)","HA Views (urządzenie)":"HA Views (device)","Przełączanie palcem":"Swipe between views","Wyłączone (tylko zakładki)":"Off (tabs only)","Przesunięcie":"Slide","Kostka":"Cube","Zapisano sposób przełączania widoków":"View switching saved",
-    "Diagnostyka przesuwania":"Swipe diagnostics","Strefy":"Zones","Stan pracy":"Work state","Brak":"None","Duplikuj":"Duplicate","Duplikować termostat?":"Duplicate the thermostat?","Duplikować tekst?":"Duplicate the text?","Duplikować etykietę?":"Duplicate the label?","Duplikować pomieszczenie?":"Duplicate the room?","Obok powstanie kopia z tym samym wyglądem i encjami.":"A copy with the same look and entities will be created next to it.","Strefy w poziomie (kolumny)":"Zones across (columns)","Strefy w pionie (wiersze)":"Zones down (rows)","Mniej":"Fewer","Więcej":"More","Grube linie siatki":"Thick grid lines","Pokaż":"Show","Termostat":"Thermostat","Tryb (stan)":"Mode (state)","Rozmiar tylko po grubych liniach siatki":"Size only along the thick grid lines","Rozmiar etykiet i termostatów zmienia się tylko po grubych liniach siatki":"Labels and thermostats are now sized along the thick grid lines only","Rozmiar etykiet i termostatów zmienia się swobodnie":"Labels and thermostats are now sized freely"
+    "Diagnostyka przesuwania":"Swipe diagnostics","Strefy":"Zones","Biblioteka":"Library","Biblioteka termostatów":"Thermostat library","Nowy szablon":"New template","Duplikuj szablon":"Duplicate template","Usuń szablon":"Delete template","Zamknij bibliotekę":"Close library","Usunąć szablon?":"Delete the template?","Szablon zniknie z biblioteki. Termostaty, które już z niego powstały, zostaną bez zmian.":"The template is removed from the library. Thermostats already made from it stay as they are.","Dodano szablon":"Template added","Utworzono kopię szablonu":"Template copied","Domyślny":"Default","Stan pracy":"Work state","Brak":"None","Duplikuj":"Duplicate","Duplikować termostat?":"Duplicate the thermostat?","Duplikować tekst?":"Duplicate the text?","Duplikować etykietę?":"Duplicate the label?","Duplikować pomieszczenie?":"Duplicate the room?","Obok powstanie kopia z tym samym wyglądem i encjami.":"A copy with the same look and entities will be created next to it.","Strefy w poziomie (kolumny)":"Zones across (columns)","Strefy w pionie (wiersze)":"Zones down (rows)","Mniej":"Fewer","Więcej":"More","Grube linie siatki":"Thick grid lines","Pokaż":"Show","Termostat":"Thermostat","Tryb (stan)":"Mode (state)","Rozmiar tylko po grubych liniach siatki":"Size only along the thick grid lines","Rozmiar etykiet i termostatów zmienia się tylko po grubych liniach siatki":"Labels and thermostats are now sized along the thick grid lines only","Rozmiar etykiet i termostatów zmienia się swobodnie":"Labels and thermostats are now sized freely"
   }
 };
 function translateValue(value) {
@@ -337,6 +337,9 @@ function ensureMultiViewModel() {
     model.views = { [id]: { id, name: 'Widok ogólny', background: undefined, backgroundTransforms: clone(model.settings?.backgroundTransforms || {}), entities: oldEntities } };
     model.viewOrder = [id]; model.activeViewId = id;
   }
+  // The library's canvas is never kept (a reload while in the library), nor the old 5 thermostat template slots.
+  if (model.views[LIBRARY_VIEW]) { delete model.views[LIBRARY_VIEW]; migrated = true; }
+  if (model.settings?.thermoTemplates) { delete model.settings.thermoTemplates; migrated = true; }
   model.viewOrder = (model.viewOrder || []).filter(id => model.views[id]);
   Object.keys(model.views).forEach(id => { if (!model.viewOrder.includes(id)) model.viewOrder.push(id); });
   const defaultView = model.settings?.defaultViewId;
@@ -427,7 +430,8 @@ function renderViewSelector() {
 }
 async function switchSceneView(id, persist = true) {
   if (!model.views[id] || id === model.activeViewId && persist) return;
-  closeCompactMenus(); closeEditor(); closeMoreInfo(); closeRoomEditor(); cancelRoomDrawing(); model.activeViewId = id; try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
+  if (libraryState && id !== LIBRARY_VIEW && model.activeViewId === LIBRARY_VIEW) return closeLibrary(id); // a view tab leaves the library
+  closeCompactMenus(); closeEditor(); closeMoreInfo(); closeRoomEditor(); cancelRoomDrawing(); model.activeViewId = id; if (id !== LIBRARY_VIEW) try { localStorage.setItem(ACTIVE_VIEW_CACHE_KEY, id); } catch {} attachActiveEntities(); currentBackground = '';
   renderViewSelector(); els.markers.classList.add('background-pending'); renderIntegrations();
   await loadBackgrounds(true, false, null, 2500); await nightImageReady(); if (currentBackground) applyBackgroundTransform(); updateSceneGeometry(); applySnapUi(); resetViewZoom(); renderMarkers(); els.markers.classList.remove('background-pending'); refreshStates();
   // The open view is remembered per device (localStorage); switching views does not rewrite the shared layout.
@@ -2643,7 +2647,6 @@ function roomEditorMarkup(room) {
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
-    + (isThermoRoom(r) ? thermoTemplatesRow() : '')
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
   const lookSection = () => partBar('room', 'Wygląd', sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
@@ -2949,38 +2952,8 @@ function onRoomEditorInput(event) {
 }
 // Thermostat templates (up to 5, shared by all views): the whole look and arrangement of a thermostat, saved from one and
 // loaded into another with one tap. The trash button switches the slots to "delete" for one tap.
-const THERMO_TEMPLATE_MAX = 5;
-let thermoTemplateDelete = false;
 const isThermoLookKey = key => /^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame'].includes(key);
-function thermoTemplates() { return Array.isArray(model.settings?.thermoTemplates) ? model.settings.thermoTemplates.slice(0, THERMO_TEMPLATE_MAX) : []; }
-function thermoTemplatesRow() {
-  const list = thermoTemplates(), esc = v => escapeHtml(translateValue(v));
-  const slots = Array.from({ length: THERMO_TEMPLATE_MAX }, (_, i) => { const has = !!list[i]; return `<button type="button" class="room-card-preset thermo-tpl${has ? ' filled' : ''}${thermoTemplateDelete && has ? ' deleting' : ''}" data-thermo-template="${i}"${has ? '' : ' disabled'} title="${esc(has ? (thermoTemplateDelete ? 'Usuń szablon' : 'Wczytaj szablon') : 'Pusty')} ${i + 1}" aria-label="${esc('Szablon')} ${i + 1}"><i class="mdi mdi-numeric-${i + 1}-box${has ? '' : '-outline'}"></i></button>`; }).join('');
-  return `<div class="control room-card-row thermo-templates"><label>${esc('Szablony')}</label><div class="room-card-presets"><button type="button" class="room-card-preset" data-thermo-template-save title="${esc('Zapisz aktualny układ jako szablon')}" aria-label="${esc('Zapisz aktualny układ jako szablon')}"><i class="mdi mdi-content-save-outline"></i></button>${slots}<button type="button" class="room-card-preset${thermoTemplateDelete ? ' active' : ''}" data-thermo-template-trash${list.length ? '' : ' disabled'} title="${esc('Usuń szablon')}" aria-label="${esc('Usuń szablon')}"><i class="mdi mdi-delete-outline"></i></button></div></div>`;
-}
-function onThermoTemplateClick(event) {
-  const save = event.target.closest('[data-thermo-template-save]'), trash = event.target.closest('[data-thermo-template-trash]'), slot = event.target.closest('[data-thermo-template]');
-  if (!save && !trash && !slot) return false;
-  event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room || !isThermoRoom(room)) return true;
-  model.settings ||= {}; const list = thermoTemplates();
-  if (trash) { thermoTemplateDelete = !thermoTemplateDelete; }
-  else if (save) {
-    if (list.length >= THERMO_TEMPLATE_MAX) { notify('Maks. 5 szablonów — usuń któryś koszem', true); return true; }
-    list.push(Object.fromEntries(Object.entries(clone(room)).filter(([key]) => isThermoLookKey(key)))); model.settings.thermoTemplates = list; thermoTemplateDelete = false;
-    scheduleSave(true); notify(`${translateValue('Zapisano szablon')} ${list.length}`);
-  } else {
-    const i = Number(slot.dataset.thermoTemplate), tpl = list[i]; if (!tpl) return true;
-    if (thermoTemplateDelete) { list.splice(i, 1); model.settings.thermoTemplates = list; thermoTemplateDelete = false; scheduleSave(true); notify(`${translateValue('Usunięto szablon')} ${i + 1}`); }
-    else {
-      Object.keys(room).filter(isThermoLookKey).forEach(key => delete room[key]);
-      Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(isThermoLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])), clone(tpl));
-      delete room.labelAutoUngrouped; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); notify(`${translateValue('Wczytano szablon')} ${i + 1}`);
-    }
-  }
-  openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return true;
-}
 function onRoomEditorClick(event) {
-  if (onThermoTemplateClick(event)) return;
   const partCopy = event.target.closest('[data-part-copy]'), partPaste = event.target.closest('[data-part-paste]');
   if (partCopy || partPaste) { event.preventDefault(); event.stopPropagation(); const room = roomsOf()[selectedRoomId]; const title = (partCopy || partPaste).closest('details')?.querySelector(':scope > summary > span')?.textContent.trim(); if (room) (partCopy ? copyPartStyle(room, partCopy.dataset.partCopy, title) : pastePartStyle(room, partPaste.dataset.partPaste, title)); return; }
   const extraAdd = event.target.closest('[data-extra-add]');
@@ -3975,7 +3948,7 @@ function updateMobilePanStart() {
 let serverRevision = 0, lastLocalChangeAt = 0, syncBase = null;
 const RELOAD_VIEW_KEY = 'ha-views:reload-view', RELOAD_MESSAGE_KEY = 'ha-views:reload-message';
 const SYNC_LOCAL_KEYS = new Set(['entities', 'revision', 'baseRevision']);
-function layoutSnapshot(source) { const data = clone(source || {}); SYNC_LOCAL_KEYS.forEach(key => delete data[key]); return data; }
+function layoutSnapshot(source) { const data = clone(source || {}); SYNC_LOCAL_KEYS.forEach(key => delete data[key]); dropLibraryCanvas(data); return data; }
 const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 function layoutDiff(before, after, path = [], ops = []) {
   if (isPlainObject(before) && isPlainObject(after)) {
@@ -4009,7 +3982,7 @@ async function mergeRemoteLayout() {
   applyLayoutOps(model, remote);
   syncBase = serverData; serverRevision = model.revision = Number(server.revision) || 0;
   if (!model.views[model.activeViewId]) model.activeViewId = model.viewOrder.find(id => model.views[id]) || Object.keys(model.views)[0];
-  model.viewOrder = (model.viewOrder || []).filter(id => model.views[id]); Object.keys(model.views).forEach(id => { if (!model.viewOrder.includes(id)) model.viewOrder.push(id); });
+  model.viewOrder = (model.viewOrder || []).filter(id => model.views[id] && id !== LIBRARY_VIEW); Object.keys(model.views).forEach(id => { if (id !== LIBRARY_VIEW && !model.viewOrder.includes(id)) model.viewOrder.push(id); });
   attachActiveEntities(); renderViewSelector();
   if (backgroundChanged || model.activeViewId !== activeId) { currentBackground = ''; await loadBackgrounds(true, false, null, 2500); if (currentBackground) applyBackgroundTransform(); }
   updateSceneGeometry(); renderMarkers(); renderAdded();
@@ -4043,7 +4016,7 @@ async function queueSave() {
   if (saveRunning) return;
   saveRunning = true; let conflicts = 0;
   while (savePending) {
-    savePending = false; const snapshot = clone(model); delete snapshot.entities; snapshot.baseRevision = serverRevision;
+    savePending = false; syncLibraryTemplate(); const snapshot = clone(model); delete snapshot.entities; dropLibraryCanvas(snapshot); snapshot.baseRevision = serverRevision;
     try {
       const result = await api('rewrite_state', jsonOptions(snapshot));
       if (Number.isFinite(Number(result?.revision))) { serverRevision = model.revision = Number(result.revision); snapshot.revision = serverRevision; syncBase = layoutSnapshot(snapshot); }
@@ -5976,6 +5949,8 @@ function renderAddDialog(part = 'all') {
     const chosen = ADD_TYPES.find(t => t.key === state.type);
     $('#add-sub', els.addDialog).textContent = translateValue(state.step === 'type' ? 'Wybierz, co chcesz dodać' : 'Wybierz encję dla tego elementu');
     $('#add-step-type', els.addDialog).innerHTML = chosen ? `<button type="button" class="add-back" data-add-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button><span class="add-step-chip"><span class="add-thumb" data-thumb="${chosen.key}"></span><b>${escapeHtml(translateValue(chosen.label))}</b></span>` : '';
+    // A thermostat can start from a template of the library (the default one when none is picked).
+    if (chosen?.key === 'thermostat' && libraryTemplates().length) $('#add-step-type', els.addDialog).insertAdjacentHTML('beforeend', `<div class="add-templates"><span>${escapeHtml(translateValue('Szablon'))}</span>${[['', translateValue('Domyślny')], ...libraryTemplates().map(t => [t.id, t.name])].map(([id, name]) => `<button type="button" class="add-tpl${(state.template || '') === id ? ' sel' : ''}" data-add-template="${escapeHtml(id)}" data-no-i18n>${escapeHtml(name)}</button>`).join('')}</div>`);
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
     $('#add-types', els.addDialog).innerHTML = ADD_TYPES.map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
@@ -6015,7 +5990,7 @@ function closeAddDialog() { if (!els.addDialog) return; els.addDialog.classList.
 function cancelAddPicking() { if (!addPicking) return; addPicking = null; els.body.classList.remove('add-picking'); }
 function confirmAddDialog() {
   if (!addState || !addGoLabel().ok) return;
-  const { type, entity, pick } = addState; closeAddDialog();
+  const { type, entity, pick } = addState; addThermoTemplate = addState.template || ''; closeAddDialog();
   if (type === 'room') return addRoomFromDialog(entity);
   if (pick) { addPicking = { type, entity }; els.body.classList.add('add-picking'); notify('Dotknij plan w miejscu, gdzie ma stanąć element'); return; }
   createAddedElement(type, entity, viewCenterPercent());
@@ -6082,10 +6057,108 @@ function thermoDefaultScale() {
 function thermoLook() {
   return { ...NEW_ROOM_LABEL, ...clone(THERMO_DEFAULT_LOOK), labelCardScale: thermoDefaultScale(), labelLinked:true };
 }
-function addThermostatLabel([x, y], entity) {
+// ---- Biblioteka: thermostat templates designed on their own canvas ---------------------------------------------
+// The library is a tab of its own: a tall (9:16) canvas with one thermostat, edited with the usual tools (panel,
+// ungrouping, snapping), and a bar with the saved templates. The canvas is a view that is never saved or listed
+// (LIBRARY_VIEW); the templates are kept in settings.thermoLibrary. A new thermostat can start from a template
+// ("+" → Termostat → template).
+const LIBRARY_VIEW = '__library', LIBRARY_ROOM = 'library_item';
+let libraryState = null, addThermoTemplate = '';
+function libraryTemplates() { return Array.isArray(model.settings?.thermoLibrary) ? model.settings.thermoLibrary : []; }
+function dropLibraryCanvas(data) {
+  if (data?.views?.[LIBRARY_VIEW]) delete data.views[LIBRARY_VIEW];
+  if (data && data.activeViewId === LIBRARY_VIEW) data.activeViewId = libraryState?.prevView || (data.viewOrder || [])[0] || '';
+}
+// A template keeps the thermostat's look and layout; not what belongs to one device or one plan (entities, name,
+// place on the plan, ungrouped positions).
+const isTemplateKey = key => isThermoLookKey(key) && !/^labelX\dEntity$/.test(key) && !(/^label\w*[XY]$/.test(key) && !/(F|D)[XY]$/.test(key));
+function roomTemplateLook(room) { return Object.fromEntries(Object.entries(clone(room)).filter(([key]) => isTemplateKey(key))); }
+// Its size follows the plan it is put on, like the default thermostat (made on the tall canvas).
+function templateLook(template) {
+  const look = clone(template.look || {}), w = els.scene?.offsetWidth || 0, h = els.scene?.offsetHeight || 0;
+  look.labelCardScale = Math.round((Number(look.labelCardScale) || THERMO_DEFAULT_SCALE) * (w && h ? Math.min(1, (h / w) / (16 / 9)) : 1) * 100) / 100;
+  return { ...NEW_ROOM_LABEL, ...look, labelLinked:true };
+}
+function libraryPreviewEntity() {
+  const real = Object.keys(stateCache).find(id => id.startsWith('climate.'));
+  if (real) return real;
+  const sample = ADD_SAMPLES.thermostat; stateCache[sample.entity_id] ||= { entity_id: sample.entity_id, state: sample.state, attributes: { friendly_name: sample.name, ...clone(sample.attributes) } };
+  return sample.entity_id;
+}
+// The edited template goes back into the library (grouped: a template is always saved as one group).
+function syncLibraryTemplate(regroup = false) {
+  if (!libraryState) return;
+  const room = model.views?.[LIBRARY_VIEW]?.rooms?.[LIBRARY_ROOM], template = libraryTemplates().find(t => t.id === libraryState.templateId);
+  if (!room || !template) return;
+  if (regroup) regroupOnLeave(room);
+  if (!room.labelLinked) return; // ungrouped right now: kept as it was until it is grouped again
+  const renamed = room.name && room.name !== template.name;
+  template.look = roomTemplateLook(room); template.name = room.name || template.name; template.updatedAt = new Date().toISOString();
+  if (renamed) renderLibraryBar();
+}
+function loadLibraryTemplate(id) {
+  const view = model.views[LIBRARY_VIEW], template = libraryTemplates().find(t => t.id === id); if (!view || !template) return;
+  const now = new Date().toISOString(); libraryState.templateId = id;
+  view.rooms = { [LIBRARY_ROOM]: { ...clone(ROOM_DEFAULTS), ...clone(template.look || {}), labelLinked:true, kind:'icon', thermo:true, id: LIBRARY_ROOM, name: template.name, entityIds:[libraryPreviewEntity()], points:[], x:50, y:50, createdAt: now, updatedAt: now } };
+  closeRoomEditor(); renderRooms(); renderLibraryBar();
+  requestAnimationFrame(() => requestAnimationFrame(() => openRoomEditor(LIBRARY_ROOM)));
+}
+function newLibraryTemplate(from = null) {
+  model.settings ||= {}; const list = libraryTemplates();
+  const template = { id: 'tpl_' + uid(), name: from ? `${from.name} (${translateValue('kopia')})` : `${translateValue('Termostat')} ${list.length + 1}`, look: from ? clone(from.look) : (({ ...thermoLook(), labelCardScale: THERMO_DEFAULT_SCALE })), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  model.settings.thermoLibrary = [...list, template]; return template;
+}
+async function openLibrary() {
+  if (isViewer() || libraryState) return;
+  if (!editMode) els.editToggle.click();
+  closeEditor(); closeFlowEditor(); closeRoomEditor(); cancelRoomDrawing(); closeMoreInfo(); closeCompactMenus(); showMainView('overview');
+  if (!libraryTemplates().length) newLibraryTemplate();
+  libraryState = { prevView: model.activeViewId, templateId: libraryTemplates()[0].id };
+  model.views[LIBRARY_VIEW] = { id: LIBRARY_VIEW, name: translateValue('Biblioteka'), background: '', backgroundColor: '#0D2838', solidCanvasRatio: 9 / 16, onboardingDone: true, backgroundTransforms: {}, entities: {}, flows: {}, rooms: {} };
+  els.body.classList.add('library-mode'); $('#library-button')?.classList.add('active');
+  await switchSceneView(LIBRARY_VIEW, false);
+  loadLibraryTemplate(libraryState.templateId);
+}
+// Leaving the library (its close button, another view, the Integrations tab or the end of editing): the template is
+// kept and the canvas removed.
+async function closeLibrary(toView = null) {
+  if (!libraryState) return;
+  syncLibraryTemplate(true); const back = toView || libraryState.prevView;
+  closeRoomEditor(); els.body.classList.remove('library-mode'); $('#library-button')?.classList.remove('active'); $('#library-bar')?.remove();
+  libraryState = null;
+  if (model.views[back] && back !== LIBRARY_VIEW) await switchSceneView(back, false);
+  delete model.views[LIBRARY_VIEW]; renderViewSelector(); scheduleSave(true);
+}
+function renderLibraryBar() {
+  if (!libraryState) return;
+  let bar = $('#library-bar'); if (!bar) { bar = document.createElement('div'); bar.id = 'library-bar'; document.body.append(bar); bar.addEventListener('click', onLibraryBarClick); }
+  const esc = v => escapeHtml(translateValue(v)), t = libraryTemplates();
+  bar.innerHTML = `<div class="lib-head"><i class="mdi mdi-bookshelf"></i><b>${esc('Biblioteka termostatów')}</b></div>`
+    + `<div class="lib-items">${t.map(x => `<button type="button" class="lib-item${x.id === libraryState.templateId ? ' active' : ''}" data-lib-open="${escapeHtml(x.id)}" data-no-i18n>${escapeHtml(x.name)}</button>`).join('')}</div>`
+    + `<div class="lib-tools"><button type="button" data-lib-new title="${esc('Nowy szablon')}" aria-label="${esc('Nowy szablon')}"><i class="mdi mdi-plus"></i></button>`
+    + `<button type="button" data-lib-copy title="${esc('Duplikuj szablon')}" aria-label="${esc('Duplikuj szablon')}"><i class="mdi mdi-content-duplicate"></i></button>`
+    + `<button type="button" class="danger" data-lib-delete title="${esc('Usuń szablon')}" aria-label="${esc('Usuń szablon')}"><i class="mdi mdi-delete-outline"></i></button>`
+    + `<button type="button" data-lib-close title="${esc('Zamknij bibliotekę')}" aria-label="${esc('Zamknij bibliotekę')}"><i class="mdi mdi-close"></i></button></div>`;
+}
+async function onLibraryBarClick(event) {
+  const b = event.target.closest('button'); if (!b || !libraryState) return;
+  if (b.hasAttribute('data-lib-close')) return closeLibrary();
+  syncLibraryTemplate(true);
+  if (b.dataset.libOpen) { if (b.dataset.libOpen !== libraryState.templateId) loadLibraryTemplate(b.dataset.libOpen); return; }
+  if (b.hasAttribute('data-lib-new')) { loadLibraryTemplate(newLibraryTemplate().id); scheduleSave(true); return notify('Dodano szablon'); }
+  const current = libraryTemplates().find(t => t.id === libraryState.templateId); if (!current) return;
+  if (b.hasAttribute('data-lib-copy')) { loadLibraryTemplate(newLibraryTemplate(current).id); scheduleSave(true); return notify('Utworzono kopię szablonu'); }
+  if (b.hasAttribute('data-lib-delete')) {
+    if (!await appConfirm({ title: 'Usunąć szablon?', message: 'Szablon zniknie z biblioteki. Termostaty, które już z niego powstały, zostaną bez zmian.', confirmText: 'Usuń', danger: true })) return;
+    model.settings.thermoLibrary = libraryTemplates().filter(t => t.id !== current.id);
+    if (!libraryTemplates().length) newLibraryTemplate();
+    loadLibraryTemplate(libraryTemplates()[0].id); scheduleSave(true); notify('Usunięto szablon');
+  }
+}
+function addThermostatLabel([x, y], entity, templateId = '') {
   const view = activeSceneView(); if (!view || !editMode || !entity) return; view.rooms ||= {};
-  const id = 'room_' + uid(), now = new Date().toISOString();
-  view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...thermoLook(), kind:'icon', thermo:true, draft:true, id, name: entity.name || entity.entity_id, entityIds:[entity.entity_id], points:[],
+  const id = 'room_' + uid(), now = new Date().toISOString(), template = libraryTemplates().find(t => t.id === templateId);
+  view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...(template ? templateLook(template) : thermoLook()), kind:'icon', thermo:true, draft:true, id, name: entity.name || entity.entity_id, entityIds:[entity.entity_id], points:[],
     x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
   rememberAdded(entity.entity_id); refreshStates();
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: true });
@@ -6102,7 +6175,7 @@ function createAddedElement(type, entity, [x, y]) {
   if (type === 'icon') return addIconElement([x, y], entity);
   const now = new Date().toISOString(); if (entity) rememberAdded(entity.entity_id);
   if (type === 'text') { addTextLabel([x, y]); return; }
-  if (type === 'thermostat') { addThermostatLabel([x, y], entity); return; }
+  if (type === 'thermostat') { addThermostatLabel([x, y], entity, addThermoTemplate); return; }
   if (type === 'flow') {
     const id = 'flow_' + uid(), integration = catalogIntegration(entity); view.flows ||= {};
     view.flows[id] = { id, entityId: entity?.entity_id || '', integrationId: integration.entry_id, integrationName: entity ? integration.title : '', sourceDomain: entity ? (integration.domain || entity.domain) : '', displayName: entity?.name || 'Flow', xPercent:x, yPercent:y, ...clone(FLOW_DEFAULTS), itemSizeV2:true, geometryLocked:false, createdAt:now, updatedAt:now };
@@ -6130,6 +6203,7 @@ function onAddDialogClick(event) {
   if (target === els.addDialog || target.closest('[data-add-close]')) return closeAddDialog();
   const typeButton = target.closest('[data-add-type]');
   if (typeButton && !typeButton.disabled) return chooseAddType(typeButton.dataset.addType);
+  const tpl = target.closest('[data-add-template]'); if (tpl) { addState.template = tpl.dataset.addTemplate; return renderAddDialog(); }
   if (target.closest('[data-add-back]')) { addState.step = 'type'; addState.entity = null; return renderAddDialog(); }
   const row = target.closest('[data-add-entity]');
   if (row) {
@@ -6916,7 +6990,8 @@ function bindEvents() {
   els.sceneTabs?.addEventListener('contextmenu', event => { if (tabDrag) event.preventDefault(); });
   els.sceneTabs?.addEventListener('click', event => { if (suppressTabClick) { suppressTabClick = false; event.preventDefault(); event.stopPropagation(); return; } const tab=event.target.closest('[data-scene-view]'); if(!tab)return; showMainView('overview'); switchSceneView(tab.dataset.sceneView); });
   els.settingsToggle?.addEventListener('click', () => { const open = !els.settingsMenu?.classList.contains('open'); closeCompactMenus(); els.settingsMenu?.classList.toggle('open', open); els.settingsToggle?.classList.toggle('active', open); });
-  els.integrationsButton?.addEventListener('click', () => { if (els.integrationsButton.classList.contains('active')) { showMainView('overview'); return; } closeEditor(); closeFlowEditor(); closeRoomEditor(); cancelRoomDrawing(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
+  $('#library-button')?.addEventListener('click', () => libraryState ? closeLibrary() : openLibrary());
+  els.integrationsButton?.addEventListener('click', async () => { if (libraryState) await closeLibrary(); if (els.integrationsButton.classList.contains('active')) { showMainView('overview'); return; } closeEditor(); closeFlowEditor(); closeRoomEditor(); cancelRoomDrawing(); closeMoreInfo(); openIntegrations.clear(); unusedIntegrationsOpen = false; closeCompactMenus(); showMainView('integrations'); });
   els.viewManage?.addEventListener('click', () => { placeViewSheet(); const open = !els.viewSwitcher.classList.contains('open'); closeCompactMenus(); els.viewSwitcher.classList.toggle('open', open); els.viewManage.classList.toggle('active', open); });
   els.viewAdd?.addEventListener('click', addSceneView); els.viewRename?.addEventListener('click', renameSceneView);
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDefault?.addEventListener('click', setDefaultSceneView); els.viewMoveLeft?.addEventListener('click', () => moveSceneView(-1)); els.viewMoveRight?.addEventListener('click', () => moveSceneView(1)); els.viewDelete?.addEventListener('click', deleteSceneView);
@@ -6926,7 +7001,7 @@ function bindEvents() {
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
-  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); if (!mobileView()) window.scrollTo(0, 0); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; if (editMode && libraryState) { closeLibrary().then(() => els.editToggle.click()); return; } closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); if (!mobileView()) window.scrollTo(0, 0); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   $('#snap-menu-button')?.addEventListener('click', event => { event.stopPropagation(); const menu = $('#snap-menu'), open = !menu.classList.contains('open'); closeCompactMenus(); menu.classList.toggle('open', open); $('#snap-menu-button').classList.toggle('active', open); syncSnapMenu(); });
   $('#snap-menu')?.addEventListener('click', event => {
     event.stopPropagation();

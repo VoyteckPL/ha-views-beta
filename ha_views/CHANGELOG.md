@@ -1,3 +1,12 @@
+## 0.6.1-beta.505
+
+- **Biblioteka termostatów (nowa zakładka)**: przycisk z półką na książki w górnym pasku otwiera osobny edytor szablonów termostatu.
+  - **Edycja**: termostat jest na pionowym płótnie 9:16 i edytujesz go tymi samymi narzędziami co na planie: panel, rozgrupowanie, przyciąganie, siatka. Nazwa w sekcji „Ogólne” jest nazwą szablonu.
+  - **Pasek biblioteki**: lista zapisanych szablonów (kliknięcie otwiera szablon), „+” nowy szablon z domyślnego termostatu, „Duplikuj” kopię do zrobienia innej wersji, kosz usuwa szablon (z potwierdzeniem), „×” zamyka bibliotekę.
+  - **Zapis**: szablon zapisuje się sam. Zapisywany jest zawsze zgrupowany, więc rozgrupowany zapisze się, gdy go zgrupujesz albo wyjdziesz.
+  - **Nowy termostat z szablonu**: w „+” → Termostat wybierasz szablon (albo „Domyślny”), a potem encję. Rozmiar dopasowuje się do kształtu planu jak przy domyślnym termostacie.
+  - **Stare „Szablony” usunięte**: rząd 5 slotów w panelu termostatu i zapisane w nich szablony zniknęły.
+
 ## 0.6.1-beta.504
 
 - **Komputer: „Rozgrupuj” pokazuje cały termostat**: po kliknięciu „Rozgrupuj” kamera płynnie dopasowuje widok do ramki termostatu albo etykiety. Ramka staje na środku widocznego planu, możliwie duża, z marginesem 5% z każdej strony, więc widać wszystkie części do edycji. Na telefonie bez zmian.
