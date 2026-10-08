@@ -1494,17 +1494,19 @@ aside.editor.typing .typing-row{display:grid!important;margin:0!important}
 @keyframes thermo-fade{0%,100%{opacity:.25}50%{opacity:1}}
 @keyframes thermo-fill-pulse{0%,100%{opacity:.2}50%{opacity:1}}
 @keyframes thermo-glow{0%,100%{opacity:.72}50%{opacity:1}}
-/* The group's own grid (ungrouped parts being moved / resized): fine violet lines from the group's centre, the two
-   centre axes stronger; it fades out towards its edges. */
+/* The group's own grid (ungrouped parts being moved / resized): fine blue lines from the group's centre, the two
+   centre axes stronger, thick blue lines every 4 steps; it fades out towards its edges. */
 #group-grid{position:absolute;z-index:4;pointer-events:none;--gl:calc(1px / var(--view-zoom,1));
   background-image:
     linear-gradient(to right,transparent calc(var(--gax) - var(--gl) / 2),rgba(192,132,252,var(--gaxa,.5)) calc(var(--gax) - var(--gl) / 2),rgba(192,132,252,var(--gaxa,.5)) calc(var(--gax) + var(--gl) / 2),transparent calc(var(--gax) + var(--gl) / 2)),
     linear-gradient(to bottom,transparent calc(var(--gay) - var(--gl) / 2),rgba(192,132,252,var(--gaya,.5)) calc(var(--gay) - var(--gl) / 2),rgba(192,132,252,var(--gaya,.5)) calc(var(--gay) + var(--gl) / 2),transparent calc(var(--gay) + var(--gl) / 2)),
-    linear-gradient(to right,rgba(125,211,252,.3) var(--gl),transparent var(--gl)),
-    linear-gradient(to bottom,rgba(125,211,252,.3) var(--gl),transparent var(--gl));
-  background-size:100% 100%,100% 100%,var(--gst) var(--gst),var(--gst) var(--gst);
-  background-position:0 0,0 0,var(--gox) 0,0 var(--goy);
-  -webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent);mask-image:radial-gradient(closest-side,#000 60%,transparent)}
+    linear-gradient(to right,rgba(125,211,252,.6) calc(var(--gl) * 2),transparent calc(var(--gl) * 2)),
+    linear-gradient(to bottom,rgba(125,211,252,.6) calc(var(--gl) * 2),transparent calc(var(--gl) * 2)),
+    linear-gradient(to right,rgba(125,211,252,.22) var(--gl),transparent var(--gl)),
+    linear-gradient(to bottom,rgba(125,211,252,.22) var(--gl),transparent var(--gl));
+  background-size:100% 100%,100% 100%,var(--gmst) var(--gmst),var(--gmst) var(--gmst),var(--gst) var(--gst),var(--gst) var(--gst);
+  background-position:0 0,0 0,calc(var(--gmox) - var(--gl)) 0,0 calc(var(--gmoy) - var(--gl)),var(--gox) 0,0 var(--goy);
+  -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent);mask-image:radial-gradient(closest-side,#000 72%,transparent)}
 .align-guide.k-group{background:#c084fc}
 .snap-target.k-group{--sc:rgba(192,132,252,.9)}
 /* Group / ungroup on the panel's head: violet like the group's own grid, so it stands out from the other buttons. */

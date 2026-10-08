@@ -1837,6 +1837,7 @@ function focusPartSection(part) {
 // of the same group, to the group's centre axes and outer edges, and to the group's own fine grid (shown while moving or
 // resizing) - not to the plan's grid or other elements, whatever "Przyciągaj do" says (only switching the guides off stops it).
 const GROUP_GRID = 10; // group grid step (M), in the label's own px (grows and shrinks with the label)
+const GROUP_GRID_MAJOR = 4; // every 4th line of the group grid (counted from the frame's centre) is a thick one
 // Its own settings (the magnet on the panel's head, saved for the whole dashboard): on / off, and what a part snaps to.
 const GROUP_SNAP_DEFAULTS = Object.freeze({ on: true, parts: true, frame: true, spacing: true, grid: 'M' });
 function groupSnapOpts() { return { ...GROUP_SNAP_DEFAULTS, ...(model.settings?.groupSnap || {}), plan: false }; } // "Elementy planu" is gone from the group's snapping
@@ -1885,8 +1886,8 @@ function groupSnap(room, exclude = []) {
   // While the camera carries the part, the grid does not catch (it would hold the part back in jerks).
   if (grid && !cameraPanning) {
     const v = visibleSceneRect(), lines = { l: Math.min(area.l, v.left), r: Math.max(area.r, v.right), t: Math.min(area.t, v.top), b: Math.max(area.b, v.bottom) };
-    for (let n = Math.ceil((lines.l - origin.x) / step); origin.x + n * step <= lines.r; n++) if (n) xs.push({ v: origin.x + n * step - scene.left, kind: 'ggrid', own: true, grid: true });
-    for (let n = Math.ceil((lines.t - origin.y) / step); origin.y + n * step <= lines.b; n++) if (n) ys.push({ v: origin.y + n * step - scene.top, kind: 'ggrid', own: true, grid: true });
+    for (let n = Math.ceil((lines.l - origin.x) / step); origin.x + n * step <= lines.r; n++) if (n) xs.push({ v: origin.x + n * step - scene.left, kind: 'ggrid', own: true, grid: true, gmajor: n % GROUP_GRID_MAJOR === 0 });
+    for (let n = Math.ceil((lines.t - origin.y) / step); origin.y + n * step <= lines.b; n++) if (n) ys.push({ v: origin.y + n * step - scene.top, kind: 'ggrid', own: true, grid: true, gmajor: n % GROUP_GRID_MAJOR === 0 });
   }
   return { scene, xs, ys, step, anchor: origin, area, others: o.parts ? others : [], grid, frame: fr, frameBoxes };
 }
@@ -1931,7 +1932,8 @@ function groupPlanTargets(room, scene) {
     .map(n => { const r = n.getBoundingClientRect(); return { l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top, radius: shapedRect(n).radius }; }).filter(b => b.r - b.l > 1);
   return { xs: all.xs, ys: all.ys, boxes };
 }
-// The group's grid drawn under the parts while one is moved / resized: fine lines every step, the centre axes stronger.
+// The group's grid drawn under the parts while one is moved / resized: fine lines every step, thick ones every
+// GROUP_GRID_MAJOR steps (landmarks), the frame's centre axes strongest.
 function showGroupGrid(ctx) {
   if (!ctx || !ctx.grid || !groupSnapOpts().on) return hideGroupGrid();
   let el = $('#group-grid'); if (!el) { el = document.createElement('div'); el.id = 'group-grid'; el.setAttribute('aria-hidden', 'true'); els.scene.append(el); }
@@ -1941,6 +1943,8 @@ function showGroupGrid(ctx) {
   els.scene.classList.add('group-editing');
   el.style.setProperty('--gax', `${ax}px`); el.style.setProperty('--gay', `${ay}px`); el.style.setProperty('--gst', `${st}px`);
   el.style.setProperty('--gox', `${((ax % st) + st) % st}px`); el.style.setProperty('--goy', `${((ay % st) + st) % st}px`);
+  const mst = st * GROUP_GRID_MAJOR; el.style.setProperty('--gmst', `${mst}px`);
+  el.style.setProperty('--gmox', `${((ax % mst) + mst) % mst}px`); el.style.setProperty('--gmoy', `${((ay % mst) + mst) % mst}px`);
 }
 function hideGroupGrid() { $('#group-grid')?.remove(); els.scene?.classList.remove('group-editing'); }
 // Two fingers are a zoom, never a move: fingers on the screen are counted; a finger landing while one label is being
@@ -3497,7 +3501,7 @@ function alignLabel(context, xPercent, yPercent, event) {
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
-    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, own, major, frame }) => offsets.forEach(o => add(v - o, grid ? 3.5 : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, gmajor, own, major, frame }) => offsets.forEach(o => add(v - o, grid ? (gmajor ? 3.1 : 3.5) : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).

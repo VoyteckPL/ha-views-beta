@@ -1,3 +1,7 @@
+## 0.6.1-beta.489
+
+- **Siatka grupy z punktami orientacyjnymi**: po rozgrupowaniu siatka termostatu i etykiety ma cienkie linie i co 4 kratki grubsze. Grube linie są liczone od środka ramki, a fioletowe osie wyznaczają sam środek. Przy przeciąganiu grube linie przyciągają trochę chętniej niż cienkie. Siatka zanika dalej od części niż wcześniej.
+
 ## 0.6.1-beta.488
 
 - **Środek między ramką a tarczą**: część można teraz postawić dokładnie pośrodku między dwoma obiektami, które nie są sąsiadami, np. ikonę między górną krawędzią ramki a górną krawędzią tarczy, gdy w tym samym pionie leżą też inne części. Limonkowe strzałki pokazują dwa równe odstępy. Część nie może nachodzić na inną, więc środek złapie się tylko wtedy, gdy jest na nim wolne miejsce.
