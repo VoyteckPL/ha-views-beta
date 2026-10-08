@@ -1,3 +1,7 @@
+## 0.6.1-beta.499
+
+- **Termostat bez „Układ” i „Styl”**: w sekcji Grupa termostatu nie ma już przycisków gotowych układów (jedno pod drugim, obok siebie…) ani stylów (bez tła, ciemne, jasne, szkło). Termostat ma swobodny układ i własny wygląd. Etykiety mają te przyciski bez zmian.
+
 ## 0.6.1-beta.498
 
 - **Nowy domyślny termostat**: nowo dodany termostat ma rozmiar ramki, rozmieszczenie elementów i wygląd przygotowanego wzorcowego termostatu: dużą tarczę z temperaturą w środku, stan pracy nad nią, nazwę i ikonę u góry, przyciski −/+ i przyciski trybów w jednym rzędzie na dole.

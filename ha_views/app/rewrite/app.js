@@ -2806,12 +2806,13 @@ function roomEditorMarkup(room) {
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
     // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
     + (r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
-    + ((r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
+    // A thermostat is laid out freely and has its own look: no layout presets and no style presets.
+    + ((r.labelLinked && !isThermoRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
           ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
             + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
           : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '')
-        + row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join(''))
+        + (isThermoRoom(r) ? '' : row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join('')))
         + bgSub + borderSub)
     + `</div>`, [
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
