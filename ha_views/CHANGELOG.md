@@ -1,3 +1,15 @@
+## 0.6.1-beta.507
+
+- **Efekty przejścia dla przycisków do innego widoku** (np. „Na piętro” / „Na parter”). W panelu przycisku, przy „Dotknięcie w widoku → Przejdź do widoku”, jest wybór efektu:
+  - **Winda** (domyślnie): plan odjeżdża w dół lub w górę z lekkim rozmyciem, a kolejne piętro wjeżdża z drugiej strony.
+  - **Wejście w przycisk**: widok powiększa się w stronę przycisku, a nowy wyłania się ze środka.
+  - **Przewrót**: plan obraca się jak kartka.
+  - **Przesunięcie** i **Przenikanie**.
+  - **Bez efektu**.
+  - **Kierunek** windy, przewrotu i przesunięcia: „Automatycznie (wg strzałki)” bierze go ze strzałki na ikonie przycisku (arrow-up / arrow-down), a jeśli jej nie ma, z kolejności widoków. Można też wybrać na stałe „W górę” albo „W dół”.
+  - **Przetestuj przejście** w panelu: przechodzi do widoku i wraca z powrotem.
+  - Przy włączonej w systemie opcji ograniczania ruchu przejście jest bez efektu.
+
 ## 0.6.1-beta.506
 
 - **Nowy wskaźnik na silniku termostatu**: „+” → Wskaźnik tworzy wskaźnik zbudowany jak termostat: swobodny układ, rozgrupowanie, części ze stylem, tłem i ramką, przyciąganie i siatka.
