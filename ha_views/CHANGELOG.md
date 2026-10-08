@@ -1,3 +1,9 @@
+## 0.6.1-beta.494
+
+- **Dodatkowe encje**: pole wyszukiwania ma tę samą szerokość co pole encji i stoi pod dodanymi encjami. Gdy żadnej nie ma, stoi w tej samej linii co nazwa „Dodatkowe encje”.
+- **Stany pracy w jednej linii**: używane stany to małe kafelki z ×, które usuwają stan. Pod nimi jest rozwijane „Dodaj stan pracy” z pozostałymi stanami. Zastępuje to długą listę pól wyboru.
+- **Duplikuj w nagłówku**: przycisk duplikowania jest w nagłówku panelu, między „Wklej styl” a koszem, i pyta o potwierdzenie. Wiersz „Kopia” zniknął z sekcji „Ogólne”. Kopiuj styl (błękitny), Wklej styl (żółty) i Duplikuj (zielony) mają własne kolory.
+
 ## 0.6.1-beta.493
 
 - **Uporządkowana sekcja „Ogólne”**: kolejność to Nazwa, Encja, Dodatkowe encje, Stany pracy, Dotknięcie w widoku, Szablony, a na końcu Duplikuj.

@@ -1646,10 +1646,22 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
    name field), the search results across the whole width under them. The extra entities' search is small and grows
    while it is used. */
 .editor .control.entity-line{align-items:start;row-gap:4px}
-.entity-line>label{line-height:32px;margin:0}
+.editor .control.entity-line>label{line-height:32px;margin:0;align-self:start!important}
 .entity-line-body{display:flex;flex-direction:column;gap:4px;min-width:0}
 .entity-line .room-entity-list:empty,.entity-line .room-entity-results:empty{display:none}
 .entity-line .room-entity-search{margin:0;height:32px;box-sizing:border-box}
 .entity-line .room-entity-results{grid-column:1/-1;margin-top:2px}
-.entity-line .room-entity-search.grow{width:128px;max-width:100%;align-self:flex-end;transition:width .18s ease}
-.entity-line .room-entity-search.grow:focus-within,.entity-line .room-entity-search.grow:has(input:not(:placeholder-shown)){width:100%}
+/* Work states: the used ones as small chips (× takes one out), a small menu under them to add one. */
+.act-chips{display:flex;flex-wrap:wrap;gap:4px}.act-chips:empty{display:none}
+.act-chip{display:inline-flex;align-items:center;gap:2px;height:26px;padding:0 2px 0 9px;border:1px solid rgba(99,181,216,.45);border-radius:13px;background:#0d2e3e;color:#dff6ff;font-size:11px;font-weight:700}
+.act-chip button{width:22px;height:22px;padding:0;border:0;border-radius:11px;background:transparent;color:#9fc3d4;font-size:13px;display:grid;place-items:center;cursor:pointer}
+.act-chip button:hover{background:rgba(255,255,255,.08);color:#fff}
+.act-add>summary{list-style:none;display:flex;align-items:center;gap:6px;height:32px;padding:0 9px;box-sizing:border-box;border:1px dashed rgba(99,181,216,.4);border-radius:8px;color:#9fc3d4;font-size:11px;font-weight:700;cursor:pointer}
+.act-add>summary::-webkit-details-marker{display:none}.act-add[open]>summary{border-style:solid;color:#dff6ff}
+.act-add-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.act-add-list button{height:26px;padding:0 10px;border:1px solid rgba(99,181,216,.3);border-radius:13px;background:#0b2533;color:#cfe9f5;font-size:11px;font-weight:700;cursor:pointer}
+.act-add-list button:hover{border-color:rgba(99,181,216,.7);color:#fff}
+/* The head: copy / paste style and duplicate in their own colours, so they are not mistaken for one another. */
+#room-editor #room-copy-style{color:#7dd3fc;border-color:rgba(125,211,252,.5)}
+#room-editor #room-paste-style{color:#fbbf24;border-color:rgba(251,191,36,.5)}
+#room-editor #room-duplicate{color:#4ade80;border-color:rgba(74,222,128,.5)}
