@@ -1418,15 +1418,15 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .room-label-part.editable::after,.room-label-card.editable::after,.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{inset:0!important;border-radius:inherit!important}
 .card-handle.nw{left:0;top:0}.card-handle.ne{left:100%;top:0}.card-handle.sw{left:0;top:100%}.card-handle.se{left:100%;top:100%}
 .room-label-part.editable.selected.square::before,.room-label-card.editable.selected.square::before{top:0}
-/* Edit grid: square cells counted from the plan's centre; the centre lines (both ways) are strong, the thick lines (every
-   N cells across / M cells down, "Grube linie co") a little thinner, then the regular grid. */
+/* Edit grid: the centre lines (both ways) are strong, the thick lines (equal zones, edge to edge, "Strefy"
+   in the snap menu) a little thinner, then the fine grid dividing every zone. */
 .scene:after{background-image:
-  linear-gradient(to right,transparent calc(50% - 1px),rgba(143,223,255,.62) calc(50% - 1px),rgba(143,223,255,.62) calc(50% + 1px),transparent calc(50% + 1px)),
-  linear-gradient(to bottom,transparent calc(50% - 1px),rgba(143,223,255,.62) calc(50% - 1px),rgba(143,223,255,.62) calc(50% + 1px),transparent calc(50% + 1px)),
+  linear-gradient(to right,transparent calc(50% - 1px),rgba(143,223,255,var(--cxa,.62)) calc(50% - 1px),rgba(143,223,255,var(--cxa,.62)) calc(50% + 1px),transparent calc(50% + 1px)),
+  linear-gradient(to bottom,transparent calc(50% - 1px),rgba(143,223,255,var(--cya,.62)) calc(50% - 1px),rgba(143,223,255,var(--cya,.62)) calc(50% + 1px),transparent calc(50% + 1px)),
   linear-gradient(to right,rgba(143,223,255,.36) 1.5px,transparent 1.5px),
   linear-gradient(to bottom,rgba(143,223,255,.36) 1.5px,transparent 1.5px),
   linear-gradient(to right,rgba(143,223,255,.12) 1px,transparent 1px),linear-gradient(to bottom,rgba(143,223,255,.12) 1px,transparent 1px)!important;
-  background-size:100% 100%,100% 100%,var(--maj-x,25%) 100%,100% var(--maj-y,25%),var(--grid-px,10%) var(--grid-px,10%),var(--grid-px,10%) var(--grid-px,10%)!important;
+  background-size:100% 100%,100% 100%,var(--maj-x,25%) 100%,100% var(--maj-y,25%),var(--grid-px,10%) var(--grid-py,10%),var(--grid-px,10%) var(--grid-py,10%)!important;
   background-position:0 0,0 0,var(--maj-ox,0) 0,0 var(--maj-oy,0),var(--grid-ox,0) var(--grid-oy,0),var(--grid-ox,0) var(--grid-oy,0)!important;
   background-repeat:no-repeat,no-repeat,repeat-x,repeat-y,repeat,repeat!important}
 /* Guide lines, snap highlights and edit outlines: one device pixel thin (at most half a CSS pixel) and centred exactly

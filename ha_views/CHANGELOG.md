@@ -1,3 +1,8 @@
+## 0.6.1-beta.478
+
+- **Siatka w równych strefach**: grube linie dzielą cały plan na równe strefy, od krawędzi do krawędzi (bez wąskich pasków przy brzegach). W menu magnesu „Strefy” ustawiasz liczbę kolumn (↔) i wierszy (↕). Domyślnie 4 kolumny, a liczba wierszy dobiera się do kształtu planu, żeby strefy były prawie kwadratowe (na 9:16: 4 × 7). Drobna siatka dzieli każdą strefę na równe kratki, więc zawsze trafia w grube linie. Mocna linia środka jest rysowana tylko tam, gdzie pokrywa się z grubą linią. Poprzednie ustawienie „Grube linie co” jest zastąpione przez „Strefy”.
+- **Powiększanie po zmniejszeniu**: termostat lub etykieta zmniejszone kropką poniżej zawartości przy powiększaniu najpierw wracają do swojego poprzedniego rozmiaru (zawartość rośnie proporcjonalnie), a dopiero dalej rośnie sama ramka. Suwak „Rozmiar” ustala nowy rozmiar wyjściowy.
+
 ## 0.6.1-beta.477
 
 - **Zmniejszanie grupy kropkami poniżej zawartości**: gdy ramka termostatu lub etykiety dojdzie do zawartości, dalsze ciągnięcie kropki zmniejsza całą grupę proporcjonalnie. Wszystkie części maleją razem i zachowują wzajemne położenie, jakby cały termostat był pomniejszony. Wcześniej ramka zatrzymywała się na marginesach. Przeciwny róg stoi w miejscu. Najmniejszy rozmiar to 0,3 skali grupy.
