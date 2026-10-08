@@ -1,3 +1,7 @@
+## 0.6.1-beta.497
+
+- **Duplikuj tworzy jedną kopię**: przycisk w nagłówku miał podpięte dwie akcje. Stara kopiowała od razu, bez pytania, a nowa robiła drugą kopię po potwierdzeniu. Teraz jest tylko kopia po potwierdzeniu, a „Anuluj” nic nie tworzy. Przycisk termostatu ma podpis „Duplikuj termostat”.
+
 ## 0.6.1-beta.496
 
 - **Tłumaczenia termostatu**: w wersji angielskiej przetłumaczone są sekcja „Stan pracy” (Work state) i złożone etykiety w trybach, np. „Kolor · aktywny” → „Colour · active”, „Przezrocz.”, „Grubość”. Każda etykieta złożona z kropką tłumaczy się teraz po obu stronach.
