@@ -1630,3 +1630,8 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 /* A group sized on the grid's thick lines (and its frame while ungrouped) stands exactly where its frame is: its point
    is not rounded to a whole pixel, so the frame's corners lie exactly on the lines' crossings. */
 @supports (left:round(1.5px,1px)){.room-label-card.exact[style*="--ax"],.room-label-backdrop.exact[style*="--ax"]{left:var(--ax)!important;top:var(--ay)!important}}
+/* "Pokaż" of a thermostat in three rows: what it shows (outlined), its parts, each mode button */
+.thermo-show .room-card-row+.room-card-row{margin-top:2px}
+.room-editor .room-card-preset.show-basic{border-style:dashed}
+.room-editor .room-card-preset.show-basic.active{border-style:solid}
+.room-editor .room-card-preset.show-mode.muted{opacity:.4}

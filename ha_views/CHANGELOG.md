@@ -1,3 +1,13 @@
+## 0.6.1-beta.484
+
+- **„Pokaż” termostatu w trzech rzędach**, w tej samej kolejności co sekcje poniżej:
+  - **Pokaż**: ikona, nazwa, tryb (stan). Przyciski są przerywane, gdy wyłączone, i mają inne ikony niż przy etykiecie.
+  - **Termostat**: tarcza, temperatura ustawiona, temperatura aktualna, stan pracy, przyciski −/+, tryby.
+  - **Tryby**: każdy przycisk trybu osobno.
+- **Poprawka: przycisk „Tryby” nie wyłączał osobnych przycisków trybów** (tych utworzonych ze starego rzędu trybów). Teraz „Tryby” pokazuje i ukrywa wszystkie przyciski trybów razem z ich sekcjami. Pojedynczy tryb włączysz lub wyłączysz w rzędzie „Tryby”, a włączenie jednego trybu włącza też „Tryby”.
+- **Kolejność sekcji**: sekcje poszczególnych trybów są zaraz po sekcji „Tryby”, a dodatkowe encje na końcu.
+- **Jedna otwarta sekcja**: po kliknięciu części termostatu otwiera się tylko jej sekcja, z widocznymi, ale zwiniętymi podsekcjami. Tak samo przy przejściu na inną część. Wcześniej otwierały się też podsekcje o tej samej nazwie w innych częściach (np. „Rozmiar”).
+
 ## 0.6.1-beta.483
 
 - **Poprawka: skakanie ramki przy swobodnej zmianie rozmiaru** (z wyłączonym „Rozmiar tylko po grubych liniach”). Termostat lub etykieta zgrupowane ponownie po rozgrupowaniu liczyły swój najmniejszy rozmiar od aktualnej ramki zamiast od części. Ramka przeskakiwała już przy pierwszym ruchu kropki, a potem nie dochodziła do kursora, więc nie łapała grubej linii. Teraz najmniejszy rozmiar to zasięg części wokół środka plus margines, a ramka zachowuje ustawiony rozmiar.
