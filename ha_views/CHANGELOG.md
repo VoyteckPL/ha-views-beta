@@ -1,3 +1,10 @@
+## 0.6.1-beta.495
+
+- **Stany pracy jako lista**: w sekcji „Ogólne” stany pracy wybierasz z rozwijanej listy, a kafelki zniknęły.
+  - Zamknięta lista pokazuje zaznaczone stany.
+  - Otwarta pokazuje wszystkie stany pracy, jakie podaje encja climate w HA: grzeje, nagrzewa, chłodzi, osusza, wentyluje, odmraża, bezczynny i wyłączony. Każdy ma ikonę, nazwę z HA i pole zaznaczenia.
+  - Lista zostaje otwarta, gdy zaznaczasz kolejne stany.
+
 ## 0.6.1-beta.494
 
 - **Dodatkowe encje**: pole wyszukiwania ma tę samą szerokość co pole encji i stoi pod dodanymi encjami. Gdy żadnej nie ma, stoi w tej samej linii co nazwa „Dodatkowe encje”.
