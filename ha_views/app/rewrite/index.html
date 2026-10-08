@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-474">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-475">
 </head>
 <body>
   <header class="topbar">
@@ -107,6 +107,7 @@
         <div class="grid-major-row"><span>Grube linie co</span>
           <div class="major-step" data-major-axis="x" title="Grube linie pionowe co tyle kratek" aria-label="Grube linie pionowe co tyle kratek"><button type="button" data-major-step="-1" aria-label="Mniej">−</button><i class="mdi mdi-arrow-left-right"></i><b>5</b><button type="button" data-major-step="1" aria-label="Więcej">+</button></div>
           <div class="major-step" data-major-axis="y" title="Grube linie poziome co tyle kratek" aria-label="Grube linie poziome co tyle kratek"><button type="button" data-major-step="-1" aria-label="Mniej">−</button><i class="mdi mdi-arrow-up-down"></i><b>5</b><button type="button" data-major-step="1" aria-label="Więcej">+</button></div>
+          <button id="major-fit" type="button" class="snap-icon major-fit" aria-pressed="false" title="Po wyjściu z edycji dociągnij rogi do skrzyżowań grubych linii" aria-label="Po wyjściu z edycji dociągnij rogi do skrzyżowań grubych linii"><i class="mdi mdi-vector-square-close"></i></button>
         </div>
         
         
@@ -354,6 +355,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-474"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-475"></script>
 </body>
 </html>

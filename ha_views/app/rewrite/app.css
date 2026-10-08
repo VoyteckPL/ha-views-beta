@@ -1625,3 +1625,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .snap-menu .grid-row:has(.grid-toggle:not(.active))~.grid-major-row{opacity:.45}
 .align-guide.k-major{background:rgba(143,223,255,.95)}
 .snap-icon[data-snap-key="major"].active{color:#8fdfff;border-color:rgba(143,223,255,.6)}
+.snap-menu .grid-major-row .major-fit{width:28px;height:26px;font-size:15px}
+.snap-menu .grid-major-row .major-fit.active{color:#8fdfff;border-color:rgba(143,223,255,.6);background:#12384a}

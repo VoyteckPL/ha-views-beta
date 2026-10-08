@@ -1,3 +1,11 @@
+## 0.6.1-beta.475
+
+- **Dociąganie do skrzyżowań grubych linii** (nowy przycisk w menu przyciągania, w wierszu „Grube linie co”, domyślnie wyłączony). Gdy jest włączony, przy wyjściu z trybu edycji każda zgrupowana etykieta i termostat, których rogi leżą blisko skrzyżowań grubych linii (do 1/5 grubej kratki), dostaje rogi dokładnie na tych skrzyżowaniach:
+  - zawartość skaluje się, żeby się zmieściła,
+  - ramka wypełnia pole między liniami,
+  - element jest w nim wyśrodkowany.
+  Usuwa to drobne zmiany rozmiaru, np. po edycji w rozgrupowaniu. Elementy ustawione swobodnie, z dala od grubych linii, zostają bez zmian.
+
 ## 0.6.1-beta.474
 
 - **Grube linie siatki co tyle samo w obu kierunkach**: grube linie liczone są w kratkach od środka planu, więc na planie 9:16 tworzą kwadraty. Wcześniej poziome grube linie dzieliły wysokość na ćwiartki, a pionowe szerokość.
