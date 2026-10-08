@@ -3489,6 +3489,12 @@ function alignLabel(context, xPercent, yPercent, event) {
       add(a[lo] - g - half, sf + .8, null, [[a[hi], b[lo], 'spacing'], [a[lo] - g, a[lo], 'spacing']], [{ ...a, kind: 'spacing' }, { ...b, kind: 'spacing' }]);
       if (g > half * 2 + 2) { const free = (g - half * 2) / 2; add(a[hi] + free + half, sf + .6, null, [[a[hi], a[hi] + free, 'spacing'], [b[lo] - free, b[lo], 'spacing']], [{ ...a, kind: 'spacing' }, { ...b, kind: 'spacing' }]); }
     }
+    // Exactly between two objects that are not neighbours (others lie between them, e.g. an icon right between the
+    // frame's top edge and the dial, with the name in between): a little behind the neighbours' middle.
+    for (let i = 0; i + 2 < row.length; i++) for (let j = i + 2; j < row.length; j++) {
+      const a = row[i], b = row[j], g = b[lo] - a[hi]; if (g <= half * 2 + 2) continue; const free = (g - half * 2) / 2, sf = Math.min(far(a), far(b));
+      add(a[hi] + free + half, sf + .9 + (j - i - 1) * .2, null, [[a[hi], a[hi] + free, 'spacing'], [b[lo] - free, b[lo], 'spacing']], [{ ...a, kind: 'spacing' }, { ...b, kind: 'spacing' }]);
+    }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
     guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, own, major, frame }) => offsets.forEach(o => add(v - o, grid ? 3.5 : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));

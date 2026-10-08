@@ -1,3 +1,7 @@
+## 0.6.1-beta.488
+
+- **Środek między ramką a tarczą**: część można teraz postawić dokładnie pośrodku między dwoma obiektami, które nie są sąsiadami, np. ikonę między górną krawędzią ramki a górną krawędzią tarczy, gdy w tym samym pionie leżą też inne części. Limonkowe strzałki pokazują dwa równe odstępy. Część nie może nachodzić na inną, więc środek złapie się tylko wtedy, gdy jest na nim wolne miejsce.
+
 ## 0.6.1-beta.487
 
 - **Prostsze przyciąganie w grupie**: magnes grupy ma 4 przełączniki, każdy w swoim kolorze linii:
