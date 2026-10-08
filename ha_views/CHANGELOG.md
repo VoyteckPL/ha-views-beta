@@ -1,3 +1,11 @@
+## 0.6.1-beta.498
+
+- **Nowy domyślny termostat**: nowo dodany termostat ma rozmiar ramki, rozmieszczenie elementów i wygląd przygotowanego wzorcowego termostatu: dużą tarczę z temperaturą w środku, stan pracy nad nią, nazwę i ikonę u góry, przyciski −/+ i przyciski trybów w jednym rzędzie na dole.
+  - Nie są przenoszone ustawienia konkretnego urządzenia: teksty stanów pracy i trybów, wybrane stany pracy oraz dodatkowe encje.
+  - Rozmiar dopasowuje się do kształtu planu. Na planie pionowym (9:16) termostat jest taki jak wzór, a na szerszym odpowiednio mniejszy, żeby zajmował tę samą część wysokości planu.
+  - „Ustaw domyślny” w termostacie przywraca ten nowy wygląd.
+  - Istniejące termostaty się nie zmieniają.
+
 ## 0.6.1-beta.497
 
 - **Duplikuj tworzy jedną kopię**: przycisk w nagłówku miał podpięte dwie akcje. Stara kopiowała od razu, bez pytania, a nowa robiła drugą kopię po potwierdzeniu. Teraz jest tylko kopia po potwierdzeniu, a „Anuluj” nic nie tworzy. Przycisk termostatu ma podpis „Duplikuj termostat”.

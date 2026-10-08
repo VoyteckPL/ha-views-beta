@@ -6008,16 +6008,53 @@ function addIconElement([x, y], entity = null) {
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
 }
 // Termostat: a label on a climate entity, laid out freely (each part can be moved inside the group or ungrouped).
-const THERMO_LAYOUT = { labelIcon:[0,-177], labelName:[0,-131], labelAction:[0,-96], labelDial:[0,0], labelTarget:[0,-18], labelCurrent:[0,25], labelMinus:[-70,90], labelPlus:[70,90], labelModes:[0,146], labelState:[0,184] };
+// The default thermostat: frame size, the parts' places in it and their look. Device-specific settings (texts of the
+// work states and modes, used work states, extra entities) are not part of it.
+const THERMO_DEFAULT_LOOK = Object.freeze({
+  tapAction:"more_info", labelCardRadius:26, labelCardPadding:0, labelIconName:"mdi:water", labelIconOn:"#20B9E7", labelIconSize:34,
+  labelIconAnim:true, labelIconVariant:true, labelIconNameOn:"mdi:water", labelIconNameOff:"mdi:water-off", labelIconOutlineWidth:0.5,
+  labelIconSource:"mdi", labelCardFree:true, labelNameColorState:true, labelStateColorState:true, labelStateColorOn:"#FFFFFF",
+  labelStateWeight:"bold", labelStateBgState:true, labelIconW:65.8, labelIconH:65.8, labelNameW:204.4, labelNameH:56.8, labelStateW:240.3,
+  labelStateH:52.3, labelIconFY:-400.03, labelNameFY:-309.5, labelStateFX:-4.11, labelStateFY:258.89, labelNameSize:30, labelStateColor:"#FFFFFF",
+  labelStateSize:28, labelDial:true, labelDialSize:110, labelTarget:true, labelTargetSize:46, labelTargetBorderOpacity:0.35,
+  labelTargetBorderWidth:2, labelCurrent:true, labelCurrentSize:71, labelAction:true, labelActionSize:40, labelActionColorOff:"#9FB6C3",
+  labelMinus:true, labelMinusSize:24, labelMinusBg:true, labelMinusBgOpacity:0.08, labelMinusBgColor:"#FFFFFF", labelMinusBorder:true,
+  labelMinusBorderOpacity:0.25, labelPlus:true, labelPlusSize:24, labelPlusBg:true, labelPlusBgOpacity:0.08, labelPlusBgColor:"#FFFFFF",
+  labelPlusBorder:true, labelPlusBorderOpacity:0.25, labelModes:true, labelModesSize:96, thermoHeatColor:"#20B9E7", thermoDialWidth:10,
+  thermoGlow:false, labelCurrentDecimals:"1", labelX1Border:true, labelX1Weight:"medium", labelX1W:96.9, labelX1Size:18.4, labelX1Bg:true,
+  labelX2Border:true, labelX2Weight:"medium", labelX2W:97.4, labelX2H:30.7, labelX2Size:18.3, labelX2Bg:true, labelX3Border:true,
+  labelX3Weight:"bold", labelX3H:47.9, labelX3Size:28, labelX3Bg:true, labelTargetWeight:"bold", labelMinusRadius:40, labelMinusPadding:5,
+  labelPlusRadius:40, labelPlusPadding:5, labelActionRadius:6, labelActionPadding:3, labelActionFX:0, labelActionFY:-101.28, labelDialFX:0,
+  labelDialFY:-1.26, labelTargetFX:0, labelTargetFY:135.76, labelCurrentFX:0, labelCurrentFY:-1.26, labelMinusFX:-225.54, labelMinusFY:344.54,
+  labelPlusFX:224.85, labelPlusFY:344.54, labelModesFX:0, labelModesFY:264.18, labelCardW:619.94, labelCardH:929.91, labelCurrentWeight:"bold",
+  labelTargetPadding:4, labelTargetRadius:9, labelStateRadius:9, thermoActColor_off:"#9BC1D8", thermoActColor_idle:"#20B9E7",
+  thermoActColor_heating:"#E63946", labelModesWeight:"normal", labelModesW:113.7, labelModesH:54.7, labelModesColorState:true, labelDialW:552.7,
+  labelDialH:0, thermoFill_heating:"breathe", labelActionWeight:"bold", labelIconName_heating:"mdi:radiator", labelIconName_idle:"mdi:radiator-off",
+  labelIconName_off:"mdi:radiator-off", thermoConfirm:true, thermoActAnim_heating:"pulse", labelModesOpacity_off:1, thermoModeShow_heat:true,
+  thermoModeLayout:"row", thermoConfirm_heat:true, labelIconAnim_heating:"pulse", labelX1FY:-83.84, labelX1FX:0, labelX1Prefix:"", labelX1Unit:"",
+  labelX2FY:-291.09, labelX2FX:129.1, labelX3FY:-291.09, labelX3FX:1.71, thermoModeGap:100, labelNameColor_heating:"#FFFFFF",
+  labelIcon_heating:"#E63946", labelCurrentColorState:false, labelX3Radius:20, labelX3Padding:4, labelCardBg_heatingColor:"#03101A",
+  labelNameRadius:6, labelStateBg_m_offColor:"#607D8B", labelStateBg_m_heatColor:"#FF6374", labelStateColor_m_off:"#FFFFFF", thermoConfirm_off:true,
+  labelModesColor_m_heat:"#22D69B", thermoModeAccent:true, labelMode_heat:true, labelMode_heatFX:-78.38, labelMode_heatFY:344.54,
+  labelMode_heatSize:50, labelMode_heatW:92, labelMode_heatH:92, labelMode_heatBgOnColor:"#FF6374", labelMode_heatBorderOnColor:"#E63946",
+  labelMode_heatRadius:28, labelMode_off:true, labelMode_offFX:70.52, labelMode_offFY:344.54, labelMode_offSize:46, labelMode_offW:92,
+  labelMode_offH:92, labelMode_offBgOnColor:"#9BC1D8", labelMode_offBorderOnColor:"#9BC1D8", labelMode_offRadius:28, thermoModeParts:true,
+  labelMode_heatColorOn:"#03101A", thermoDialStyle:"classic", thermoRoomWidth:30, thermoNeonGlow:5, thermoScaleStep:5, thermoSegCount:44,
+  thermoSegGap:50, thermoCometTail:69, labelCardCentred:true, labelCardExact:true, labelMode_cool:true, labelMode_heat_cool:true,
+  labelMode_auto:true, labelMode_dry:true, labelMode_fan_only:true, labelMode_eco:true, labelMode_electric:true, labelMode_gas:true,
+  labelMode_heat_pump:true, labelMode_high_demand:true, labelMode_performance:true, thermoModeShow_off:true, labelActionW:133.6, labelActionH:33.2,
+  labelMinusW:74.5, labelMinusH:74.5, labelPlusW:75, labelPlusH:74.5, labelCurrentW:240.2, labelCurrentH:80.1
+});
+// Its size on the plan: as made on a tall (9:16) plan; on a wider plan smaller, so it takes the same share of the
+// plan's height.
+const THERMO_DEFAULT_SCALE = 1.29;
+function thermoDefaultScale() {
+  const w = els.scene?.offsetWidth || 0, h = els.scene?.offsetHeight || 0;
+  return Math.round(THERMO_DEFAULT_SCALE * (w && h ? Math.min(1, (h / w) / (16 / 9)) : 1) * 100) / 100;
+}
 // The default look of a thermostat (a new one, and "Ustaw domyślny" on an existing one).
 function thermoLook() {
-  const place = Object.fromEntries(Object.entries(THERMO_LAYOUT).flatMap(([k, [fx, fy]]) => [[`${k}FX`, fx], [`${k}FY`, fy]]));
-  return { ...NEW_ROOM_LABEL, labelCardScale:.8, labelCardFree:true, labelLinked:true,
-    labelIcon:true, labelState:false, labelName:true, labelDial:true, labelTarget:true, labelCurrent:true, labelAction:true, labelMinus:true, labelPlus:true, labelModes:true,
-    labelStateBg:false, labelStateBorder:false, labelIconSize:32, labelNameSize:19, labelDialSize:33, labelTargetSize:46, labelTargetWeight:'bold', labelCurrentSize:18, labelActionSize:15, labelModesSize:19,
-    labelMinusSize:24, labelMinusBg:true, labelMinusBgColor:'#FFFFFF', labelMinusBgOpacity:.08, labelMinusBorder:true, labelMinusBorderOpacity:.25, labelMinusRadius:40, labelMinusPadding:5,
-    labelPlusSize:24, labelPlusBg:true, labelPlusBgColor:'#FFFFFF', labelPlusBgOpacity:.08, labelPlusBorder:true, labelPlusBorderOpacity:.25, labelPlusRadius:40, labelPlusPadding:5,
-    labelActionBg:true, labelActionBgOpacity:.4, labelActionRadius:20, labelActionPadding:3, labelCardRadius:26, labelCardPadding:14, tapAction:'more_info', ...place };
+  return { ...NEW_ROOM_LABEL, ...clone(THERMO_DEFAULT_LOOK), labelCardScale: thermoDefaultScale(), labelLinked:true };
 }
 function addThermostatLabel([x, y], entity) {
   const view = activeSceneView(); if (!view || !editMode || !entity) return; view.rooms ||= {};
