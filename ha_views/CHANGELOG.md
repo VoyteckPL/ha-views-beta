@@ -1,3 +1,7 @@
+## 0.6.1-beta.508
+
+- **Ramka grupy dopasowuje się do widocznych części** (etykiety i pomieszczenia): po ukryciu części ramka i tło grupy zmniejszają się do części, które zostały. Na przykład po ukryciu nazwy i stanu zostaje ramka wokół samej ikony, a po pokazaniu nazwy ramka znowu rośnie. Ramka o własnym rozmiarze, ustawiona kropkami albo zachowana po rozgrupowaniu, wraca wtedy do dopasowania. Części zostają na swoich miejscach. Tło i ramkę wokół samej ikony wyłączysz przyciskami Tło i Ramka w sekcji Grupa. Termostat i wskaźnik mają dalej ramkę o stałym rozmiarze.
+
 ## 0.6.1-beta.507
 
 - **Efekty przejścia dla przycisków do innego widoku** (np. „Na piętro” / „Na parter”). W panelu przycisku, przy „Dotknięcie w widoku → Przejdź do widoku”, jest wybór efektu:

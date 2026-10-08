@@ -3091,6 +3091,10 @@ function onRoomEditorClick(event) {
     const showing = parts.includes(key) && !room[key];
     if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
     room[key] = !room[key];
+    // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
+    // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
+    // and state leaves the frame around the icon only. The parts stay where they are.
+    if (partKeys.includes(key) && !isThermoRoom(room)) { delete room.labelCardCentred; delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; }
     // "Tryby" shows / hides every mode button (the ones switched off on their own stay off); a mode button shown on its
     // own shows the modes again. Each mode's choice is kept with the mode list in the "Tryby" section.
     if (isThermoRoom(room) && room.thermoModeParts) {
