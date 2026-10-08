@@ -1,3 +1,7 @@
+## 0.6.1-beta.479
+
+- **Suwak „Margines” wrócił** do sekcji Grupa, pod suwakiem „Rozmiar”: odstęp między ramką grupy a jej częściami (0–60 px), dla etykiet i termostatów. Nie ma go, gdy widoczna jest tylko jedna część (wtedy grupa nie ma ramki).
+
 ## 0.6.1-beta.478
 
 - **Siatka w równych strefach**: grube linie dzielą cały plan na równe strefy, od krawędzi do krawędzi (bez wąskich pasków przy brzegach). W menu magnesu „Strefy” ustawiasz liczbę kolumn (↔) i wierszy (↕). Domyślnie 4 kolumny, a liczba wierszy dobiera się do kształtu planu, żeby strefy były prawie kwadratowe (na 9:16: 4 × 7). Drobna siatka dzieli każdą strefę na równe kratki, więc zawsze trafia w grube linie. Mocna linia środka jest rysowana tylko tam, gdzie pokrywa się z grubą linią. Poprzednie ustawienie „Grube linie co” jest zastąpione przez „Strefy”.
