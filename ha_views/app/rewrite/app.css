@@ -1642,3 +1642,14 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .snap-target.k-frame{--sc:rgba(192,132,252,.9)}
 .align-guide.k-ggrid{background:#7dd3fc}
 .group-snap-menu .gs-row[data-gsnap-grid]{--kc:#7dd3fc}
+/* "Ogólne": the entity lines - the label on the left, the picked entity or the search on the right (same column as the
+   name field), the search results across the whole width under them. The extra entities' search is small and grows
+   while it is used. */
+.editor .control.entity-line{align-items:start;row-gap:4px}
+.entity-line>label{line-height:32px;margin:0}
+.entity-line-body{display:flex;flex-direction:column;gap:4px;min-width:0}
+.entity-line .room-entity-list:empty,.entity-line .room-entity-results:empty{display:none}
+.entity-line .room-entity-search{margin:0;height:32px;box-sizing:border-box}
+.entity-line .room-entity-results{grid-column:1/-1;margin-top:2px}
+.entity-line .room-entity-search.grow{width:128px;max-width:100%;align-self:flex-end;transition:width .18s ease}
+.entity-line .room-entity-search.grow:focus-within,.entity-line .room-entity-search.grow:has(input:not(:placeholder-shown)){width:100%}

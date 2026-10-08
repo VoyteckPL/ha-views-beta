@@ -1,3 +1,10 @@
+## 0.6.1-beta.493
+
+- **Uporządkowana sekcja „Ogólne”**: kolejność to Nazwa, Encja, Dodatkowe encje, Stany pracy, Dotknięcie w widoku, Szablony, a na końcu Duplikuj.
+  - **Encja**: jedna linia z wybraną encją po prawej, w tej samej kolumnie co pole nazwy. Po usunięciu encji w tym miejscu pojawia się pole wyszukiwania.
+  - **Dodatkowe encje**: po prawej małe pole wyszukiwania, które rośnie na całą szerokość, gdy w nie klikniesz albo coś wpiszesz. Wybrane encje są pod nim, a wyniki wyszukiwania pod całą linią.
+  - **Telefon**: przy wpisywaniu nazwy nad klawiaturą widać tylko jej linię. Przy wyszukiwaniu encji widać całą linię razem z wynikami.
+
 ## 0.6.1-beta.492
 
 - **Kwadratowa siatka**: grube linie zawsze tworzą kwadraty. Liczba stref w poziomie wyznacza bok kwadratu (szerokość planu podzielona przez liczbę kolumn). Rzędy idą w dół przez cały plan w tym samym rozmiarze, więc ostatni rząd może być ucięty dolną krawędzią planu. Drobne kratki też są kwadratowe. Ustawienie liczby rzędów zniknęło, bo wynika z kolumn.

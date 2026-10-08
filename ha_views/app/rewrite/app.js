@@ -2612,17 +2612,23 @@ function roomEditorMarkup(room) {
   const note = text => `<p class="flow-section-note">${text}</p>`, canToggle = r.entityIds.some(id => isToggleableMarker({ entityId:id }));
   const addedList = r.entityIds.map(id => roomEntityRow(id, 'remove')).join('');
   const icon = isIconRoom(r);
-  const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + control('Podpis','textCaption','text',r.textCaption || '') + linkControls(r) + duplicateRow('room', 'Duplikuj tekst')) : section('Ogólne', control('Nazwa','name','text',r.name) + duplicateRow('room', isThermoRoom(r) ? 'Duplikuj termostat' : icon ? 'Duplikuj etykietę' : 'Duplikuj pomieszczenie')
+  // "Ogólne": one line each - name, the entity (picked: its row; none: the search in its place), the extra entities (a small
+  // search that grows while used, the picked ones under it), then work states, tap in view, templates and copy.
+  const esc = t => escapeHtml(translateValue(t));
+  const search = (id, cls = '') => `<label class="room-entity-search${cls}"><i class="mdi mdi-magnify"></i><input id="${id}" type="search" autocomplete="off" placeholder="${esc('Szukaj nazwy lub encji…')}"></label>`;
+  const entityLine = (label, cls, body, results) => `<div class="control entity-line label-entity ${cls}"><label>${esc(label)}</label><div class="entity-line-body">${body}</div>${results}</div>`;
+  const mainEntity = entityLine(icon ? 'Encja' : 'Encje', 'main-entity', `<div class="room-entity-list">${addedList}</div>` + (r.entityIds.length ? '' : search('room-entity-search')), r.entityIds.length ? '' : '<div id="room-entity-results" class="room-entity-list room-entity-results"></div>');
+  const extraFree = EXTRA_PARTS.some(([, k]) => !(r[k] && r[`${k}Entity`]));
+  const extraEntities = isThermoRoom(r) ? entityLine('Dodatkowe encje', 'extra-entities', (extraFree ? search('extra-entity-search', ' grow') : '')
+    + `<div class="room-entity-list">${EXTRA_PARTS.filter(([, k]) => r[k] && r[`${k}Entity`]).map(([, k]) => roomEntityRow(r[`${k}Entity`], 'remove').replace(/data-room-remove="[^"]*"/, `data-extra-remove="${k}"`)).join('')}</div>`,
+    extraFree ? '<div id="extra-entity-results" class="room-entity-results"></div>' : '') : '';
+  const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + control('Podpis','textCaption','text',r.textCaption || '') + linkControls(r) + duplicateRow('room', 'Duplikuj tekst')) : section('Ogólne', control('Nazwa','name','text',r.name)
+    + mainEntity + extraEntities
+    + (isThermoRoom(r) ? gaugeSubsection(esc('Stany pracy'), `<p class="flow-section-note">${esc('Zaznacz stany, których używa to urządzenie — tylko one pojawią się w ustawieniach stanu pracy.')}</p>` + (() => { const used = thermoActsUsed(r); return Object.keys(THERMO_ACTIONS).map(a => plainControl(THERMO_ACTIONS[a][0], `thermoActUse_${a}`, 'checkbox', used.includes(a), { refresh:true })).join(''); })()) : '')
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
-    + (isThermoRoom(r) ? gaugeSubsection(escapeHtml(translateValue('Dodatkowe encje')), `<p class="flow-section-note">${escapeHtml(translateValue('Inne encje związane z urządzeniem (np. ciśnienie, temperatura wody). Każda dostaje swoją sekcję i można ją ustawić jak rozgrupowaną część.'))}</p>`
-        + `<div class="control room-entities-control"><div class="room-entity-list">${EXTRA_PARTS.filter(([, k]) => r[k] && r[`${k}Entity`]).map(([, k]) => roomEntityRow(r[`${k}Entity`], 'remove').replace(/data-room-remove="[^"]*"/, `data-extra-remove="${k}"`)).join('')}</div>`
-        + (EXTRA_PARTS.some(([, k]) => !(r[k] && r[`${k}Entity`])) ? `<label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="extra-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="extra-entity-results" class="room-entity-results"></div>` : '') + `</div>`) : '')
-    + (isThermoRoom(r) ? gaugeSubsection(escapeHtml(translateValue('Stany pracy')), `<p class="flow-section-note">${escapeHtml(translateValue('Zaznacz stany, których używa to urządzenie — tylko one pojawią się w ustawieniach stanu pracy.'))}</p>` + (() => { const used = thermoActsUsed(r); return Object.keys(THERMO_ACTIONS).map(a => plainControl(THERMO_ACTIONS[a][0], `thermoActUse_${a}`, 'checkbox', used.includes(a), { refresh:true })).join(''); })()) : '')
-    + `<div class="control room-entities-control label-entity"><div class="room-entity-list">${addedList}</div>`
-    // A label has one entity: the search shows only while it has none.
-    + (r.entityIds.length ? '</div>' : `<label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="room-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="room-entity-results" class="room-entity-list room-entity-results"></div></div>`)
     + (isThermoRoom(r) ? thermoTemplatesRow() : '')
+    + duplicateRow('room', isThermoRoom(r) ? 'Duplikuj termostat' : icon ? 'Duplikuj etykietę' : 'Duplikuj pomieszczenie')
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
   const lookSection = () => partBar('room', 'Wygląd', sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
@@ -3652,7 +3658,8 @@ function startEditorTyping(input) {
   if (editorTyping) endEditorTyping(true);
   const cover = editSheetCover();
   editorTyping = { panel, content, input, scroll: content.scrollTop, cover };
-  input.closest('.control, .room-entity-search, label')?.classList.add('typing-row'); input.classList.add('typing-input');
+  // An entity search keeps its results visible with it (the whole entity line stays).
+  (input.closest('.entity-line') || input.closest('.control, .room-entity-search, label'))?.classList.add('typing-row'); input.classList.add('typing-input');
   panel.classList.add('typing'); document.body.classList.add('editor-typing'); placeTypingPanel();
 }
 function endEditorTyping(now = false) {
