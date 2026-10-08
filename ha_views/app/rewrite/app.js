@@ -1054,7 +1054,13 @@ function keepLabelPlaceOnRegroup(room) {
     // What the group was, to be put back exactly when it is grouped again with no part moved; and its frame, which
     // stays as it was while ungrouped (unless "Dopasuj do części" is chosen).
     room.labelRegroupSnap = { x: room.labelCardX, y: room.labelCardY, free: !!room.labelCardFree, scale: Number(room.labelCardScale) || 1, parts };
-    if (card?.offsetWidth) { const [fx, fy] = centre(card); room.labelUngroupFrame = { w: card.offsetWidth, h: card.offsetHeight, x: toOffsetX(fx), y: toOffsetY(fy) }; }
+    // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
+    // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
+    // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
+    if (card?.offsetWidth) {
+      const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
+      room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
+    }
   } else {
     const snap = room.labelRegroupSnap; delete room.labelRegroupSnap;
     // The parts drawn now (not every switched-on key: an empty presets row or a mode the device lacks draws nothing).
@@ -1069,8 +1075,13 @@ function keepLabelPlaceOnRegroup(room) {
     }
     const nodes = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width); if (!nodes.length) return;
     const rects = nodes.map(node => node.getBoundingClientRect());
-    const cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
-    room.labelCardX = toOffsetX(cx); room.labelCardY = toOffsetY(cy);
+    let cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
+    // The frame kept while ungrouped stays the group's frame: same place, same size (parts moved inside it do not move
+    // or resize it, so a group laid on the grid stays on it). The group is then centred on its frame, not on its parts.
+    if (kept && Number.isFinite(Number(kept.x)) && Number(kept.w) > 0) {
+      cx = anchorX + Number(kept.x) * scene.width * k / w; cy = anchorY + Number(kept.y) * scene.height * k / h;
+      room.labelCardX = r2(Number(kept.x)); room.labelCardY = r2(Number(kept.y)); room.labelCardW = r2(Number(kept.w)); room.labelCardH = r2(Number(kept.h)); room.labelCardCentred = true;
+    } else { room.labelCardX = toOffsetX(cx); room.labelCardY = toOffsetY(cy); delete room.labelCardCentred; }
     // Grouping again keeps the arrangement: each part's place inside the group (group-local px).
     const local = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 6);
     nodes.forEach(node => { const key = partKey(node), r = node.getBoundingClientRect(); room[`${key}FX`] = r2(((r.left + r.right) / 2 - cx) / local); room[`${key}FY`] = r2(((r.top + r.bottom) / 2 - cy) / local); });
@@ -1166,6 +1177,13 @@ function fitFreeCard(room, group) {
   const pad = parts.length > 1 ? clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60) : 0;
   const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
+  // A group centred on its frame (grouped again with the frame it kept): the frame's size, its centre on the group's point.
+  if (room.labelCardCentred && Number(room.labelCardW) > 0) {
+    card.style.width = `${Number(room.labelCardW)}px`; card.style.height = `${Number(room.labelCardH) || Math.round(maxY - minY + pad * 2)}px`;
+    card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px');
+    parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${Number(room[`${key}FX`]) || 0}px,${Number(room[`${key}FY`]) || 0}px)`; });
+    return;
+  }
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   card.style.width = `${Math.round(maxX - minX + pad * 2.7)}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`;
   card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`);

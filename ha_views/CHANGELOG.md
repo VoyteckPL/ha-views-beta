@@ -1,3 +1,10 @@
+## 0.6.1-beta.481
+
+- **Poprawka: ramka grupy wypadała z siatki po rozgrupowaniu i zgrupowaniu.**
+  - Jeśli w rozgrupowanym termostacie lub etykiecie przesunąłeś części, ponowne zgrupowanie ustawiało ramkę od nowa wokół części, więc ramka przesuwała się i zmieniała rozmiar.
+  - Teraz ramka po zgrupowaniu jest dokładnie tą, którą widać podczas rozgrupowania: to samo miejsce i ten sam rozmiar. Części zostają tam, gdzie je ustawiłeś.
+  - Ramka jest też zapamiętywana z samego układu, a nie z pomiaru ekranu, więc nie przesuwa się nawet o ułamek piksela przy kolejnych rozgrupowaniach. W teście 3 cykle z przesuwaniem części dają 0 px przesunięcia ramki (wcześniej ok. 0,5 px na cykl).
+
 ## 0.6.1-beta.480
 
 - **Przycisk „Rozmiar tylko po grubych liniach siatki”** (menu magnesu, wiersz „Strefy”) zastępuje dociąganie przy wyjściu z edycji. Gdy jest włączony, kropki w rogach etykiety lub termostatu przeskakują tylko po grubych liniach:
