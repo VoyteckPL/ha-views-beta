@@ -358,6 +358,9 @@ function ensureMultiViewModel() {
     view.backgroundColor ??= ''; view.onboardingDone ??= false;
     // An icon whose wizard was never finished is not kept.
     Object.entries(view.rooms || {}).forEach(([key, room]) => { if (room?.draft) { delete view.rooms[key]; migrated = true; } });
+    // A label's / room's group frame hugs its parts again (only a thermostat's / gauge's has its own size): a size kept
+    // from before goes; the parts stay where they are (their offsets are from the same point).
+    Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
     [...Object.values(view.rooms || {}), ...Object.values(view.entities || {}), ...Object.values(view.flows || {})].forEach(item => { if (item?.geometryLocked) { item.geometryLocked = false; migrated = true; } });
     // Layout v3: a marker's id is its key in view.entities (older layouts keyed markers by entity id and some had a random id).
@@ -876,6 +879,9 @@ function isIconRoom(room) { return room?.kind === 'icon'; }
 // optional caption, and a tap runs its own action (go to a view, open a Home Assistant page or a link).
 function isTextRoom(room) { return isIconRoom(room) && !!room?.textEl; }
 function isThermoRoom(room) { return isIconRoom(room) && !!room?.thermo; }
+// Only a thermostat / gauge has a group frame of its own size (designed, kept while ungrouped, sized on the thick grid
+// lines). A label's or room's frame always hugs its shown parts: they can be laid out freely and the frame follows.
+function fixedFrame(room) { return isThermoRoom(room); }
 // Wskaźnik (gauge): built on the thermostat's engine (same parts, dial styles, free layout, ungrouping) but showing a
 // number entity: the arc fills from min to max, the value is the big number; nothing is set from it.
 function isGaugeRoom(room) { return isThermoRoom(room) && !!room?.gauge; }
@@ -1137,7 +1143,7 @@ function keepLabelPlaceOnRegroup(room) {
     // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
     // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
     // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
-    if (card?.offsetWidth) {
+    if (card?.offsetWidth && fixedFrame(room)) {
       const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
       room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
     }
@@ -1147,7 +1153,7 @@ function keepLabelPlaceOnRegroup(room) {
     const shownKeys = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width).map(partKey).filter(Boolean);
     const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
-    const kept = room.labelUngroupFrame; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
+    const kept = fixedFrame(room) ? room.labelUngroupFrame : null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
     if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
@@ -1233,7 +1239,7 @@ function fitLabelBackdrop(room, group) {
   const rects = [...group.querySelectorAll('.room-label-part')].map(node => node.getBoundingClientRect()).filter(r => r.width);
   const scene = els.scene.getBoundingClientRect(), w = els.scene.offsetWidth || 1, k = sceneScale || 1; if (!rects.length || !scene.width) return;
   // While ungrouped the frame keeps the group's size and place (it does not follow the parts being moved).
-  const kept = room.labelUngroupFrame;
+  const kept = fixedFrame(room) && room.labelUngroupFrame;
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
   const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
@@ -1640,7 +1646,7 @@ function fitCardHandles() {
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
-  const zoneSize = majorSizing() && !!handle.closest('.room-label-card'); // "Rozmiar po grubych liniach": no free scaling with Shift
+  const zoneSize = majorSizing() && !!handle.closest('.room-label-card') && fixedFrame(room); // "Rozmiar po grubych liniach": no free scaling with Shift
   if ((event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
   const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
@@ -1699,7 +1705,7 @@ function startFreeResize(event, handle) {
   if (useSnap && !groupMode) own.forEach(r => { const pts = (a, b) => [...(st.edges ? [a, b] : []), ...(st.centers ? [(a + b) / 2] : [])]; pts(r.left, r.right).forEach(v => g.xs.push({ v: v - scene.left, kind: 'label', box: boxOf(r) })); pts(r.top, r.bottom).forEach(v => g.ys.push({ v: v - scene.top, kind: 'label', box: boxOf(r) })); });
   const sizes = useSnap && groupMode ? [...(gopts.parts ? own : []), ...planBoxes.map(b => ({ left: b.l + scene.left, right: b.r + scene.left, top: b.t + scene.top, bottom: b.b + scene.top, width: b.r - b.l, height: b.b - b.t, radius: b.radius }))] : useSnap && st.labels ? [...own, ...$$('#room-labels .room-label-card, #room-labels .room-label-part').filter(n => n.dataset.roomId !== room.id && n.offsetParent !== null).map(shapedRect).filter(r => r.width && rectOnScreen(r, view))] : [];
   let moved = false;
-  const partFrame = !isCard && !room.labelLinked ? groupFrameRect(room, scene) : null;
+  const partFrame = !isCard && !room.labelLinked && fixedFrame(room) ? groupFrameRect(room, scene) : null;
   const camera = dragCamera(last => move(last));
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
@@ -1754,10 +1760,11 @@ function startFreeResize(event, handle) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.
       // Made bigger again, a group shrunk this way first grows back to the size it had (labelCardFitBase), then its frame.
-      const minF = .3 / cardScale0, maxF = Math.max(1, cardBase / cardScale0), f = clamp(Math.min(lw / natW, lh / natH), minF, maxF);
+      const minF = .3 / cardScale0, maxF = fixedFrame(room) ? Math.max(1, cardBase / cardScale0) : 6 / cardScale0, f = clamp(Math.min(lw / natW, lh / natH), minF, maxF);
       lw = Math.max(natW * f, lw); lh = Math.max(natH * f, lh);
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
+      if (!fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; } // a hugging frame: the dots only scale the group
+      else if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
       else { room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10; }
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
@@ -1797,6 +1804,7 @@ function startFreeResize(event, handle) {
 }
 // Ungrouped, a part stays inside the group's frame (the frame kept from the group): moved back in when it would stick out.
 function keepInFrame(room, key, part) {
+  if (!fixedFrame(room)) return false; // a hugging frame follows its parts, nothing is kept inside it
   const sc = els.scene.getBoundingClientRect(), fr = groupFrameRect(room, sc), node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${part}"]`); if (!fr || !node) return false;
   const r = node.getBoundingClientRect(); if (!r.width) return false;
   const fit = (lo, hi, a, b) => b - a > hi - lo ? (lo + hi) / 2 - (a + b) / 2 : a < lo ? lo - a : b > hi ? hi - b : 0;
@@ -1925,7 +1933,7 @@ const nearness = gap => Math.min(4, gap / 60);
 function groupFrameRect(room, scene = els.scene.getBoundingClientRect()) {
   const id = CSS.escape(room.id), drawn = $(`.room-label-backdrop[data-room-id="${id}"]`)?.getBoundingClientRect();
   if (drawn?.width) return { l: drawn.left, r: drawn.right, t: drawn.top, b: drawn.bottom };
-  const kept = room.labelUngroupFrame; if (!kept || !(Number(kept.w) > 0)) return null;
+  const kept = fixedFrame(room) && room.labelUngroupFrame; if (!kept || !(Number(kept.w) > 0)) return null;
   const [axp, ayp] = roomAnchor(room), toScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6);
   const cx = scene.left + axp / 100 * scene.width + Number(kept.x) * toScreen, cy = scene.top + ayp / 100 * scene.height + Number(kept.y) * toScreen, hw = Number(kept.w) * toScreen * lsc / 2, hh = Number(kept.h) * toScreen * lsc / 2;
   return { l: cx - hw, r: cx + hw, t: cy - hh, b: cy + hh };
@@ -3006,7 +3014,7 @@ function onRoomEditorInput(event) {
     const card = room.labelLinked && !(isIconRoom(room) && dashSpan(room)) ? document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`) : null, oldScale = clamp(Number(room.labelCardScale) || 1, .3, 6);
     if (card && !input._frame) { input._frame = { w: card.offsetWidth * oldScale, h: card.offsetHeight * oldScale }; input.addEventListener('change', () => { delete input._frame; }, { once:true }); }
     room.labelCardScale = Math.round(clamp(value * labelScaleBase(room), .2, 6) * 1000) / 1000; delete room.labelCardFitBase; room.updatedAt = new Date().toISOString();
-    if (input._frame) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
+    if (input._frame && fixedFrame(room)) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     // Ungrouped: the frame kept from the group stays the same size on the plan as well.
     const kept = !room.labelLinked && room.labelUngroupFrame;
     if (kept) { if (!input._kept) { input._kept = { w: kept.w * oldScale, h: kept.h * oldScale }; input.addEventListener('change', () => { delete input._kept; }, { once:true }); } const k = clamp(room.labelCardScale, .3, 6); kept.w = Math.round(input._kept.w / k * 100) / 100; kept.h = Math.round(input._kept.h / k * 100) / 100; }

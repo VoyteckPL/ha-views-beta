@@ -1,3 +1,12 @@
+## 0.6.1-beta.509
+
+- **Ramka etykiety i pomieszczenia zawsze otacza części**: główna ramka grupy nie ma już stałego rozmiaru. Dopasowuje się do części, także po rozgrupowaniu, gdy przesuwasz je swobodnie: odsuniesz ikonę, a ramka rośnie razem z nią.
+  - Części nie są już zamknięte w ramce.
+  - Kropki na rogach zgrupowanej etykiety zmieniają skalę całej grupy, a ramka dalej otacza części.
+  - Przy jednej części, np. samej ikonie, ramka ciasno ją otacza z marginesem. Margines ustawisz suwakiem „Margines”, a tło i ramkę wyłączysz przyciskami w sekcji Grupa.
+  - Etykiety i pomieszczenia, które miały zapamiętany stały rozmiar ramki, wracają do dopasowania, a części zostają na swoich miejscach.
+  - Termostat i wskaźnik mają dalej ramkę o stałym rozmiarze (z „Rozmiar tylko po grubych liniach”).
+
 ## 0.6.1-beta.508
 
 - **Ramka grupy dopasowuje się do widocznych części** (etykiety i pomieszczenia): po ukryciu części ramka i tło grupy zmniejszają się do części, które zostały. Na przykład po ukryciu nazwy i stanu zostaje ramka wokół samej ikony, a po pokazaniu nazwy ramka znowu rośnie. Ramka o własnym rozmiarze, ustawiona kropkami albo zachowana po rozgrupowaniu, wraca wtedy do dopasowania. Części zostają na swoich miejscach. Tło i ramkę wokół samej ikony wyłączysz przyciskami Tło i Ramka w sekcji Grupa. Termostat i wskaźnik mają dalej ramkę o stałym rozmiarze.
