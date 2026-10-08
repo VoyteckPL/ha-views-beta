@@ -1,3 +1,7 @@
+## 0.6.1-beta.491
+
+- **Margines grupy tylko tam, gdzie działa**: suwak „Margines” w sekcji Grupa znika, gdy ramka ma własny rozmiar, np. po rozgrupowaniu i ponownym zgrupowaniu albo po zmianie rozmiaru po grubych liniach siatki. Taką ramkę ustawiasz kropkami, więc margines nic by nie zmienił. Gdy ramka dopasowuje się do części, suwak zostaje i dalej zmienia odstęp od ramki.
+
 ## 0.6.1-beta.490
 
 - **Równe odstępy wewnątrz tarczy**: część położona w całości w innej części, np. temperatura w tarczy, liczy odstępy od wewnętrznych krawędzi tej części. Limonkowe strzałki pokazują równy odstęp od krawędzi tarczy do temperatury i dalej do kolejnej części. Część można też postawić dokładnie pośrodku między krawędzią tarczy a inną częścią w środku.

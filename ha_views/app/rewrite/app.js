@@ -2787,8 +2787,9 @@ function roomEditorMarkup(room) {
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
-    // Margin between the group's frame and its parts.
-    + control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true })
+    // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
+    // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
+    + (r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
     + ((r.labelLinked ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
           ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
