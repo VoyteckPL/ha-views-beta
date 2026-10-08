@@ -603,10 +603,13 @@ function gridMajorLines(w, h) { return gridLines(w, h, true); }
 // "Rozmiar po grubych liniach" (button in the snap menu): the corner dots of a label / thermostat group move from one thick
 // grid line to the next only, so its size is always whole zones.
 function majorSizing() { return !!model.settings?.majorFit && model.settings?.snapEnabled !== false; }
+// How far a resized edge is caught by a grid line - and held by it, the same distance, so letting go of a line never
+// makes the edge jump further than it was caught.
+function gridReach() { return mobileView() ? 12 : 9; }
 function gridLineNear(v, horizontal) {
   if (model.settings?.snapEnabled === false) return null;
   const sc = els.scene.getBoundingClientRect(), lines = gridLines(sc.width, sc.height, !!snapTargets().major)[horizontal ? 'xs' : 'ys'], origin = horizontal ? sc.left : sc.top; if (!lines.length) return null;
-  const line = origin + lines.reduce((b, l) => Math.abs(origin + l - v) < Math.abs(origin + b - v) ? l : b, lines[0]); return Math.abs(line - v) <= (mobileView() ? 18 : 13) ? line : null;
+  const line = origin + lines.reduce((b, l) => Math.abs(origin + l - v) < Math.abs(origin + b - v) ? l : b, lines[0]); return Math.abs(line - v) <= gridReach() ? line : null;
 }
 function snapPercent(value) {
   if (model.settings?.snapEnabled === false) return clamp(value, 0, 100);
@@ -1563,7 +1566,14 @@ function startFreeResize(event, handle) {
   // Screen px per group px, from the exact (fractional) width - offsetWidth is rounded to a whole pixel.
   const rect0 = node.getBoundingClientRect(), k = rect0.width / Math.max(1, parseFloat(getComputedStyle(node).width) || node.offsetWidth);
   const keep = [node.style.minWidth, node.style.minHeight]; node.style.minWidth = ''; node.style.minHeight = '';
-  const natW = node.offsetWidth, natH = node.offsetHeight; [node.style.minWidth, node.style.minHeight] = keep;
+  let natW = node.offsetWidth, natH = node.offsetHeight; [node.style.minWidth, node.style.minHeight] = keep;
+  // A group centred on its frame has the frame's size set outright: the least it needs is its parts' extent around the
+  // centre plus the margin (not its current frame), and its frame size is always kept (never handed back to the parts).
+  const centredCard = node.classList.contains('room-label-card') && !!room.labelCardCentred && Number(room.labelCardW) > 0 && !!room.labelCardFree;
+  if (centredCard) {
+    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60), parts = [...node.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth);
+    if (parts.length) { natW = 2 * Math.max(...parts.map(([n, kk]) => Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2)) + (parts.length > 1 ? pad * 2.7 : 0); natH = 2 * Math.max(...parts.map(([n, kk]) => Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2)) + (parts.length > 1 ? pad * 2 : 0); }
+  }
   const cardScale0 = clamp(Number(room.labelCardScale) || 1, .3, 6), cardBase = Math.max(cardScale0, Number(room.labelCardFitBase) || 0);
   const cs = getComputedStyle(node), hasPad = room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '';
   const fixedPad = !isCard && (node.dataset.labelPart === 'icon' || hasPad), padX = fixedPad ? (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) || 0 : 0, padY = fixedPad ? (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) || 0 : 0;
@@ -1634,7 +1644,7 @@ function startFreeResize(event, handle) {
         lines.forEach(t => { const v = (horizontal ? scene.left : scene.top) + t.v, d = Math.abs(edge - v), s = d * .5 + (t.grid ? 3.5 : t.box ? nearness(boxGap(cur, t.box)) : 2); if (sign * (v - fixed) > 4 && d <= reach && (!best || s < best.s)) best = { d, s, edge: v, t }; });
         sizes.forEach(r => { const size = horizontal ? r.width : r.height, v = fixed + sign * size, d = Math.abs(edge - v), s = d * .5 + 1 + nearness(boxGap(cur, relBox(r))); if (d <= reach && (!best || s < best.s)) best = { d, s, edge: v, r, size: true }; });
         // The grid holds a little longer than it catches (a firmer grip): a caught line is kept while the pointer stays near.
-        const held = gridHold[horizontal ? 'x' : 'y'], gl = groupMode ? null : held !== null && Math.abs(edge - held) <= (mobileView() ? 26 : 20) ? held : gridLineNear(edge, horizontal);
+        const held = gridHold[horizontal ? 'x' : 'y'], gl = groupMode ? null : held !== null && Math.abs(edge - held) <= gridReach() ? held : gridLineNear(edge, horizontal);
         gridHold[horizontal ? 'x' : 'y'] = null;
         if (gl !== null && sign * (gl - fixed) > 4) { const d = Math.abs(edge - gl); if (!best || d < best.d || best.d > 3) { best = { d, edge: gl, grid: true }; gridHold[horizontal ? 'x' : 'y'] = gl; } }
         return best; };
@@ -1656,7 +1666,8 @@ function startFreeResize(event, handle) {
       const minF = .3 / cardScale0, maxF = Math.max(1, cardBase / cardScale0), f = clamp(Math.min(lw / natW, lh / natH), minF, maxF);
       lw = Math.max(natW * f, lw); lh = Math.max(natH * f, lh);
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10;
+      if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
+      else { room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10; }
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
       const cw = Math.max(1, natW - padX), ch = Math.max(1, natH - padY), minScale = 6 / startSize;

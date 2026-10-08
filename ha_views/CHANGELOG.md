@@ -1,3 +1,8 @@
+## 0.6.1-beta.483
+
+- **Poprawka: skakanie ramki przy swobodnej zmianie rozmiaru** (z wyłączonym „Rozmiar tylko po grubych liniach”). Termostat lub etykieta zgrupowane ponownie po rozgrupowaniu liczyły swój najmniejszy rozmiar od aktualnej ramki zamiast od części. Ramka przeskakiwała już przy pierwszym ruchu kropki, a potem nie dochodziła do kursora, więc nie łapała grubej linii. Teraz najmniejszy rozmiar to zasięg części wokół środka plus margines, a ramka zachowuje ustawiony rozmiar.
+- **Mniejszy skok przy puszczaniu linii siatki**: linia siatki trzyma krawędź tylko na tę samą odległość, na jaką ją łapie (ok. 9 px na komputerze, 12 px na telefonie). Wcześniej trzymała dłużej (20/26 px), więc krawędź po puszczeniu skakała o ponad 20 px.
+
 ## 0.6.1-beta.482
 
 - **Poprawka: rogi nie zawsze lądowały dokładnie na skrzyżowaniu** przy zmianie rozmiaru po grubych liniach. Usunięte przyczyny:
