@@ -1,3 +1,12 @@
+## 0.6.1-beta.506
+
+- **Nowy wskaźnik na silniku termostatu**: „+” → Wskaźnik tworzy wskaźnik zbudowany jak termostat: swobodny układ, rozgrupowanie, części ze stylem, tłem i ramką, przyciąganie i siatka.
+  - **Części:** ikona, nazwa, łuk, wartość, liczby min/max i procent, a także dodatkowe encje jak w termostacie. Każdą część można ukryć w sekcji Grupa („Pokaż” i „Wskaźnik”).
+  - **Łuk:** wszystkie style tarczy termostatu, czyli klasyczna, segmenty LED, chronograf, podwójny pierścień, termiczna, neon, półkole, kometa i podziałka. Do tego kąt łuku 180–300°, grubość i wskazówka. Podziałka dopasowuje się do zakresu.
+  - **Zakres i kolory:** minimum i maksimum, kolory wg wartości (dolny i górny próg, trzy kolory, płynne przejście) albo jeden kolor łuku.
+  - **Domyślne progi według rodzaju czujnika:** temperatura w domu 10–30 °C (zimno poniżej 18, ciepło od 24), na zewnątrz −20–40 °C, woda 10–80 °C, wilgotność, bateria, CO₂, ciśnienie, napięcie, moc (osobno fotowoltaika), energia i procent. Przycisk „Dobierz automatycznie” w sekcji Łuk ustawia je ponownie.
+  - **Stare wskaźniki** (gauge i podkowa) zostają i działają jak dotąd.
+
 ## 0.6.1-beta.505
 
 - **Biblioteka termostatów (nowa zakładka)**: przycisk z półką na książki w górnym pasku otwiera osobny edytor szablonów termostatu.
