@@ -1627,3 +1627,6 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .snap-icon[data-snap-key="major"].active{color:#8fdfff;border-color:rgba(143,223,255,.6)}
 .snap-menu .grid-major-row .major-fit{width:28px;height:26px;font-size:15px}
 .snap-menu .grid-major-row .major-fit.active{color:#8fdfff;border-color:rgba(143,223,255,.6);background:#12384a}
+/* A group sized on the grid's thick lines (and its frame while ungrouped) stands exactly where its frame is: its point
+   is not rounded to a whole pixel, so the frame's corners lie exactly on the lines' crossings. */
+@supports (left:round(1.5px,1px)){.room-label-card.exact[style*="--ax"],.room-label-backdrop.exact[style*="--ax"]{left:var(--ax)!important;top:var(--ay)!important}}

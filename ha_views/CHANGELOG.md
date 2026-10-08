@@ -1,3 +1,12 @@
+## 0.6.1-beta.482
+
+- **Poprawka: rogi nie zawsze lądowały dokładnie na skrzyżowaniu** przy zmianie rozmiaru po grubych liniach. Usunięte przyczyny:
+  - Grupa zgrupowana ponownie po rozgrupowaniu źle liczyła swój rozmiar i ramka odjeżdżała o kilka pikseli.
+  - Położenie etykiety było zaokrąglane do pełnego piksela.
+  - Grube linie były rysowane według zaokrąglonej wysokości planu, a przyciąganie liczyło według dokładnej, więc u dołu planu rysunek odjeżdżał o ułamek piksela.
+  - Skala ramki była liczona z zaokrąglonej szerokości.
+- Teraz ramka ustawiona po grubych liniach jest wyliczana wprost z linii: jej środek i rozmiar są obliczane, a nie mierzone. Rogi trafiają w skrzyżowania z dokładnością do 0,01 px, także po rozgrupowaniu i zgrupowaniu oraz po wyjściu z edycji. Zwykłe elementy (bez rozmiaru po grubych liniach) działają jak dotąd.
+
 ## 0.6.1-beta.481
 
 - **Poprawka: ramka grupy wypadała z siatki po rozgrupowaniu i zgrupowaniu.**

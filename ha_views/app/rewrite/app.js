@@ -581,7 +581,8 @@ function gridLayout(w, h) {
 function syncGridGeometry() {
   // Guide and edit lines are one device pixel thin, whatever the screen density.
   document.documentElement.style.setProperty('--dpr', String(window.devicePixelRatio || 1));
-  const scene = els.scene; if (!scene) return; const w = scene.offsetWidth, h = scene.offsetHeight; if (!w || !h) return;
+  // The plan's exact (fractional) size: the drawn lines must be where elements snap to (offsetWidth / Height are rounded).
+  const scene = els.scene; if (!scene) return; const cs = getComputedStyle(scene), w = parseFloat(cs.width) || scene.offsetWidth, h = parseFloat(cs.height) || scene.offsetHeight; if (!w || !h) return;
   const L = gridLayout(w, h);
   scene.style.setProperty('--grid-px', `${L.fx}px`); scene.style.setProperty('--grid-py', `${L.fy}px`); scene.style.setProperty('--grid-ox', '0px'); scene.style.setProperty('--grid-oy', '0px');
   // The centre lines are drawn strong only where they are thick lines too (an even number of zones).
@@ -1481,10 +1482,10 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
       free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
-    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
+    return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${free && r.labelCardExact && r.labelCardCentred && Number(r.labelCardW) > 0 ? ' exact' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
-  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${cardLook(r, on)}"></div>` : '';
+  const backdrop = r.labelCardBg || r.labelCardBorder ? `<div class="room-label-backdrop${r.labelCardBlur ? ' blur' : ''}${r.labelCardExact ? ' exact' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${cardLook(r, on)}"></div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : shownParts[0];
   return backdrop + layeredParts(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
@@ -1559,7 +1560,8 @@ function startFreeResize(event, handle) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1, id = CSS.escape(room.id);
   const scene = els.scene.getBoundingClientRect(), planToScreen = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
-  const rect0 = node.getBoundingClientRect(), k = rect0.width / Math.max(1, node.offsetWidth);
+  // Screen px per group px, from the exact (fractional) width - offsetWidth is rounded to a whole pixel.
+  const rect0 = node.getBoundingClientRect(), k = rect0.width / Math.max(1, parseFloat(getComputedStyle(node).width) || node.offsetWidth);
   const keep = [node.style.minWidth, node.style.minHeight]; node.style.minWidth = ''; node.style.minHeight = '';
   const natW = node.offsetWidth, natH = node.offsetHeight; [node.style.minWidth, node.style.minHeight] = keep;
   const cardScale0 = clamp(Number(room.labelCardScale) || 1, .3, 6), cardBase = Math.max(cardScale0, Number(room.labelCardFitBase) || 0);
@@ -1572,6 +1574,24 @@ function startFreeResize(event, handle) {
   const zones = isCard && zoneSize ? gridMajorLines(scene.width, scene.height) : null;
   const nearLine = (list, v) => list.reduce((b, l) => Math.abs(l - v) < Math.abs(b - v) ? l : b, list[0]);
   if (zones?.xs.length && zones.ys.length) { fx = scene.left + nearLine(zones.xs, fx - scene.left); fy = scene.top + nearLine(zones.ys, fy - scene.top); }
+  // Zone sizing works on a group centred on its frame (its parts placed from the frame's centre), so the frame is set
+  // straight from the lines - its centre and size computed, never measured (a measured box is off by the pixel rounding
+  // of the label's point). A group laid out in a row / column, or centred on its parts, is turned into one first:
+  // nothing moves on the plan.
+  let zoneParts = null;
+  if (zones?.xs.length && zones.ys.length) {
+    const lsc = cardScale0, fsx = room.labelCardCentred ? 0 : parseFloat(node.style.getPropertyValue('--fsx')) || 0, fsy = room.labelCardCentred ? 0 : parseFloat(node.style.getPropertyValue('--fsy')) || 0, cs = getComputedStyle(node);
+    if (!room.labelCardFree) {
+      const mx = (rect0.left + rect0.right) / 2, my = (rect0.top + rect0.bottom) / 2;
+      [...node.querySelectorAll(':scope > .room-card-part')].forEach(n => { const kk = partKey(n), r = n.getBoundingClientRect(); if (!kk || !r.width) return; room[`${kk}FX`] = Math.round((r.left + r.width / 2 - mx) / k * 100) / 100; room[`${kk}FY`] = Math.round((r.top + r.height / 2 - my) / k * 100) / 100; });
+      room.labelCardFree = true;
+    } else if (!room.labelCardCentred) ROOM_LABEL_PARTS.forEach(([, kk]) => { if (room[`${kk}FX`] !== undefined) { room[`${kk}FX`] = Math.round(((Number(room[`${kk}FX`]) || 0) - fsx) * 100) / 100; room[`${kk}FY`] = Math.round(((Number(room[`${kk}FY`]) || 0) - fsy) * 100) / 100; } });
+    if (!room.labelCardCentred) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + fsx * lsc) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + fsy * lsc) * 100) / 100; room.labelCardW = parseFloat(cs.width) || node.offsetWidth; room.labelCardH = parseFloat(cs.height) || node.offsetHeight; room.labelCardCentred = true; renderRoomLabels(); }
+    // The parts' extent around the centre (group px at the starting scale) and the margin: the least frame they need.
+    const card = $(`.room-label-card[data-room-id="${id}"]`), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+    const ext = [...(card?.querySelectorAll(':scope > .room-card-part') || [])].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => [Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2, Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2]);
+    zoneParts = { w: ext.length ? 2 * Math.max(...ext.map(e => e[0])) + pad * 2.7 : node.offsetWidth, h: ext.length ? 2 * Math.max(...ext.map(e => e[1])) + pad * 2 : node.offsetHeight };
+  }
   const posX = `${key}X`, posY = `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
   const groupMode = !isCard && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1, gctx = groupMode ? groupSnap(room, [node]) : null;
@@ -1592,7 +1612,18 @@ function startFreeResize(event, handle) {
       // The moving corner: the nearest thick line past the fixed one (at least one zone).
       const pickLine = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
       ex = pickLine(zones.xs, ex, fx, sx, scene.left); ey = pickLine(zones.ys, ey, fy, sy, scene.top);
-      bx = { edge: ex, t: { kind: 'major' } }; by = { edge: ey, t: { kind: 'major' } };
+      // The box between the lines: the content scaled to fit it (back to its own size when there is room), the frame
+      // exactly the box, its centre exactly the box's centre (from the label's point, unrounded).
+      const Wb = Math.abs(ex - fx), Hb = Math.abs(ey - fy), minF = .3 / cardScale0, maxF = Math.max(1, cardBase / cardScale0);
+      const f = clamp(Math.min(Wb / k / zoneParts.w, Hb / k / zoneParts.h), minF, maxF), [ax, ay] = roomAnchor(room);
+      room.labelCardExact = true; room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = k * (room.labelCardScale / cardScale0);
+      room.labelCardW = Math.round(Wb / kf * 100) / 100; room.labelCardH = Math.round(Hb / kf * 100) / 100;
+      room.labelCardX = Math.round(((fx + ex) / 2 - (scene.left + ax / 100 * scene.width)) / planToScreen * 1000) / 1000;
+      room.labelCardY = Math.round(((fy + ey) / 2 - (scene.top + ay / 100 * scene.height)) / planToScreen * 1000) / 1000;
+      renderRoomLabels();
+      const Ws = scene.width || 1, Hs = scene.height || 1;
+      showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
+      return;
     } else if (useSnap && !e.altKey) {
       const reach = snapReach();
       // One snap per moving side: a line of another element, or the width / height of another label or part. Nearer
