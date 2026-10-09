@@ -1,3 +1,7 @@
+## 0.6.1-beta.550
+
+- Etykieta: kropki nazwy lub stanu skalują pudełko proporcjonalnie. Skalę wyznacza bok przesunięty bardziej, a drugi za nim podąża. Pudełko nie robi się szersze ani wyższe niż tekst, więc przy marginesie 0 nie zostaje puste miejsce po bokach.
+
 ## 0.6.1-beta.549
 
 - Etykieta: przy zmianie rozmiaru nazwy lub stanu (kropkami albo suwakiem „Rozmiar”) margines wewnętrzny zostaje taki sam. Rośnie tylko tekst, a pudełko rośnie o tekst. Domyślny margines, który rósł razem z tekstem, zostaje przy pierwszej zmianie zapisany w obecnych pikselach.

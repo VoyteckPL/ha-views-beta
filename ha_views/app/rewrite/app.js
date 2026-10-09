@@ -1946,8 +1946,11 @@ function startFreeResize(event, handle) {
       // with the room inside it.
       const w0 = Math.max(1, rect0.width / k), h0 = Math.max(1, rect0.height / k), fMin = 6 / Math.max(6, sizeStart);
       const iw0 = Math.max(1, w0 - 2 * textPadX0), ih0 = Math.max(1, h0 - 2 * textPadY0);
-      lw = Math.max(2 * textPadX0 + iw0 * fMin, lw); lh = Math.max(2 * textPadY0 + ih0 * fMin, lh);
-      const f = clamp(Math.min((lw - 2 * textPadX0) / iw0, (lh - 2 * textPadY0) / ih0), fMin, 420 / Math.max(1, sizeStart));
+      // Its proportions are kept (a box wider than its text would leave empty room beside it, margin 0 or not): the side
+      // moved further sets the scale, the other follows.
+      const rw = (lw - 2 * textPadX0) / iw0, rh = (lh - 2 * textPadY0) / ih0;
+      const f = clamp(Math.abs(Math.log(Math.max(.01, rw))) >= Math.abs(Math.log(Math.max(.01, rh))) ? rw : rh, fMin, 420 / Math.max(1, sizeStart));
+      lw = 2 * textPadX0 + iw0 * f; lh = 2 * textPadY0 + ih0 * f;
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
       if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       if (textRad0 !== null) room[`${key}Radius`] = Math.round(clamp(textRad0 * f, 0, 200) * 10) / 10;
