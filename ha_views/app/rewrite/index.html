@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-520">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-521">
 </head>
 <body>
   <header class="topbar">
@@ -231,6 +231,7 @@
         <div class="editor-meta"><code id="flow-editor-integration"></code></div>
       </div>
       <div class="editor-quick-actions">
+        <button type="button" id="flow-side-preview" class="editor-icon-button head-side with-text" hidden><i class="mdi mdi-plus-circle-outline"></i><span class="head-preview-text">Wartość +</span></button>
         <button id="flow-default-style" class="editor-icon-button" title="Ustaw domyślny" aria-label="Ustaw domyślny"><i class="mdi mdi-restore"></i></button>
         <button id="flow-save-template" class="editor-icon-button tpl" title="Zapisz jako szablon" aria-label="Zapisz jako szablon"><i class="mdi mdi-bookmark-plus-outline"></i></button>
         <button id="flow-copy-style" class="editor-icon-button" title="Kopiuj styl Flow" aria-label="Kopiuj styl Flow"><i class="mdi mdi-content-copy"></i></button>
@@ -358,6 +359,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-520"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-521"></script>
 </body>
 </html>

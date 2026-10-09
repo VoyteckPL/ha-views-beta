@@ -1,3 +1,8 @@
+## 0.6.1-beta.521
+
+- Flow, „Przywróć domyślny”: przywraca ten sam wygląd co przy nowym Flow (duży, z animacją „Przepływ”, w pełnych kratkach siatki), a nie stare domyślne ustawienia. Tak samo działa przywracanie pojedynczych suwaków.
+- Flow z kierunkiem „wg znaku + / −”: zamiast zakładek „Wartość + / Wartość −” w nagłówku panelu jest przełącznik podglądu, jak przy innych elementach. Przełącza, którą stronę widać na planie i którą edytujesz; przy „−” jest czerwony.
+
 ## 0.6.1-beta.520
 
 - Kropki zaznaczenia mają wszędzie ten sam rozmiar co przy etykietach i termostatach: 12 px, a na ekranie dotykowym 16 px. Dotyczy to rogów pomieszczeń (nadal żółte; punkty pośrodku boków są nieco mniejsze) i rogów Flow (białe z fioletową obwódką, wcześniej większe).

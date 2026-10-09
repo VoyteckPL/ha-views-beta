@@ -5011,7 +5011,7 @@ function flowEditorMarkup(flow) {
   const auto = flow.directionMode === 'auto', locked = !!flow.geometryLocked, side = auto ? flowEditorSide : 'positive', s = flowEffective(flow, side);
   const separate = flowSeparateStyles(flow), styleNote = auto ? (separate ? 'Styl dla ' + (side === 'negative' ? '−' : '+') : 'Styl wspólny dla + i −') : '';
   const value = flowNumericState(flow.entityId), unit = stateCache?.[flow.entityId]?.attributes?.unit_of_measurement || '';
-  const sideSwitch = auto ? '<div class="flow-side-switch" role="tablist"><button type="button" data-flow-side="positive" class="' + (side === 'positive' ? 'active' : '') + '">Wartość +</button><button type="button" data-flow-side="negative" class="' + (side === 'negative' ? 'active' : '') + '">Wartość −</button></div><p class="flow-side-note"><span>' + (side === 'negative' ? 'Podgląd i edycja dla wartości ujemnej.' : 'Podgląd i edycja dla wartości dodatniej.') + '</span> <span>' + (separate ? 'Każda strona ma własny styl.' : 'Kształt, rozmiar i animacja są wspólne — kolor jest osobny.') + '</span></p>' : '';
+  const sideSwitch = auto ? '<p class="flow-side-note"><span>' + (side === 'negative' ? 'Podgląd i edycja dla wartości ujemnej.' : 'Podgląd i edycja dla wartości dodatniej.') + '</span> <span>' + (separate ? 'Każda strona ma własny styl.' : 'Kształt, rozmiar i animacja są wspólne — kolor jest osobny.') + '</span></p>' : '';
   const note = text => text ? '<p class="flow-section-note">' + text + '</p>' : '';
   const entityPicker = `<div class="control room-entities-control"><label>Encja</label><div class="room-entity-list">${flow.entityId ? flowEntityRow(flow.entityId, 'clear') : ''}</div><label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="flow-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="flow-entity-results" class="room-entity-list room-entity-results"></div></div>`;
   // Sections as in the thermostat's panel: "Ogólne", then a bar per category in its own colour with on / off buttons.
@@ -5053,11 +5053,19 @@ function flowEditorMarkup(flow) {
     [['animation','Przepływ','mdi-chevron-triple-right',(s.animation || 'none') === 'flow'],['speedByValue','Tempo od wartości','mdi-speedometer',!!s.speedByValue]]);
   return sideSwitch + general + steering + frame + shape + colors + animation;
 }
+// "Kierunek wg znaku": the header has a preview toggle (as the ON / OFF one of labels): + or − is shown on the plan and edited.
+function syncFlowSidePreview(flow) {
+  const button = $('#flow-side-preview'); if (!button) return; const auto = flow?.directionMode === 'auto'; button.hidden = !auto; if (!auto) return;
+  const neg = flowEditorSide === 'negative', label = translateValue(neg ? 'Wartość −' : 'Wartość +');
+  button.classList.toggle('active', neg); button.querySelector('i').className = `mdi ${neg ? 'mdi-minus-circle-outline' : 'mdi-plus-circle-outline'}`; button.querySelector('.head-preview-text').textContent = label;
+  button.title = `${translateValue('Podgląd')}: ${label}`; button.setAttribute('aria-label', button.title);
+}
 function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return closeFlowEditor();
   const newlySelected = selectedFlowId !== id;
   if (newlySelected) { preserveSection = flowEditorOpenSectionIndex = -1; flowEditorSide = flowSideOf(flow, flowNumericState(flow.entityId)); }
   closeEditor(); closeRoomEditor(); selectedFlowId = id;
+  syncFlowSidePreview(flow);
   els.flowEditorTitle.textContent = flow.displayName || flow.entityId || 'Flow'; els.flowEditorEntity.textContent = flow.entityId || '—'; els.flowEditorIntegration.textContent = 'Flow' + (flow.integrationName ? ' · ' + flow.integrationName : '');
   if (els.flowEditorIcon) els.flowEditorIcon.innerHTML = flow.entityId ? integrationIconMarkupFor(flow.sourceDomain || flow.entityId.split('.')[0], flow.integrationName || flow.sourceDomain, 'editor-brand-icon') : '<span class="integration-icon room-editor-icon"><i class="mdi mdi-chevron-triple-right"></i></span>';
   const scroll = els.flowEditorContent.scrollTop;
@@ -5126,8 +5134,9 @@ function onFlowEditorClick(event) {
   const reset = event.target.closest('[data-reset-path]');
   if (reset) {
     event.preventDefault(); const input = els.flowEditorContent.querySelector('input[data-path="' + CSS.escape(reset.dataset.resetPath) + '"]');
-    if (!input || input.disabled || !(reset.dataset.resetPath in FLOW_DEFAULTS)) return;
-    input.value = FLOW_DEFAULTS[reset.dataset.resetPath]; input.dispatchEvent(new Event('change', { bubbles:true })); return;
+    const defaults = { ...FLOW_DEFAULTS, ...NEW_FLOW_SIZE };
+    if (!input || input.disabled || !(reset.dataset.resetPath in defaults)) return;
+    input.value = defaults[reset.dataset.resetPath]; input.dispatchEvent(new Event('change', { bubbles:true })); return;
   }
   const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]');
   if (toggle) { event.preventDefault(); const menu = toggle.closest('.color-picker').querySelector('.color-menu'), open = menu.classList.contains('visible'); $$('.color-menu', els.flowEditorContent).forEach(x => x.classList.remove('visible')); menu.classList.toggle('visible', !open); if (!open) requestAnimationFrame(() => menu.scrollIntoView({ block:'nearest' })); return; }
@@ -5149,7 +5158,8 @@ function pasteFlowStyle() {
 }
 async function resetFlowStyle() {
   const flow = activeSceneView()?.flows?.[selectedFlowId]; if (!flow || !await appConfirm({ title:'Przywrócić domyślny Flow?', message:'Obecne ustawienia wyglądu i działania Flow zostaną zastąpione domyślnymi. Pozycja i nazwa zostaną zachowane.', confirmText:'Przywróć', danger:true })) return;
-  Object.assign(flow, clone(FLOW_DEFAULTS), { updatedAt:new Date().toISOString() }); delete flow.negativeStyle; flowEditorSide = 'positive';
+  Object.assign(flow, clone(FLOW_DEFAULTS), clone(NEW_FLOW_SIZE), { updatedAt:new Date().toISOString() }); delete flow.negativeStyle; flowEditorSide = 'positive';
+  renderMarkers(); snapNewFlowToGrid(flow.id);
   openFlowEditor(flow.id); scheduleSave(true); notify('Przywrócono domyślny Flow');
 }
 // A marker copy keeps the whole look and gets its own id; a text element also gets its own virtual entity id.
@@ -7356,7 +7366,7 @@ function bindEvents() {
   els.viewDuplicate?.addEventListener('click', duplicateSceneView); els.viewDefault?.addEventListener('click', setDefaultSceneView); els.viewMoveLeft?.addEventListener('click', () => moveSceneView(-1)); els.viewMoveRight?.addEventListener('click', () => moveSceneView(1)); els.viewDelete?.addEventListener('click', deleteSceneView);
   els.confirmInput?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); closeAppConfirm(true); } });
   els.flowEditorClose?.addEventListener('click', closeFlowEditor);
-  $('#flow-default-style')?.addEventListener('click', resetFlowStyle); $('#flow-copy-style')?.addEventListener('click', copyFlowStyle); $('#flow-duplicate')?.addEventListener('click', duplicateFlow); $('#flow-paste-style')?.addEventListener('click', pasteFlowStyle); $('#flow-remove')?.addEventListener('click', confirmRemoveFlow);
+  $('#flow-default-style')?.addEventListener('click', resetFlowStyle); $('#flow-side-preview')?.addEventListener('click', event => { event.stopPropagation(); flowEditorSide = flowEditorSide === 'negative' ? 'positive' : 'negative'; renderMarkers(); if (selectedFlowId) openFlowEditor(selectedFlowId); }); $('#flow-copy-style')?.addEventListener('click', copyFlowStyle); $('#flow-duplicate')?.addEventListener('click', duplicateFlow); $('#flow-paste-style')?.addEventListener('click', pasteFlowStyle); $('#flow-remove')?.addEventListener('click', confirmRemoveFlow);
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
