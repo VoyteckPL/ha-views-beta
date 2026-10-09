@@ -1686,3 +1686,9 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .room-wizard-own{position:relative;display:grid;place-items:center;height:24px;min-width:0;border:1px dashed rgba(143,223,255,.5);border-radius:7px;color:#8fdfff;font-size:14px;cursor:pointer;overflow:hidden}
 .room-wizard-own input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 [data-canvas-size].canvas-phone{display:inline-flex;align-items:center;justify-content:center;gap:3px}[data-canvas-size].canvas-phone i{font-size:14px;color:#5cdbff}
+.part-fdir{--part-color:#21bceb}
+.room-wizard-side{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.room-wizard-colour{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;color:#cfe6f0;font-size:12px}
+.room-wizard-colour .color-picker{position:relative}
+.room-wizard .color-menu.visible{position:fixed;left:50%;top:50%;right:auto;transform:translate(-50%,-50%);z-index:95}
+.editor-icon-button.tpl.saved{background:#22d69b;border-color:#22d69b;color:#03101a}

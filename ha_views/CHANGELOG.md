@@ -1,3 +1,10 @@
+## 0.6.1-beta.516
+
+- Kreator Flow: kolor wybiera się jak w panelach (próbka otwierająca paletę). Przy kierunku „wg znaku + / −” jest przełącznik „Wartość + / Wartość −”: wybiera, który kolor zmieniasz, a plan od razu pokazuje tę stronę.
+- Panel Flow ma sekcje jak termostat: „Ogólne”, potem kolorowe paski Kierunek, Ramka i pozycja, Strzałki, Kolory i wygląd, Animacja. Na paskach są szybkie przełączniki: wg znaku ±, ukryj poniżej progu, blokada geometrii, poświata, obrys, przepływ i tempo od wartości.
+- Zapisanie szablonu jest teraz wyraźnie potwierdzone: przycisk na chwilę zmienia się w zielony znaczek, a komunikat ma przycisk „Biblioteka”.
+- 9:16 jest pierwsze na liście proporcji. Proporcje 9:16 dostaje tylko nowy widok, istniejące widoki zostają bez zmian.
+
 ## 0.6.1-beta.515
 
 - **Biblioteka szablonów bez osobnego edytora.** W panelu każdego elementu (etykieta, tekst, pomieszczenie, termostat, wskaźnik, Flow) jest przycisk z zakładką „Zapisz jako szablon”. Przycisk biblioteki na górnym pasku otwiera listę szablonów pogrupowanych według rodzaju; każdy szablon można dodać na plan, zastosować do zaznaczonego elementu tego samego rodzaju, przemianować albo usunąć. W „+” jest rząd „Z szablonu” ze wszystkimi szablonami. Stare szablony termostatów zostają.

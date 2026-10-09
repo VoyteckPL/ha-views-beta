@@ -313,7 +313,7 @@ function setBackgroundColour(colour) {
   const view = activeSceneView(); if (!view || !/^#[0-9a-f]{6}$/i.test(colour || '')) return;
   const imageRatio = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0 ? els.image.naturalWidth / els.image.naturalHeight : 0;
   if (imageRatio) view.solidCanvasRatio = imageRatio;
-  view.solidCanvasRatio ||= 9 / 16; // a colour background starts tall (9:16), the best fit on a phone
+  view.solidCanvasRatio ||= mobileView() ? 9 / 16 : 16 / 9;
   view.background = ''; currentBackground = '';
   view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
   els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
@@ -446,7 +446,8 @@ async function addSceneView() {
   const name = await appPrompt({ title: 'Nowy widok', message: 'Podaj krótką nazwę nowego widoku.', value: `Widok ${model.viewOrder.length + 1}`, confirmText: 'Dodaj' });
   if (!name) return;
   const id = `view_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
-  model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: 9 / 16, onboardingDone: false, backgroundTransforms: {}, entities: {}, flows: {} }; model.viewOrder.push(id);
+  model.views[id] = { id, name, background: '', backgroundColor: '', solidCanvasRatio: 9 / 16, // a new view starts tall (9:16), the best fit on a phone
+    onboardingDone: false, backgroundTransforms: {}, entities: {}, flows: {} }; model.viewOrder.push(id);
   await switchSceneView(id, false); scheduleSave(true); notify('Dodano nowy widok');
 }
 // Tabs can be reordered by dragging (mouse: drag; touch: long-press, then drag). Admin only.
@@ -2413,6 +2414,7 @@ function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
   const tpl = pendingTemplate && libraryTemplates().find(t => t.id === pendingTemplate); pendingTemplate = '';
   if (tpl && room) { applyTemplate(room, tpl, flow); if (flow) renderMarkers(); else renderRooms(); }
   if (!room || !box) return flow ? openFlowEditor(id) : openRoomEditor(id, -1, 0);
+  if (flow) flowEditorSide = 'positive';
   if (flow) roomWizard = { id, flow:true, fromTemplate: !!tpl, step:'name', generated: room.displayName || 'Flow', query:'', picked: new Set(room.entityId ? [room.entityId] : []), parts: new Set(), skipEntities };
   else roomWizard = { id, fromTemplate: !!tpl, step:'name', generated: room.name, query:'', picked: new Set(room.entityIds || []), parts: new Set(isThermoRoom(room) || tpl ? wizardPartsFor(room).map(([key]) => key).filter(key => room[key]) : WIZARD_PARTS.map(([key]) => key).filter(key => !(isTextRoom(room) && key === 'labelState'))), skipEntities };
   // On a phone it sits under the top bar so the on-screen keyboard cannot cover it.
@@ -2461,7 +2463,16 @@ function renderWizardFlow(flow) {
   box.innerHTML = group('Kierunek', FLOW_WIZARD_DIRS.map(([v, t, i]) => btn('direction', v, v === dir, t, i)).join(''))
     + group('Strzałki', FLOW_SHAPES.map(([v, t]) => btn('shape', v, v === (flow.shape || 'chevron'), t, FLOW_WIZARD_SHAPES[v] || 'mdi-chevron-right')).join(''))
     + group('Animacja', FLOW_WIZARD_ANIMS.map(([v, t, i]) => btn('animation', v, v === (flow.animation || 'none'), t, i)).join(''))
-    + (current => `<div class="room-wizard-group"><span>${esc(translateValue(flow.directionMode === 'auto' ? 'Kolor dla +' : 'Kolor'))}</span><div class="room-wizard-swatches">${COLOR_PALETTE.map(c => `<button type="button" class="${c.toLowerCase() === String(current).toLowerCase() ? 'on' : ''}" data-wizard-flow="color" data-value="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<label class="room-wizard-own" title="${esc(translateValue('Własny kolor RGB…'))}"><i class="mdi mdi-eyedropper-variant"></i><input type="color" data-wizard-link="color" value="${esc(current)}"></label></div></div>`)(flow.directionMode === 'auto' ? flow.positiveColor || flow.color : flow.color);
+    + wizardFlowColour(flow);
+}
+// Colour of a Flow in its wizard: the panels' picker (a swatch opening the palette); with "wg znaku" a + / − switch
+// chooses which side is edited and shown on the plan.
+function wizardFlowColour(flow) {
+  const esc = v => escapeHtml(String(v ?? '')), auto = flow.directionMode === 'auto', side = auto ? flowEditorSide : 'positive';
+  const key = side === 'negative' ? 'negativeColor' : 'color', current = side === 'negative' ? flow.negativeColor || FLOW_DEFAULTS.negativeColor : auto ? flow.positiveColor || flow.color : flow.color || FLOW_DEFAULTS.color;
+  const sides = auto ? `<div class="room-wizard-side">${[['positive','mdi-plus','Wartość +'],['negative','mdi-minus','Wartość −']].map(([v, mdi, t]) => `<button type="button" class="room-wizard-action${side === v ? ' on' : ''}" data-wizard-side="${v}"><i class="mdi ${mdi}"></i><span>${esc(translateValue(t))}</span></button>`).join('')}</div>` : '';
+  const picker = `<div class="color-picker"><button type="button" class="color-current" data-color-toggle style="background:${esc(current)}" aria-label="${esc(translateValue('Wybierz kolor'))}"></button><input class="color-native" type="color" value="${esc(current)}" data-wizard-link="${key}"><div class="color-menu"><div class="color-palette">${COLOR_PALETTE.map(c => `<button type="button" data-palette-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}</div><button type="button" class="rgb-button" data-rgb-color>${esc(translateValue('Własny kolor RGB…'))}</button></div></div>`;
+  return `<div class="room-wizard-group"><span>${esc(translateValue('Kolor'))}</span>${sides}<div class="room-wizard-colour"><span>${esc(translateValue(auto ? (side === 'negative' ? 'Kolor dla −' : 'Kolor dla +') : 'Kolor'))}</span>${picker}</div></div>`;
 }
 function setWizardFlow(flow, key, value) {
   if (key === 'direction') { if (value === 'auto') flow.directionMode = 'auto'; else Object.assign(flow, { directionMode:'manual', direction:value }); }
@@ -2570,6 +2581,12 @@ function roomWizardNext() {
 }
 function onRoomWizardClick(event) {
   if (!roomWizard) return;
+  const sideButton = event.target.closest('[data-wizard-side]');
+  if (sideButton) { flowEditorSide = sideButton.dataset.wizardSide === 'negative' ? 'negative' : 'positive'; renderMarkers(); return renderWizardFlow(wizardItem()); }
+  const colourToggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]');
+  if (colourToggle) { colourToggle.closest('.color-picker')?.querySelector('.color-menu')?.classList.toggle('visible'); return; }
+  if (swatch) { const picker = swatch.closest('.color-picker'), input = $('.color-native', picker); input.value = swatch.dataset.paletteColor; $('.color-current', picker).style.background = input.value; $('.color-menu', picker).classList.remove('visible'); input.dispatchEvent(new Event('change', { bubbles:true })); return; }
+  if (rgb) { rgb.closest('.color-picker')?.querySelector('.color-native')?.click(); return; }
   const flowButton = event.target.closest('[data-wizard-flow]');
   if (flowButton) { const flow = wizardItem(); if (flow) setWizardFlow(flow, flowButton.dataset.wizardFlow, flowButton.dataset.value); return; }
   const actionButton = event.target.closest('[data-wizard-action]');
@@ -4863,7 +4880,7 @@ function buildFlowNode(flow) {
     const deadband = Math.max(0, Number(flow.deadband) || 0);
     const isActive = numericState === null || Math.abs(numericState) > deadband;
     if (!isActive && flow.hideInactive && !editMode) return null;
-    const previewSide = editMode && selectedFlowId === flow.id && autoDirection ? flowEditorSide : null;
+    const previewSide = editMode && autoDirection && (selectedFlowId === flow.id || roomWizard?.flow && roomWizard.id === flow.id) ? flowEditorSide : null;
     const side = previewSide || flowSideOf(flow, numericState), style = flowEffective(flow, side);
     const shape = FLOW_SHAPES.some(([key]) => key === style.shape) ? style.shape : 'chevron';
     const itemCount = clamp(Math.round(Number(style.flowCount) || 3), 1, FLOW_LIMITS.count);
@@ -4983,38 +5000,44 @@ function flowEditorMarkup(flow) {
   const sideSwitch = auto ? '<div class="flow-side-switch" role="tablist"><button type="button" data-flow-side="positive" class="' + (side === 'positive' ? 'active' : '') + '">Wartość +</button><button type="button" data-flow-side="negative" class="' + (side === 'negative' ? 'active' : '') + '">Wartość −</button></div><p class="flow-side-note"><span>' + (side === 'negative' ? 'Podgląd i edycja dla wartości ujemnej.' : 'Podgląd i edycja dla wartości dodatniej.') + '</span> <span>' + (separate ? 'Każda strona ma własny styl.' : 'Kształt, rozmiar i animacja są wspólne — kolor jest osobny.') + '</span></p>' : '';
   const note = text => text ? '<p class="flow-section-note">' + text + '</p>' : '';
   const entityPicker = `<div class="control room-entities-control"><label>Encja</label><div class="room-entity-list">${flow.entityId ? flowEntityRow(flow.entityId, 'clear') : ''}</div><label class="room-entity-search"><i class="mdi mdi-magnify"></i><input id="flow-entity-search" type="search" autocomplete="off" placeholder="${escapeHtml(translateValue('Szukaj nazwy lub encji…'))}"></label><div id="flow-entity-results" class="room-entity-list room-entity-results"></div></div>`;
-  const steering = section('Encja i kierunek', duplicateRow('flow', 'Duplikuj Flow') + control('Nazwa','displayName','text',flow.displayName || '') + entityPicker + '<div class="control"><label>Aktualna wartość</label><strong class="flow-live-value">' + (value === null ? '—' : escapeHtml(String(value)) + (unit ? ' ' + escapeHtml(unit) : '')) + '</strong><span></span></div>'
-    + control('Sterowanie','directionMode','select',auto ? 'auto' : 'manual',{ items:[['manual','Stały kierunek'],['auto','Kierunek wg znaku + / −']], refresh:true })
+  // Sections as in the thermostat's panel: "Ogólne", then a bar per category in its own colour with on / off buttons.
+  const bar = (part, title, body, toggles = []) => `<details class="editor-section part-section part-${part}"><summary><span>${escapeHtml(translateValue(title))}</span><span class="section-tools">${toggles.map(([k, t, mdi, on]) => `<button type="button" class="section-toggle${on ? ' active' : ''}" data-flow-toggle="${k}" aria-pressed="${!!on}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${mdi}"></i></button>`).join('')}</span></summary><div class="editor-section-body">${body}</div></details>`;
+  const general = section('Ogólne', duplicateRow('flow', 'Duplikuj Flow') + control('Nazwa','displayName','text',flow.displayName || '') + entityPicker + '<div class="control"><label>Aktualna wartość</label><strong class="flow-live-value">' + (value === null ? '—' : escapeHtml(String(value)) + (unit ? ' ' + escapeHtml(unit) : '')) + '</strong><span></span></div>');
+  const steering = bar('fdir', 'Kierunek', control('Sterowanie','directionMode','select',auto ? 'auto' : 'manual',{ items:[['manual','Stały kierunek'],['auto','Kierunek wg znaku + / −']], refresh:true })
     + (auto ? control('Kierunek dla +','positiveDirection','select',flow.positiveDirection || 'right',dirs) + control('Kierunek dla −','negativeDirection','select',flow.negativeDirection || 'left',dirs) + control('Osobny styl dla −','negativeStyleEnabled','checkbox',!!flow.negativeStyleEnabled,refresh) : control('Kierunek','direction','select',flow.direction || 'right',dirs))
     + control('Próg aktywności','deadband','number',Number(flow.deadband) || 0,{ valueType:'number', min:0 }) + control('Ukryj poniżej progu','hideInactive','checkbox',!!flow.hideInactive)
-    + note('Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.'));
+    + note('Flow jest nieaktywny, gdy |wartość| ≤ próg — np. próg 0 wyłącza strzałki fotowoltaiki przy 0 W w nocy. Nieaktywny Flow jest przygaszony i bez animacji albo, z opcją ukrywania, całkiem niewidoczny. W trybie edycji ukryty Flow ma tylko przerywaną ramkę, żeby dało się go kliknąć.'),
+    [['directionMode','Kierunek wg znaku + / −','mdi-plus-minus-variant',auto],['hideInactive','Ukryj poniżej progu','mdi-eye-off-outline',!!flow.hideInactive]]);
   const shapeKey = FLOW_SHAPES.some(([key]) => key === s.shape) ? s.shape : 'chevron';
   const streamingAnim = (s.animation || 'none') === 'flow';
-  const frame = section('Ramka i pozycja', note(styleNote)
+  const frame = bar('group', 'Ramka i pozycja', note(styleNote)
     + linkedSizeControl('Oba wymiary','flowLength','chevronHeight',[8,FLOW_LIMITS.length,FLOW_LIMITS.min,FLOW_LIMITS.size],locked)
     + control('Długość ramki','flowLength','range',Number(s.flowLength) || 84,{ min:8, max:FLOW_LIMITS.length, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Szerokość ramki','chevronHeight','range',Number(s.chevronHeight) || 22,{ min:FLOW_LIMITS.min, max:FLOW_LIMITS.size, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Obrót','rotation','range',Number(flow.rotation) || 0,{ min:-180, max:180, step:1, suffix:'°', integer:true, disabled:locked })
-    + note('Ramka to obszar Flow na planie, liczony wzdłuż kierunku strzałek. Szerokość ramki jest też wysokością strzałek. Uchwyty zaznaczenia zmieniają to samo.'));
-  const shape = section('Strzałki', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true })
+    + note('Ramka to obszar Flow na planie, liczony wzdłuż kierunku strzałek. Szerokość ramki jest też wysokością strzałek. Uchwyty zaznaczenia zmieniają to samo.'),
+    [['geometryLocked','Zablokuj geometrię','mdi-lock-outline',locked]]);
+  const shape = bar('icon', 'Strzałki', note(styleNote) + control('Rodzaj','shape','select',shapeKey,{ items:FLOW_SHAPES, refresh:true })
     + (shapeKey === 'segment' ? '' : control('Ostrość','shapeSharpness','range',clamp(Number(s.shapeSharpness) || 100,10,300),{ min:10, max:300, step:1, suffix:'%', integer:true }))
     + (shapeKey === 'chevron' || shapeKey === 'arrow' ? control(shapeKey === 'arrow' ? 'Grubość trzonu' : 'Grubość','chevronThickness','range',Number(s.chevronThickness) || 5,{ min:1, max:FLOW_LIMITS.thickness, step:1, suffix:'px', integer:true }) : '')
     + control('Długość strzałki','chevronWidth','range',Number(s.chevronWidth) || 22,{ min:2, max:FLOW_LIMITS.size, step:1, suffix:'px', integer:true, disabled:locked })
     + control('Odstęp','gap','range',Number(s.gap) || 0,{ min:-(Math.max(2, Number(s.chevronWidth) || 22) - 2), max:FLOW_LIMITS.gap, step:1, suffix:'px', integer:true, disabled:locked })
     + (streamingAnim ? note('W animacji „Przepływ” strzałki wypełniają całą ramkę, więc liczba nie ma znaczenia.') : control('Liczba','flowCount','range',clamp(Number(s.flowCount) || 3,1,FLOW_LIMITS.count),{ min:1, max:FLOW_LIMITS.count, step:1, integer:true }) + note('Strzałki są wyśrodkowane w ramce; to, co się nie mieści, jest przycinane. Liczba i odstęp nie zmieniają ramki. Ujemny odstęp wsuwa strzałki jedna w drugą (gęściej).')));
   const colorProp = auto ? (side === 'negative' ? 'negativeColor' : 'positiveColor') : 'color';
-  const colors = section('Kolory i wygląd', note(styleNote) + control(auto ? (side === 'negative' ? 'Kolor dla −' : 'Kolor dla +') : 'Kolor','' + colorProp,'color',s.activeColor)
+  const colors = bar('name', 'Kolory i wygląd', note(styleNote) + control(auto ? (side === 'negative' ? 'Kolor dla −' : 'Kolor dla +') : 'Kolor','' + colorProp,'color',s.activeColor)
     + control('Obrys','outlineWidth','range',Number(s.outlineWidth) || 0,{ min:0, max:20, step:.5, suffix:'px', refresh:true }) + (Number(s.outlineWidth) > 0 ? control('Kolor obrysu','outlineColor','color',s.outlineColor || '#FFFFFF') : '')
     + control('Poświata','glow','range',Number(s.glow) || 0,{ min:0, max:40, step:1, suffix:'px', integer:true }) + control('Osobny kolor poświaty','glowCustom','checkbox',!!s.glowCustom,refresh) + (s.glowCustom ? control('Kolor poświaty','glowColor','color',s.glowColor || s.activeColor) : '')
-    + control('Krycie','opacity','range',clamp(Number(s.opacity) || 100,10,100),{ min:10, max:100, step:1, suffix:'%', integer:true }));
+    + control('Krycie','opacity','range',clamp(Number(s.opacity) || 100,10,100),{ min:10, max:100, step:1, suffix:'%', integer:true }),
+    [['glow','Poświata','mdi-blur',Number(s.glow) > 0],['outlineWidth','Obrys','mdi-vector-square',Number(s.outlineWidth) > 0]]);
   const animated = s.animation && s.animation !== 'none';
   const siblings = Object.values(activeSceneView()?.flows || {}).filter(other => other.id !== flow.id && other.entityId === flow.entityId);
-  const animation = section('Animacja', note(styleNote) + control('Typ','animation','select',s.animation || 'none',{ items:[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']], refresh:true }) + (animated
+  const animation = bar('state', 'Animacja', note(styleNote) + control('Typ','animation','select',s.animation || 'none',{ items:[['none','Brak'],['pulse','Pulsowanie'],['flow','Przepływ']], refresh:true }) + (animated
     ? control('Tempo','animationSpeed','range',Number(s.animationSpeed) || FLOW_DEFAULTS.animationSpeed,{ min:.2, max:6, step:.1, suffix:'×' }) + control('Tempo od wartości','speedByValue','checkbox',!!s.speedByValue,refresh) + (s.speedByValue ? control('Pełne tempo przy','speedValueMax','number',Number(s.speedValueMax) || FLOW_DEFAULTS.speedValueMax,{ valueType:'number', min:1 }) : '')
       + note(streamingAnim ? 'Tempo to stała prędkość strzałek (1× = 150 px/s) — nie zależy od rozmiaru, odstępu ani liczby, więc Flow z tym samym tempem jadą identycznie.' : 'Tempo pulsowania nie zależy od rozmiaru Flow.')
     : '')
-    + (siblings.length ? '<div class="room-icon-actions"><button type="button" data-flow-sync-animation><i class="mdi mdi-sync"></i><span>' + escapeHtml(translateValue('Ustaw tę animację w pozostałych Flow tej encji')) + ' (' + siblings.length + ')</span></button></div>' : ''));
-  return sideSwitch + steering + frame + shape + colors + animation;
+    + (siblings.length ? '<div class="room-icon-actions"><button type="button" data-flow-sync-animation><i class="mdi mdi-sync"></i><span>' + escapeHtml(translateValue('Ustaw tę animację w pozostałych Flow tej encji')) + ' (' + siblings.length + ')</span></button></div>' : ''),
+    [['animation','Przepływ','mdi-chevron-triple-right',(s.animation || 'none') === 'flow'],['speedByValue','Tempo od wartości','mdi-speedometer',!!s.speedByValue]]);
+  return sideSwitch + general + steering + frame + shape + colors + animation;
 }
 function openFlowEditor(id, preserveSection = flowEditorOpenSectionIndex) {
   const flow = activeSceneView()?.flows?.[id]; if (!flow) return closeFlowEditor();
@@ -5073,6 +5096,16 @@ function onFlowEditorClick(event) {
     const others = Object.values(view.flows).filter(other => other.id !== flow.id && other.entityId === flow.entityId);
     others.forEach(other => { Object.assign(other, clone(values), { updatedAt:now }); if (other.negativeStyle) Object.assign(other.negativeStyle, clone(values)); });
     renderMarkers(); scheduleSave(true); notify(`${translateValue('Ustawiono tę samą animację w innych Flow tej encji')}: ${others.length}`); return;
+  }
+  // The bars' on / off buttons (they never open or close their section).
+  const barToggle = event.target.closest('[data-flow-toggle]');
+  if (barToggle) {
+    event.preventDefault(); event.stopPropagation(); const flow = activeSceneView()?.flows?.[selectedFlowId]; if (!flow) return;
+    const k = barToggle.dataset.flowToggle, side = flow.directionMode === 'auto' ? flowEditorSide : 'positive', cur = flowEffective(flow, side);
+    if (k === 'directionMode') flow.directionMode = flow.directionMode === 'auto' ? 'manual' : 'auto';
+    else if (k === 'hideInactive' || k === 'geometryLocked') flow[k] = !flow[k];
+    else { const t = flowStyleTarget(flow, k, side); t[k] = k === 'glow' ? (Number(cur.glow) > 0 ? 0 : FLOW_DEFAULTS.glow || 5) : k === 'outlineWidth' ? (Number(cur.outlineWidth) > 0 ? 0 : 2) : k === 'animation' ? ((cur.animation || 'none') === 'flow' ? 'none' : 'flow') : !cur[k]; }
+    flow.updatedAt = new Date().toISOString(); renderMarkers(); openFlowEditor(flow.id); scheduleSave(true); return;
   }
   const sideButton = event.target.closest('[data-flow-side]');
   if (sideButton) { event.preventDefault(); flowEditorSide = sideButton.dataset.flowSide === 'negative' ? 'negative' : 'positive'; openFlowEditor(selectedFlowId); return; }
@@ -6331,7 +6364,10 @@ async function saveTemplateFrom(flow = false) {
   const name = await appPrompt({ title: 'Zapisz jako szablon', message: 'Nazwa szablonu w bibliotece', value: (flow ? item.displayName : item.name) || '', confirmText: 'Zapisz' }); if (!name) return;
   const now = new Date().toISOString(); model.settings ||= {};
   model.settings.thermoLibrary = [...libraryTemplates(), { id: 'tpl_' + uid(), kind: elementKind(item, flow), name, look: templateLookOf(item, flow), createdAt: now, updatedAt: now }];
-  scheduleSave(true); renderLibraryPanel(); notify('Zapisano szablon w bibliotece');
+  scheduleSave(true); renderLibraryPanel();
+  // A clear confirmation: the button turns into a tick for a moment and a toast offers to open the library.
+  const button = $(flow ? '#flow-save-template' : '#room-save-template'); if (button) { button.classList.add('saved'); button.innerHTML = '<i class="mdi mdi-check-bold"></i>'; setTimeout(() => { button.classList.remove('saved'); button.innerHTML = '<i class="mdi mdi-bookmark-plus-outline"></i>'; }, 1600); }
+  notifyWithAction(`${translateValue('Zapisano szablon w bibliotece')}: ${name}`, translateValue('Biblioteka'), openLibraryPanel, 4500);
 }
 // "+" from a template: the element of its kind in the middle of the screen (a room is drawn first), with the template's look.
 function addFromTemplate(id, entity = null) {
@@ -6835,7 +6871,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false, prefetch
       els.emptyBackgroundSelect.innerHTML = '<option value="">Wybierz istniejące tło…</option>' + items.map(x => `<option value="${escapeHtml(x.name)}">${escapeHtml(x.name)}</option>`).join('');
       els.emptyBackgroundSelect.disabled = !items.length;
     }
-    view.solidCanvasRatio ||= 9 / 16; syncCanvasControls();
+    view.solidCanvasRatio ||= mobileView() ? 9 / 16 : 16 / 9; syncCanvasControls();
     if (els.solidCanvasRatio) els.solidCanvasRatio.value = String([1.7777777778,1.3333333333,1,.5625].reduce((best, ratio) => Math.abs(ratio - view.solidCanvasRatio) < Math.abs(best - view.solidCanvasRatio) ? ratio : best, 1.7777777778));
     applyBackgroundColour(); updateEmptyState(); els.image.hidden = !currentBackground; syncBackgroundTransformControls();
     if (currentBackground) {
@@ -7273,7 +7309,7 @@ function bindEvents() {
   els.scene?.addEventListener('pointerdown', onAddPickPointer, true);
   $('#room-wizard')?.addEventListener('click', onRoomWizardClick);
   // Fields of a text's action step write straight into the text.
-  ['input','change'].forEach(type => $('#room-wizard')?.addEventListener(type, event => { const field = event.target.closest?.('[data-wizard-link]'), room = roomWizard && wizardItem(); if (!field || !room) return; room[field.dataset.wizardLink] = field.type === 'checkbox' ? field.checked : field.value.trim(); if (roomWizard.flow && field.dataset.wizardLink === 'color') { room.positiveColor = room.color; renderMarkers(); } room.updatedAt = new Date().toISOString(); }));
+  ['input','change'].forEach(type => $('#room-wizard')?.addEventListener(type, event => { const field = event.target.closest?.('[data-wizard-link]'), room = roomWizard && wizardItem(); if (!field || !room) return; room[field.dataset.wizardLink] = field.type === 'checkbox' ? field.checked : field.value.trim(); if (roomWizard.flow) { if (field.dataset.wizardLink === 'color') room.positiveColor = room.color; const sw = field.closest('.color-picker')?.querySelector('.color-current'); if (sw) sw.style.background = field.value; renderMarkers(); } room.updatedAt = new Date().toISOString(); }));
   // Buttons in the wizard never take the focus from its text field (that would close the keyboard).
   ['pointerdown','mousedown'].forEach(type => $('#room-wizard')?.addEventListener(type, event => { if (event.target.closest('button') && document.activeElement?.closest?.('#room-wizard') && document.activeElement.matches('input')) event.preventDefault(); }));
   $('#room-wizard-name')?.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); roomWizardNext(); } });
