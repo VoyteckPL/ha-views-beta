@@ -1,3 +1,13 @@
+## 0.6.1-beta.555
+
+- Etykieta z jednym widocznym elementem ma jedno tło i jedną ramkę: etykiety.
+  - Tło i ramkę elementu przejmuje główna etykieta. Jeśli etykieta ich nie miała, dostaje je w kolorach elementu, a margines elementu staje się marginesem etykiety.
+  - Po pokazaniu drugiego elementu wszystko wraca do poprzedniego stanu.
+- Sekcja „Rozmiar” każdego elementu (ikona, nazwa, stan) jest od razu otwarta i ma całe skalowanie pod ręką:
+  - suwak rozmiaru i suwak marginesu; oba przyciągają się do wartości użytych w innych elementach,
+  - dla nazwy i stanu także „Dopasuj do tekstu” i kłódka „Stała ramka”.
+- Osobny blok na górze sekcji „Stan” usunięty, bo jego funkcje są teraz w sekcji „Rozmiar”.
+
 ## 0.6.1-beta.554
 
 - Etykieta, sekcja „Stan”:
