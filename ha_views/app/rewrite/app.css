@@ -1672,3 +1672,4 @@ body.library-mode #room-duplicate,body.library-mode #room-remove,body.library-mo
 @media (max-width:760px){#library-bar{top:58px;bottom:auto;left:8px;right:8px;transform:none;max-width:none}#library-bar .lib-head b{display:none}}
 .add-templates{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}.add-templates>span{font-size:11px;color:#86a5b6;font-weight:700}
 .add-tpl{height:28px;padding:0 11px;border:1px solid rgba(99,181,216,.3);border-radius:14px;background:#0b2533;color:#cfe9f5;font-size:11px;font-weight:700;cursor:pointer}.add-tpl.sel{border-color:#20b9e7;background:rgba(32,185,231,.2);color:#fff}
+.add-templates.wide{grid-column:1/-1;margin-top:2px}

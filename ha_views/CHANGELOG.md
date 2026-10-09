@@ -1,3 +1,11 @@
+## 0.6.1-beta.511
+
+- **Jednakowe dodawanie elementów**: każdy nowy element pojawia się od razu na środku ekranu. Przełącznik „Wskaż miejsce na planie” został usunięty.
+  - Termostat i wskaźnik dodają się jak etykieta, bez okna z listą obszarów: element staje na środku, a encję wybierasz w jego kreatorze (nazwa → encja → co ma być widać).
+  - Lista encji w kreatorze pokazuje tylko pasujące: dla termostatu climate i water_heater, dla wskaźnika encje z liczbą.
+  - Nazwa bierze się z wybranej encji. Wskaźnik od razu dobiera zakres, progi, ikonę i jednostkę.
+  - Termostat z szablonu biblioteki wybierasz na pierwszym ekranie, pod kafelkami: „Termostat z szablonu”.
+
 ## 0.6.1-beta.510
 
 - **Zapis układu powyżej 1 MiB**: serwer dodatku przyjmował zapytania tylko do 1 MiB (domyślny limit aiohttp), więc duży układ, np. z wieloma widokami i termostatami, przestawał się zapisywać z błędem „Nieprawidłowy JSON”. Limit podniesiony do 32 MiB. Gdyby układ był jeszcze większy, pojawi się czytelny komunikat „Układ jest za duży do zapisania”.
