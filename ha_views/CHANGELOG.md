@@ -1,3 +1,7 @@
+## 0.6.1-beta.512
+
+- Flow dodaje się tak samo jak pozostałe elementy: pojawia się na środku ekranu i otwiera się kreator w 3 krokach — nazwa, encja (tylko z liczbą, można pominąć) i wygląd (kierunek albo „wg znaku + / −”, rodzaj strzałek, animacja, kolor). Każdy wybór od razu widać na planie, a po kreatorze otwiera się panel Flow.
+
 ## 0.6.1-beta.511
 
 - **Jednakowe dodawanie elementów**: każdy nowy element pojawia się od razu na środku ekranu. Przełącznik „Wskaż miejsce na planie” został usunięty.
