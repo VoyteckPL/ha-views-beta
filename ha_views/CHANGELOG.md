@@ -1,3 +1,10 @@
+## 0.6.1-beta.540
+
+- Etykieta: usunięto Shift i przełącznik „Kropki zmieniają tylko ramkę”. Kropki zgrupowanej etykiety zawsze skalują całą etykietę.
+- Rozgrupowana etykieta: kropki nazwy lub stanu zmieniają pudełko, a czcionka, margines i zaokrąglenie skalują się proporcjonalnie.
+- Nigdy „…”: pełny stan jest zawsze widoczny. Szerokość pudełka zostaje stała, a tekst zmniejsza się tyle, ile trzeba.
+- „Margines” grupy wyznacza szerokość i wysokość ramki wokół części (0 = ramka ciasno przy częściach). Działa też po rozgrupowaniu. Zmiana marginesu kasuje rozmiar ramki ustawiony wcześniej kropkami.
+
 ## 0.6.1-beta.539
 
 - Nowy, jednolity model etykiety: etykieta to ramka plus części.

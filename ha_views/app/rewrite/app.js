@@ -1693,15 +1693,15 @@ function fitLabelTexts(room, group) {
     room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
   });
   if (locked) { const html = roomLabelMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '', editMode && !room.geometryLocked && !roomDraft); group.innerHTML = html; group.__html = html; group.__key = ''; equalizeLabelFrames(room, group); scheduleSave(false); }
-  // Fitting: the text at full size, then smaller (down to 55 %) while it does not fit; past that it is cut with "…".
+  // Fitting: the text at full size, then smaller while it does not fit - as small as it takes, never cut with "…".
   // A thermostat's text (its own sizes in em, a raised unit…) is scaled down as a whole instead.
   group.querySelectorAll('.fit > b, .fit > small, .fit > .thermo-part').forEach(t => {
     const thermo = t.classList.contains('thermo-part'); t.style.fontSize = ''; t.style.transform = '';
     const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0), need = thermo ? t.getBoundingClientRect().width / Math.max(.01, box.getBoundingClientRect().width / Math.max(1, box.offsetWidth)) : t.scrollWidth;
     if (room_ > 0 && need > room_ + .5) {
-      const min = thermo ? .35 : .55; let k = Math.max(min, room_ / need * .98); /* a thermostat's / gauge's text has no "…": it may get smaller */
+      const min = thermo ? .35 : .05; let k = Math.max(min, room_ / need * .98);
       if (thermo) t.style.transform = `scale(${Math.floor(k * 100) / 100})`;
-      else { t.style.fontSize = `${Math.floor(k * 100)}%`; for (let i = 0; i < 6 && k > min && t.scrollWidth > room_ + .5; i++) { k = Math.max(min, k - .04); t.style.fontSize = `${Math.floor(k * 100)}%`; } } // text widths do not scale exactly
+      else { t.style.fontSize = `${Math.floor(k * 100)}%`; for (let i = 0; i < 30 && k > min && t.scrollWidth > room_ + .5; i++) { k = Math.max(min, k * .96); t.style.fontSize = `${Math.floor(k * 100)}%`; } } // text widths do not scale exactly
     }
   });
 }
@@ -1739,10 +1739,9 @@ function startFreeResize(event, handle) {
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const zoneSize = majorSizing() && !!handle.closest('.room-label-card') && fixedFrame(room); // "Rozmiar po grubych liniach": no free scaling with Shift
-  // A label's group (its frame hugs its parts): the dots scale the whole label, as a picture; with Shift (or "Kropki:
-  // ramka" on the Group bar, for a phone) they size its frame only. Other cases as before (Shift scales).
-  const hugCard = !!handle.closest('.room-label-card') && !fixedFrame(room), scaleWhole = hugCard && !(event.shiftKey || room.labelFrameDots);
-  if ((!hugCard && event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
+  // A label's group (its frame hugs its parts): the dots always scale the whole label, as a picture (no Shift).
+  const hugCard = !!handle.closest('.room-label-card') && !fixedFrame(room), scaleWhole = hugCard;
+  if ((isThermoRoom(room) && event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
   const isCard = node.classList.contains('room-label-card'), key = isCard ? 'labelCard' : partKey(node); if (!key) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
@@ -1767,6 +1766,8 @@ function startFreeResize(event, handle) {
   // per px of text, taken now); the text's width is fitted into the box. No 1:1 snapping for a text.
   // (The height a pill of this text has by itself, per px of text: measured with the box's own height taken off.)
   const textBox = !isCard && !isThermoRoom(room) && BOX_TEXT_KEYS.includes(key), sizeNode = node, sizeStart = startSize;
+  const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
+  const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
   const [boxPerPx, boxWPerPx] = textBox ? (() => {
     const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
     Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
@@ -1889,11 +1890,14 @@ function startFreeResize(event, handle) {
       if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
       else { room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10; }
     } else if (!isThermoRoom(room) && BOX_TEXT_KEYS.includes(key)) {
-      // A label's name / state: the dots size its box only (as the frame of the label); the text keeps its size and is
-      // fitted into the box (smaller when the box is narrower), so name and state behave the same.
-      lh = Math.max(boxPerPx * 8, lh); lw = Math.max(boxWPerPx * 8, lw);
-      // The text as big as the box lets it be both ways (its pill's own proportions), so it never needs cutting.
-      room[`${key}Size`] = Math.round(clamp(Math.min(lh / boxPerPx, lw / boxWPerPx), 6, 420) * 10) / 10;
+      // A label's name / state: its box follows the dots, its text size and its margin (and corners) scale in proportion
+      // with the box (the tighter side); a text wider than the box is fitted into it (smaller, never cut).
+      const w0 = Math.max(1, rect0.width / k), h0 = Math.max(1, rect0.height / k), fMin = 6 / Math.max(6, sizeStart);
+      lw = Math.max(w0 * fMin, lw); lh = Math.max(h0 * fMin, lh);
+      const f = clamp(Math.min(lw / w0, lh / h0), fMin, 420 / Math.max(1, sizeStart));
+      room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
+      if (textPad0 !== null) room[`${key}Padding`] = Math.round(clamp(textPad0 * f, 0, 120) * 10) / 10;
+      if (textRad0 !== null) room[`${key}Radius`] = Math.round(clamp(textRad0 * f, 0, 200) * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
@@ -3124,7 +3128,7 @@ function roomEditorMarkup(room) {
     + control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
     // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
-    + (r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
+    + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
     // Labels (and thermostats) are laid out freely and keep their own look: no layout presets and no style presets
     // (a drawn room's label still has them).
     + ((r.labelLinked && !isIconRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
@@ -3137,7 +3141,7 @@ function roomEditorMarkup(room) {
     + `</div>`, [
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
       ...(isThermoRoom(r) ? [] : [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(r) ? 'Podpis' : 'Stan', isTextRoom(r) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']]),
-      ['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant'],...(isThermoRoom(r) ? [] : [['labelFrameDots','Kropki zmieniają tylko ramkę (jak Shift)','mdi-crop-free']])]);
+      ['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
   // Sections in the order of "Pokaż": icon, name, mode text, the thermostat's parts, each mode button, extra entities.
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
@@ -3253,6 +3257,8 @@ function onRoomEditorInput(event) {
   if (/^label\w*Opacity(On|Off|_[a-z]+)?$|^outline\w*Opacity$/.test(path)) value = clamp(value / 100, 0, 1);
   if (/^labelIconName(On|Off)?$/.test(path)) value = String(value).trim();
   if (path === 'labelIconName') value = String(value).trim();
+  // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.
+  if (path === 'labelCardPadding' && !fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text.
   if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; delete room[`${k}W`]; delete room[`${k}Lock`]; }
   { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Weight|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
