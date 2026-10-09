@@ -1,3 +1,7 @@
+## 0.6.1-beta.549
+
+- Etykieta: przy zmianie rozmiaru nazwy lub stanu (kropkami albo suwakiem „Rozmiar”) margines wewnętrzny zostaje taki sam. Rośnie tylko tekst, a pudełko rośnie o tekst. Domyślny margines, który rósł razem z tekstem, zostaje przy pierwszej zmianie zapisany w obecnych pikselach.
+
 ## 0.6.1-beta.548
 
 - Etykieta: przy ponownym zgrupowaniu ramka nie zostawia pustych pól. Z każdej pary przeciwległych boków (lewy-prawy, góra-dół) zostaje mniejszy margines, więc elementy leżą w ramce równo. Kształt ramki i ustawienie elementów się nie zmieniają, suwak „Margines” też nie.

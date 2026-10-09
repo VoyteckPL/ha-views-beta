@@ -1810,6 +1810,7 @@ function startFreeResize(event, handle) {
   const textBox = !isCard && !isThermoRoom(room) && BOX_TEXT_KEYS.includes(key), sizeNode = node, sizeStart = startSize;
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
+  const textPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, textPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0;
   const [boxPerPx, boxWPerPx] = textBox ? (() => {
     const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
     Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
@@ -1941,11 +1942,14 @@ function startFreeResize(event, handle) {
     } else if (!isThermoRoom(room) && BOX_TEXT_KEYS.includes(key)) {
       // A label's name / state: its box follows the dots, its text size and its margin (and corners) scale in proportion
       // with the box (the tighter side); a text wider than the box is fitted into it (smaller, never cut).
+      // The margin stays as it is (an unset one, which grows with the text, is kept at its present px): the text scales
+      // with the room inside it.
       const w0 = Math.max(1, rect0.width / k), h0 = Math.max(1, rect0.height / k), fMin = 6 / Math.max(6, sizeStart);
-      lw = Math.max(w0 * fMin, lw); lh = Math.max(h0 * fMin, lh);
-      const f = clamp(Math.min(lw / w0, lh / h0), fMin, 420 / Math.max(1, sizeStart));
+      const iw0 = Math.max(1, w0 - 2 * textPadX0), ih0 = Math.max(1, h0 - 2 * textPadY0);
+      lw = Math.max(2 * textPadX0 + iw0 * fMin, lw); lh = Math.max(2 * textPadY0 + ih0 * fMin, lh);
+      const f = clamp(Math.min((lw - 2 * textPadX0) / iw0, (lh - 2 * textPadY0) / ih0), fMin, 420 / Math.max(1, sizeStart));
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
-      if (textPad0 !== null) room[`${key}Padding`] = Math.round(clamp(textPad0 * f, 0, 120) * 10) / 10;
+      if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       if (textRad0 !== null) room[`${key}Radius`] = Math.round(clamp(textRad0 * f, 0, 200) * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
     } else {
@@ -3313,9 +3317,12 @@ function onRoomEditorInput(event) {
   { const own = !isThermoRoom(room) && /^(label(?:Name|State))Size$/.exec(path); if (own) {
     const k = own[1], old = Number(room[path]) || ROOM_DEFAULTS[path], f = Number(value) / Math.max(1, old), num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     if (f > 0 && Math.abs(f - 1) > .001) {
-      if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round(room[`${k}W`] * f * 10) / 10;
-      if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round(room[`${k}H`] * f * 10) / 10;
-      if (num(room[`${k}Padding`])) room[`${k}Padding`] = Math.round(clamp(Number(room[`${k}Padding`]) * f, 0, 120) * 10) / 10;
+      // The margin stays (an unset one, growing with the text, is kept at its present px): the box grows by the text only.
+      const pn = k === 'labelName' ? 'name' : 'state', node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${pn}"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="${pn}"]`), cs = node ? getComputedStyle(node) : null;
+      const px = cs ? parseFloat(cs.paddingLeft) || 0 : 0, py = cs ? parseFloat(cs.paddingTop) || 0 : 0;
+      if (!num(room[`${k}Padding`]) && py > 0) room[`${k}Padding`] = Math.round(py * 10) / 10;
+      if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round((2 * px + Math.max(1, room[`${k}W`] - 2 * px) * f) * 10) / 10;
+      if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round((2 * py + Math.max(1, room[`${k}H`] - 2 * py) * f) * 10) / 10;
       if (num(room[`${k}Radius`])) room[`${k}Radius`] = Math.round(clamp(Number(room[`${k}Radius`]) * f, 0, 200) * 10) / 10;
     }
   } }
