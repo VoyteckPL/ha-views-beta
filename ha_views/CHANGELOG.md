@@ -1,3 +1,7 @@
+## 0.6.1-beta.527
+
+- Tryb rozgrupowany jest wyraźnie widoczny: ramka grupy edytowanej etykiety (termostatu, wskaźnika) ma fioletową, przerywaną, delikatnie pulsującą poświatę, a nad nią jest plakietka „Rozgrupowane”. Działa też przy etykiecie bez tła i ramki. Grubość linii i rozmiar plakietki są stałe przy każdym rozmiarze i powiększeniu.
+
 ## 0.6.1-beta.526
 
 - Podwójne kliknięcie (na telefonie podwójne dotknięcie) na etykiecie, termostacie lub wskaźniku w trybie edycji rozgrupowuje go. Podwójne kliknięcie na jednym z jego elementów grupuje go z powrotem. Działa tylko, gdy grupa ma co najmniej dwa elementy. Podwójne dotknięcie pustego miejsca na planie nadal powiększa widok.
