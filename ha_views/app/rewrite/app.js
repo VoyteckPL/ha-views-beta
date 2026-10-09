@@ -1684,7 +1684,9 @@ function fitLabelTexts(room, group) {
   if (!isThermoRoom(room)) BOX_TEXT_KEYS.forEach(key => {
     if (!room[key] || Number(room[`${key}W`]) > 0) return;
     const m = nat(key); if (!m) return;
-    room[`${key}W`] = Math.round((m[0] + size(key) * .5) * 10) / 10; if (!(Number(room[`${key}H`]) > 0)) room[`${key}H`] = Math.round(m[1] * 10) / 10; delete room[`${key}Lock`]; locked = true;
+    // A margin set by hand is the whole margin (0 = the box tight round the text): no spare room added then.
+    const ownPad = room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '' && Number.isFinite(Number(room[`${key}Padding`]));
+    room[`${key}W`] = Math.round((m[0] + (ownPad ? 0 : size(key) * .5)) * 10) / 10; if (!(Number(room[`${key}H`]) > 0)) room[`${key}H`] = Math.round(m[1] * 10) / 10; delete room[`${key}Lock`]; locked = true;
   });
   if (isThermoRoom(room)) lockedTextKeys(room).forEach(key => {
     if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
@@ -3260,7 +3262,7 @@ function onRoomEditorInput(event) {
   // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.
   if (path === 'labelCardPadding' && !fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text.
-  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; delete room[`${k}W`]; delete room[`${k}Lock`]; }
+  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; delete room[`${k}W`]; delete room[`${k}Lock`]; if (/Padding$/.test(path)) delete room[`${k}H`]; }
   { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Weight|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }

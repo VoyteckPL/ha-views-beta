@@ -1,3 +1,7 @@
+## 0.6.1-beta.541
+
+- Etykieta: suwak „Margines” nazwy lub stanu (w Tle/Ramce) ustawiony na 0 daje pudełko przylegające do tekstu. Ręcznie ustawiony margines to cały margines, bez ukrytego zapasu. Zmiana marginesu mierzy pudełko od nowa (szerokość i wysokość).
+
 ## 0.6.1-beta.540
 
 - Etykieta: usunięto Shift i przełącznik „Kropki zmieniają tylko ramkę”. Kropki zgrupowanej etykiety zawsze skalują całą etykietę.
