@@ -1,3 +1,10 @@
+## 0.6.1-beta.518
+
+- Termostat czyta z atrybutów encji, co ona podaje: current_temperature (temperatura aktualna), hvac_action (stan pracy) oraz temperature albo target_temp_low/high (temperatura ustawiona).
+  - Nowy termostat startuje bez części, których encja nie ma.
+  - Bez temperatury aktualnej temperatura ustawiona trafia na jej miejsce, na środek tarczy, w jej rozmiarze.
+  - W panelu, w „Pokaż”, takie części mają przerywaną ramkę i podpowiedź „brak w encji”, ale nadal można je włączyć.
+
 ## 0.6.1-beta.517
 
 - Nowy termostat dopasowuje układ do urządzenia. Gdy urządzenie ma tylko grzanie i wyłącznik, układ zostaje jak dotąd. Gdy ma więcej trybów (klimatyzator: chłodzenie, auto, osuszanie, wentylator…; podgrzewacz wody: eko, pompa ciepła…), pod rzędem −/grzanie/wyłącznik/+ pojawiają się równe rzędy po 5 przycisków. Gdy ma presety, pod nimi dochodzi rząd presetów (bez „none”). Ramka rośnie tylko w dół, a szerokość i górna część zostają te same. Wcześniej dodatkowe tryby lądowały jeden na drugim na środku.
