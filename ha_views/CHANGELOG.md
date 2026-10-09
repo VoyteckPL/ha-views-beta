@@ -1,3 +1,8 @@
+## 0.6.1-beta.532
+
+- Stały rozmiar etykiety działa też, gdy nazwa albo stan ma rozmiar ustawiony kropkami. Taki rozmiar jest teraz rozmiarem stałym, a nie najmniejszym: dłuższa wartość się zmniejsza i nie rozpycha części ani ramki.
+- Każda etykieta z jednym widocznym elementem jest przy wczytaniu grupowana, także rozgrupowana ręcznie (np. z samym stanem). Jej ramka trzyma się wtedy rozmiaru elementu.
+
 ## 0.6.1-beta.531
 
 - Etykieta ma stały rozmiar, niezależnie od tego, co pokazuje. Nazwa i stan mają zapamiętaną szerokość i wysokość, liczoną od rozmiaru ich tekstu, więc suwak „Rozmiar” nadal je skaluje. Stan jest co najmniej tak szeroki jak nazwa. Dłuższy tekst stanu (np. „Niedostępny” zamiast „21.5 °C”) się zmniejsza, do 55%, a dalej jest ucinany „…”. Rozmiar liczy się od nowa po zmianie nazwy, podpisu, tekstów stanu, grubości lub marginesu tekstu oraz po włączeniu lub wyłączeniu części. Nie dotyczy termostatu i wskaźnika, które mają własny, stały układ.

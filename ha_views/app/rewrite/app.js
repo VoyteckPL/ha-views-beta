@@ -365,7 +365,7 @@ function ensureMultiViewModel() {
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
-    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && room.labelAutoUngrouped && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
+    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
     [...Object.values(view.rooms || {}), ...Object.values(view.entities || {}), ...Object.values(view.flows || {})].forEach(item => { if (item?.geometryLocked) { item.geometryLocked = false; migrated = true; } });
     // Layout v3: a marker's id is its key in view.entities (older layouts keyed markers by entity id and some had a random id).
@@ -1292,10 +1292,12 @@ function fitLabelBackdrop(room, group) {
 // their box is locked (in em of the part's own text size, so the part's "Rozmiar" still scales it) and the text is fitted
 // into it (smaller, at the end cut with "…"). Not for thermostats / gauges, whose frame is designed.
 const LOCKED_TEXT_PARTS = ['labelName','labelState'];
-function textLock(r, key) { const v = r[`${key}Lock`]; return LOCKED_TEXT_PARTS.includes(key) && !isThermoRoom(r) && !(Number(r[`${key}W`]) > 0) && Array.isArray(v) && v[0] > 0 ? v : null; }
+// A size set with the part's dots is its fixed size too (not a least one any more).
+function textLock(r, key) { const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0; return LOCKED_TEXT_PARTS.includes(key) && !isThermoRoom(r) && (w > 0 || h > 0 || (Array.isArray(v) && v[0] > 0)) ? { w, h, v: Array.isArray(v) ? v : null } : null; }
 function partBoxSize(r, key) {
   if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
-  const lock = textLock(r, key); if (lock) return `;width:${lock[0]}em;height:${lock[1]}em;box-sizing:border-box;overflow:hidden`;
+  const lock = textLock(r, key);
+  if (lock) { const w = lock.w ? `${lock.w}px` : lock.v ? `${lock.v[0]}em` : '', h = lock.h ? `${lock.h}px` : lock.v ? `${lock.v[1]}em` : ''; return `${w ? `;width:${w}` : ''}${h ? `;height:${h}` : ''};box-sizing:border-box;overflow:hidden`; }
   const w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0;
   return (w ? `;min-width:${w}px` : '') + (h ? `;min-height:${h}px` : '') + (w || h ? ';box-sizing:border-box' : '');
 }
@@ -1672,7 +1674,7 @@ function fitLabelTexts(room, group) {
   const nat = key => { const n = parts(key)[0]; return n?.offsetWidth ? [n.offsetWidth, n.offsetHeight] : null; };
   let locked = false;
   LOCKED_TEXT_PARTS.forEach(key => {
-    if (!room[key] || Array.isArray(room[`${key}Lock`]) || Number(room[`${key}W`]) > 0) return;
+    if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
     const m = nat(key); if (!m) return; let w = m[0];
     if (key === 'labelState') { const nm = room.labelName && nat('labelName'); w = Math.max(w, nm ? nm[0] : 0, size(key) * 4); }
     room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
