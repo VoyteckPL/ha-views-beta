@@ -1,3 +1,7 @@
+## 0.6.1-beta.537
+
+- Nazwa i stan etykiety działają tak samo. Kropki (w trybie rozgrupowanym) zmieniają tylko ramkę części, a rozmiar czcionki zostaje. Tekst dopasowuje się do ramki: pomniejsza się, gdy ramka jest węższa, i wraca do swojego rozmiaru, gdy jest szersza. Wcześniej zmniejszanie kropkami zmieniało też czcionkę, a stan był dodatkowo dopasowywany do zablokowanej ramki, przez co skalowanie działało dziwnie.
+
 ## 0.6.1-beta.536
 
 - Stan etykiety nie jest już ucinany „…” przy normalnym rozmiarze (np. „clos…”). Pomniejszanie sprawdza, czy tekst naprawdę się mieści, i zmniejsza go dalej, a „…” pojawia się dopiero przy 55%. Nowo zapamiętana szerokość stanu ma też mały zapas (pół litery), bo na innym urządzeniu ten sam tekst bywa o kilka pikseli szerszy.

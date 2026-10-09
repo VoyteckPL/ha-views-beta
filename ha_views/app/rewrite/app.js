@@ -1295,8 +1295,13 @@ function fitLabelBackdrop(room, group) {
 // into it (smaller, at the end cut with "…"). A thermostat's / gauge's texts as well: mode, work state, values, percent.
 const LOCKED_TEXT_PARTS = ['labelState'], THERMO_TEXT_PARTS = ['labelName','labelState','labelAction','labelTarget','labelCurrent','labelPercent'];
 const lockedTextKeys = r => isThermoRoom(r) ? THERMO_TEXT_PARTS : LOCKED_TEXT_PARTS;
-// A size set with the part's dots is its fixed size too (not a least one any more).
-function textLock(r, key) { const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0; return lockedTextKeys(r).includes(key) && (w > 0 || h > 0 || (Array.isArray(v) && v[0] > 0)) ? { w, h, v: Array.isArray(v) ? v : null } : null; }
+// A label's name and state behave alike: a size set with their dots is their box's fixed size (the text fits into it).
+const BOX_TEXT_KEYS = ['labelName','labelState'];
+function textLock(r, key) {
+  const thermo = isThermoRoom(r); if (!(thermo ? THERMO_TEXT_PARTS : BOX_TEXT_KEYS).includes(key)) return null;
+  const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0, em = lockedTextKeys(r).includes(key) && Array.isArray(v) && v[0] > 0 ? v : null;
+  return w > 0 || h > 0 || em ? { w, h, v: em } : null;
+}
 function partBoxSize(r, key) {
   if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
   const lock = textLock(r, key);
@@ -1857,6 +1862,11 @@ function startFreeResize(event, handle) {
       if (!fixedFrame(room)) room.hugFrameV1 = true; // its least size is the user's own: the old load-time clean-up must leave it
       if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
       else { room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10; }
+    } else if (!isThermoRoom(room) && BOX_TEXT_KEYS.includes(key)) {
+      // A label's name / state: the dots size its box only (as the frame of the label); the text keeps its size and is
+      // fitted into the box (smaller when the box is narrower), so name and state behave the same.
+      const fs = Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`]; lw = Math.max(fs * 1.2, lw); lh = Math.max(fs * .9, lh);
+      room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
       const cw = Math.max(1, natW - padX), ch = Math.max(1, natH - padY), minScale = 6 / startSize;
