@@ -2108,11 +2108,26 @@ function secondFingerToZoom(event) {
   if (event.pointerType !== 'touch' || touchesDown.size < 2 || !editMode) return false;
   event.preventDefault(); event.stopPropagation(); viewportPointerDown(event); return true;
 }
+let groupTap = null;
+function toggleLabelGroupFromPlan(room) {
+  // The click that ends this tap would land on the plan (the label may have moved away) and deselect - and so group again.
+  const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 450);
+  // The panel's "Grupuj" button's own handler does the rest; called directly, since the click that follows a press on a
+  // label is swallowed (it must not select what lies under it).
+  const flip = () => { const button = $('#room-group-toggle'); if (button) onRoomEditorClick({ target: button, preventDefault() {}, stopPropagation() {} }); };
+  if (selectedRoomId !== room.id || !$('#room-editor')?.classList.contains('visible')) { openRoomEditor(room.id); requestAnimationFrame(flip); } else flip();
+}
 function startRoomLabelDrag(event) {
   if (secondFingerToZoom(event)) return;
   const corner = event.target.closest?.('.card-handle'); if (corner && editMode) return startFreeResize(event, corner);
   const node = event.target.closest('.room-label-part.editable, .room-label-card.editable'); if (!node || !editMode || event.button > 0) return;
   const room = roomsOf()[node.dataset.roomId], part = node.dataset.labelPart === 'card' ? ['card','labelCard','Grupa'] : ROOM_LABEL_PARTS.find(([p]) => p === node.dataset.labelPart); if (!room || !part) return;
+  // A double click / double tap on a label ungroups it (on one of its parts: groups it again). The label holds the pointer
+  // while it is dragged, so the browser's dblclick never comes - the two quick presses on the same spot are counted here
+  // (and the plan's own double tap, the zoom, is skipped for them).
+  const now = performance.now(), twice = groupTap && groupTap.roomId === room.id && now - groupTap.t < 380 && Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 24;
+  groupTap = twice ? null : { roomId: room.id, t: now, x: event.clientX, y: event.clientY };
+  if (twice && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length > 1) { event.preventDefault(); event.stopPropagation(); handleTapAt = now; return toggleLabelGroupFromPlan(room); }
   // Ungrouped, on a phone: only the active part moves at once. A finger landing on another part does not grab it - a
   // tap makes it the active one (then it can be moved), a drag moves the plan - so passing fingers move nothing by mistake.
   if (event.pointerType === 'touch' && selectedRoomId === room.id && !room.labelLinked && node.dataset.labelPart !== 'card' && !node.classList.contains('active-part')) {
@@ -7465,6 +7480,14 @@ function bindEvents() {
   $('#background-transform-reset')?.addEventListener('click', async () => { if (!currentBackground || !await appConfirm({ title:'Zresetować dopasowanie tła?', message:'Skala, pozycja i tryb dopasowania tego tła wrócą do wartości domyślnych.', confirmText:'Resetuj', danger:true })) return; activeSceneView().backgroundTransforms[currentBackground] = defaultBackgroundTransform(); applyBackgroundTransform(); syncBackgroundTransformControls(); scheduleSave(true); notify('Przywrócono domyślne dopasowanie tła'); });
   els.scene.addEventListener('click', onRoomDrawClick, true);
   $('#room-labels')?.addEventListener('pointerdown', startRoomLabelDrag);
+  // On a phone the first tap selects the label and the camera brings it into view, so the second tap of a double tap may
+  // land beside it: two taps on the same spot of the screen still count as a double tap on that label.
+  els.viewport?.addEventListener('pointerdown', event => {
+    if (!groupTap || event.pointerType !== 'touch' || !editMode || event.target.closest?.('.room-label-card, .room-label-part, .card-handle')) return;
+    const now = performance.now(), room = roomsOf()[groupTap.roomId], near = Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 30, quick = now - groupTap.t < 380; groupTap = null;
+    if (!room || !near || !quick || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 2) return;
+    event.preventDefault(); event.stopPropagation(); handleTapAt = now; toggleLabelGroupFromPlan(room);
+  }, true);
   // No browser context menu (copy / share / save image) on a long press anywhere on the plan.
   els.scene.addEventListener('contextmenu', event => event.preventDefault());
   // Every new press starts clean: a pan or swipe that ended without a click must not swallow the next tap.

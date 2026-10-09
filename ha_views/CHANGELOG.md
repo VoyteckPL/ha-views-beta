@@ -1,3 +1,7 @@
+## 0.6.1-beta.526
+
+- Podwójne kliknięcie (na telefonie podwójne dotknięcie) na etykiecie, termostacie lub wskaźniku w trybie edycji rozgrupowuje go. Podwójne kliknięcie na jednym z jego elementów grupuje go z powrotem. Działa tylko, gdy grupa ma co najmniej dwa elementy. Podwójne dotknięcie pustego miejsca na planie nadal powiększa widok.
+
 ## 0.6.1-beta.525
 
 - Naprawiono przeskakiwanie przy przesuwaniu części rozgrupowanej etykiety z włączoną siatką grupy.
