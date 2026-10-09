@@ -1798,11 +1798,13 @@ function startFreeResize(event, handle) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.
       // Made bigger again, a group shrunk this way first grows back to the size it had (labelCardFitBase), then its frame.
-      const minF = .3 / cardScale0, maxF = fixedFrame(room) ? Math.max(1, cardBase / cardScale0) : 6 / cardScale0, f = clamp(Math.min(lw / natW, lh / natH), minF, maxF);
+      // A label's (hugging) frame does the same: its dots set the frame's size around the parts (kept as its least size -
+      // the frame still grows with the parts, and changing which parts show lets it hug them again); Shift scales the whole label.
+      const minF = .3 / cardScale0, maxF = Math.max(1, cardBase / cardScale0), f = clamp(Math.min(lw / natW, lh / natH), minF, maxF);
       lw = Math.max(natW * f, lw); lh = Math.max(natH * f, lh);
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      if (!fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; } // a hugging frame: the dots only scale the group
-      else if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
+      if (!fixedFrame(room)) room.hugFrameV1 = true; // its least size is the user's own: the old load-time clean-up must leave it
+      if (centredCard) { room.labelCardW = Math.round(lw / f * 100) / 100; room.labelCardH = Math.round(lh / f * 100) / 100; }
       else { room.labelCardW = lw / f <= natW + .5 ? 0 : Math.round(lw / f * 10) / 10; room.labelCardH = lh / f <= natH + .5 ? 0 : Math.round(lh / f * 10) / 10; }
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
@@ -3132,7 +3134,7 @@ function onRoomEditorInput(event) {
     const card = room.labelLinked && !(isIconRoom(room) && dashSpan(room)) ? document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`) : null, oldScale = clamp(Number(room.labelCardScale) || 1, .3, 6);
     if (card && !input._frame) { input._frame = { w: card.offsetWidth * oldScale, h: card.offsetHeight * oldScale }; input.addEventListener('change', () => { delete input._frame; }, { once:true }); }
     room.labelCardScale = Math.round(clamp(value * labelScaleBase(room), .2, 6) * 1000) / 1000; delete room.labelCardFitBase; room.updatedAt = new Date().toISOString();
-    if (input._frame && fixedFrame(room)) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
+    if (input._frame && (fixedFrame(room) || Number(room.labelCardW) > 0 || Number(room.labelCardH) > 0)) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     // Ungrouped: the frame kept from the group stays the same size on the plan as well.
     const kept = !room.labelLinked && room.labelUngroupFrame;
     if (kept) { if (!input._kept) { input._kept = { w: kept.w * oldScale, h: kept.h * oldScale }; input.addEventListener('change', () => { delete input._kept; }, { once:true }); } const k = clamp(room.labelCardScale, .3, 6); kept.w = Math.round(input._kept.w / k * 100) / 100; kept.h = Math.round(input._kept.h / k * 100) / 100; }

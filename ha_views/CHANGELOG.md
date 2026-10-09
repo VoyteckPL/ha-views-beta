@@ -1,3 +1,12 @@
+## 0.6.1-beta.523
+
+- Etykieta: kropki w rogach zmieniają teraz rozmiar ramki, a nie całej etykiety.
+  - Większa ramka zostawia ikonę, nazwę i stan w tym samym rozmiarze, na środku.
+  - Przy zmniejszaniu ramka dochodzi do części, a poniżej tego zmniejsza się cała etykieta.
+  - Ustawiony rozmiar jest najmniejszym rozmiarem ramki: gdy części urosną, ramka nadal je obejmuje. Po włączeniu lub wyłączeniu części ramka znów dopasowuje się do nich.
+  - Z Shift kropki skalują całą etykietę jak dotąd.
+  - Suwak „Rozmiar” zmienia części, a ustawiona ramka zostaje na planie tej samej wielkości.
+
 ## 0.6.1-beta.522
 
 - Etykiety (i teksty) nie mają już w sekcji grupy rzędów „Układ” i „Styl”, tak jak termostaty. Etykieta pomieszczenia ma je nadal.
