@@ -1,3 +1,8 @@
+## 0.6.1-beta.524
+
+- „Rozmiar tylko po grubych liniach siatki” nazywa się teraz krócej: „Rozmiar po strefach”.
+- Przy włączonym „Rozmiar po strefach” ramka etykiety (i etykiety pomieszczenia) zmieniana kropkami skacze po grubych liniach. Nieruchomy róg trafia na najbliższe skrzyżowanie, a ruchomy przeskakuje od linii do linii. Elementy zostają w swoim rozmiarze na środku ramki, a gdy ramka jest mniejsza od nich, się zmniejszają. Alt wyłącza przyciąganie.
+
 ## 0.6.1-beta.523
 
 - Etykieta: kropki w rogach zmieniają teraz rozmiar ramki, a nie całej etykiety.
