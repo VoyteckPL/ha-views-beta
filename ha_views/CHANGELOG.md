@@ -1,3 +1,7 @@
+## 0.6.1-beta.529
+
+- Etykieta z jednym elementem (np. sama ikona) po zaznaczeniu wygląda zwyczajnie, bez fioletowej ramki trybu rozgrupowanego. Ta ramka pojawia się tylko, gdy rozgrupowane są co najmniej dwa elementy.
+
 ## 0.6.1-beta.528
 
 - Tryb rozgrupowany: elementy wewnątrz ramki znów mają swoje normalne kolory. Wcześniej tło grupy przykrywało je i przyciemniało. Nad ramką zamiast plakietki z napisem jest sama ikona; podpis „Rozgrupowane” pokazuje się po najechaniu.

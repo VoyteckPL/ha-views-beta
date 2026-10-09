@@ -1618,7 +1618,8 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   // Ungrouped and being edited: the group's frame glows and an icon above it says so (drawn even when the label has no background / frame).
-  const ungroupEdit = interactive && r.id === selectedRoomId, look = r.labelCardBg || r.labelCardBorder;
+  // (A label left with one part is ungrouped only so the part has its own dots: it looks selected as usual.)
+  const ungroupEdit = interactive && r.id === selectedRoomId && ROOM_LABEL_PARTS.filter(([part]) => content[part]).length > 1, look = r.labelCardBg || r.labelCardBorder;
   const backdrop = look || ungroupEdit ? `<div class="room-label-backdrop${r.labelCardBlur && look ? ' blur' : ''}${r.labelCardExact ? ' exact' : ''}${ungroupEdit ? ' ungrouped-edit' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${look ? cardLook(r, on) : ''}">${ungroupEdit ? `<span class="ungroup-badge" title="${escapeHtml(translateValue('Rozgrupowane'))}"><i class="mdi mdi-ungroup"></i></span>` : ''}</div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : '';
