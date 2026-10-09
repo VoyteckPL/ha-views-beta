@@ -1677,7 +1677,8 @@ function fitLabelTexts(room, group) {
   let locked = false;
   lockedTextKeys(room).forEach(key => {
     if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
-    const m = nat(key); if (!m) return; let w = m[0];
+    // A little room to spare (half a letter): the same text is a few px wider with another device's font.
+    const m = nat(key); if (!m) return; let w = m[0] + size(key) * .5;
     room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
   });
   if (locked) { const html = roomLabelMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '', editMode && !room.geometryLocked && !roomDraft); group.innerHTML = html; group.__html = html; group.__key = ''; equalizeLabelFrames(room, group); scheduleSave(false); }
@@ -1686,7 +1687,11 @@ function fitLabelTexts(room, group) {
   group.querySelectorAll('.fit > b, .fit > small, .fit > .thermo-part').forEach(t => {
     const thermo = t.classList.contains('thermo-part'); t.style.fontSize = ''; t.style.transform = '';
     const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0), need = thermo ? t.getBoundingClientRect().width / Math.max(.01, box.getBoundingClientRect().width / Math.max(1, box.offsetWidth)) : t.scrollWidth;
-    if (room_ > 0 && need > room_ + .5) { const k = Math.max(thermo ? .35 : .55, room_ / need); /* a thermostat's / gauge's text has no "…": it may get smaller */ if (thermo) t.style.transform = `scale(${Math.floor(k * 100) / 100})`; else t.style.fontSize = `${Math.floor(k * 100)}%`; }
+    if (room_ > 0 && need > room_ + .5) {
+      const min = thermo ? .35 : .55; let k = Math.max(min, room_ / need * .98); /* a thermostat's / gauge's text has no "…": it may get smaller */
+      if (thermo) t.style.transform = `scale(${Math.floor(k * 100) / 100})`;
+      else { t.style.fontSize = `${Math.floor(k * 100)}%`; for (let i = 0; i < 6 && k > min && t.scrollWidth > room_ + .5; i++) { k = Math.max(min, k - .04); t.style.fontSize = `${Math.floor(k * 100)}%`; } } // text widths do not scale exactly
+    }
   });
 }
 // Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so

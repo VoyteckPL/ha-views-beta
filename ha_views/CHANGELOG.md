@@ -1,3 +1,7 @@
+## 0.6.1-beta.536
+
+- Stan etykiety nie jest już ucinany „…” przy normalnym rozmiarze (np. „clos…”). Pomniejszanie sprawdza, czy tekst naprawdę się mieści, i zmniejsza go dalej, a „…” pojawia się dopiero przy 55%. Nowo zapamiętana szerokość stanu ma też mały zapas (pół litery), bo na innym urządzeniu ten sam tekst bywa o kilka pikseli szerszy.
+
 ## 0.6.1-beta.535
 
 - Ramka nowej etykiety obejmuje teksty z własnym marginesem, bez dopełniania do pełnych kratek siatki, które przy dużej siatce dawało szeroki pusty pas. Na siatkę trafia tylko jej lewy górny róg. Termostat, wskaźnik i Flow nadal mają rozmiar w pełnych kratkach.
