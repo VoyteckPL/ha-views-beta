@@ -366,6 +366,8 @@ function ensureMultiViewModel() {
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
     Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
+    // A label's name is not locked any more (only its state is): a width taken on one device cut the name on another.
+    Object.values(view.rooms || {}).forEach(room => { if (room && !room.thermo && 'labelNameLock' in room) { delete room.labelNameLock; migrated = true; } });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
     [...Object.values(view.rooms || {}), ...Object.values(view.entities || {}), ...Object.values(view.flows || {})].forEach(item => { if (item?.geometryLocked) { item.geometryLocked = false; migrated = true; } });
     // Layout v3: a marker's id is its key in view.entities (older layouts keyed markers by entity id and some had a random id).
@@ -691,7 +693,7 @@ const ROOM_DEFAULTS = Object.freeze(withExtraPartDefaults({ name:'Pomieszczenie'
   gaugeMin:0, gaugeMax:100, gaugeSweep:270, gaugeColor:'#20B9E7', gaugeRules:true, gaugeLow:30, gaugeHigh:70, gaugeColorLow:'#4FC3F7', gaugeColorMid:'#22D69B', gaugeColorHigh:'#FF8A65', gaugeSmooth:true, labelModesDX:0, labelModesDY:0, labelModesOpacity:1, labelModesOpacityOn:1, labelModesOpacityOff:1, labelModesColorOn:'#FFFFFF', labelModesColorOff:'#FFFFFF', thermoHeatColor:'#FF7A2F', thermoCoolColor:'#38BDF8', thermoAutoColor:'#34D399', thermoDryColor:'#FBBF24', thermoFanColor:'#A78BFA', thermoOffColor:'#64748B', thermoTrackColor:'#1E3546', thermoDialWidth:9, thermoDialRange:true, thermoGlow:true, labelActionAccent:true, labelTargetAccent:false, labelCurrentAccent:false, labelTargetUnit:'°C', labelTargetDecimals:'auto', labelCurrentUnit:'°C', labelCurrentDecimals:'auto', thermoDotSize:100, thermoKnobSize:100 }));
 // A freshly drawn room starts with its icon, name and state visible and the usual extras switched on
 // (icon outline, backgrounds, icon border), so every option is visible and can be tuned or turned off.
-const NEW_ROOM_LABEL = Object.freeze({ labelIcon:true, labelName:true, labelState:true, labelLinked:true, labelCardBg:true, labelCardBorder:true,
+const NEW_ROOM_LABEL = Object.freeze({ labelPartGap:12, labelIcon:true, labelName:true, labelState:true, labelLinked:true, labelCardBg:true, labelCardBorder:true,
   labelIconOutline:true, labelIconBg:true, labelIconBorder:true, labelIconColor:'#9FB6C3', labelIconOn:'#DCE8EF', labelIconOff:'#9FB6C3', labelNameBg:true, labelNameBorder:true, labelStateBg:true, labelStateBorder:true, labelIconY:-97, labelNameY:26, labelStateY:123 });
 // A new element's corners go onto the grid's lines: its frame is made whole cells (a label's frame only grows, as a
 // least size - it still hugs its parts, and the least size goes with the first change of its parts) and moved so its
@@ -1291,7 +1293,7 @@ function fitLabelBackdrop(room, group) {
 // A label's name and state keep one size whatever they show (a state "Wł." → "Niedostępny" must not resize the label):
 // their box is locked (in em of the part's own text size, so the part's "Rozmiar" still scales it) and the text is fitted
 // into it (smaller, at the end cut with "…"). A thermostat's / gauge's texts as well: mode, work state, values, percent.
-const LOCKED_TEXT_PARTS = ['labelName','labelState'], THERMO_TEXT_PARTS = ['labelName','labelState','labelAction','labelTarget','labelCurrent','labelPercent'];
+const LOCKED_TEXT_PARTS = ['labelState'], THERMO_TEXT_PARTS = ['labelName','labelState','labelAction','labelTarget','labelCurrent','labelPercent'];
 const lockedTextKeys = r => isThermoRoom(r) ? THERMO_TEXT_PARTS : LOCKED_TEXT_PARTS;
 // A size set with the part's dots is its fixed size too (not a least one any more).
 function textLock(r, key) { const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0; return lockedTextKeys(r).includes(key) && (w > 0 || h > 0 || (Array.isArray(v) && v[0] > 0)) ? { w, h, v: Array.isArray(v) ? v : null } : null; }
@@ -1622,7 +1624,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
-      free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, 'gap:0', cardLook(r, on)].join(';') + accentVar;
+      free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${free && r.labelCardExact && r.labelCardCentred && Number(r.labelCardW) > 0 ? ' exact' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
@@ -1652,7 +1654,7 @@ function renderRoomLabels(view = activeSceneView()) {
     const html = roomLabelMarkup(room, preview(room.id), editMode && !room.geometryLocked && !roomDraft); kept.add(room.id);
     let group = [...layer.children].find(node => node.dataset.labelGroup === room.id);
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
-    if (group.__html === html) return equalizeLabelFrames(room, group);
+    if (group.__html === html) { equalizeLabelFrames(room, group); return fitLabelTexts(room, group); }
     // Only the position changed (the room or the label is being dragged): the existing nodes get the new
     // position styles instead of being re-created, so the icon is never rebuilt mid-drag.
     const key = html.replace(/left:[-\d.]+%;top:[-\d.]+%/g, '').replace(/--l[xy]:[-\d.]+px/g, '').replace(/min-(width|height):[\d.]+px/g, '');
@@ -7731,6 +7733,8 @@ function bindEvents() {
   document.addEventListener('focusin', event => { const el = event.target; if (el?.matches?.('.editor input:not([type=range]):not([type=checkbox]):not([type=color])')) el.enterKeyHint = 'done'; });
   document.addEventListener('keydown', event => { const el = event.target; if (event.key === 'Enter' && !event.isComposing && el?.matches?.('.editor input:not([type=range]):not([type=checkbox]):not([type=color])')) { event.preventDefault(); el.blur(); } });
   if ('ResizeObserver' in window) new ResizeObserver(updateSceneGeometry).observe(els.scene);
+  // Texts are fitted again once the web fonts are in (their widths change).
+  document.fonts?.ready?.then(() => renderRoomLabels()); document.fonts?.addEventListener?.('loadingdone', () => renderRoomLabels());
   els.zoomOut?.addEventListener('click', () => setViewZoom(viewZoom-.5)); els.zoomIn?.addEventListener('click', () => setViewZoom(viewZoom+.5)); els.zoomReset?.addEventListener('click', resetViewZoom);
   // A double tap on a room corner removes the corner; the browser also turns those two taps into a dblclick,
   // which must not toggle the zoom (on a phone the view used to jump back to 100 %).

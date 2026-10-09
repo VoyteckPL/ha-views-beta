@@ -1,3 +1,9 @@
+## 0.6.1-beta.534
+
+- Naprawiono obciętą nazwę etykiety („Bra…”). Nazwa nie ma już zablokowanej szerokości i zawsze dopasowuje się do własnego tekstu. Stała szerokość, zapisana w jednostkach czcionki, na innym urządzeniu (np. inna czcionka na telefonie i na Windows) bywała za wąska. Stały rozmiar zostaje tylko dla stanu, który zmienia się sam. Zapisane blokady nazw są usuwane przy wczytaniu.
+- Teksty są dopasowywane ponownie, gdy wczytają się czcionki.
+- Nowe etykiety mają odstęp między ikoną, nazwą i stanem, więc części już się nie stykają. Istniejące zostają bez zmian.
+
 ## 0.6.1-beta.533
 
 - Termostat i wskaźnik: ich teksty też mają stały rozmiar. Dotyczy to nazwy, pigułki trybu, stanu pracy, temperatury ustawionej i aktualnej, wartości oraz procentu. Rozmiar jest zapamiętany przy pierwszym wyświetleniu, a rozmiar ustawiony kropkami jest stały. Dłuższy tekst (np. „Grzanie / chłodzenie”, „-12,5°C”, „12 400 W”, „Niedostępny”) jest pomniejszany w całości, do 35%, i nie poszerza pigułki ani części. Rozmiar liczy się od nowa po zmianie jednostki, miejsc po przecinku, grubości lub marginesu danego tekstu.
