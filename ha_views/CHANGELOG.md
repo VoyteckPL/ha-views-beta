@@ -1,3 +1,7 @@
+## 0.6.1-beta.520
+
+- Kropki zaznaczenia mają wszędzie ten sam rozmiar co przy etykietach i termostatach: 12 px, a na ekranie dotykowym 16 px. Dotyczy to rogów pomieszczeń (nadal żółte; punkty pośrodku boków są nieco mniejsze) i rogów Flow (białe z fioletową obwódką, wcześniej większe).
+
 ## 0.6.1-beta.519
 
 - Kreator termostatu, krok „Co ma być widać?”: po wybraniu encji kreator sprawdza jej atrybuty. Części bez danych (np. temperatura aktualna, stan pracy) mają podpis „brak w encji” i są domyślnie odznaczone. Gdy któraś zostanie zaznaczona ręcznie, termostat ją pokaże. Gdy temperatura aktualna jest odznaczona, temperatura ustawiona trafia na środek tarczy. „Pomiń” zostawia części bez danych ukryte.

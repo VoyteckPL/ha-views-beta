@@ -1695,3 +1695,16 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .part-section.no-data>summary>span:first-child{opacity:.55}.no-data-tag{margin-left:7px;padding:1px 6px;border:1px dashed rgba(159,182,195,.5);border-radius:6px;color:#9fb6c3;font:600 10px/1.4 inherit;font-style:normal;white-space:nowrap}
 .room-card-preset.no-data{border-style:dashed;opacity:.45}
 .room-wizard-part.no-data:not(.on){opacity:.6}.room-wizard-part .no-data-tag{display:block;width:max-content;margin:3px auto 0}
+/* Corner / point dots: the same size everywhere (as the dots of labels and thermostats: 12 px, 16 px on touch); rooms
+   keep their yellow, Flow its violet. */
+.room-handle{width:calc(12px / var(--view-zoom,1))!important;height:calc(12px / var(--view-zoom,1))!important;margin:calc(-6px / var(--view-zoom,1)) 0 0 calc(-6px / var(--view-zoom,1))!important}
+.room-handle.mid{width:calc(9px / var(--view-zoom,1))!important;height:calc(9px / var(--view-zoom,1))!important;margin:calc(-4.5px / var(--view-zoom,1)) 0 0 calc(-4.5px / var(--view-zoom,1))!important}
+.flow-selection i[data-flow-handle]{width:12px;height:12px;border:2px solid rgba(176,124,255,1);background:#fff!important;background-clip:border-box;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45)}
+.flow-selection i[data-flow-handle]::before{content:"";position:absolute;inset:-8px;border-radius:50%}
+.flow-selection i[data-flow-handle=nw]{left:-6px;top:-6px}.flow-selection i[data-flow-handle=ne]{right:-6px;top:-6px}.flow-selection i[data-flow-handle=sw]{left:-6px;bottom:-6px}.flow-selection i[data-flow-handle=se]{right:-6px;bottom:-6px}
+@media (pointer:coarse){
+  .room-handle{width:calc(16px / var(--view-zoom,1))!important;height:calc(16px / var(--view-zoom,1))!important;margin:calc(-8px / var(--view-zoom,1)) 0 0 calc(-8px / var(--view-zoom,1))!important}
+  .room-handle.mid{width:calc(12px / var(--view-zoom,1))!important;height:calc(12px / var(--view-zoom,1))!important;margin:calc(-6px / var(--view-zoom,1)) 0 0 calc(-6px / var(--view-zoom,1))!important}
+  .flow-selection i[data-flow-handle]{width:16px;height:16px}.flow-selection i[data-flow-handle]::before{inset:-10px}
+  .flow-selection i[data-flow-handle=nw]{left:-8px;top:-8px}.flow-selection i[data-flow-handle=ne]{right:-8px;top:-8px}.flow-selection i[data-flow-handle=sw]{left:-8px;bottom:-8px}.flow-selection i[data-flow-handle=se]{right:-8px;bottom:-8px}
+}
