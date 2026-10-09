@@ -1,3 +1,11 @@
+## 0.6.1-beta.552
+
+- Etykieta (rozgrupowana): szybki pasek nad zaznaczonym stanem.
+  - Zawiera: rozmiar tekstu (− / +, przytrzymanie zmienia płynnie, liczbę można wpisać), margines (− / +), dopasowanie pudełka do tekstu, pogrubienie i kolor z palety.
+  - Zmienia to samo co panel, a panel się odświeża.
+  - Pasek stoi nad ramką etykiety, więc nie zasłania jej części; gdy nad ramką brak miejsca, stoi pod nią. Ma zwykłą skalę ekranu niezależnie od powiększenia planu i mieści się w jednym rzędzie na telefonie.
+- Kropki na bokach nazwy i stanu pokazują się tylko, gdy część jest na ekranie wystarczająco duża. Przy małej części zostają same rogi, żeby kropki się nie zlewały.
+
 ## 0.6.1-beta.551
 
 - Etykieta (rozgrupowana): nazwa i stan mają kropki w rogach i na środku każdego boku.
