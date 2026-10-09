@@ -1,3 +1,7 @@
+## 0.6.1-beta.522
+
+- Etykiety (i teksty) nie mają już w sekcji grupy rzędów „Układ” i „Styl”, tak jak termostaty. Etykieta pomieszczenia ma je nadal.
+
 ## 0.6.1-beta.521
 
 - Flow, „Przywróć domyślny”: przywraca ten sam wygląd co przy nowym Flow (duży, z animacją „Przepływ”, w pełnych kratkach siatki), a nie stare domyślne ustawienia. Tak samo działa przywracanie pojedynczych suwaków.
