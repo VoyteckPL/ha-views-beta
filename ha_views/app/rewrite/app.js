@@ -2428,7 +2428,7 @@ function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
 }
 function closeRoomWizard() {
   const box = $('#room-wizard'); if (!roomWizard || !box) return;
-  const { id, picked, parts, generated: roomWizard_generated, flow: isFlow, fromTemplate } = roomWizard, room = isFlow ? activeSceneView()?.flows?.[id] : roomsOf()[id]; roomWizard = null;
+  const { id, picked, parts, generated: roomWizard_generated, flow: isFlow, fromTemplate, partsSeen } = roomWizard, room = isFlow ? activeSceneView()?.flows?.[id] : roomsOf()[id]; roomWizard = null;
   box.classList.remove('visible'); box.setAttribute('aria-hidden', 'true');
   if (!room) return;
   if (isFlow) return closeFlowWizard(room, [...picked][0] || '', roomWizard_generated);
@@ -2443,7 +2443,7 @@ function closeRoomWizard() {
   // A thermostat's rows follow its device (fitThermoRows); its frame is put on the grid from its own size, not twice.
   const thermoRows = isThermoRoom(room) && !isGaugeRoom(room) && !fromTemplate && room.entityIds.length, frameSize = [room.labelCardW, room.labelCardH];
   renderRooms(); fitRoomLabel(id); snapNewLabelToGrid(id); scheduleSave(true);
-  if (thermoRows) fitThermoRows(id, frameSize);
+  if (thermoRows) fitThermoRows(id, frameSize, false, !!partsSeen);
   // With entities picked there is nothing left to do in the Room section, so the panel opens collapsed.
   openRoomEditor(id, -1, room.entityIds.length ? -1 : 0);
   notify(isGaugeRoom(room) ? 'Dodano wskaźnik' : isThermoRoom(room) ? 'Dodano termostat' : isTextRoom(room) ? 'Dodano tekst' : isIconRoom(room) ? 'Dodano etykietę' : room.entityIds.length ? 'Dodano pomieszczenie' : 'Dodano pomieszczenie — encje możesz dodać w panelu');
@@ -2550,7 +2550,13 @@ function renderRoomWizard(part = 'all') {
     // Name → entities: the search field takes the focus right away (in the same tap / Enter), so the on-screen
     // keyboard stays open between the two steps instead of closing and opening again.
     if (w.step === 'entities' && document.activeElement?.id === 'room-wizard-name') $('#room-wizard-search', box).focus();
-    $('#room-wizard-parts', box).innerHTML = wizardPartsFor(room).map(([key, label, mdi]) => [key, text && key === 'labelState' ? 'Podpis' : label, mdi]).map(([key, label, mdi]) => `<button type="button" class="room-wizard-part${w.parts.has(key) ? ' on' : ''}" data-wizard-part="${key}" aria-pressed="${w.parts.has(key)}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(label))}</span><i class="mdi ${w.parts.has(key) ? 'mdi-check-circle' : 'mdi-circle-outline'} room-wizard-part-check"></i></button>`).join('');
+    // A thermostat: the parts its entity has no data for start unticked and say so (they can still be ticked).
+    const pickedId = [...w.picked][0] || (room?.entityIds || [])[0], none = w.step === 'parts' && !w.fromTemplate ? thermoMissingParts(room, pickedId) : new Set(), noneKey = key => none.has(key.slice(5).toLowerCase());
+    if (w.step === 'parts' && isThermoRoom(room) && !isGaugeRoom(room) && !w.fromTemplate && !w.partsSeen) {
+      if (pickedId && !stateCache[pickedId]?.attributes) { wizardThermoState(pickedId).then(() => { if (roomWizard === w && w.step === 'parts') renderRoomWizard(); }); }
+      else { w.partsSeen = true; wizardPartsFor(room).forEach(([key]) => { if (noneKey(key)) w.parts.delete(key); }); }
+    }
+    $('#room-wizard-parts', box).innerHTML = wizardPartsFor(room).map(([key, label, mdi]) => [key, text && key === 'labelState' ? 'Podpis' : label, mdi]).map(([key, label, mdi]) => `<button type="button" class="room-wizard-part${w.parts.has(key) ? ' on' : ''}${noneKey(key) ? ' no-data' : ''}" data-wizard-part="${key}" aria-pressed="${w.parts.has(key)}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(label))}${noneKey(key) ? `<em class="no-data-tag">${escapeHtml(translateValue('brak w encji'))}</em>` : ''}</span><i class="mdi ${w.parts.has(key) ? 'mdi-check-circle' : 'mdi-circle-outline'} room-wizard-part-check"></i></button>`).join('');
     renderRoomWizardButton();
   }
   if (w.step !== 'entities') return;
@@ -2612,6 +2618,7 @@ function onRoomWizardClick(event) {
     if (roomWizard.step === 'name') { const input = $('#room-wizard-name'); if (input) input.value = ''; return roomWizardNext(); }
     // Skipping entities keeps none; skipping the parts keeps all three.
     if (roomWizard.step === 'entities') roomWizard.picked = roomWizard.flow ? new Set() : new Set(roomsOf()[roomWizard.id]?.entityIds || []);
+    if (roomWizard.step === 'parts') roomWizard.partsSeen = false; // skipped: the parts without data are left out after all
     if (roomWizard.step === 'parts') { const wr = roomsOf()[roomWizard.id]; roomWizard.parts = new Set(isThermoRoom(wr) ? wizardPartsFor(wr).map(([key]) => key).filter(key => wr[key]) : WIZARD_PARTS.map(([key]) => key).filter(key => !(isTextRoom(wr) && key === 'labelState'))); }
     const steps = wizardSteps(), next = steps[steps.indexOf(roomWizard.step) + 1];
     if (next) { roomWizard.step = next; renderRoomWizard(); return requestAnimationFrame(focusWizardTarget); }
@@ -6475,26 +6482,32 @@ function layoutThermoRows(room) {
 // What a thermostat shows comes from its entity's attributes: current_temperature (Temperatura aktualna), hvac_action
 // (Stan pracy), temperature or target_temp_low / high (Temperatura ustawiona), hvac_modes / operation_list (Tryby),
 // preset_modes (Presety). A part whose attribute the entity does not have is marked in the panel ("brak w encji").
-function thermoMissingParts(r) {
+function thermoMissingParts(r, entityId = (r?.entityIds || [])[0]) {
   if (!isThermoRoom(r) || isGaugeRoom(r)) return new Set();
-  const a = stateCache[(r.entityIds || [])[0]]?.attributes; if (!a || !Object.keys(a).length) return new Set();
-  const has = k => a[k] !== undefined && a[k] !== null && a[k] !== '', water = String((r.entityIds || [])[0] || '').startsWith('water_heater.');
+  const a = stateCache[entityId]?.attributes; if (!a || !Object.keys(a).length) return new Set();
+  const has = k => a[k] !== undefined && a[k] !== null && a[k] !== '', water = String(entityId || '').startsWith('water_heater.');
   return new Set([...(has('current_temperature') ? [] : ['current']), ...(has('hvac_action') || water ? [] : ['action']), ...(has('temperature') || has('target_temp_low') ? [] : ['target'])]);
 }
-// A new thermostat starts without them: no current temperature puts the set one in its place (the dial's middle, as big).
-function hideMissingThermoParts(room) {
+// A new thermostat starts without them (unless they were picked in the wizard's last step, which already left them out
+// by default): with no current temperature the set one takes its place (the dial's middle, as big).
+function hideMissingThermoParts(room, chosen = false) {
   const missing = thermoMissingParts(room); if (!missing.size) return false;
-  if (missing.has('current') && room.labelCurrent) { room.labelCurrent = false; if (!missing.has('target')) Object.assign(room, { labelTargetFX: room.labelCurrentFX ?? 0, labelTargetFY: room.labelCurrentFY ?? 0, labelTargetSize: room.labelCurrentSize ?? room.labelTargetSize }); }
-  if (missing.has('action')) room.labelAction = false;
-  if (missing.has('target')) room.labelTarget = false;
+  if (!chosen) ['current','action','target'].filter(p => missing.has(p)).forEach(p => { room[`label${p[0].toUpperCase()}${p.slice(1)}`] = false; });
+  if (missing.has('current') && !room.labelCurrent && room.labelTarget && !missing.has('target')) Object.assign(room, { labelTargetFX: room.labelCurrentFX ?? 0, labelTargetFY: room.labelCurrentFY ?? 0, labelTargetSize: room.labelCurrentSize ?? room.labelTargetSize });
   return true;
 }
+// The wizard's parts step of a thermostat: the picked entity's state is fetched (once) so the parts it has no data for
+// are known; they start unticked and say "brak w encji".
+async function wizardThermoState(entityId) {
+  if (!entityId || stateCache[entityId]?.attributes && Object.keys(stateCache[entityId].attributes).length) return;
+  try { const data = await api('selected_states', jsonOptions({ entity_ids: [entityId] })); if (data?.states?.[entityId]) stateCache[entityId] = data.states[entityId]; } catch {}
+}
 // Laid out once the device's modes are known (its state may come a moment after the wizard).
-function fitThermoRows(id, frameSize, retried = false) {
+function fitThermoRows(id, frameSize, retried = false, chosen = false) {
   const room = roomsOf()[id], a = room && stateCache[(room.entityIds || [])[0]]?.attributes; if (!room) return;
-  if (!a || !(a.hvac_modes || a.operation_list || a.preset_modes)) { if (!retried && room.entityIds?.length) refreshStates().then(() => fitThermoRows(id, frameSize, true)); return; }
+  if (!a || !(a.hvac_modes || a.operation_list || a.preset_modes)) { if (!retried && room.entityIds?.length) refreshStates().then(() => fitThermoRows(id, frameSize, true, chosen)); return; }
   const before = [room.labelCardW, room.labelCardH]; [room.labelCardW, room.labelCardH] = frameSize || before;
-  const hidden = hideMissingThermoParts(room);
+  const hidden = hideMissingThermoParts(room, chosen);
   if (!layoutThermoRows(room) && !hidden) { [room.labelCardW, room.labelCardH] = before; return; }
   { room.updatedAt = new Date().toISOString(); renderRooms(); snapNewLabelToGrid(id); scheduleSave(true); }
 }

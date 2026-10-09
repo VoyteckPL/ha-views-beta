@@ -1,3 +1,7 @@
+## 0.6.1-beta.519
+
+- Kreator termostatu, krok „Co ma być widać?”: po wybraniu encji kreator sprawdza jej atrybuty. Części bez danych (np. temperatura aktualna, stan pracy) mają podpis „brak w encji” i są domyślnie odznaczone. Gdy któraś zostanie zaznaczona ręcznie, termostat ją pokaże. Gdy temperatura aktualna jest odznaczona, temperatura ustawiona trafia na środek tarczy. „Pomiń” zostawia części bez danych ukryte.
+
 ## 0.6.1-beta.518
 
 - Termostat czyta z atrybutów encji, co ona podaje: current_temperature (temperatura aktualna), hvac_action (stan pracy) oraz temperature albo target_temp_low/high (temperatura ustawiona).
