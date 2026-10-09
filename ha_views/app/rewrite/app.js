@@ -1288,8 +1288,14 @@ function fitLabelBackdrop(room, group) {
   backdrop.style.width = `${(right - left) / local + pad * 2.7}px`; backdrop.style.height = `${(bottom - top) / local + pad * 2}px`;
 }
 // Frame size set with the side dots (box-local px; never smaller than the content).
+// A label's name and state keep one size whatever they show (a state "Wł." → "Niedostępny" must not resize the label):
+// their box is locked (in em of the part's own text size, so the part's "Rozmiar" still scales it) and the text is fitted
+// into it (smaller, at the end cut with "…"). Not for thermostats / gauges, whose frame is designed.
+const LOCKED_TEXT_PARTS = ['labelName','labelState'];
+function textLock(r, key) { const v = r[`${key}Lock`]; return LOCKED_TEXT_PARTS.includes(key) && !isThermoRoom(r) && !(Number(r[`${key}W`]) > 0) && Array.isArray(v) && v[0] > 0 ? v : null; }
 function partBoxSize(r, key) {
   if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
+  const lock = textLock(r, key); if (lock) return `;width:${lock[0]}em;height:${lock[1]}em;box-sizing:border-box;overflow:hidden`;
   const w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0;
   return (w ? `;min-width:${w}px` : '') + (h ? `;min-height:${h}px` : '') + (w || h ? ';box-sizing:border-box' : '');
 }
@@ -1606,7 +1612,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const inner = (free ? layeredParts : list => list)(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
       const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, thermo?.active?.[part] ?? on);
       const place = free ? `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(${Number(r[`${key}FX`]) || 0}px,${Number(r[`${key}FY`]) || 0}px)` : `transform:translate(${Number(r[`${key}DX`]) || 0}px,${Number(r[`${key}DY`]) || 0}px)`;
-      return `<div class="room-card-part ${part}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
+      return `<div class="room-card-part ${part}${textLock(r, key) ? ' fit' : ''}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
     }).join('');
     if (!inner) return '';
     const layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
@@ -1630,7 +1636,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
     const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
-    return `<div class="room-label-part ${part}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
+    return `<div class="room-label-part ${part}${textLock(r, key) ? ' fit' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
 function renderRoomLabels(view = activeSceneView()) {
@@ -1652,10 +1658,31 @@ function renderRoomLabels(view = activeSceneView()) {
       [...fresh.content.children].forEach((node, index) => { const live = group.children[index]; if (live && live.getAttribute('style') !== node.getAttribute('style')) live.setAttribute('style', node.getAttribute('style')); });
     } else group.innerHTML = html;
     group.__html = html; group.__key = key;
-    equalizeLabelFrames(room, group);
+    equalizeLabelFrames(room, group); fitLabelTexts(room, group);
   });
   [...layer.children].forEach(node => { if (!kept.has(node.dataset.labelGroup)) node.remove(); });
   renderDashGrid(); fitCardHandles();
+}
+function fitLabelTexts(room, group) {
+  if (isThermoRoom(room)) return;
+  const parts = key => [...group.querySelectorAll(`[data-label-part="${key === 'labelName' ? 'name' : 'state'}"]`)].filter(n => !n.classList.contains('room-label-card'));
+  // Not locked yet (new, or its text / parts changed): its box is taken now. The state is at least as wide as the name
+  // (or 4 letters), so a longer state later fits without shrinking much.
+  const size = key => clamp(Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420);
+  const nat = key => { const n = parts(key)[0]; return n?.offsetWidth ? [n.offsetWidth, n.offsetHeight] : null; };
+  let locked = false;
+  LOCKED_TEXT_PARTS.forEach(key => {
+    if (!room[key] || Array.isArray(room[`${key}Lock`]) || Number(room[`${key}W`]) > 0) return;
+    const m = nat(key); if (!m) return; let w = m[0];
+    if (key === 'labelState') { const nm = room.labelName && nat('labelName'); w = Math.max(w, nm ? nm[0] : 0, size(key) * 4); }
+    room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
+  });
+  if (locked) { const html = roomLabelMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '', editMode && !room.geometryLocked && !roomDraft); group.innerHTML = html; group.__html = html; group.__key = ''; equalizeLabelFrames(room, group); scheduleSave(false); }
+  // Fitting: the text at full size, then smaller (down to 55 %) while it does not fit; past that it is cut with "…".
+  group.querySelectorAll('.fit > b, .fit > small').forEach(t => {
+    t.style.fontSize = ''; const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+    if (room_ > 0 && t.scrollWidth > room_ + .5) t.style.fontSize = `${Math.max(55, Math.floor(room_ / t.scrollWidth * 100))}%`;
+  });
 }
 // Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so
 // the dots are drawn in a layer above the plan card (not clipped) - a dot on the plan's edge shows past it.
@@ -3178,6 +3205,8 @@ function onRoomEditorInput(event) {
   if (/^label\w*Opacity(On|Off|_[a-z]+)?$|^outline\w*Opacity$/.test(path)) value = clamp(value / 100, 0, 1);
   if (/^labelIconName(On|Off)?$/.test(path)) value = String(value).trim();
   if (path === 'labelIconName') value = String(value).trim();
+  // What fills the name / state boxes changed by hand: their size is taken again from the new text.
+  if (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path)) LOCKED_TEXT_PARTS.forEach(k => { if (path === 'name' || path.startsWith('labelName') || k === 'labelState') delete room[`${k}Lock`]; });
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }
   room[path] = value; room.updatedAt = new Date().toISOString();
@@ -3253,7 +3282,7 @@ function onRoomEditorClick(event) {
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
     // and state leaves the frame around the icon only. The parts stay where they are.
-    if (partKeys.includes(key) && !isThermoRoom(room)) { delete room.labelCardCentred; delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; }
+    if (partKeys.includes(key) && !isThermoRoom(room)) { LOCKED_TEXT_PARTS.forEach(k => delete room[`${k}Lock`]); delete room.labelCardCentred; delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; }
     // "Tryby" shows / hides every mode button (the ones switched off on their own stay off); a mode button shown on its
     // own shows the modes again. Each mode's choice is kept with the mode list in the "Tryby" section.
     if (isThermoRoom(room) && room.thermoModeParts) {

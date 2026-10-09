@@ -1,3 +1,7 @@
+## 0.6.1-beta.531
+
+- Etykieta ma stały rozmiar, niezależnie od tego, co pokazuje. Nazwa i stan mają zapamiętaną szerokość i wysokość, liczoną od rozmiaru ich tekstu, więc suwak „Rozmiar” nadal je skaluje. Stan jest co najmniej tak szeroki jak nazwa. Dłuższy tekst stanu (np. „Niedostępny” zamiast „21.5 °C”) się zmniejsza, do 55%, a dalej jest ucinany „…”. Rozmiar liczy się od nowa po zmianie nazwy, podpisu, tekstów stanu, grubości lub marginesu tekstu oraz po włączeniu lub wyłączeniu części. Nie dotyczy termostatu i wskaźnika, które mają własny, stały układ.
+
 ## 0.6.1-beta.530
 
 - Etykieta z jednym elementem (np. sama ikona) jest zawsze zgrupowana, więc przesuwa się, przyciąga do siatki i zmienia rozmiar po strefach jak każda inna etykieta. Ukrycie elementów rozgrupowanej etykiety aż do jednego od razu ją grupuje. Etykiety rozgrupowane automatycznie przez starsze wersje są przy wczytaniu grupowane z powrotem.
