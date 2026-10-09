@@ -1889,11 +1889,14 @@ function startFreeResize(event, handle) {
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
     if (scaleWhole) {
       // The whole label scaled as one picture (parts, texts, margin and the frame's own size alike).
-      const b0 = rect0.width / k, b1 = rect0.height / k, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
+      // The content fills the frame by its tighter side: measured against the content's own box (its parts and margin), not
+      // against the frame - a frame made wider and then narrower again leaves the content as it was.
+      const free = node.classList.contains('free'), b0 = free ? rect0.width / k : natW, b1 = free ? rect0.height / k : natH, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
+      lw = Math.max(lw, b0 * f); lh = Math.max(lh, b1 * f);
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      // "Rozmiar po strefach": the frame is the box between the thick lines exactly, the content scaled to fit in it.
-      if (hugZones?.xs.length && hugZones.ys.length && !e.altKey) { const kf = room.labelCardScale / cardScale0; room.labelCardW = Math.round(lw / kf * 100) / 100; room.labelCardH = Math.round(lh / kf * 100) / 100; room.hugFrameV1 = true; }
-      else { lw = b0 * f; lh = b1 * f; }
+      // The frame follows the dot exactly (its width and height each on their own; with "Rozmiar po strefach" the box
+      // between the thick lines), the content scaled to fit in it and centred.
+      { const kf = room.labelCardScale / cardScale0; room.labelCardW = Math.round(lw / kf * 100) / 100; room.labelCardH = Math.round(lh / kf * 100) / 100; room.hugFrameV1 = true; }
     } else if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.

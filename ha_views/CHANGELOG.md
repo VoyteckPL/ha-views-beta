@@ -1,3 +1,7 @@
+## 0.6.1-beta.543
+
+- Etykieta: kropki zgrupowanej etykiety (także bez siatki) zmieniają szerokość i wysokość ramki osobno, ramka idzie dokładnie za kropką. Zawartość wypełnia ramkę po ciaśniejszym boku i jest wyśrodkowana. Poszerzenie ramki nie zmienia zawartości, a po zwężeniu zawartość wraca do poprzedniego rozmiaru. Suwak „Margines” przywraca ramkę dopasowaną do części.
+
 ## 0.6.1-beta.542
 
 - Etykieta: suwak „Rozmiar” nazwy lub stanu powiększa i zmniejsza pudełko razem z tekstem. Margines i zaokrąglenie też skalują się proporcjonalnie. Wcześniej pudełko zostawało stałe i tekst się nie zwiększał.
