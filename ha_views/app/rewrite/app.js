@@ -363,6 +363,9 @@ function ensureMultiViewModel() {
     // A label's / room's group frame hugs its parts again (only a thermostat's / gauge's has its own size): a size kept
     // from before goes; the parts stay where they are (their offsets are from the same point).
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
+    // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
+    // group's dots now size its frame, and a group moves and snaps like every other label).
+    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && room.labelAutoUngrouped && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
     [...Object.values(view.rooms || {}), ...Object.values(view.entities || {}), ...Object.values(view.flows || {})].forEach(item => { if (item?.geometryLocked) { item.geometryLocked = false; migrated = true; } });
     // Layout v3: a marker's id is its key in view.entities (older layouts keyed markers by entity id and some had a random id).
@@ -1214,7 +1217,6 @@ function keepLabelPlaceOnRegroup(room) {
 }
 // Ungrouping is for arranging the parts: when the label / thermostat is left (panel closed, another element picked,
 // edit mode or view left) it is grouped again, as with the "Grupa" button - every part stays where it was placed.
-// A label showing one part (ungrouped by itself) stays as it is.
 function regroupOnLeave(room) {
   if (!room || room.labelLinked || room.labelAutoUngrouped || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) return false;
   if (!$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`)) return false;
@@ -3258,6 +3260,8 @@ function onRoomEditorClick(event) {
       if (key === 'labelModes') MODE_PART_LIST.forEach(m => { if (room[`labelMode_${m}`] !== undefined || room.labelModes) room[`labelMode_${m}`] = !!room.labelModes && room[`thermoModeShow_${m}`] !== false; });
       const mm = /^labelMode_(.+)$/.exec(key); if (mm) { room[`thermoModeShow_${mm[1]}`] = !!room[key]; if (room[key]) room.labelModes = true; }
     }
+    // An ungrouped label left with one part is grouped again (one part has nothing to arrange).
+    if (partKeys.includes(key) && !room.labelLinked && partKeys.filter(k => room[k]).length === 1) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, true); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
     room.updatedAt = new Date().toISOString(); renderRooms();
     if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part) keepApart(room, key, part); }
     openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);

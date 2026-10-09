@@ -1,3 +1,7 @@
+## 0.6.1-beta.530
+
+- Etykieta z jednym elementem (np. sama ikona) jest zawsze zgrupowana, więc przesuwa się, przyciąga do siatki i zmienia rozmiar po strefach jak każda inna etykieta. Ukrycie elementów rozgrupowanej etykiety aż do jednego od razu ją grupuje. Etykiety rozgrupowane automatycznie przez starsze wersje są przy wczytaniu grupowane z powrotem.
+
 ## 0.6.1-beta.529
 
 - Etykieta z jednym elementem (np. sama ikona) po zaznaczeniu wygląda zwyczajnie, bez fioletowej ramki trybu rozgrupowanego. Ta ramka pojawia się tylko, gdy rozgrupowane są co najmniej dwa elementy.
