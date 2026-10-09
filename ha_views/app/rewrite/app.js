@@ -182,7 +182,7 @@ const FLOW_DEFAULTS = Object.freeze({ direction:'right', directionMode:'manual',
 const FLOW_SPEED_PX = 150;
 const FLOW_ANIMATION_KEYS = ['animation','animationSpeed','speedByValue','speedValueMax'];
 // A new Flow starts about as long as a new label is wide, its arrows about as tall as the label's name.
-const NEW_FLOW_SIZE = Object.freeze({ flowLength:200, chevronHeight:48, chevronWidth:44, chevronThickness:9, gap:18 });
+const NEW_FLOW_SIZE = Object.freeze({ flowLength:260, chevronHeight:60, chevronWidth:54, chevronThickness:11, gap:22 });
 const FLOW_STYLE_KEYS = ['shape','shapeSharpness','flowCount','flowLength','chevronWidth','chevronHeight','chevronThickness','gap','outlineWidth','outlineColor','glow','glowCustom','glowColor','opacity','animation','animationSpeed','speedByValue','speedValueMax'];
 const FLOW_SHAPES = [['chevron','Chevron'],['arrow','Strzałka'],['dart','Grot'],['triangle','Trójkąt'],['segment','Segment']];
 const FLOW_LIMITS = Object.freeze({ min:4, size:600, length:1600, thickness:120, gap:300, count:12 });
@@ -690,6 +690,38 @@ const ROOM_DEFAULTS = Object.freeze(withExtraPartDefaults({ name:'Pomieszczenie'
 // (icon outline, backgrounds, icon border), so every option is visible and can be tuned or turned off.
 const NEW_ROOM_LABEL = Object.freeze({ labelIcon:true, labelName:true, labelState:true, labelLinked:true, labelCardBg:true, labelCardBorder:true,
   labelIconOutline:true, labelIconBg:true, labelIconBorder:true, labelIconColor:'#9FB6C3', labelIconOn:'#DCE8EF', labelIconOff:'#9FB6C3', labelNameBg:true, labelNameBorder:true, labelStateBg:true, labelStateBorder:true, labelIconY:-97, labelNameY:26, labelStateY:123 });
+// A new element's corners go onto the grid's lines: its frame is made whole cells (a label's frame only grows, as a
+// least size - it still hugs its parts, and the least size goes with the first change of its parts) and moved so its
+// top-left corner sits on the nearest crossing.
+function gridCellOnScreen() { const sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return null; const L = gridLayout(sc.width, sc.height); return { sc, cx: L.fx, cy: L.fy }; }
+function snapCornerShift(r, g) { const nx = Math.round((r.left - g.sc.left) / g.cx) * g.cx + g.sc.left, ny = Math.round((r.top - g.sc.top) / g.cy) * g.cy + g.sc.top; return [nx - r.left, ny - r.top]; }
+function snapNewLabelToGrid(id) {
+  const room = roomsOf()[id], g = gridCellOnScreen(); if (!room?.labelLinked || !g || (isIconRoom(room) && dashSpan(room))) return;
+  const node = () => document.querySelector(`.room-label-card[data-room-id="${CSS.escape(id)}"]`), card = node(); if (!card?.offsetWidth) return;
+  const r = card.getBoundingClientRect(), k = r.width / card.offsetWidth; if (!k) return;
+  room.labelCardW = Math.round(Math.max(1, Math.ceil(r.width / g.cx - .05)) * g.cx / k * 100) / 100;
+  room.labelCardH = Math.round(Math.max(1, Math.ceil(r.height / g.cy - .05)) * g.cy / k * 100) / 100;
+  room.hugFrameV1 = true; // already a hugging frame: the load-time migration must not take its least size away
+  renderRoomLabels();
+  for (let i = 0; i < 2; i++) {
+    const now = node()?.getBoundingClientRect(); if (!now) return; const [dx, dy] = snapCornerShift(now, g); if (Math.abs(dx) < .3 && Math.abs(dy) < .3) break;
+    if (isIconRoom(room)) { room.x = Math.round((Number(room.x) + dx / g.sc.width * 100) * 1000) / 1000; room.y = Math.round((Number(room.y) + dy / g.sc.height * 100) * 1000) / 1000; }
+    else { const toPlan = g.sc.width / (els.scene.offsetWidth || 1) * (sceneScale || 1); room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + dx / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + dy / toPlan) * 100) / 100; }
+    renderRoomLabels();
+  }
+}
+function snapNewFlowToGrid(id) {
+  const flow = activeSceneView()?.flows?.[id], g = gridCellOnScreen(), node = () => $(`.flow-marker[data-flow-id="${CSS.escape(id)}"]`); if (!flow || !g || !node()) return;
+  const r = node().getBoundingClientRect(), f = r.width / Math.max(1, Number(flow.flowLength) || FLOW_DEFAULTS.flowLength); if (!f || Number(flow.rotation)) return;
+  const h = Math.max(1, Math.round(r.height / g.cy)) * g.cy / f, k = h / Math.max(1, Number(flow.chevronHeight) || FLOW_DEFAULTS.chevronHeight);
+  flow.flowLength = Math.round(Math.max(1, Math.round(r.width / g.cx)) * g.cx / f * 100) / 100; flow.chevronHeight = Math.round(h * 100) / 100;
+  ['chevronWidth','gap','chevronThickness'].forEach(key => { flow[key] = Math.round((Number(flow[key]) || FLOW_DEFAULTS[key]) * k * 100) / 100; });
+  renderMarkers();
+  for (let i = 0; i < 2; i++) {
+    const now = node()?.getBoundingClientRect(); if (!now) return; const [dx, dy] = snapCornerShift(now, g); if (Math.abs(dx) < .3 && Math.abs(dy) < .3) break;
+    flow.xPercent = Math.round((Number(flow.xPercent) + dx / g.sc.width * 100) * 1000) / 1000; flow.yPercent = Math.round((Number(flow.yPercent) + dy / g.sc.height * 100) * 1000) / 1000; renderMarkers();
+  }
+}
 // Scales a new room's group so it fits inside the drawn shape (at most 70 % of its width and 60 % of its height, never above the size of a
 // new label, so rooms and labels start the same size).
 function fitRoomLabel(id) {
@@ -2401,7 +2433,7 @@ function closeRoomWizard() {
   // An icon is generated only now, with the parts chosen in the last step.
   if (isIconRoom(room)) { wizardPartsFor(room).forEach(([key, , , also = []]) => { [key, ...also].forEach(k => { room[k] = parts.has(key); }); }); delete room.draft; }
   if (room.entityIds.join('|') !== before) { room.updatedAt = new Date().toISOString(); refreshStates(); }
-  renderRooms(); fitRoomLabel(id); scheduleSave(true);
+  renderRooms(); fitRoomLabel(id); snapNewLabelToGrid(id); scheduleSave(true);
   // With entities picked there is nothing left to do in the Room section, so the panel opens collapsed.
   openRoomEditor(id, -1, room.entityIds.length ? -1 : 0);
   notify(isGaugeRoom(room) ? 'Dodano wskaźnik' : isThermoRoom(room) ? 'Dodano termostat' : isTextRoom(room) ? 'Dodano tekst' : isIconRoom(room) ? 'Dodano etykietę' : room.entityIds.length ? 'Dodano pomieszczenie' : 'Dodano pomieszczenie — encje możesz dodać w panelu');
@@ -2413,7 +2445,7 @@ function closeFlowWizard(flow, entityId, generated) {
   if (entityId) rememberAdded(entityId);
   if ((!flow.displayName || flow.displayName === generated) && entityId) flow.displayName = entity?.name || roomEntityName(entityId);
   flow.updatedAt = new Date().toISOString();
-  renderMarkers(); renderAdded(); scheduleSave(true); if (entityId) refreshStates();
+  renderMarkers(); renderAdded(); snapNewFlowToGrid(flow.id); scheduleSave(true); if (entityId) refreshStates();
   openFlowEditor(flow.id); notify(entityId ? 'Dodano Flow' : 'Dodano Flow — encję możesz dodać w panelu');
 }
 // Step "Wygląd" of a Flow: direction, arrows, animation and colour (the rest is in its panel). Every choice shows on the plan at once.

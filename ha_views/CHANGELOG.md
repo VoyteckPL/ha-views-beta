@@ -1,3 +1,8 @@
+## 0.6.1-beta.514
+
+- Każdy nowy element (etykieta, tekst, pomieszczenie, termostat, wskaźnik, Flow) po utworzeniu ma rogi na liniach siatki. Jego ramka ma rozmiar w pełnych kratkach, a lewy górny róg trafia w najbliższe skrzyżowanie linii. Ramka etykiety nadal otacza jej części, a rozmiar w kratkach jest tylko jej najmniejszym rozmiarem.
+- Nowy Flow jest większy: dłuższy i z wyższymi strzałkami.
+
 ## 0.6.1-beta.513
 
 - Naprawiono: przy włączonym „Rozmiar tylko po grubych liniach siatki” nie dało się zmienić rozmiaru etykiety ani termostatu (błąd w kodzie przerywał zmianę rozmiaru).
