@@ -1750,85 +1750,19 @@ function fitLabelTexts(room, group) {
 }
 // Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so
 // the dots are drawn in a layer above the plan card (not clipped) - a dot on the plan's edge shows past it.
-// A quick bar over an ungrouped label's state (being edited): its text size, margin, fitting the box to the text, bold
-// and colour at hand, next to the element - the same changes as the panel's controls make.
-function quickBarRoom() {
-  const room = editMode && selectedRoomId ? roomsOf()[selectedRoomId] : null;
-  if (!room || isThermoRoom(room) || room.labelLinked || selectedLabelPart !== 'state' || !room.labelState) return null;
-  const node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="state"]`);
-  return node?.getBoundingClientRect().width ? [room, node] : null;
-}
-function quickSet(path, value, final = true) {
+// Quick controls of a label's state (on top of its section in the panel): the same changes as the panel's own controls.
+function quickSet(path, value) {
   const fake = { dataset: { path, valueType: typeof value === 'number' ? 'range' : '' }, type: typeof value === 'number' ? 'range' : 'text', value: String(value), closest: () => null };
-  onRoomEditorInput({ target: fake, type: final ? 'change' : 'input' });
-  clearTimeout(quickSet.timer); quickSet.timer = setTimeout(() => { const room = roomsOf()[selectedRoomId]; if (room && $('#room-editor')?.classList.contains('visible')) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }, 600);
+  onRoomEditorInput({ target: fake, type: 'change' });
 }
-const quickNum = (room, key) => { const v = room[key]; return v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null; };
-function quickValues(room, node) {
-  const size = clamp(Number(room.labelStateSize) || ROOM_DEFAULTS.labelStateSize, 6, 420), pad = quickNum(room, 'labelStatePadding') ?? Math.round(parseFloat(getComputedStyle(node).paddingTop) || 0);
-  return { size: Math.round(size * 10) / 10, pad: Math.round(pad * 10) / 10, bold: room.labelStateWeight === 'bold', color: room.labelStateColor || ROOM_DEFAULTS.labelStateColor, colorState: !!room.labelStateColorState, framed: !!(room.labelStateBg || room.labelStateBorder) };
-}
-function quickStep(kind, dir) {
-  const hit = quickBarRoom(); if (!hit) return; const [room, node] = hit, v = quickValues(room, node);
-  if (kind === 'size') quickSet('labelStateSize', clamp(Math.round((v.size + dir) * 10) / 10, 6, 420), false);
-  else if (kind === 'pad') quickSet('labelStatePadding', clamp(Math.round(v.pad + dir), 0, 120), false);
-}
-function quickFit() {
-  const hit = quickBarRoom(); if (!hit) return; const [room, node] = hit;
-  // Its margin kept as it is now (an unset one would add a spare half letter), then the box measured again round the text.
-  if (quickNum(room, 'labelStatePadding') === null && (room.labelStateBg || room.labelStateBorder)) room.labelStatePadding = Math.round((parseFloat(getComputedStyle(node).paddingTop) || 0) * 10) / 10;
+// The state's box fitted round its text again (its margin kept as it is now: an unset one would add a spare half letter).
+function quickFit(room) {
+  const node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="state"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="state"]`);
+  const p = room.labelStatePadding; if (!(p !== undefined && p !== null && p !== '' && Number.isFinite(Number(p))) && node && (room.labelStateBg || room.labelStateBorder)) room.labelStatePadding = Math.round((parseFloat(getComputedStyle(node).paddingTop) || 0) * 10) / 10;
   delete room.labelStateW; delete room.labelStateH; delete room.labelStateLock; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true);
-}
-function updateQuickBar() {
-  const card = document.body, hit = quickBarRoom(); let bar = $('#part-quickbar');
-  if (!hit) { if (bar) bar.hidden = true; return; }
-  const [room, node] = hit, v = quickValues(room, node);
-  if (!bar) {
-    bar = document.createElement('div'); bar.id = 'part-quickbar'; bar.className = 'part-quickbar'; card.append(bar);
-    ['pointerdown', 'mousedown', 'touchstart', 'click', 'dblclick', 'wheel'].forEach(t => bar.addEventListener(t, e => e.stopPropagation(), { passive: t !== 'wheel' && t !== 'touchstart' ? undefined : true }));
-    // Held − / + repeats (slowly first, then faster); a tap steps once.
-    bar.addEventListener('pointerdown', e => {
-      const b = e.target.closest('[data-qb-step]'); if (!b) return; e.preventDefault();
-      const [kind, dir] = b.dataset.qbStep.split(':'), step = () => quickStep(kind, Number(dir)); step();
-      let delay = 380; const again = () => { bar.__hold = setTimeout(() => { step(); delay = Math.max(45, delay * .8); again(); }, delay); }; again();
-      const stop = () => { clearTimeout(bar.__hold); window.removeEventListener('pointerup', stop); window.removeEventListener('pointercancel', stop); scheduleSave(true); };
-      window.addEventListener('pointerup', stop); window.addEventListener('pointercancel', stop);
-    });
-    bar.addEventListener('click', e => {
-      const b = e.target.closest('button'); if (!b) return; const hit2 = quickBarRoom(); if (!hit2) return; const [r2] = hit2;
-      if (b.dataset.qb === 'fit') quickFit();
-      else if (b.dataset.qb === 'bold') quickSet('labelStateWeight', r2.labelStateWeight === 'bold' ? 'normal' : 'bold');
-      else if (b.dataset.qb === 'colour') bar.classList.toggle('palette-open');
-      else if (b.dataset.qbColour) { quickSet('labelStateColor', b.dataset.qbColour); bar.classList.remove('palette-open'); }
-    });
-    bar.addEventListener('change', e => { const i = e.target.closest('input[data-qb-input]'); if (!i) return; const n = Number(String(i.value).replace(',', '.')); if (!Number.isFinite(n)) return; quickSet(i.dataset.qbInput === 'size' ? 'labelStateSize' : 'labelStatePadding', i.dataset.qbInput === 'size' ? clamp(n, 6, 420) : clamp(n, 0, 120)); });
-    bar.addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur?.(); e.stopPropagation(); });
-  }
-  bar.hidden = false;
-  const sig = JSON.stringify(v);
-  if (bar.__sig !== sig && !bar.contains(document.activeElement)) {
-    bar.__sig = sig; const t = k => escapeHtml(translateValue(k));
-    bar.innerHTML = `<span class="qb-group" title="${t('Rozmiar tekstu')}"><i class="mdi mdi-format-size"></i><button type="button" data-qb-step="size:-1" aria-label="−">−</button><input data-qb-input="size" inputmode="decimal" value="${v.size}"><button type="button" data-qb-step="size:1" aria-label="+">+</button></span>`
-      + (v.framed ? `<span class="qb-group" title="${t('Margines')}"><i class="mdi mdi-border-outside"></i><button type="button" data-qb-step="pad:-1" aria-label="−">−</button><input data-qb-input="pad" inputmode="decimal" value="${v.pad}"><button type="button" data-qb-step="pad:1" aria-label="+">+</button></span>` : '')
-      + `<button type="button" class="qb-btn" data-qb="fit" title="${t('Dopasuj do tekstu')}"><i class="mdi mdi-arrow-collapse-horizontal"></i></button>`
-      + `<button type="button" class="qb-btn${v.bold ? ' active' : ''}" data-qb="bold" title="${t('Pogrubienie')}"><i class="mdi mdi-format-bold"></i></button>`
-      + (v.colorState ? '' : `<button type="button" class="qb-btn" data-qb="colour" title="${t('Kolor')}"><span class="qb-swatch" style="background:${escapeHtml(v.color)}"></span></button><div class="qb-palette">${COLOR_PALETTE.map(c => `<button type="button" data-qb-colour="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}</div>`);
-  }
-  // Over the label's frame, so it covers none of its parts (under it when there is no room above; over the state itself
-  // when neither fits), kept inside the plan's card and centred on the state.
-  // Drawn on the page (not inside the plan, whose zoom would scale it): placed in screen px, kept on the screen.
-  const r = node.getBoundingClientRect(), bw = bar.offsetWidth, bh = bar.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
-  const parts = [node, ...$$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"], .room-label-backdrop[data-room-id="${CSS.escape(room.id)}"]`)].map(n => n.getBoundingClientRect()).filter(q => q.width);
-  const fTop = Math.min(...parts.map(q => q.top)), fBottom = Math.max(...parts.map(q => q.bottom));
-  const head = ($('.topbar') || $('header'))?.getBoundingClientRect().bottom || 0, sheet = $('#room-editor.visible')?.getBoundingClientRect(), floor = sheet && sheet.top > vh * .3 && sheet.left < 10 ? sheet.top : vh;
-  let left = r.left + r.width / 2 - bw / 2, top = fTop - bh - 14;
-  if (top < head + 4) top = fBottom + 14;
-  if (top + bh > floor - 4) top = Math.max(head + 4, r.top - bh - 14);
-  bar.style.left = `${clamp(left, 8, Math.max(8, vw - bw - 8)).toFixed(1)}px`; bar.style.top = `${top.toFixed(1)}px`;
 }
 function fitCardHandles() {
   const card = els.sceneCard; if (!card || !els.scene) return;
-  updateQuickBar();
   let layer = $('#handle-overlay'); const handles = $$('#room-labels .card-handle');
   if (!handles.length) { layer?.replaceChildren(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'handle-overlay'; layer.setAttribute('aria-hidden', 'true'); card.append(layer); }
@@ -3241,7 +3175,14 @@ function roomEditorMarkup(room) {
     if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
         + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')), frameToggles(key));
-    return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', (accentable ? control('Kolor wg trybu',`${key}Accent`,'checkbox',false,refresh) : '') + control('Zależne ON/OFF',`${key}ColorState`,'checkbox',!!r[`${key}ColorState`],refresh)
+    // A label's state: its most used controls on top, always at hand (text size, margin, colour, fit, bold).
+    const quick = part === 'state' && !isThermoRoom(r) ? `<div class="part-quick">`
+      + range('Rozmiar tekstu','labelStateSize',clamp(Number(r.labelStateSize) || ROOM_DEFAULTS.labelStateSize, 6, 420),6,Math.max(120, Math.ceil(Number(r.labelStateSize) || 0)),1,'px')
+      + (r.labelStateBg || r.labelStateBorder ? range('Margines','labelStatePadding',has(r.labelStatePadding) ? clamp(Number(r.labelStatePadding), 0, 120) : Math.round(fontPx * .28),0,120,1,'px') : '')
+      + (r.labelStateColorState ? '' : control('Kolor','labelStateColor','color',r.labelStateColor || ROOM_DEFAULTS.labelStateColor))
+      + `<div class="control room-card-row"><label>${escapeHtml(translateValue('Tekst'))}</label><div class="room-card-presets"><button type="button" class="room-card-preset" data-quick-fit title="${escapeHtml(translateValue('Dopasuj do tekstu'))}" aria-label="${escapeHtml(translateValue('Dopasuj do tekstu'))}"><i class="mdi mdi-arrow-collapse-horizontal"></i></button><button type="button" class="room-card-preset${r.labelStateWeight === 'bold' ? ' active' : ''}" data-quick-bold title="${escapeHtml(translateValue('Pogrubienie'))}" aria-label="${escapeHtml(translateValue('Pogrubienie'))}"><i class="mdi mdi-format-bold"></i></button></div></div>`
+      + `</div>` : '';
+    return partBar(part, title, quick + sizeSub + contentSub + modesSub + sub('Kolor', (accentable ? control('Kolor wg trybu',`${key}Accent`,'checkbox',false,refresh) : '') + control('Zależne ON/OFF',`${key}ColorState`,'checkbox',!!r[`${key}ColorState`],refresh)
         + (r[`${key}ColorState`]
           ? control('Kolor ON',`${key}ColorOn`,'color',r[`${key}ColorOn`]) + control('Kolor OFF',`${key}ColorOff`,'color',r[`${key}ColorOff`])
             + range('Przezrocz. ON',`${key}OpacityOn`,pct(r[`${key}OpacityOn`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}OpacityOff`,pct(r[`${key}OpacityOff`]),0,100,1,'%')
@@ -3435,6 +3376,8 @@ function onRoomEditorInput(event) {
 // loaded into another with one tap. The trash button switches the slots to "delete" for one tap.
 const isThermoLookKey = key => /^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key);
 function onRoomEditorClick(event) {
+  const quickBtn = event.target.closest?.('[data-quick-fit], [data-quick-bold]');
+  if (quickBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; if (quickBtn.hasAttribute('data-quick-fit')) quickFit(room); else quickSet('labelStateWeight', room.labelStateWeight === 'bold' ? 'normal' : 'bold'); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   // "Przetestuj przejście": to the button's view with its effect and back again, then the panel opens as it was.
   if (event.target.closest('[data-link-try]')) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId], from = model.activeViewId; if (!room || !model.views[room.linkView] || room.linkView === from) return;

@@ -1722,19 +1722,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .room-card-part.fit>b,.room-card-part.fit>small,.room-label-part.fit>b,.room-label-part.fit>small{display:block;min-width:0;max-width:100%;overflow:hidden;white-space:nowrap}
 .room-card-part.fit>.thermo-part,.room-label-part.fit>.thermo-part{transform-origin:center;white-space:nowrap}
 
-/* Quick bar over an ungrouped label's state */
-.part-quickbar{position:fixed;z-index:120;display:flex;flex-wrap:wrap;max-width:calc(100vw - 16px);box-sizing:border-box;align-items:center;gap:5px;padding:5px;border:1px solid rgba(99,181,216,.42);border-radius:11px;background:rgba(7,25,36,.96);box-shadow:0 10px 28px rgba(0,0,0,.5);white-space:nowrap;pointer-events:auto;touch-action:manipulation;user-select:none}
-.part-quickbar[hidden]{display:none}
-.part-quickbar .qb-group{display:flex;align-items:center;gap:2px;padding:0 3px 0 6px;height:30px;border:1px solid rgba(139,190,216,.22);border-radius:8px;background:rgba(20,58,78,.45);color:#9fc6d8}
-.part-quickbar .qb-group>.mdi{font-size:15px;margin-right:2px}
-.part-quickbar button{display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:6px;background:transparent;color:#d7f5ff;font-size:16px;line-height:1;cursor:pointer}
-.part-quickbar button:hover{background:#16475f}
-.part-quickbar input{width:38px;height:24px;padding:0 2px;border:1px solid rgba(139,190,216,.25);border-radius:5px;background:#0b202d;color:#fff;font-size:12px;text-align:center}
-.part-quickbar .qb-btn{width:30px;height:30px;border:1px solid rgba(139,190,216,.22);background:rgba(20,58,78,.45)}
-.part-quickbar .qb-btn.active{border-color:var(--cyan,#20b9e7);color:var(--cyan,#20b9e7);background:#1e3540}
-.part-quickbar .qb-btn .mdi{font-size:17px}
-.part-quickbar .qb-swatch{display:block;width:16px;height:16px;border-radius:50%;border:2px solid #9eb8c5}
-.part-quickbar .qb-palette{display:none;position:absolute;right:0;top:calc(100% + 6px);width:216px;padding:9px;grid-template-columns:repeat(6,1fr);gap:6px;border:1px solid rgba(99,181,216,.4);border-radius:11px;background:#0b202d;box-shadow:0 15px 40px rgba(0,0,0,.55)}
-.part-quickbar.palette-open .qb-palette{display:grid}
-.part-quickbar .qb-palette button{width:27px;height:27px;border:1px solid rgba(255,255,255,.32);border-radius:7px}
-@media (pointer:coarse){.part-quickbar{gap:4px;padding:4px}.part-quickbar button{width:28px;height:34px;font-size:18px}.part-quickbar .qb-group{height:36px;padding:0 2px 0 5px}.part-quickbar .qb-group>.mdi{font-size:14px;margin-right:0}.part-quickbar .qb-btn{width:34px;height:36px}.part-quickbar input{width:34px;height:28px;font-size:14px}}
+/* Quick controls on top of a label's state section */
+.part-quick{padding:2px 0 6px;margin-bottom:6px;border-bottom:1px solid var(--line)}

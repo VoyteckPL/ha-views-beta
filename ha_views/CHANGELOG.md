@@ -1,3 +1,11 @@
+## 0.6.1-beta.553
+
+- Etykieta: pływający pasek nad stanem usunięty. Na telefonie przyciski − / + zmieniały wartość w niekontrolowany sposób.
+- Zamiast niego na górze sekcji „Stan” w panelu jest stały blok z najczęściej używanymi ustawieniami, zawsze pod ręką bez rozwijania podsekcji:
+  - suwaki „Rozmiar tekstu” (6–120 px) i „Margines”,
+  - kolor,
+  - przyciski „Dopasuj do tekstu” i „Pogrubienie”.
+
 ## 0.6.1-beta.552
 
 - Etykieta (rozgrupowana): szybki pasek nad zaznaczonym stanem.
