@@ -1673,20 +1673,32 @@ function renderRoomLabels(view = activeSceneView()) {
   [...layer.children].forEach(node => { if (!kept.has(node.dataset.labelGroup)) node.remove(); });
   renderDashGrid(); fitCardHandles();
 }
+const preFontBoxes = new Set();
+// An element's own (untransformed) size in fractions of a px, padding and border included.
+function cssBox(n) {
+  const cs = getComputedStyle(n), f = v => parseFloat(v) || 0, border = cs.boxSizing === 'border-box';
+  return [f(cs.width) + (border ? 0 : f(cs.paddingLeft) + f(cs.paddingRight) + f(cs.borderLeftWidth) + f(cs.borderRightWidth)), f(cs.height) + (border ? 0 : f(cs.paddingTop) + f(cs.paddingBottom) + f(cs.borderTopWidth) + f(cs.borderBottomWidth))];
+}
 function fitLabelTexts(room, group) {
   const partName = key => ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0];
   const parts = key => [...group.querySelectorAll(`[data-label-part="${partName(key)}"]`)].filter(n => !n.classList.contains('room-label-card'));
   // Not locked yet (new, or its text / parts changed): its box is taken now, as wide as what it shows now.
   const size = key => clamp(Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420);
-  const nat = key => { const n = parts(key)[0]; return n?.offsetWidth ? [n.offsetWidth, n.offsetHeight] : null; };
+  // Exact (fractional) box sizes: offsetWidth is rounded to a whole px, and a text cut by that rounding gets smaller.
+  const nat = key => { const n = parts(key)[0]; if (!n?.offsetWidth) return null; const w = () => Math.ceil(cssBox(n)[0] * 10) / 10; return [w(), Math.ceil(cssBox(n)[1] * 10) / 10, w]; };
   let locked = false;
   // A label's name / state: its box is its W / H (as if set with its dots), taken once from what it shows.
   if (!isThermoRoom(room)) BOX_TEXT_KEYS.forEach(key => {
     if (!room[key] || Number(room[`${key}W`]) > 0) return;
     const m = nat(key); if (!m) return;
+    // A switch's state with its own ON / OFF texts: the box fits the longer of them (whichever shows now).
+    if (key === 'labelState' && roomSwitchable(room) && roomNumber(room) === null) {
+      const n = parts(key)[0], t = n?.querySelector('b, small'), own = [room.labelStateOnText, room.labelStateOffText].map(v => String(v || '').trim()).filter(Boolean);
+      if (t && own.length && t.children.length === 0) { const keep = t.textContent; own.forEach(v => { t.textContent = v; m[0] = Math.max(m[0], m[2]()); }); t.textContent = keep; }
+    }
     // A margin set by hand is the whole margin (0 = the box tight round the text): no spare room added then.
     const ownPad = room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '' && Number.isFinite(Number(room[`${key}Padding`]));
-    room[`${key}W`] = Math.round((m[0] + (ownPad ? 0 : size(key) * .5)) * 10) / 10; if (!(Number(room[`${key}H`]) > 0)) room[`${key}H`] = Math.round(m[1] * 10) / 10; delete room[`${key}Lock`]; locked = true;
+    room[`${key}W`] = Math.round((m[0] + (ownPad ? 0 : size(key) * .5)) * 10) / 10; if (document.fonts && document.fonts.status !== 'loaded') preFontBoxes.add(`${room.id}|${key}|${room[`${key}W`]}`); if (!(Number(room[`${key}H`]) > 0)) room[`${key}H`] = Math.round(m[1] * 10) / 10; delete room[`${key}Lock`]; locked = true;
   });
   if (isThermoRoom(room)) lockedTextKeys(room).forEach(key => {
     if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
@@ -1699,11 +1711,14 @@ function fitLabelTexts(room, group) {
   // A thermostat's text (its own sizes in em, a raised unit…) is scaled down as a whole instead.
   group.querySelectorAll('.fit > b, .fit > small, .fit > .thermo-part').forEach(t => {
     const thermo = t.classList.contains('thermo-part'); t.style.fontSize = ''; t.style.transform = '';
-    const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0), need = thermo ? t.getBoundingClientRect().width / Math.max(.01, box.getBoundingClientRect().width / Math.max(1, box.offsetWidth)) : t.scrollWidth;
-    if (room_ > 0 && need > room_ + .5) {
+    // Measured in fractions of a px (whole-px widths would shrink a text that fits exactly).
+    const box = t.parentElement, cs = getComputedStyle(box), kb = Math.max(.01, box.getBoundingClientRect().width / Math.max(.01, cssBox(box)[0])), range = document.createRange();
+    const room_ = box.getBoundingClientRect().width / kb - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0) - (parseFloat(cs.borderLeftWidth) || 0) - (parseFloat(cs.borderRightWidth) || 0);
+    const textW = () => { range.selectNodeContents(t); return range.getBoundingClientRect().width / kb; }, need = thermo ? t.getBoundingClientRect().width / kb : textW();
+    if (room_ > 0 && need > room_ + .3) {
       const min = thermo ? .35 : .05; let k = Math.max(min, room_ / need * .98);
       if (thermo) t.style.transform = `scale(${Math.floor(k * 100) / 100})`;
-      else { t.style.fontSize = `${Math.floor(k * 100)}%`; for (let i = 0; i < 30 && k > min && t.scrollWidth > room_ + .5; i++) { k = Math.max(min, k * .96); t.style.fontSize = `${Math.floor(k * 100)}%`; } } // text widths do not scale exactly
+      else { t.style.fontSize = `${Math.floor(k * 100)}%`; for (let i = 0; i < 30 && k > min && textW() > room_ + .3; i++) { k = Math.max(min, k * .96); t.style.fontSize = `${Math.floor(k * 100)}%`; } } // text widths do not scale exactly
     }
   });
 }
@@ -3259,6 +3274,17 @@ function onRoomEditorInput(event) {
   if (/^label\w*Opacity(On|Off|_[a-z]+)?$|^outline\w*Opacity$/.test(path)) value = clamp(value / 100, 0, 1);
   if (/^labelIconName(On|Off)?$/.test(path)) value = String(value).trim();
   if (path === 'labelIconName') value = String(value).trim();
+  // A name's / state's size slider scales its box with the text (and its margin and corners, as its dots do): the box
+  // is fixed, so a bigger text in the old box would only be fitted back down.
+  { const own = !isThermoRoom(room) && /^(label(?:Name|State))Size$/.exec(path); if (own) {
+    const k = own[1], old = Number(room[path]) || ROOM_DEFAULTS[path], f = Number(value) / Math.max(1, old), num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
+    if (f > 0 && Math.abs(f - 1) > .001) {
+      if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round(room[`${k}W`] * f * 10) / 10;
+      if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round(room[`${k}H`] * f * 10) / 10;
+      if (num(room[`${k}Padding`])) room[`${k}Padding`] = Math.round(clamp(Number(room[`${k}Padding`]) * f, 0, 120) * 10) / 10;
+      if (num(room[`${k}Radius`])) room[`${k}Radius`] = Math.round(clamp(Number(room[`${k}Radius`]) * f, 0, 200) * 10) / 10;
+    }
+  } }
   // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.
   if (path === 'labelCardPadding' && !fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text.
@@ -7783,7 +7809,9 @@ function bindEvents() {
   document.addEventListener('keydown', event => { const el = event.target; if (event.key === 'Enter' && !event.isComposing && el?.matches?.('.editor input:not([type=range]):not([type=checkbox]):not([type=color])')) { event.preventDefault(); el.blur(); } });
   if ('ResizeObserver' in window) new ResizeObserver(updateSceneGeometry).observe(els.scene);
   // Texts are fitted again once the web fonts are in (their widths change).
-  document.fonts?.ready?.then(() => renderRoomLabels()); document.fonts?.addEventListener?.('loadingdone', () => renderRoomLabels());
+  // Boxes measured before the fonts came are measured again with them (a fallback font is narrower: the text would shrink).
+  const remeasure = () => { if (preFontBoxes.size) { preFontBoxes.forEach(e => { const [id, key, w] = e.split('|'), room = roomsOf()[id]; if (room && String(room[`${key}W`]) === w) { delete room[`${key}W`]; delete room[`${key}H`]; } }); preFontBoxes.clear(); } renderRoomLabels(); };
+  document.fonts?.ready?.then(remeasure); document.fonts?.addEventListener?.('loadingdone', remeasure);
   els.zoomOut?.addEventListener('click', () => setViewZoom(viewZoom-.5)); els.zoomIn?.addEventListener('click', () => setViewZoom(viewZoom+.5)); els.zoomReset?.addEventListener('click', resetViewZoom);
   // A double tap on a room corner removes the corner; the browser also turns those two taps into a dblclick,
   // which must not toggle the zoom (on a phone the view used to jump back to 100 %).

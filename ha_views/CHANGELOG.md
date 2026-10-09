@@ -1,3 +1,10 @@
+## 0.6.1-beta.542
+
+- Etykieta: suwak „Rozmiar” nazwy lub stanu powiększa i zmniejsza pudełko razem z tekstem. Margines i zaokrąglenie też skalują się proporcjonalnie. Wcześniej pudełko zostawało stałe i tekst się nie zwiększał.
+- Stan przełącznika z własnymi tekstami ON/OFF: pudełko mieści dłuższy z nich. Po wpisaniu nowego tekstu OFF pudełko się dopasowuje, także gdy teraz widać ON.
+- Pudełka mierzone są dokładnie, w ułamkach piksela. Wcześniej zaokrąglenie potrafiło zmniejszyć tekst o kilka %, który i tak się mieścił.
+- Pudełka zmierzone przed wczytaniem czcionek są mierzone ponownie.
+
 ## 0.6.1-beta.541
 
 - Etykieta: suwak „Margines” nazwy lub stanu (w Tle/Ramce) ustawiony na 0 daje pudełko przylegające do tekstu. Ręcznie ustawiony margines to cały margines, bez ukrytego zapasu. Zmiana marginesu mierzy pudełko od nowa (szerokość i wysokość).
