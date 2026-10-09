@@ -1290,10 +1290,11 @@ function fitLabelBackdrop(room, group) {
 // Frame size set with the side dots (box-local px; never smaller than the content).
 // A label's name and state keep one size whatever they show (a state "Wł." → "Niedostępny" must not resize the label):
 // their box is locked (in em of the part's own text size, so the part's "Rozmiar" still scales it) and the text is fitted
-// into it (smaller, at the end cut with "…"). Not for thermostats / gauges, whose frame is designed.
-const LOCKED_TEXT_PARTS = ['labelName','labelState'];
+// into it (smaller, at the end cut with "…"). A thermostat's / gauge's texts as well: mode, work state, values, percent.
+const LOCKED_TEXT_PARTS = ['labelName','labelState'], THERMO_TEXT_PARTS = ['labelName','labelState','labelAction','labelTarget','labelCurrent','labelPercent'];
+const lockedTextKeys = r => isThermoRoom(r) ? THERMO_TEXT_PARTS : LOCKED_TEXT_PARTS;
 // A size set with the part's dots is its fixed size too (not a least one any more).
-function textLock(r, key) { const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0; return LOCKED_TEXT_PARTS.includes(key) && !isThermoRoom(r) && (w > 0 || h > 0 || (Array.isArray(v) && v[0] > 0)) ? { w, h, v: Array.isArray(v) ? v : null } : null; }
+function textLock(r, key) { const v = r[`${key}Lock`], w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0; return lockedTextKeys(r).includes(key) && (w > 0 || h > 0 || (Array.isArray(v) && v[0] > 0)) ? { w, h, v: Array.isArray(v) ? v : null } : null; }
 function partBoxSize(r, key) {
   if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
   const lock = textLock(r, key);
@@ -1666,24 +1667,26 @@ function renderRoomLabels(view = activeSceneView()) {
   renderDashGrid(); fitCardHandles();
 }
 function fitLabelTexts(room, group) {
-  if (isThermoRoom(room)) return;
-  const parts = key => [...group.querySelectorAll(`[data-label-part="${key === 'labelName' ? 'name' : 'state'}"]`)].filter(n => !n.classList.contains('room-label-card'));
+  const partName = key => ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0];
+  const parts = key => [...group.querySelectorAll(`[data-label-part="${partName(key)}"]`)].filter(n => !n.classList.contains('room-label-card'));
   // Not locked yet (new, or its text / parts changed): its box is taken now. The state is at least as wide as the name
   // (or 4 letters), so a longer state later fits without shrinking much.
   const size = key => clamp(Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420);
   const nat = key => { const n = parts(key)[0]; return n?.offsetWidth ? [n.offsetWidth, n.offsetHeight] : null; };
   let locked = false;
-  LOCKED_TEXT_PARTS.forEach(key => {
+  lockedTextKeys(room).forEach(key => {
     if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
     const m = nat(key); if (!m) return; let w = m[0];
-    if (key === 'labelState') { const nm = room.labelName && nat('labelName'); w = Math.max(w, nm ? nm[0] : 0, size(key) * 4); }
+    if (key === 'labelState' && !isThermoRoom(room)) { const nm = room.labelName && nat('labelName'); w = Math.max(w, nm ? nm[0] : 0, size(key) * 4); }
     room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
   });
   if (locked) { const html = roomLabelMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '', editMode && !room.geometryLocked && !roomDraft); group.innerHTML = html; group.__html = html; group.__key = ''; equalizeLabelFrames(room, group); scheduleSave(false); }
   // Fitting: the text at full size, then smaller (down to 55 %) while it does not fit; past that it is cut with "…".
-  group.querySelectorAll('.fit > b, .fit > small').forEach(t => {
-    t.style.fontSize = ''; const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
-    if (room_ > 0 && t.scrollWidth > room_ + .5) t.style.fontSize = `${Math.max(55, Math.floor(room_ / t.scrollWidth * 100))}%`;
+  // A thermostat's text (its own sizes in em, a raised unit…) is scaled down as a whole instead.
+  group.querySelectorAll('.fit > b, .fit > small, .fit > .thermo-part').forEach(t => {
+    const thermo = t.classList.contains('thermo-part'); t.style.fontSize = ''; t.style.transform = '';
+    const box = t.parentElement, cs = getComputedStyle(box), room_ = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0), need = thermo ? t.getBoundingClientRect().width / Math.max(.01, box.getBoundingClientRect().width / Math.max(1, box.offsetWidth)) : t.scrollWidth;
+    if (room_ > 0 && need > room_ + .5) { const k = Math.max(thermo ? .35 : .55, room_ / need); /* a thermostat's / gauge's text has no "…": it may get smaller */ if (thermo) t.style.transform = `scale(${Math.floor(k * 100) / 100})`; else t.style.fontSize = `${Math.floor(k * 100)}%`; }
   });
 }
 // Corner dots stay exactly on the element's corners and are always whole: the plan clips what sticks out of it, so
@@ -3209,6 +3212,7 @@ function onRoomEditorInput(event) {
   if (path === 'labelIconName') value = String(value).trim();
   // What fills the name / state boxes changed by hand: their size is taken again from the new text.
   if (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path)) LOCKED_TEXT_PARTS.forEach(k => { if (path === 'name' || path.startsWith('labelName') || k === 'labelState') delete room[`${k}Lock`]; });
+  { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Weight|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }
   room[path] = value; room.updatedAt = new Date().toISOString();

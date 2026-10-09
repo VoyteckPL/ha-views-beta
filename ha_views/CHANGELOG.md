@@ -1,3 +1,7 @@
+## 0.6.1-beta.533
+
+- Termostat i wskaźnik: ich teksty też mają stały rozmiar. Dotyczy to nazwy, pigułki trybu, stanu pracy, temperatury ustawionej i aktualnej, wartości oraz procentu. Rozmiar jest zapamiętany przy pierwszym wyświetleniu, a rozmiar ustawiony kropkami jest stały. Dłuższy tekst (np. „Grzanie / chłodzenie”, „-12,5°C”, „12 400 W”, „Niedostępny”) jest pomniejszany w całości, do 35%, i nie poszerza pigułki ani części. Rozmiar liczy się od nowa po zmianie jednostki, miejsc po przecinku, grubości lub marginesu danego tekstu.
+
 ## 0.6.1-beta.532
 
 - Stały rozmiar etykiety działa też, gdy nazwa albo stan ma rozmiar ustawiony kropkami. Taki rozmiar jest teraz rozmiarem stałym, a nie najmniejszym: dłuższa wartość się zmniejsza i nie rozpycha części ani ramki.

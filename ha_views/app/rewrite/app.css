@@ -1717,3 +1717,4 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .ungroup-badge{position:absolute;left:0;bottom:100%;display:inline-grid;place-items:center;width:1.9em;height:1.9em;margin-bottom:calc(8px * var(--inv));padding:0;border-radius:50%;background:#c084fc;color:#1a0b2e;font:700 calc(11px * var(--inv))/1.3 system-ui,sans-serif;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .ungroup-badge .mdi{font-size:1.25em;line-height:1}
 .room-card-part.fit>b,.room-card-part.fit>small,.room-label-part.fit>b,.room-label-part.fit>small{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-card-part.fit>.thermo-part,.room-label-part.fit>.thermo-part{transform-origin:center;white-space:nowrap}
