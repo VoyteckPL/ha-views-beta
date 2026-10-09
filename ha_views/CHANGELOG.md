@@ -1,3 +1,7 @@
+## 0.6.1-beta.546
+
+- Etykieta: po rozgrupowaniu ramka zostaje w kształcie i miejscu sprzed rozgrupowania i nie dopasowuje się do części. Przesunięcie lub powiększenie części poza ramkę wysuwa ten bok, który przekroczyła, a pozostałe boki zostają. Po ponownym zgrupowaniu etykieta ma ten nowy kształt ramki, a części zostają na swoich miejscach. Suwak „Margines” nadal dopasowuje ramkę z powrotem do części.
+
 ## 0.6.1-beta.545
 
 - Etykieta: po wyłączeniu tła i ramki nazwy lub stanu tekst nie robi się większy. Pudełko zmniejsza się o margines wewnętrzny, który znika razem z tłem i ramką, a po ponownym włączeniu wraca do poprzedniego rozmiaru.

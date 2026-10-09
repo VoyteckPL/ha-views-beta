@@ -1186,8 +1186,9 @@ function keepLabelPlaceOnRegroup(room) {
     // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
     // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
     // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
-    if (card?.offsetWidth && fixedFrame(room)) {
+    if (card?.offsetWidth) {
       const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
+      if (!fixedFrame(room)) room.hugFrameV1 = true; // the kept frame (and the group's frame made from it) is the user's own
       room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
     }
   } else {
@@ -1196,7 +1197,7 @@ function keepLabelPlaceOnRegroup(room) {
     const shownKeys = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width).map(partKey).filter(Boolean);
     const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
-    const kept = fixedFrame(room) ? room.labelUngroupFrame : null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
+    const kept = room.labelUngroupFrame || null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
     if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
@@ -1276,12 +1277,23 @@ function equalizeLabelFrames(room, group) {
   group.querySelectorAll('.room-label-part, .room-label-card').forEach(node => node.classList.toggle('square', !!node.querySelector(':scope > .card-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
+// The ungrouped label whose part is being moved / resized now: only then its kept frame grows (a render right after
+// ungrouping, its parts not laid out yet, must not).
+let growFrameRoom = null;
 function fitLabelBackdrop(room, group) {
   const backdrop = group.querySelector('.room-label-backdrop'); if (!backdrop) return;
   const rects = [...group.querySelectorAll('.room-label-part')].map(node => node.getBoundingClientRect()).filter(r => r.width);
   const scene = els.scene.getBoundingClientRect(), w = els.scene.offsetWidth || 1, k = sceneScale || 1; if (!rects.length || !scene.width) return;
   // While ungrouped the frame keeps the group's size and place (it does not follow the parts being moved).
-  const kept = fixedFrame(room) && room.labelUngroupFrame;
+  const kept = room.labelUngroupFrame;
+  // A label's frame kept from the group grows with a part taken past one of its sides (that side moves out, the
+  // others stay) - and keeps that shape when grouped again. A thermostat's frame holds its parts inside it.
+  if (kept && !fixedFrame(room) && growFrameRoom === room.id && Number(kept.w) > 0) {
+    const [ax0, ay0] = roomAnchor(room), toPlan0 = (scene.width / w) * k, local0 = toPlan0 * clamp(Number(room.labelCardScale) || 1, .3, 6), pad0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+    const ox = scene.left + ax0 / 100 * scene.width, oy = scene.top + ay0 / 100 * scene.height, kx = ox + Number(kept.x) * toPlan0, ky = oy + Number(kept.y) * toPlan0, hw = Number(kept.w) * local0 / 2, hh = Number(kept.h) * local0 / 2;
+    const L = Math.min(kx - hw, ...rects.map(r => r.left - pad0 * 1.35 * local0)), R = Math.max(kx + hw, ...rects.map(r => r.right + pad0 * 1.35 * local0)), T = Math.min(ky - hh, ...rects.map(r => r.top - pad0 * local0)), B = Math.max(ky + hh, ...rects.map(r => r.bottom + pad0 * local0));
+    if (L < kx - hw - .5 || R > kx + hw + .5 || T < ky - hh - .5 || B > ky + hh + .5) { const r2 = v => Math.round(v * 100) / 100; Object.assign(kept, { x: r2(((L + R) / 2 - ox) / toPlan0), y: r2(((T + B) / 2 - oy) / toPlan0), w: r2((R - L) / local0), h: r2((B - T) / local0) }); }
+  }
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
   const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
@@ -1837,7 +1849,7 @@ function startFreeResize(event, handle) {
   const partFrame = !isCard && !room.labelLinked && fixedFrame(room) ? groupFrameRect(room, scene) : null;
   const camera = dragCamera(last => move(last));
   const move = e => {
-    if (e.pointerId !== event.pointerId) return; moved = true;
+    if (e.pointerId !== event.pointerId) return; moved = true; if (!isCard && !room.labelLinked) growFrameRoom = room.id;
     // The camera may have moved the plan since the dot was grabbed (it follows a dot taken past the screen's edge): the
     // pointer is taken back into the plan's position at the start, where every other value of this resize lives.
     const now = els.scene.getBoundingClientRect(), shX = now.left - scene.left, shY = now.top - scene.top; camera.track(e);
@@ -1895,7 +1907,7 @@ function startFreeResize(event, handle) {
       // The whole label scaled as one picture (parts, texts, margin and the frame's own size alike).
       // The content fills the frame by its tighter side: measured against the content's own box (its parts and margin), not
       // against the frame - a frame made wider and then narrower again leaves the content as it was.
-      const free = node.classList.contains('free'), b0 = free ? rect0.width / k : natW, b1 = free ? rect0.height / k : natH, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
+      const free = node.classList.contains('free') && !centredCard, b0 = free ? rect0.width / k : natW, b1 = free ? rect0.height / k : natH, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
       lw = Math.max(lw, b0 * f); lh = Math.max(lh, b1 * f);
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
       // The frame follows the dot exactly (its width and height each on their own; with "Rozmiar po strefach" the box
@@ -1951,7 +1963,7 @@ function startFreeResize(event, handle) {
     $(sel)?.classList.toggle('square', square || Math.abs(r.width - r.height) < .5);
   };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return;
+    if (e.pointerId !== event.pointerId) return; if (growFrameRoom === room.id) growFrameRoom = null;
     camera.stop(); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
@@ -2346,9 +2358,9 @@ function startRoomLabelDrag(event) {
       if (fix) { moving.forEach(kk => { room[`${kk}X`] = Math.round(((Number(room[`${kk}X`]) || 0) + fix.x / 100 * w / k) * 100) / 100; room[`${kk}Y`] = Math.round(((Number(room[`${kk}Y`]) || 0) + fix.y / 100 * h / k) * 100) / 100; }); renderRoomLabels(); }
     }
   };
-  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; place(e); camera.track(e); };
+  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; if (!room.labelLinked) growFrameRoom = room.id; place(e); camera.track(e); };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; alive = false; camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
+    if (e.pointerId !== event.pointerId) return; alive = false; if (growFrameRoom === room.id) { growFrameRoom = null; scheduleSave(true); } camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
