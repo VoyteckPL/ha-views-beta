@@ -1,3 +1,7 @@
+## 0.6.1-beta.544
+
+- Wskaźnik: kropki ramki działają jak w etykiecie. Szerokość i wysokość ramki zmieniają się osobno, ramka idzie dokładnie za kropką. Wskaźnik wypełnia ramkę po ciaśniejszym boku (także powiększa się) i jest wyśrodkowany. Shift dla wskaźnika usunięty. Przy „Rozmiarze po strefach” wskaźnik również wypełnia strefę.
+
 ## 0.6.1-beta.543
 
 - Etykieta: kropki zgrupowanej etykiety (także bez siatki) zmieniają szerokość i wysokość ramki osobno, ramka idzie dokładnie za kropką. Zawartość wypełnia ramkę po ciaśniejszym boku i jest wyśrodkowana. Poszerzenie ramki nie zmienia zawartości, a po zwężeniu zawartość wraca do poprzedniego rozmiaru. Suwak „Margines” przywraca ramkę dopasowaną do części.

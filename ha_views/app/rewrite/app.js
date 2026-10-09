@@ -1758,7 +1758,7 @@ function startFreeResize(event, handle) {
   const zoneSize = majorSizing() && !!handle.closest('.room-label-card') && fixedFrame(room); // "Rozmiar po grubych liniach": no free scaling with Shift
   // A label's group (its frame hugs its parts): the dots always scale the whole label, as a picture (no Shift).
   const hugCard = !!handle.closest('.room-label-card') && !fixedFrame(room), scaleWhole = hugCard;
-  if ((isThermoRoom(room) && event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
+  if ((isThermoRoom(room) && !isGaugeRoom(room) && event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
   const isCard = node.classList.contains('room-label-card'), key = isCard ? 'labelCard' : partKey(node); if (!key) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
@@ -1806,7 +1806,10 @@ function startFreeResize(event, handle) {
   // of the thick lines, the moving one from line to line; the parts stay centred in it (or scale down when it is smaller).
   const hugZones = isCard && !fixedFrame(room) && majorSizing() ? gridMajorLines(scene.width, scene.height) : null;
   if (hugZones?.xs.length && hugZones.ys.length) { fx = scene.left + nearLine(hugZones.xs, fx - scene.left); fy = scene.top + nearLine(hugZones.ys, fy - scene.top); }
-  if (zones?.xs.length && zones.ys.length) {
+  // A gauge's frame follows its dots freely (its width and height each on their own), the gauge scaled to fill it by the
+  // tighter side and centred - as with the thick lines, only without them.
+  const gaugeFree = isCard && isGaugeRoom(room) && !(zones?.xs.length && zones.ys.length);
+  if ((zones?.xs.length && zones.ys.length) || gaugeFree) {
     const lsc = cardScale0, fsx = room.labelCardCentred ? 0 : parseFloat(node.style.getPropertyValue('--fsx')) || 0, fsy = room.labelCardCentred ? 0 : parseFloat(node.style.getPropertyValue('--fsy')) || 0, cs = getComputedStyle(node);
     if (!room.labelCardFree) {
       const mx = (rect0.left + rect0.right) / 2, my = (rect0.top + rect0.bottom) / 2;
@@ -1840,13 +1843,14 @@ function startFreeResize(event, handle) {
     const now = els.scene.getBoundingClientRect(), shX = now.left - scene.left, shY = now.top - scene.top; camera.track(e);
     let ex = (sx > 0 ? rect0.right : rect0.left) + e.clientX - shX - event.clientX, ey = (sy > 0 ? rect0.bottom : rect0.top) + e.clientY - shY - event.clientY;
     let bx = null, by = null, square = false;
-    if (zones?.xs.length && zones.ys.length) {
+    if ((zones?.xs.length && zones.ys.length) || gaugeFree) {
       // The moving corner: the nearest thick line past the fixed one (at least one zone).
       const pickLine = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
-      ex = pickLine(zones.xs, ex, fx, sx, scene.left); ey = pickLine(zones.ys, ey, fy, sy, scene.top);
+      if (gaugeFree) { ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom); if (sx * (ex - fx) < 8) ex = fx + sx * 8; if (sy * (ey - fy) < 8) ey = fy + sy * 8; }
+      else { ex = pickLine(zones.xs, ex, fx, sx, scene.left); ey = pickLine(zones.ys, ey, fy, sy, scene.top); }
       // The box between the lines: the content scaled to fit it (back to its own size when there is room), the frame
       // exactly the box, its centre exactly the box's centre (from the label's point, unrounded).
-      const Wb = Math.abs(ex - fx), Hb = Math.abs(ey - fy), minF = .3 / cardScale0, maxF = Math.max(1, cardBase / cardScale0);
+      const Wb = Math.abs(ex - fx), Hb = Math.abs(ey - fy), minF = .3 / cardScale0, maxF = isGaugeRoom(room) ? 6 / cardScale0 : Math.max(1, cardBase / cardScale0);
       const f = clamp(Math.min(Wb / k / zoneParts.w, Hb / k / zoneParts.h), minF, maxF), [ax, ay] = roomAnchor(room);
       room.labelCardExact = true; room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = k * (room.labelCardScale / cardScale0);
       room.labelCardW = Math.round(Wb / kf * 100) / 100; room.labelCardH = Math.round(Hb / kf * 100) / 100;
@@ -1854,7 +1858,7 @@ function startFreeResize(event, handle) {
       room.labelCardY = Math.round(((fy + ey) / 2 - (scene.top + ay / 100 * scene.height)) / planToScreen * 1000) / 1000;
       renderRoomLabels();
       const Ws = scene.width || 1, Hs = scene.height || 1;
-      showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
+      if (!gaugeFree) showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
       return;
     } else if (hugZones?.xs.length && hugZones.ys.length && !e.altKey) {
       const lineFrom = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
