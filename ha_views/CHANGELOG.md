@@ -1,3 +1,7 @@
+## 0.6.1-beta.510
+
+- **Zapis układu powyżej 1 MiB**: serwer dodatku przyjmował zapytania tylko do 1 MiB (domyślny limit aiohttp), więc duży układ, np. z wieloma widokami i termostatami, przestawał się zapisywać z błędem „Nieprawidłowy JSON”. Limit podniesiony do 32 MiB. Gdyby układ był jeszcze większy, pojawi się czytelny komunikat „Układ jest za duży do zapisania”.
+
 ## 0.6.1-beta.509
 
 - **Ramka etykiety i pomieszczenia zawsze otacza części**: główna ramka grupy nie ma już stałego rozmiaru. Dopasowuje się do części, także po rozgrupowaniu, gdy przesuwasz je swobodnie: odsuniesz ikonę, a ramka rośnie razem z nią.
