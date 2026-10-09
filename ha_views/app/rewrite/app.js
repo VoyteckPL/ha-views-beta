@@ -1209,6 +1209,16 @@ function keepLabelPlaceOnRegroup(room) {
     let cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
     // The frame kept while ungrouped stays the group's frame: same place, same size (parts moved inside it do not move
     // or resize it, so a group laid on the grid stays on it). The group is then centred on its frame, not on its parts.
+    // A label's frame left with empty room on one side (its parts moved away from it): each pair of opposite sides keeps
+    // the smaller of its two margins, so the parts sit evenly inside the frame and no empty field is left.
+    if (kept && !fixedFrame(room) && Number(kept.w) > 0) {
+      const toScr = scene.width * k / w, loc = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 6);
+      const fx0 = anchorX + Number(kept.x) * toScr, fy0 = anchorY + Number(kept.y) * scene.height * k / h, hw = Number(kept.w) * loc / 2, hh = Number(kept.h) * loc / 2;
+      const l = Math.min(...rects.map(r => r.left)), r_ = Math.max(...rects.map(r => r.right)), t = Math.min(...rects.map(r => r.top)), b = Math.max(...rects.map(r => r.bottom));
+      const mx = Math.max(0, Math.min(l - (fx0 - hw), fx0 + hw - r_)), my = Math.max(0, Math.min(t - (fy0 - hh), fy0 + hh - b));
+      const L = l - mx, R = r_ + mx, T = t - my, B = b + my;
+      Object.assign(kept, { x: r2(((L + R) / 2 - anchorX) / toScr), y: r2(((T + B) / 2 - anchorY) / (scene.height * k / h)), w: r2((R - L) / loc), h: r2((B - T) / loc) });
+    }
     if (kept && Number.isFinite(Number(kept.x)) && Number(kept.w) > 0) {
       cx = anchorX + Number(kept.x) * scene.width * k / w; cy = anchorY + Number(kept.y) * scene.height * k / h;
       room.labelCardX = r2(Number(kept.x)); room.labelCardY = r2(Number(kept.y)); room.labelCardW = r2(Number(kept.w)); room.labelCardH = r2(Number(kept.h)); room.labelCardCentred = true;
