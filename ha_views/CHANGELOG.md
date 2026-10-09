@@ -1,3 +1,7 @@
+## 0.6.1-beta.547
+
+- Etykieta (rozgrupowana): ramka, którą wysunął element, wraca, gdy element wraca do środka. Nigdy nie robi się mniejsza niż ramka sprzed rozgrupowania. Po zgrupowaniu etykieta ma kształt, jaki ramka ma w tym momencie.
+
 ## 0.6.1-beta.546
 
 - Etykieta: po rozgrupowaniu ramka zostaje w kształcie i miejscu sprzed rozgrupowania i nie dopasowuje się do części. Przesunięcie lub powiększenie części poza ramkę wysuwa ten bok, który przekroczyła, a pozostałe boki zostają. Po ponownym zgrupowaniu etykieta ma ten nowy kształt ramki, a części zostają na swoich miejscach. Suwak „Margines” nadal dopasowuje ramkę z powrotem do części.

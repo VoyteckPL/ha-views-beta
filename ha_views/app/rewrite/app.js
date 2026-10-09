@@ -362,7 +362,7 @@ function ensureMultiViewModel() {
     Object.entries(view.rooms || {}).forEach(([key, room]) => { if (room?.draft) { delete view.rooms[key]; migrated = true; } });
     // A label's / room's group frame hugs its parts again (only a thermostat's / gauge's has its own size): a size kept
     // from before goes; the parts stay where they are (their offsets are from the same point).
-    Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
+    Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
     Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
@@ -1190,6 +1190,7 @@ function keepLabelPlaceOnRegroup(room) {
       const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
       if (!fixedFrame(room)) room.hugFrameV1 = true; // the kept frame (and the group's frame made from it) is the user's own
       room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
+      if (!fixedFrame(room)) room.labelUngroupBase = { ...room.labelUngroupFrame }; // the least it gets back to
     }
   } else {
     const snap = room.labelRegroupSnap; delete room.labelRegroupSnap;
@@ -1291,8 +1292,10 @@ function fitLabelBackdrop(room, group) {
   if (kept && !fixedFrame(room) && growFrameRoom === room.id && Number(kept.w) > 0) {
     const [ax0, ay0] = roomAnchor(room), toPlan0 = (scene.width / w) * k, local0 = toPlan0 * clamp(Number(room.labelCardScale) || 1, .3, 6), pad0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
     const ox = scene.left + ax0 / 100 * scene.width, oy = scene.top + ay0 / 100 * scene.height, kx = ox + Number(kept.x) * toPlan0, ky = oy + Number(kept.y) * toPlan0, hw = Number(kept.w) * local0 / 2, hh = Number(kept.h) * local0 / 2;
-    const L = Math.min(kx - hw, ...rects.map(r => r.left - pad0 * 1.35 * local0)), R = Math.max(kx + hw, ...rects.map(r => r.right + pad0 * 1.35 * local0)), T = Math.min(ky - hh, ...rects.map(r => r.top - pad0 * local0)), B = Math.max(ky + hh, ...rects.map(r => r.bottom + pad0 * local0));
-    if (L < kx - hw - .5 || R > kx + hw + .5 || T < ky - hh - .5 || B > ky + hh + .5) { const r2 = v => Math.round(v * 100) / 100; Object.assign(kept, { x: r2(((L + R) / 2 - ox) / toPlan0), y: r2(((T + B) / 2 - oy) / toPlan0), w: r2((R - L) / local0), h: r2((B - T) / local0) }); }
+    // Grown from the frame it had when ungrouped (a part brought back in lets its side come back, never past that frame).
+    const base = room.labelUngroupBase && Number(room.labelUngroupBase.w) > 0 ? room.labelUngroupBase : kept, bx = ox + Number(base.x) * toPlan0, by = oy + Number(base.y) * toPlan0, bw = Number(base.w) * local0 / 2, bh = Number(base.h) * local0 / 2;
+    const L = Math.min(bx - bw, ...rects.map(r => r.left - pad0 * 1.35 * local0)), R = Math.max(bx + bw, ...rects.map(r => r.right + pad0 * 1.35 * local0)), T = Math.min(by - bh, ...rects.map(r => r.top - pad0 * local0)), B = Math.max(by + bh, ...rects.map(r => r.bottom + pad0 * local0));
+    if (Math.abs(L - (kx - hw)) > .5 || Math.abs(R - (kx + hw)) > .5 || Math.abs(T - (ky - hh)) > .5 || Math.abs(B - (ky + hh)) > .5) { const r2 = v => Math.round(v * 100) / 100; Object.assign(kept, { x: r2(((L + R) / 2 - ox) / toPlan0), y: r2(((T + B) / 2 - oy) / toPlan0), w: r2((R - L) / local0), h: r2((B - T) / local0) }); }
   }
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
   const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
@@ -3283,6 +3286,8 @@ function onRoomEditorInput(event) {
     if (input._frame && (fixedFrame(room) || Number(room.labelCardW) > 0 || Number(room.labelCardH) > 0)) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     // Ungrouped: the frame kept from the group stays the same size on the plan as well.
     const kept = !room.labelLinked && room.labelUngroupFrame;
+    const base = !room.labelLinked && room.labelUngroupBase;
+    if (base) { if (!input._base) { input._base = { w: base.w * oldScale, h: base.h * oldScale }; input.addEventListener('change', () => { delete input._base; }, { once:true }); } const kb = clamp(room.labelCardScale, .3, 6); base.w = Math.round(input._base.w / kb * 100) / 100; base.h = Math.round(input._base.h / kb * 100) / 100; }
     if (kept) { if (!input._kept) { input._kept = { w: kept.w * oldScale, h: kept.h * oldScale }; input.addEventListener('change', () => { delete input._kept; }, { once:true }); } const k = clamp(room.labelCardScale, .3, 6); kept.w = Math.round(input._kept.w / k * 100) / 100; kept.h = Math.round(input._kept.h / k * 100) / 100; }
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
@@ -3319,7 +3324,7 @@ function onRoomEditorInput(event) {
 }
 // Thermostat templates (up to 5, shared by all views): the whole look and arrangement of a thermostat, saved from one and
 // loaded into another with one tap. The trash button switches the slots to "delete" for one tap.
-const isThermoLookKey = key => /^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame'].includes(key);
+const isThermoLookKey = key => /^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key);
 function onRoomEditorClick(event) {
   // "Przetestuj przejście": to the button's view with its effect and back again, then the panel opens as it was.
   if (event.target.closest('[data-link-try]')) {
@@ -3393,7 +3398,7 @@ function onRoomEditorClick(event) {
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
     // and state leaves the frame around the icon only. The parts stay where they are.
-    if (partKeys.includes(key) && !isThermoRoom(room)) { delete room.labelCardCentred; delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; }
+    if (partKeys.includes(key) && !isThermoRoom(room)) { delete room.labelCardCentred; delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; delete room.labelUngroupBase; }
     // "Tryby" shows / hides every mode button (the ones switched off on their own stay off); a mode button shown on its
     // own shows the modes again. Each mode's choice is kept with the mode list in the "Tryby" section.
     if (isThermoRoom(room) && room.thermoModeParts) {
@@ -3513,7 +3518,7 @@ function pastePartStyle(room, part, title) {
 }
 function toggleRoomLock() { const room = roomsOf()[selectedRoomId]; if (!room) return; room.geometryLocked = !room.geometryLocked; room.updatedAt = new Date().toISOString(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); notify(room.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); }
 // Every look setting of a room / label / thermostat: the style list plus every label part and thermostat option.
-const roomLookKey = key => ROOM_STYLE_KEYS.includes(key) || (/^(label|thermo[A-Z_])/.test(key) && !/^labelX\d(Entity)?$/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame'].includes(key));
+const roomLookKey = key => ROOM_STYLE_KEYS.includes(key) || (/^(label|thermo[A-Z_])/.test(key) && !/^labelX\d(Entity)?$/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key));
 function copyRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room) return; roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(roomLookKey).map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
 // Pasting a style keeps where the target stands: the label / part offsets from its point are its own (a room's label
 // offsets would move a plain label away); only looks (and the group's inner arrangement) are taken over.
