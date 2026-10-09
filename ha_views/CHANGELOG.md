@@ -1,3 +1,11 @@
+## 0.6.1-beta.539
+
+- Nowy, jednolity model etykiety: etykieta to ramka plus części.
+  - Nazwa i stan to pudełka o stałym rozmiarze, zapisanym w pikselach planu, a nie w jednostkach czcionki. Rozmiar jest mierzony raz, z małym zapasem. Tekst ma wielkość ustawioną wysokością pudełka i zmniejsza się tylko, gdy się nie mieści. Zmiana wartości ani urządzenia nie zmienia rozmiaru. Pudełko liczy się od nowa po zmianie nazwy lub tekstów stanu (wysokość zostaje).
+  - Kropki zgrupowanej etykiety skalują całą etykietę proporcjonalnie, także z jednym elementem. Z Shift albo z przełącznikiem „Kropki zmieniają tylko ramkę” na pasku Grupa (na telefon) zmieniają samą ramkę. Przy „Rozmiarze po strefach” ramka trafia w grube linie, a zawartość skaluje się do niej.
+  - Kropki części w trybie rozgrupowanym zmieniają jej pudełko, a tekst idzie za wysokością pudełka.
+  - Dawne blokady rozmiaru stanu są przy wczytaniu zamieniane na pudełka.
+
 ## 0.6.1-beta.538
 
 - Kropki nazwy lub stanu: ramka nie zapada się już do kreski. Wielkość tekstu idzie za ramką: rośnie z nią i maleje, ale tylko na tyle, na ile pozwalają wysokość i szerokość, więc tekst nigdy nie musi być ucinany. Bez przyciągania 1:1 dla tekstu.
