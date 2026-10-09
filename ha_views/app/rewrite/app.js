@@ -3356,6 +3356,15 @@ function onRoomEditorClick(event) {
     // At least one of icon / name / state stays visible.
     const partKeys = ROOM_LABEL_PARTS.map(([, k]) => k);
     if (key === 'labelMinus' && isThermoRoom(room) && partToggle.closest('.group-tight')) room.labelPlus = !room.labelMinus;
+    // A name's / state's background and frame carry its margin: with both off (or the first one on) the margin goes (or
+    // comes), so its box gets smaller (or bigger) by the margin - the text keeps its room and its size.
+    { const own = !isThermoRoom(room) && /^(label(?:Name|State))(Bg|Border)$/.exec(key), k = own?.[1];
+      if (own && !room[`${k}${own[2] === 'Bg' ? 'Border' : 'Bg'}`] && (Number(room[`${k}W`]) > 0 || Number(room[`${k}H`]) > 0)) {
+        const p = room[`${k}Padding`], set = p !== undefined && p !== null && p !== '' && Number.isFinite(Number(p)), size = clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420);
+        const px = set ? clamp(Number(p), 0, 120) * 2 : size * .55, py = set ? clamp(Number(p), 0, 120) : size * .28, sign = room[key] ? -1 : 1; // on now = being switched off
+        if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.max(1, Math.round((Number(room[`${k}W`]) + sign * 2 * px) * 10) / 10);
+        if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.max(1, Math.round((Number(room[`${k}H`]) + sign * 2 * py) * 10) / 10);
+      } }
     if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
     if (key === 'labelLinked' && room.labelLinked) { selectedLabelPart = ''; panelPart = null; } // ungrouped: no part picked yet, all only outlined
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }

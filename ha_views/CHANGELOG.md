@@ -1,3 +1,7 @@
+## 0.6.1-beta.545
+
+- Etykieta: po wyłączeniu tła i ramki nazwy lub stanu tekst nie robi się większy. Pudełko zmniejsza się o margines wewnętrzny, który znika razem z tłem i ramką, a po ponownym włączeniu wraca do poprzedniego rozmiaru.
+
 ## 0.6.1-beta.544
 
 - Wskaźnik: kropki ramki działają jak w etykiecie. Szerokość i wysokość ramki zmieniają się osobno, ramka idzie dokładnie za kropką. Wskaźnik wypełnia ramkę po ciaśniejszym boku (także powiększa się) i jest wyśrodkowany. Shift dla wskaźnika usunięty. Przy „Rozmiarze po strefach” wskaźnik również wypełnia strefę.
