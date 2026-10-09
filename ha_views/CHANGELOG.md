@@ -1,3 +1,9 @@
+## 0.6.1-beta.554
+
+- Etykieta, sekcja „Stan”:
+  - Suwaki „Rozmiar tekstu” i „Margines” przyciągają się do wartości użytych gdzie indziej: nazwy tej etykiety i stanu innych etykiet na widoku. Te wartości są zaznaczone kreskami na suwaku.
+  - Nowa kłódka „Stała ramka”. Zamknięta: pudełko stanu stoi w miejscu, a rozmiar tekstu i margines zmieniają się w jego środku; za duży tekst się dopasowuje. Otwarta (domyślnie): pudełko rośnie i maleje razem z tekstem.
+
 ## 0.6.1-beta.553
 
 - Etykieta: pływający pasek nad stanem usunięty. Na telefonie przyciski − / + zmieniały wartość w niekontrolowany sposób.
