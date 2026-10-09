@@ -2002,7 +2002,9 @@ function groupSnap(room, exclude = []) {
   if (o.parts) orects.forEach(r => { const box = rel({ l: r.left, r: r.right, t: r.top, b: r.bottom }); [r.left, (r.left + r.right) / 2, r.right].forEach((v, i) => xs.push({ v: v - scene.left, kind: 'label', own: true, center: i === 1, box })); [r.top, (r.top + r.bottom) / 2, r.bottom].forEach((v, i) => ys.push({ v: v - scene.top, kind: 'label', own: true, center: i === 1, box })); });
   // Ramka (purple): the frame's centre lines first, then its edges. Its edges are also boxes for equal gaps (a part right
   // between the frame's edge and another part). Without a kept frame, the label's point.
-  const fr = groupFrameRect(room, scene), frameBoxes = [];
+  // A label's frame hugs its parts - the moved one too - so it (and the grid counted from its centre) would move with the
+  // part and the part would creep after its own lines. For snapping it is the box of the other parts, which stays put.
+  const fr = fixedFrame(room) ? groupFrameRect(room, scene) : orects.length ? frame : null, frameBoxes = [];
   if (o.frame) {
     if (fr) {
       const fbox = rel(fr);
@@ -3786,7 +3788,9 @@ function alignLabel(context, xPercent, yPercent, event) {
     }
     // Other guides (markers, Flow, rooms, background): lower priority, full-length lines as before.
     const offsets = [...(centers ? [0] : []), ...(edges ? [-half, half] : [])];
-    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, gmajor, own, major, frame }) => offsets.forEach(o => add(v - o, grid ? (gmajor ? 3.1 : 3.5) : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
+    // A group's grid catches a part by its centre only: with its edges too, three targets a few px apart in every cell
+    // made the part jump between them.
+    guideValues(axis === 'x' ? context.xs : context.ys).forEach(({ v, kind, room, bg, box, span, center, grid, gmajor, own, major, frame }) => (grid && kind === 'ggrid' ? offsets.filter(o => !o) : offsets).forEach(o => add(v - o, grid ? (gmajor ? 3.1 : 3.5) : major ? 1.2 : frame ? (center && !o ? -.6 : .8) : room && own && context.group ? (center && !o ? 0 : .6) : 2 + (box ? far(box) : 0), { at: v, kind: kind || (room ? 'room' : bg ? 'bg' : 'label'), full: !span, span, grid: !!grid }, [], box ? [{ ...box, kind: kind || (room ? 'room' : 'label') }] : [], center && !o ? centreReach : threshold)));
     const stuck = motion.stick[axis];
     // A caught line holds until the label is moved clearly away from it, or another candidate is clearly closer to the
     // finger (e.g. sliding from "8 px next to it" on to touching).

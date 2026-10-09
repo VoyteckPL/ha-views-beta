@@ -1,3 +1,9 @@
+## 0.6.1-beta.525
+
+- Naprawiono przeskakiwanie przy przesuwaniu części rozgrupowanej etykiety z włączoną siatką grupy.
+  - Do każdej linii siatki przyciągały się trzy punkty części (lewa krawędź, środek, prawa krawędź), więc w jednej kratce było kilka celów oddalonych o 3–7 px. Teraz do linii siatki grupy przyciąga się tylko środek części. Krawędzie dalej przyciągają się do ramki i innych części.
+  - Ramka etykiety obejmuje też przesuwaną część, więc przy przyciąganiu liczy się teraz z pozostałych części i nie przesuwa się razem z nią.
+
 ## 0.6.1-beta.524
 
 - „Rozmiar tylko po grubych liniach siatki” nazywa się teraz krócej: „Rozmiar po strefach”.
