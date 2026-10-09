@@ -1615,7 +1615,7 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .major-step{display:flex;align-items:center;gap:2px;height:26px;padding:0 2px;border:1px solid rgba(99,181,216,.3);border-radius:8px;background:#0d2e3e;color:#b8eafa}
 .major-step button{width:20px;height:22px;padding:0;border:0;background:none;color:#8fe3fb;font-size:15px;line-height:1}
 .major-step i{font-size:12px;color:#5cdbff}.major-step b{min-width:16px;text-align:center;font-size:12px;color:#e6f6fd}
-.snap-menu .grid-row:has(.grid-toggle:not(.active))~.grid-major-row{opacity:.45}
+.snap-menu .grid-major-row:has(.grid-toggle:not(.active)) .major-step,.snap-menu .grid-major-row:has(.grid-toggle:not(.active)) .major-fit{opacity:.45}
 .align-guide.k-major{background:rgba(143,223,255,.95)}
 .snap-icon[data-snap-key="major"].active{color:#8fdfff;border-color:rgba(143,223,255,.6)}
 .snap-menu .grid-major-row .major-fit{width:28px;height:26px;font-size:15px}
@@ -1677,3 +1677,4 @@ body.library-mode #room-duplicate,body.library-mode #room-remove,body.library-mo
 .room-wizard[data-kind="flow"] .room-wizard-actions{grid-template-columns:repeat(3,1fr)}.room-wizard[data-kind="flow"] .room-wizard-action{min-height:36px;padding:5px 8px;font-size:11.5px;gap:6px}
 .room-wizard[data-kind="flow"] #room-wizard-action{max-height:min(52vh,420px);overflow:auto;overscroll-behavior:contain}
 .room-wizard-color input[type=color]{width:100%;padding:2px 4px}
+.snap-menu .grid-major-row .grid-toggle{width:28px;height:26px;font-size:15px}

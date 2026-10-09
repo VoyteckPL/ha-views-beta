@@ -181,6 +181,8 @@ const FLOW_DEFAULTS = Object.freeze({ direction:'right', directionMode:'manual',
 // or count, so two Flows with the same tempo move exactly alike.
 const FLOW_SPEED_PX = 150;
 const FLOW_ANIMATION_KEYS = ['animation','animationSpeed','speedByValue','speedValueMax'];
+// A new Flow starts about as long as a new label is wide, its arrows about as tall as the label's name.
+const NEW_FLOW_SIZE = Object.freeze({ flowLength:200, chevronHeight:48, chevronWidth:44, chevronThickness:9, gap:18 });
 const FLOW_STYLE_KEYS = ['shape','shapeSharpness','flowCount','flowLength','chevronWidth','chevronHeight','chevronThickness','gap','outlineWidth','outlineColor','glow','glowCustom','glowColor','opacity','animation','animationSpeed','speedByValue','speedValueMax'];
 const FLOW_SHAPES = [['chevron','Chevron'],['arrow','Strzałka'],['dart','Grot'],['triangle','Trójkąt'],['segment','Segment']];
 const FLOW_LIMITS = Object.freeze({ min:4, size:600, length:1600, thickness:120, gap:300, count:12 });
@@ -584,7 +586,7 @@ function migrateGridZonesPerView() {
   Object.values(model.views || {}).forEach(view => { if (view?.grid?.gridZones === undefined) (view.grid ||= {}).gridZones = { x: Number(legacy.x) || 4 }; });
   model.settings.gridZonesPerViewV1 = true; return true;
 }
-function gridOpt(key) { const v = activeSceneView()?.grid?.[key]; return v !== undefined ? v : model.settings?.[key]; }
+function gridOpt(key) { if (key === 'snapStep') return .25; const v = activeSceneView()?.grid?.[key]; return v !== undefined ? v : model.settings?.[key]; }
 function setGridOpt(key, value) { const view = activeSceneView(); if (view) (view.grid ||= {})[key] = value; else model.settings[key] = value; }
 function gridVisual() { const step = Number(gridOpt('snapStep')) || .25; return step >= 4 ? 10 : step >= 1 ? 5 : 2.5; }
 // Edit grid in square zones: the thick lines split the plan's width into N equal columns ("Strefy" in the snap menu) and
@@ -687,8 +689,9 @@ const ROOM_DEFAULTS = Object.freeze(withExtraPartDefaults({ name:'Pomieszczenie'
 // A freshly drawn room starts with its icon, name and state visible and the usual extras switched on
 // (icon outline, backgrounds, icon border), so every option is visible and can be tuned or turned off.
 const NEW_ROOM_LABEL = Object.freeze({ labelIcon:true, labelName:true, labelState:true, labelLinked:true, labelCardBg:true, labelCardBorder:true,
-  labelIconOutline:true, labelIconBg:true, labelIconBorder:true, labelIconColor:'#9FB6C3', labelNameBg:true, labelNameBorder:true, labelStateBg:true, labelStateBorder:true, labelIconY:-97, labelNameY:26, labelStateY:123 });
-// Scales a new room's group so it fits inside the drawn shape (at most 70 % of its width and 60 % of its height, never above the default size).
+  labelIconOutline:true, labelIconBg:true, labelIconBorder:true, labelIconColor:'#9FB6C3', labelIconOn:'#DCE8EF', labelIconOff:'#9FB6C3', labelNameBg:true, labelNameBorder:true, labelStateBg:true, labelStateBorder:true, labelIconY:-97, labelNameY:26, labelStateY:123 });
+// Scales a new room's group so it fits inside the drawn shape (at most 70 % of its width and 60 % of its height, never above the size of a
+// new label, so rooms and labels start the same size).
 function fitRoomLabel(id) {
   const room = roomsOf()[id], card = document.querySelector(`.room-label-card[data-room-id="${CSS.escape(id)}"]`), scene = els.scene?.getBoundingClientRect();
   if (!room?.labelLinked || !card || !scene?.width || !room.points?.length) return;
@@ -696,7 +699,7 @@ function fitRoomLabel(id) {
   const xs = room.points.map(p => p[0]), ys = room.points.map(p => p[1]);
   const roomW = (Math.max(...xs) - Math.min(...xs)) / 100 * scene.width, roomH = (Math.max(...ys) - Math.min(...ys)) / 100 * scene.height;
   const fit = Math.min(roomW * .7 / (box.width / scale), roomH * .6 / (box.height / scale));
-  const next = Math.round(clamp(fit, .3, 1) * 20) / 20; if (next === room.labelCardScale) return;
+  const next = Math.round(clamp(fit, .3, ICON_LABEL_SCALE) * 20) / 20; if (next === room.labelCardScale) return;
   room.labelCardScale = next; renderRooms();
 }
 // Room label parts: each is shown, styled and placed on its own (offsets in plan pixels from the room centre).
@@ -926,7 +929,7 @@ function gaugeProfile(entityId) {
   const top = Number.isFinite(v) ? Math.max(10, Math.ceil(Math.abs(v) * 1.5)) : 100; return p(0, top, top * .3, top * .7, C.blue, C.green, C.orange, 'mdi-gauge');
 }
 // "Rozmiar" in the Group section is shown relative to the default: for an icon 1.0× is the size of a new icon.
-const ICON_LABEL_SCALE = .6;
+const ICON_LABEL_SCALE = .7;
 function labelScaleBase(room) { return isIconRoom(room) ? ICON_LABEL_SCALE : 1; }
 // The plan area an icon's label covers (in scene %), used to centre it like a room; falls back to its point.
 function iconFocusBox(room) {
@@ -1646,10 +1649,10 @@ function fitCardHandles() {
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 function startFreeResize(event, handle) {
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
+  const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const zoneSize = majorSizing() && !!handle.closest('.room-label-card') && fixedFrame(room); // "Rozmiar po grubych liniach": no free scaling with Shift
   if ((event.shiftKey && !zoneSize) || handle.closest('.room-label-part')?.dataset.labelPart === 'dial') return startCardResize(event, handle);
   const gridHold = { x: null, y: null };
-  const node = handle.closest('.room-label-card, .room-label-part'), room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const isCard = node.classList.contains('room-label-card'), key = isCard ? 'labelCard' : partKey(node); if (!key) return;
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1, id = CSS.escape(room.id);
@@ -2340,7 +2343,7 @@ function finishRoomDrawing() {
   const view = activeSceneView(); if (!view) return cancelRoomDrawing();
   view.rooms ||= {};
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(room => !isIconRoom(room)).length + 1;
-  view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, id, name: roomDraft.name || `${translateValue('Pomieszczenie')} ${count}`, entityIds: [...(roomDraft.entityIds || [])], points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
+  view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, id, name: roomDraft.name || `${translateValue('Pomieszczenie')} ${count}`, entityIds: [...(roomDraft.entityIds || [])], points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
   const withEntities = view.rooms[id].entityIds.length > 0; cancelRoomDrawing(); renderRooms(); fitRoomLabel(id); scheduleSave(true); if (withEntities) refreshStates();
   openRoomWizard(id);
 }
@@ -2373,12 +2376,7 @@ function wizardPartsFor(room) { return isGaugeRoom(room) ? GAUGE_WIZARD_PARTS : 
 // What the wizard is creating: a room / label, or (flow mode) a Flow of the active view.
 function wizardItem() { return roomWizard?.flow ? activeSceneView()?.flows?.[roomWizard.id] : roomsOf()[roomWizard?.id]; }
 function wizardSteps() { if (roomWizard?.flow) return roomWizard.skipEntities ? ['name','action'] : ['name','entities','action']; const room = roomsOf()[roomWizard?.id]; if (isTextRoom(room)) return ['name','action','parts']; const steps = isIconRoom(room) ? ['name','entities','parts'] : ['name','entities']; return roomWizard?.skipEntities ? steps.filter(step => step !== 'entities') : steps; }
-function showWizardPin(room) {
-  $('#wizard-pin')?.remove(); if (!room || !isIconRoom(room)) return;
-  const pin = document.createElement('div'); pin.id = 'wizard-pin'; pin.className = 'wizard-pin';
-  const [x, y] = roomAnchor(room); pin.style.left = `${x}%`; pin.style.top = `${y}%`; pin.innerHTML = '<i class="mdi mdi-map-marker"></i>';
-  els.scene.append(pin);
-}
+
 function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
   const room = flow ? activeSceneView()?.flows?.[id] : roomsOf()[id], box = $('#room-wizard'); if (!room || !box) return flow ? openFlowEditor(id) : openRoomEditor(id, -1, 0);
   if (flow) roomWizard = { id, flow:true, step:'name', generated: room.displayName || 'Flow', query:'', picked: new Set(room.entityId ? [room.entityId] : []), parts: new Set(), skipEntities };
@@ -2386,15 +2384,13 @@ function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
   // On a phone it sits under the top bar so the on-screen keyboard cannot cover it.
   box.style.top = mobileView() ? `${Math.round(($('.topbar')?.getBoundingClientRect().bottom || 0) + 8)}px` : '';
   box.classList.add('visible'); box.setAttribute('aria-hidden', 'false'); renderRoomWizard();
-  // A Flow needs no pin: its arrows already show on the plan (and change with the choices).
-  showWizardPin(flow ? null : room);
   requestAnimationFrame(() => requestAnimationFrame(focusWizardTarget));
   loadEntityCatalog().then(() => { if (roomWizard?.step === 'entities') renderRoomWizard('list'); });
 }
 function closeRoomWizard() {
   const box = $('#room-wizard'); if (!roomWizard || !box) return;
   const { id, picked, parts, generated: roomWizard_generated, flow: isFlow } = roomWizard, room = isFlow ? activeSceneView()?.flows?.[id] : roomsOf()[id]; roomWizard = null;
-  box.classList.remove('visible'); box.setAttribute('aria-hidden', 'true'); showWizardPin(null);
+  box.classList.remove('visible'); box.setAttribute('aria-hidden', 'true');
   if (!room) return;
   if (isFlow) return closeFlowWizard(room, [...picked][0] || '', roomWizard_generated);
   const before = (room.entityIds || []).join('|'); room.entityIds = [...picked];
@@ -6400,7 +6396,7 @@ function createAddedElement(type, entity, [x, y]) {
   if (type === 'gauge') { addGaugeLabel([x, y], entity); return; }
   if (type === 'flow') {
     const id = 'flow_' + uid(), integration = catalogIntegration(entity); view.flows ||= {};
-    view.flows[id] = { id, entityId: entity?.entity_id || '', integrationId: integration.entry_id, integrationName: entity ? integration.title : '', sourceDomain: entity ? (integration.domain || entity.domain) : '', displayName: entity?.name || 'Flow', xPercent:x, yPercent:y, ...clone(FLOW_DEFAULTS), itemSizeV2:true, geometryLocked:false, createdAt:now, updatedAt:now };
+    view.flows[id] = { id, entityId: entity?.entity_id || '', integrationId: integration.entry_id, integrationName: entity ? integration.title : '', sourceDomain: entity ? (integration.domain || entity.domain) : '', displayName: entity?.name || 'Flow', xPercent:x, yPercent:y, ...clone(FLOW_DEFAULTS), ...NEW_FLOW_SIZE, itemSizeV2:true, geometryLocked:false, createdAt:now, updatedAt:now };
     renderMarkers(); renderAdded(); scheduleSave(true); if (entity) refreshStates();
     // Like the other elements: the wizard (name → entity → look), the entity step skipped when it is already given.
     openRoomWizard(id, { flow:true, skipEntities: !!entity }); return;
@@ -7277,10 +7273,6 @@ function bindEvents() {
     const step = Number(event.target.closest('[data-major-step]')?.dataset.majorStep); if (!step) return; event.stopPropagation();
     const m = { ...(gridOpt('gridZones') || {}) }; m.x = clamp(gridZones().x + step, 1, GRID_ZONES_MAX); delete m.y; setGridOpt('gridZones', m);
     syncGridGeometry(); scheduleSave(true);
-  }));
-  els.gridPresets.forEach(button => button.addEventListener('click', () => {
-    setGridOpt('snapStep', Number(button.dataset.gridStep));
-    applySnapUi(); scheduleSave(true);
   }));
   els.solidCanvasRatio?.addEventListener('change', () => { const view = activeSceneView(); if (!view) return; view.solidCanvasRatio = clamp(els.solidCanvasRatio.value, .25, 4); updateSceneGeometry(); scheduleSave(true); });
   els.bgManage.addEventListener('click', () => { closeEditor(); closeMoreInfo(); openBackgroundMenu(); });

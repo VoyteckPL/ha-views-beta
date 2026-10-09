@@ -1,3 +1,11 @@
+## 0.6.1-beta.513
+
+- Naprawiono: przy włączonym „Rozmiar tylko po grubych liniach siatki” nie dało się zmienić rozmiaru etykiety ani termostatu (błąd w kodzie przerywał zmianę rozmiaru).
+- Menu siatki: usunięto S / M / L. Włącznik siatki jest teraz w jednym rzędzie z liczbą stref, a rząd nazywa się „Siatka”.
+- Przy dodawaniu elementu nie pojawia się już niebieska pinezka.
+- Ujednolicone domyślne rozmiary: nowa etykieta, tekst i etykieta pomieszczenia mają ten sam, nieco większy rozmiar, a nowy Flow jest tak długi, jak szeroka jest etykieta.
+- Ikony nowych etykiet są domyślnie szare: jaśniejsze, gdy encja jest włączona, ciemniejsze, gdy wyłączona. Wcześniej były żółte.
+
 ## 0.6.1-beta.512
 
 - Flow dodaje się tak samo jak pozostałe elementy: pojawia się na środku ekranu i otwiera się kreator w 3 krokach — nazwa, encja (tylko z liczbą, można pominąć) i wygląd (kierunek albo „wg znaku + / −”, rodzaj strzałek, animacja, kolor). Każdy wybór od razu widać na planie, a po kreatorze otwiera się panel Flow.
