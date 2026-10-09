@@ -1,3 +1,9 @@
+## 0.6.1-beta.551
+
+- Etykieta (rozgrupowana): nazwa i stan mają kropki w rogach i na środku każdego boku.
+  - Kropka w rogu skaluje proporcjonalnie: tekst i pudełko razem, bez pustych pól.
+  - Kropka na boku zmienia tylko ten bok: lewa i prawa szerokość, górna i dolna wysokość. Tekst zostaje tej samej wielkości i jest wyśrodkowany; gdy pudełko jest węższe, tekst się do niego dopasowuje.
+
 ## 0.6.1-beta.550
 
 - Etykieta: kropki nazwy lub stanu skalują pudełko proporcjonalnie. Skalę wyznacza bok przesunięty bardziej, a drugi za nim podąża. Pudełko nie robi się szersze ani wyższe niż tekst, więc przy marginesie 0 nie zostaje puste miejsce po bokach.

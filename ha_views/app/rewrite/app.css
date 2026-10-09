@@ -1303,6 +1303,7 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .card-handle::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 .card-handle.nw{left:-8px;top:-8px;cursor:nwse-resize}.card-handle.se{left:calc(100% + 8px);top:calc(100% + 8px);cursor:nwse-resize}
 .card-handle.ne{left:calc(100% + 8px);top:-8px;cursor:nesw-resize}.card-handle.sw{left:-8px;top:calc(100% + 8px);cursor:nesw-resize}
+.card-handle.n{left:50%;top:-8px;cursor:ns-resize}.card-handle.s{left:50%;top:calc(100% + 8px);cursor:ns-resize}.card-handle.e{left:calc(100% + 8px);top:50%;cursor:ew-resize}.card-handle.w{left:-8px;top:50%;cursor:ew-resize}
 @media (pointer:coarse){.card-handle{width:16px;height:16px}.card-handle::before{inset:-10px}}
 /* Computer: the page never scrolls - the plan card is fitted to the window. A scroll bar that came and went with one
    pixel of rounding changed the width, the card was fitted again and the plan jumped up and down (flicker). */
@@ -1408,6 +1409,7 @@ img.room-layer.room-glow.flat{will-change:opacity}
    so what is seen while snapping is the element's real box - the same box the guide lines and highlights use. */
 .room-label-part.editable::after,.room-label-card.editable::after,.room-label-card.editable.selected::after,.room-label-part.editable.selected::after{inset:0!important;border-radius:inherit!important}
 .card-handle.nw{left:0;top:0}.card-handle.ne{left:100%;top:0}.card-handle.sw{left:0;top:100%}.card-handle.se{left:100%;top:100%}
+.card-handle.n{left:50%;top:0}.card-handle.s{left:50%;top:100%}.card-handle.e{left:100%;top:50%}.card-handle.w{left:0;top:50%}
 .room-label-part.editable.selected.square::before,.room-label-card.editable.selected.square::before{top:0}
 /* Edit grid: the centre lines (both ways) are strong, the thick lines (equal zones, edge to edge, "Strefy"
    in the snap menu) a little thinner, then the fine grid dividing every zone. */
@@ -1475,6 +1477,7 @@ aside.editor.typing .typing-row{display:grid!important;margin:0!important}
 #handle-overlay{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:visible}
 .card-handle-proxy{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:2px solid #20b9e7;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;cursor:nwse-resize}
 .card-handle-proxy[data-corner="ne"],.card-handle-proxy[data-corner="sw"]{cursor:nesw-resize}
+.card-handle-proxy[data-corner="n"],.card-handle-proxy[data-corner="s"]{cursor:ns-resize}.card-handle-proxy[data-corner="e"],.card-handle-proxy[data-corner="w"]{cursor:ew-resize}
 .card-handle-proxy::before{content:"";position:absolute;inset:-6px;border-radius:50%}
 .card-handle-proxy.square{border-color:#4ade80}
 @media (pointer:coarse){.card-handle-proxy{width:16px;height:16px;margin:-8px 0 0 -8px}.card-handle-proxy::before{inset:-10px}}

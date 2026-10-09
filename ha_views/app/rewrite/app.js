@@ -1670,7 +1670,8 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, thermo?.active?.[part] ?? on);
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
-    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    // A name / state also has a dot in the middle of each side: it changes that side only (the text keeps its size).
+    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se', ...(!isThermoRoom(r) && BOX_TEXT_KEYS.includes(key) ? ['n','e','s','w'] : [])].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${textLock(r, key) ? ' fit' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
@@ -1916,6 +1917,8 @@ function startFreeResize(event, handle) {
     // The moving corner never leaves the plan - nor, for a part of an ungrouped label, the group's frame.
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
     if (partFrame) { ex = clamp(ex, partFrame.l, partFrame.r); ey = clamp(ey, partFrame.t, partFrame.b); }
+    // A side's dot: only that side moves (the other dimension stays as it was).
+    if (c === 'e' || c === 'w') ey = fy + sy * rect0.height; else if (c === 'n' || c === 's') ex = fx + sx * rect0.width;
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
     if (scaleWhole) {
       // The whole label scaled as one picture (parts, texts, margin and the frame's own size alike).
@@ -1946,6 +1949,12 @@ function startFreeResize(event, handle) {
       // with the room inside it.
       const w0 = Math.max(1, rect0.width / k), h0 = Math.max(1, rect0.height / k), fMin = 6 / Math.max(6, sizeStart);
       const iw0 = Math.max(1, w0 - 2 * textPadX0), ih0 = Math.max(1, h0 - 2 * textPadY0);
+      if (c.length === 1) {
+        // A side's dot: the box gets wider / taller, the text keeps its size (centred; fitted in when the box is narrower).
+        lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
+        room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
+        if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
+      } else {
       // Its proportions are kept (a box wider than its text would leave empty room beside it, margin 0 or not): the side
       // moved further sets the scale, the other follows.
       const rw = (lw - 2 * textPadX0) / iw0, rh = (lh - 2 * textPadY0) / ih0;
@@ -1955,6 +1964,7 @@ function startFreeResize(event, handle) {
       if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       if (textRad0 !== null) room[`${key}Radius`] = Math.round(clamp(textRad0 * f, 0, 200) * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
+      }
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
       const cw = Math.max(1, natW - padX), ch = Math.max(1, natH - padY), minScale = 6 / startSize;
