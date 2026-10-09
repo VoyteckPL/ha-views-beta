@@ -1,3 +1,7 @@
+## 0.6.1-beta.528
+
+- Tryb rozgrupowany: elementy wewnątrz ramki znów mają swoje normalne kolory. Wcześniej tło grupy przykrywało je i przyciemniało. Nad ramką zamiast plakietki z napisem jest sama ikona; podpis „Rozgrupowane” pokazuje się po najechaniu.
+
 ## 0.6.1-beta.527
 
 - Tryb rozgrupowany jest wyraźnie widoczny: ramka grupy edytowanej etykiety (termostatu, wskaźnika) ma fioletową, przerywaną, delikatnie pulsującą poświatę, a nad nią jest plakietka „Rozgrupowane”. Działa też przy etykiecie bez tła i ramki. Grubość linii i rozmiar plakietki są stałe przy każdym rozmiarze i powiększeniu.
