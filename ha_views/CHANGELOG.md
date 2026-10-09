@@ -1,3 +1,8 @@
+## 0.6.1-beta.535
+
+- Ramka nowej etykiety obejmuje teksty z własnym marginesem, bez dopełniania do pełnych kratek siatki, które przy dużej siatce dawało szeroki pusty pas. Na siatkę trafia tylko jej lewy górny róg. Termostat, wskaźnik i Flow nadal mają rozmiar w pełnych kratkach.
+- Stan nowej etykiety ma szerokość swojego tekstu, a nie szerokość nazwy. Nadal się nie zmienia, gdy zmienia się wartość.
+
 ## 0.6.1-beta.534
 
 - Naprawiono obciętą nazwę etykiety („Bra…”). Nazwa nie ma już zablokowanej szerokości i zawsze dopasowuje się do własnego tekstu. Stała szerokość, zapisana w jednostkach czcionki, na innym urządzeniu (np. inna czcionka na telefonie i na Windows) bywała za wąska. Stały rozmiar zostaje tylko dla stanu, który zmienia się sam. Zapisane blokady nazw są usuwane przy wczytaniu.

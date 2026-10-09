@@ -707,8 +707,8 @@ function snapNewLabelToGrid(id) {
   // Whole cells, rounded up; a thermostat's frame (which has its own margin around the parts) may also lose a little
   // of a cell, so a big grid does not leave a wide empty band at its bottom.
   const cells = (v, c) => { const q = v / c; return Math.max(1, isThermoRoom(room) && q - Math.floor(q) < .35 ? Math.floor(q) : Math.ceil(q - .05)); };
-  room.labelCardW = Math.round(cells(r.width, g.cx) * g.cx / k * 100) / 100;
-  room.labelCardH = Math.round(cells(r.height, g.cy) * g.cy / k * 100) / 100;
+  // A label's frame hugs its texts (whole cells would leave a wide margin round them): only its corner goes on the grid.
+  if (fixedFrame(room)) { room.labelCardW = Math.round(cells(r.width, g.cx) * g.cx / k * 100) / 100; room.labelCardH = Math.round(cells(r.height, g.cy) * g.cy / k * 100) / 100; }
   room.hugFrameV1 = true; // already a hugging frame: the load-time migration must not take its least size away
   renderRoomLabels();
   for (let i = 0; i < 2; i++) {
@@ -1671,15 +1671,13 @@ function renderRoomLabels(view = activeSceneView()) {
 function fitLabelTexts(room, group) {
   const partName = key => ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0];
   const parts = key => [...group.querySelectorAll(`[data-label-part="${partName(key)}"]`)].filter(n => !n.classList.contains('room-label-card'));
-  // Not locked yet (new, or its text / parts changed): its box is taken now. The state is at least as wide as the name
-  // (or 4 letters), so a longer state later fits without shrinking much.
+  // Not locked yet (new, or its text / parts changed): its box is taken now, as wide as what it shows now.
   const size = key => clamp(Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420);
   const nat = key => { const n = parts(key)[0]; return n?.offsetWidth ? [n.offsetWidth, n.offsetHeight] : null; };
   let locked = false;
   lockedTextKeys(room).forEach(key => {
     if (!room[key] || Array.isArray(room[`${key}Lock`])) return;
     const m = nat(key); if (!m) return; let w = m[0];
-    if (key === 'labelState' && !isThermoRoom(room)) { const nm = room.labelName && nat('labelName'); w = Math.max(w, nm ? nm[0] : 0, size(key) * 4); }
     room[`${key}Lock`] = [Math.round(w / size(key) * 100) / 100, Math.round(m[1] / size(key) * 100) / 100]; locked = true;
   });
   if (locked) { const html = roomLabelMarkup(room, editMode && room.id === selectedRoomId ? roomPreviewOn : '', editMode && !room.geometryLocked && !roomDraft); group.innerHTML = html; group.__html = html; group.__key = ''; equalizeLabelFrames(room, group); scheduleSave(false); }
