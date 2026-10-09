@@ -1,3 +1,8 @@
+## 0.6.1-beta.517
+
+- Nowy termostat dopasowuje układ do urządzenia. Gdy urządzenie ma tylko grzanie i wyłącznik, układ zostaje jak dotąd. Gdy ma więcej trybów (klimatyzator: chłodzenie, auto, osuszanie, wentylator…; podgrzewacz wody: eko, pompa ciepła…), pod rzędem −/grzanie/wyłącznik/+ pojawiają się równe rzędy po 5 przycisków. Gdy ma presety, pod nimi dochodzi rząd presetów (bez „none”). Ramka rośnie tylko w dół, a szerokość i górna część zostają te same. Wcześniej dodatkowe tryby lądowały jeden na drugim na środku.
+- Ramka termostatu przy dopasowaniu do siatki może stracić kawałek kratki, więc przy dużej siatce nie zostaje pusty pas na dole.
+
 ## 0.6.1-beta.516
 
 - Kreator Flow: kolor wybiera się jak w panelach (próbka otwierająca paletę). Przy kierunku „wg znaku + / −” jest przełącznik „Wartość + / Wartość −”: wybiera, który kolor zmieniasz, a plan od razu pokazuje tę stronę.

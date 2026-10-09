@@ -699,8 +699,11 @@ function snapNewLabelToGrid(id) {
   const room = roomsOf()[id], g = gridCellOnScreen(); if (!room?.labelLinked || !g || (isIconRoom(room) && dashSpan(room))) return;
   const node = () => document.querySelector(`.room-label-card[data-room-id="${CSS.escape(id)}"]`), card = node(); if (!card?.offsetWidth) return;
   const r = card.getBoundingClientRect(), k = r.width / card.offsetWidth; if (!k) return;
-  room.labelCardW = Math.round(Math.max(1, Math.ceil(r.width / g.cx - .05)) * g.cx / k * 100) / 100;
-  room.labelCardH = Math.round(Math.max(1, Math.ceil(r.height / g.cy - .05)) * g.cy / k * 100) / 100;
+  // Whole cells, rounded up; a thermostat's frame (which has its own margin around the parts) may also lose a little
+  // of a cell, so a big grid does not leave a wide empty band at its bottom.
+  const cells = (v, c) => { const q = v / c; return Math.max(1, isThermoRoom(room) && q - Math.floor(q) < .35 ? Math.floor(q) : Math.ceil(q - .05)); };
+  room.labelCardW = Math.round(cells(r.width, g.cx) * g.cx / k * 100) / 100;
+  room.labelCardH = Math.round(cells(r.height, g.cy) * g.cy / k * 100) / 100;
   room.hugFrameV1 = true; // already a hugging frame: the load-time migration must not take its least size away
   renderRoomLabels();
   for (let i = 0; i < 2; i++) {
@@ -2437,7 +2440,10 @@ function closeRoomWizard() {
   // An icon is generated only now, with the parts chosen in the last step.
   if (isIconRoom(room)) { wizardPartsFor(room).forEach(([key, , , also = []]) => { [key, ...also].forEach(k => { room[k] = parts.has(key); }); }); delete room.draft; }
   if (room.entityIds.join('|') !== before) { room.updatedAt = new Date().toISOString(); refreshStates(); }
+  // A thermostat's rows follow its device (fitThermoRows); its frame is put on the grid from its own size, not twice.
+  const thermoRows = isThermoRoom(room) && !isGaugeRoom(room) && !fromTemplate && room.entityIds.length, frameSize = [room.labelCardW, room.labelCardH];
   renderRooms(); fitRoomLabel(id); snapNewLabelToGrid(id); scheduleSave(true);
+  if (thermoRows) fitThermoRows(id, frameSize);
   // With entities picked there is nothing left to do in the Room section, so the panel opens collapsed.
   openRoomEditor(id, -1, room.entityIds.length ? -1 : 0);
   notify(isGaugeRoom(room) ? 'Dodano wskaźnik' : isThermoRoom(room) ? 'Dodano termostat' : isTextRoom(room) ? 'Dodano tekst' : isIconRoom(room) ? 'Dodano etykietę' : room.entityIds.length ? 'Dodano pomieszczenie' : 'Dodano pomieszczenie — encje możesz dodać w panelu');
@@ -6439,6 +6445,39 @@ function addGaugeLabel([x, y], entity) {
     x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
   if (entity) { rememberAdded(entity.entity_id); refreshStates(); }
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
+}
+// The default thermostat has one row of buttons under the dial: − / heat / off / +. A device with more modes (air
+// conditioner: cool, auto, dry, fan…; water heater: eco, heat pump…) gets them in even rows of up to five below it, and one
+// with presets a row of presets under those; the frame grows downwards by those rows only (its width and everything
+// above stays as it is). A device with just heat and off keeps the default layout.
+const THERMO_ROW_STEP = 106, THERMO_ROW_MAX = 5, THERMO_PRESET_ROW = 60, THERMO_PRESET_AT = 80;
+function layoutThermoRows(room) {
+  const info = climateInfo({ entityId: (room.entityIds || [])[0] || '' }), modes = info.modes.filter(m => MODE_PART_LIST.includes(m));
+  const presets = !info.water && info.presets.length > 0; if (!modes.length && !presets) return false;
+  const y1 = Number(room.labelMode_heatFY ?? 344.54), left = Number(room.labelMode_heatFX ?? -78.38), right = Number(room.labelMode_offFX ?? 70.52);
+  const first = modes.includes('heat') ? 'heat' : modes.find(m => m !== 'off'), second = modes.includes('off') && first !== 'off' ? 'off' : modes.find(m => m !== first);
+  const rest = modes.filter(m => m !== first && m !== second), rows = Math.ceil(rest.length / THERMO_ROW_MAX);
+  // Every mode button looks like the default's heat button (size, frame); its colour stays its mode's own.
+  const look = Object.fromEntries(['Size','W','H','Radius','ColorOn'].filter(k => room[`labelMode_heat${k}`] !== undefined).map(k => [k, room[`labelMode_heat${k}`]]));
+  const place = (m, fx, fy) => { if (!m) return; const k = `labelMode_${m}`; room[k] = true; Object.entries(look).forEach(([f, v]) => { if (m !== 'heat' && m !== 'off') room[k + f] = v; }); room[`${k}FX`] = Math.round(fx * 100) / 100; room[`${k}FY`] = Math.round(fy * 100) / 100; };
+  place(first, left, y1); place(second, right, y1);
+  for (let r = 0; r < rows; r++) { const list = rest.slice(r * THERMO_ROW_MAX, (r + 1) * THERMO_ROW_MAX); list.forEach((m, i) => place(m, (i - (list.length - 1) / 2) * THERMO_ROW_STEP, y1 + THERMO_ROW_STEP * (r + 1))); }
+  let grow = rows * THERMO_ROW_STEP;
+  // Presets: one centred row as wide as the frame, its text about the size of the state's; "none" is not a preset to pick.
+  if (presets) { room.thermoPresets = true; room.labelModes = true; room.labelModesSize = 42; room.labelModesW = 560; room.labelModesH = 0; if (info.presets.includes('none')) room.thermoPresetShow_none = false; room.labelModesFX = 0; room.labelModesFY = Math.round((y1 + THERMO_ROW_STEP * rows + THERMO_PRESET_AT) * 100) / 100; grow += THERMO_PRESET_ROW; }
+  if (!grow) return true;
+  // Down only: everything moves up by half of what is added, the frame grows by all of it.
+  Object.keys(room).filter(k => /^label\w*FY$/.test(k)).forEach(k => { room[k] = Math.round(((Number(room[k]) || 0) - grow / 2) * 100) / 100; });
+  room.labelCardH = Math.round(((Number(room.labelCardH) || 929.91) + grow) * 100) / 100;
+  return true;
+}
+// Laid out once the device's modes are known (its state may come a moment after the wizard).
+function fitThermoRows(id, frameSize, retried = false) {
+  const room = roomsOf()[id], a = room && stateCache[(room.entityIds || [])[0]]?.attributes; if (!room) return;
+  if (!a || !(a.hvac_modes || a.operation_list || a.preset_modes)) { if (!retried && room.entityIds?.length) refreshStates().then(() => fitThermoRows(id, frameSize, true)); return; }
+  const before = [room.labelCardW, room.labelCardH]; [room.labelCardW, room.labelCardH] = frameSize || before;
+  if (!layoutThermoRows(room)) { [room.labelCardW, room.labelCardH] = before; return; }
+  { room.updatedAt = new Date().toISOString(); renderRooms(); snapNewLabelToGrid(id); scheduleSave(true); }
 }
 function addThermostatLabel([x, y], entity) {
   const view = activeSceneView(); if (!view || !editMode) return; view.rooms ||= {};
