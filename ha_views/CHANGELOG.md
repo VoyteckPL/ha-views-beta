@@ -1,3 +1,10 @@
+## 0.6.1-beta.515
+
+- **Biblioteka szablonów bez osobnego edytora.** W panelu każdego elementu (etykieta, tekst, pomieszczenie, termostat, wskaźnik, Flow) jest przycisk z zakładką „Zapisz jako szablon”. Przycisk biblioteki na górnym pasku otwiera listę szablonów pogrupowanych według rodzaju; każdy szablon można dodać na plan, zastosować do zaznaczonego elementu tego samego rodzaju, przemianować albo usunąć. W „+” jest rząd „Z szablonu” ze wszystkimi szablonami. Stare szablony termostatów zostają.
+- Flow: w kreatorze kolor wybiera się z tej samej palety co w panelach (plus własny kolor). Nowy Flow jest 3× większy i ma domyślnie animację „Przepływ”.
+- Flow przyciąga się do siatki: przy przesuwaniu lewy górny róg skacze po skrzyżowaniach linii, a zmiana rozmiaru uchwytami idzie o pełne kratki (Alt wyłącza).
+- Nowy widok z tłem w kolorze ma domyślnie proporcje 9:16. Przycisk 9:16 w opcjach ma ikonę telefonu („Najlepsze na telefon”).
+
 ## 0.6.1-beta.514
 
 - Każdy nowy element (etykieta, tekst, pomieszczenie, termostat, wskaźnik, Flow) po utworzeniu ma rogi na liniach siatki. Jego ramka ma rozmiar w pełnych kratkach, a lewy górny róg trafia w najbliższe skrzyżowanie linii. Ramka etykiety nadal otacza jej części, a rozmiar w kratkach jest tylko jej najmniejszym rozmiarem.
