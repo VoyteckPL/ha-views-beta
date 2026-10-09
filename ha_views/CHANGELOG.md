@@ -1,3 +1,8 @@
+## 0.6.1-beta.538
+
+- Kropki nazwy lub stanu: ramka nie zapada się już do kreski. Wielkość tekstu idzie za ramką: rośnie z nią i maleje, ale tylko na tyle, na ile pozwalają wysokość i szerokość, więc tekst nigdy nie musi być ucinany. Bez przyciągania 1:1 dla tekstu.
+- Etykieta z jednym elementem: kropki grupy zmieniają rozmiar tego elementu. Tekst dostaje ramkę i wielkość tekstu, ikona się skaluje. Ramka i tło grupy, jeśli są włączone (przyciski na pasku Grupa), obejmują element.
+
 ## 0.6.1-beta.537
 
 - Nazwa i stan etykiety działają tak samo. Kropki (w trybie rozgrupowanym) zmieniają tylko ramkę części, a rozmiar czcionki zostaje. Tekst dopasowuje się do ramki: pomniejsza się, gdy ramka jest węższa, i wraca do swojego rozmiaru, gdy jest szersza. Wcześniej zmniejszanie kropkami zmieniało też czcionkę, a stan był dodatkowo dopasowywany do zablokowanej ramki, przez co skalowanie działało dziwnie.

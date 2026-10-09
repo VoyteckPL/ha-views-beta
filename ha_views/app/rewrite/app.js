@@ -1754,6 +1754,21 @@ function startFreeResize(event, handle) {
   const cs = getComputedStyle(node), hasPad = room[`${key}Padding`] !== undefined && room[`${key}Padding`] !== null && room[`${key}Padding`] !== '';
   const fixedPad = !isCard && (node.dataset.labelPart === 'icon' || hasPad), padX = fixedPad ? (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)) || 0 : 0, padY = fixedPad ? (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) || 0 : 0;
   const startSize = isCard ? 1 : Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`];
+  // A label's name / state: its box follows the dots and its text height follows the box's height (how tall the box is
+  // per px of text, taken now); the text's width is fitted into the box. No 1:1 snapping for a text.
+  // (The height a pill of this text has by itself, per px of text: measured with the box's own height taken off.)
+  // A label (not a thermostat) showing one part: the group's dots size that part itself (a text its box and text, an icon
+  // the whole label); the group's frame, when shown, hugs it.
+  const soloKeys = isCard && !fixedFrame(room) ? ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).map(([, kk]) => kk) : [], soloKey = soloKeys.length === 1 ? soloKeys[0] : '';
+  const soloText = soloKey && BOX_TEXT_KEYS.includes(soloKey) ? soloKey : '', soloNode = soloText ? node.querySelector(':scope > .room-card-part') : null;
+  const textBox = (!isCard && !isThermoRoom(room) && BOX_TEXT_KEYS.includes(key)) || !!soloNode, sizeKey = soloNode ? soloText : key, sizeNode = soloNode || node, sizeStart = soloNode ? Number(room[`${soloText}Size`]) || ROOM_DEFAULTS[`${soloText}Size`] : startSize;
+  const cardPad = soloNode ? [(parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0), (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0)] : [0, 0];
+  const [boxPerPx, boxWPerPx] = textBox ? (() => {
+    const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
+    Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
+    const w = n.offsetWidth, h = n.offsetHeight; [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight] = keep; if (t) t.style.fontSize = fs;
+    return [Math.max(.6, h / Math.max(1, sizeStart)), Math.max(.6, w / Math.max(1, sizeStart))];
+  })() : [0, 0];
   let fx = sx > 0 ? rect0.left : rect0.right, fy = sy > 0 ? rect0.top : rect0.bottom; const cx0 = (rect0.left + rect0.right) / 2, cy0 = (rect0.top + rect0.bottom) / 2;
   // Sized by the thick lines only: the corner held still goes to its nearest crossing, the moving one jumps from line to
   // line, so the group always covers whole zones of the grid.
@@ -1844,13 +1859,22 @@ function startFreeResize(event, handle) {
       const W = Math.abs(ex - fx), H = Math.abs(ey - fy);
       // A group's grid line gives way to 1:1 (only a real line - a part, an axis - holds against it).
       const hard = b => b && !b.t?.grid;
-      if (Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
+      if (!textBox && Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
     }
     // The moving corner never leaves the plan - nor, for a part of an ungrouped label, the group's frame.
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
     if (partFrame) { ex = clamp(ex, partFrame.l, partFrame.r); ey = clamp(ey, partFrame.t, partFrame.b); }
     let lw = Math.abs(ex - fx) / k, lh = Math.abs(ey - fy) / k;
-    if (isCard) {
+    if (soloNode) {
+      // A group of one text: its box is the frame less the frame's margin; the frame hugs it again.
+      const ph = Math.max(boxPerPx * 8, lh - cardPad[1]), pw = Math.max(boxWPerPx * 8, lw - cardPad[0]); lw = pw + cardPad[0]; lh = ph + cardPad[1];
+      room[`${sizeKey}Size`] = Math.round(clamp(Math.min(ph / boxPerPx, pw / boxWPerPx), 6, 420) * 10) / 10;
+      room[`${sizeKey}W`] = Math.round(pw * 10) / 10; room[`${sizeKey}H`] = Math.round(ph * 10) / 10; delete room[`${sizeKey}Lock`]; delete room.labelCardW; delete room.labelCardH;
+    } else if (isCard && soloKey) {
+      // A group of one icon: the dots scale the whole label (its frame hugs the icon).
+      const f = clamp(Math.min(lw / natW, lh / natH), .3 / cardScale0, 6 / cardScale0); lw = natW * f; lh = natH * f;
+      room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000; delete room.labelCardW; delete room.labelCardH;
+    } else if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.
       // Made bigger again, a group shrunk this way first grows back to the size it had (labelCardFitBase), then its frame.
@@ -1865,7 +1889,9 @@ function startFreeResize(event, handle) {
     } else if (!isThermoRoom(room) && BOX_TEXT_KEYS.includes(key)) {
       // A label's name / state: the dots size its box only (as the frame of the label); the text keeps its size and is
       // fitted into the box (smaller when the box is narrower), so name and state behave the same.
-      const fs = Number(room[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`]; lw = Math.max(fs * 1.2, lw); lh = Math.max(fs * .9, lh);
+      lh = Math.max(boxPerPx * 8, lh); lw = Math.max(boxWPerPx * 8, lw);
+      // The text as big as the box lets it be both ways (its pill's own proportions), so it never needs cutting.
+      room[`${key}Size`] = Math.round(clamp(Math.min(lh / boxPerPx, lw / boxWPerPx), 6, 420) * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
