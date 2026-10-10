@@ -2109,7 +2109,7 @@ function startFreeResize(event, handle) {
     camera.stop(); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
-    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); } if (moved) refocusLabel(room); // the camera keeps the resized label in view, 10% round it
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
@@ -2209,7 +2209,7 @@ function startCardResize(event, handle) {
     if (e.pointerId !== event.pointerId) return;
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
-    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); } if (moved) refocusLabel(room); // the camera keeps the resized label in view, 10% round it
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
@@ -3480,7 +3480,7 @@ function onRoomEditorInput(event) {
     const kept = !room.labelLinked && room.labelUngroupFrame;
     if (kept) { if (!input._kept) { input._kept = { w: kept.w * oldScale, h: kept.h * oldScale }; input.addEventListener('change', () => { delete input._kept; }, { once:true }); } const k = clamp(room.labelCardScale, .3, 6); kept.w = Math.round(input._kept.w / k * 100) / 100; kept.h = Math.round(input._kept.h / k * 100) / 100; }
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
-    renderRooms(); if (event.type === 'change') scheduleSave(true); return;
+    renderRooms(); if (event.type === 'change') { scheduleSave(true); refocusLabel(room); } return;
   }
   if (path === 'opacity') value = clamp(value / 100, .05, 1);
   if (path === 'thermoFillOpacity') value = clamp(value / 100, 0, 1);
@@ -3517,6 +3517,8 @@ function onRoomEditorInput(event) {
   room[path] = value; room.updatedAt = new Date().toISOString();
   const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
   renderRooms();
+  // A size changed (slider let go): the camera keeps the label in view with 10% round it.
+  if (event.type === 'change' && /^label\w*(Size|Padding|Radius|BorderWidth|Weight)$|^labelPartGap$/.test(path)) refocusLabel(room);
   if (input.dataset.editorRefresh === 'true') { openRoomEditor(room.id); scheduleSave(true); return; }
   scheduleSave(event.type === 'change');
 }
@@ -3527,9 +3529,9 @@ function onRoomEditorClick(event) {
   const arrangeBtn = event.target.closest?.('[data-arrange], [data-icon-shape]');
   if (arrangeBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
     if (arrangeBtn.dataset.iconShape) quickSet('labelIconShape', arrangeBtn.dataset.iconShape); else { arrangeLabelParts(room, arrangeBtn.dataset.arrange); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); }
-    openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+    openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }
   const quickBtn = event.target.closest?.('[data-quick-fit], [data-quick-bold], [data-quick-lock]');
-  if (quickBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const qk = [...BOX_TEXT_KEYS, 'labelIcon'].includes(quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) ? (quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) : 'labelState'; if (quickBtn.hasAttribute('data-quick-fit')) quickFit(room, qk); else if (quickBtn.hasAttribute('data-quick-lock')) { room[`${qk}FixedBox`] = !room[`${qk}FixedBox`]; if (qk === 'labelIcon' && !room.labelIconFixedBox) { delete room.labelIconW; delete room.labelIconH; } room.updatedAt = new Date().toISOString(); scheduleSave(true); } else quickSet('labelStateWeight', room.labelStateWeight === 'bold' ? 'normal' : 'bold'); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+  if (quickBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const qk = [...BOX_TEXT_KEYS, 'labelIcon'].includes(quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) ? (quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) : 'labelState'; if (quickBtn.hasAttribute('data-quick-fit')) quickFit(room, qk); else if (quickBtn.hasAttribute('data-quick-lock')) { room[`${qk}FixedBox`] = !room[`${qk}FixedBox`]; if (qk === 'labelIcon' && !room.labelIconFixedBox) { delete room.labelIconW; delete room.labelIconH; } room.updatedAt = new Date().toISOString(); scheduleSave(true); } else quickSet('labelStateWeight', room.labelStateWeight === 'bold' ? 'normal' : 'bold'); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }
   // "Przetestuj przejście": to the button's view with its effect and back again, then the panel opens as it was.
   if (event.target.closest('[data-link-try]')) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId], from = model.activeViewId; if (!room || !model.views[room.linkView] || room.linkView === from) return;
@@ -4407,6 +4409,7 @@ function fitLabelFrameOnDesktop(room) {
 }
 // A label tapped in edit mode is centred and zoomed to fill the visible plan with a 10% margin on every side (on a phone:
 // the band above the editor panel). The label's frame (ungrouped: its parts and frame) is what is fitted.
+function refocusLabel(room) { if (room && isIconRoom(room) && editMode) requestAnimationFrame(() => requestAnimationFrame(() => focusLabelBox(room))); }
 function focusLabelBox(room) {
   if (!editMode || !room) return false;
   // The label's frame (grouped: its card; ungrouped: the frame drawn round its parts), so grouped and ungrouped give one view.

@@ -1,3 +1,7 @@
+## 0.6.1-beta.572
+
+- Edycja etykiety: po zmianie rozmiaru kamera dopasowuje się tak, że etykieta znowu wypełnia widok z marginesem 10% i jest wyśrodkowana. Dotyczy to kropek grupy i elementów (po puszczeniu) oraz suwaków rozmiaru, marginesu, zaokrąglenia, grubości ramki, grubości czcionki i odstępu (po puszczeniu). Dotyczy też przycisków „Dopasuj”, wyrównania i pogrubienia.
+
 ## 0.6.1-beta.571
 
 - Edycja etykiety: stuknięcie palcem w element (ikonę, nazwę, stan) oraz otwarcie lub zamknięcie jego sekcji w panelu nie oddala już kamery. Działało tam jeszcze stare centrowanie z limitem 2,35×. Teraz zawsze zostaje widok całej etykiety z marginesem 10%.
