@@ -1,3 +1,7 @@
+## 0.6.1-beta.571
+
+- Edycja etykiety: stuknięcie palcem w element (ikonę, nazwę, stan) oraz otwarcie lub zamknięcie jego sekcji w panelu nie oddala już kamery. Działało tam jeszcze stare centrowanie z limitem 2,35×. Teraz zawsze zostaje widok całej etykiety z marginesem 10%.
+
 ## 0.6.1-beta.570
 
 - Edycja etykiety: kliknięcie elementu (ikony, nazwy, stanu) po rozgrupowaniu oraz samo rozgrupowanie dają ten sam widok co kliknięcie etykiety: cała etykieta wyśrodkowana z marginesem 10%. Widok już nie skacze.

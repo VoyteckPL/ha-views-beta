@@ -2401,7 +2401,7 @@ function startRoomLabelDrag(event) {
       const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 400);
       selectedLabelPart = partName; panelPart = null; $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).forEach(n => n.classList.toggle('active-part', n.dataset.labelPart === partName));
       renderRoomLabels(); if ($('#room-editor')?.classList.contains('visible')) focusPartSection(partName);
-      requestAnimationFrame(() => requestAnimationFrame(() => { const box = partFocusBox(room, partName); if (box) focusSceneBoxOnMobile(box); }));
+      requestAnimationFrame(() => requestAnimationFrame(() => { if (isIconRoom(room) && focusLabelBox(room)) return; const box = partFocusBox(room, partName); if (box) focusSceneBoxOnMobile(box); }));
     };
     window.addEventListener('pointerup', end, true); window.addEventListener('pointercancel', end, true);
     return;
@@ -3421,10 +3421,10 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     const opening = !details.open;
     if (opening) {
       panelPart = { roomId: room.id, part }; selectedLabelPart = part; renderRoomLabels(); markPartSection(part);
-      requestAnimationFrame(() => { const box = partFocusBox(room, part); if (box) focusSceneBoxOnMobile(box); });
+      requestAnimationFrame(() => { if (isIconRoom(room) && focusLabelBox(room)) return; const box = partFocusBox(room, part); if (box) focusSceneBoxOnMobile(box); });
     } else {
       panelPart = null; renderRoomLabels();
-      requestAnimationFrame(() => focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []));
+      requestAnimationFrame(() => { if (isIconRoom(room) && focusLabelBox(room)) return; focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); });
     }
   }));
   $$('input,select', content).forEach(input => {
@@ -3437,7 +3437,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   panel.classList.add('visible'); panel.setAttribute('aria-hidden', 'false'); renderRooms();
   if (pendingPartFocus?.roomId === room.id) { const part = pendingPartFocus.part; pendingPartFocus = null; requestAnimationFrame(() => focusPartSection(part)); }
   else if (!room.labelLinked) markPartSection(selectedLabelPart);
-  if (newlySelected && !skipRoomFocus) requestAnimationFrame(() => requestAnimationFrame(() => { focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); renderRoomEditLayer(); }));
+  if (newlySelected && !skipRoomFocus) requestAnimationFrame(() => requestAnimationFrame(() => { if (!(isIconRoom(room) && focusLabelBox(room))) focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); renderRoomEditLayer(); }));
   requestAnimationFrame(() => { const outline = $('#room-edit-layer .room-outline.selected'); if (outline && !mobileView() && !panel.dataset.dragged) placeEditorNear(panel, outline); });
 }
 function closeRoomEditor() {
@@ -4286,6 +4286,7 @@ function focusWizardTarget() {
 function focusSelectedOnMobile() {
   if (roomWizard) return focusWizardTarget();
   const room = selectedRoomId && roomsOf()[selectedRoomId];
+  if (room && isIconRoom(room) && focusLabelBox(room)) return;
   if (room) focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); else focusSelectedMarkerOnMobile();
 }
 // Typing in an editor field on a phone: the camera stays where it is and the panel shrinks to the one line being
