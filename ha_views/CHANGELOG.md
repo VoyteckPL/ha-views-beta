@@ -1,3 +1,10 @@
+## 0.6.1-beta.558
+
+- Etykieta: kropki grupy znów zmniejszają etykietę.
+  - Skalują całą etykietę proporcjonalnie, a ramka zawsze obejmuje elementy; kropki nie zapisują już własnego rozmiaru ramki.
+  - Przy „Rozmiarze po strefach” grube linie tylko przyciągają przesuwany róg, gdy jest blisko. Nie wymuszają już całej strefy, więc etykietę mniejszą niż strefa da się zmniejszyć, a pierwszy ruch jej nie powiększa.
+  - Wskaźnik i termostat bez zmian.
+
 ## 0.6.1-beta.557
 
 - Etykieta: ramka grupy zawsze dokładnie obejmuje elementy plus margines grupy. Po rozgrupowaniu podczas przesuwania elementów ramka zmienia rozmiar na żywo, rośnie i maleje. Po ponownym zgrupowaniu zostaje dopasowana do elementów. Zastępuje to trzymanie kształtu sprzed rozgrupowania (beta.546–548). Termostat i wskaźnik bez zmian.

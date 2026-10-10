@@ -1857,7 +1857,7 @@ function startFreeResize(event, handle) {
   // A label's hugging frame sized by its dots ("Rozmiar po strefach"): the corner held still goes to its nearest crossing
   // of the thick lines, the moving one from line to line; the parts stay centred in it (or scale down when it is smaller).
   const hugZones = isCard && !fixedFrame(room) && majorSizing() ? gridMajorLines(scene.width, scene.height) : null;
-  if (hugZones?.xs.length && hugZones.ys.length) { fx = scene.left + nearLine(hugZones.xs, fx - scene.left); fy = scene.top + nearLine(hugZones.ys, fy - scene.top); }
+  // (A label's corner held still stays where it is: the thick lines only catch the moving corner when it comes near one.)
   // A gauge's frame follows its dots freely (its width and height each on their own), the gauge scaled to fill it by the
   // tighter side and centred - as with the thick lines, only without them.
   const gaugeFree = isCard && isGaugeRoom(room) && !(zones?.xs.length && zones.ys.length);
@@ -1913,7 +1913,9 @@ function startFreeResize(event, handle) {
       if (!gaugeFree) showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
       return;
     } else if (hugZones?.xs.length && hugZones.ys.length && !e.altKey) {
-      const lineFrom = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
+      // A thick line near the moving corner catches it (past the corner held still); elsewhere the corner is free, so a
+      // label smaller than a zone can be made smaller still.
+      const lineFrom = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1 && Math.abs(v - edge) <= snapReach() * 1.5); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : edge; };
       ex = lineFrom(hugZones.xs, ex, fx, sx, scene.left); ey = lineFrom(hugZones.ys, ey, fy, sy, scene.top);
       const Ws = scene.width || 1, Hs = scene.height || 1;
       showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
@@ -1950,11 +1952,10 @@ function startFreeResize(event, handle) {
       // The content fills the frame by its tighter side: measured against the content's own box (its parts and margin), not
       // against the frame - a frame made wider and then narrower again leaves the content as it was.
       const free = node.classList.contains('free') && !centredCard, b0 = free ? rect0.width / k : natW, b1 = free ? rect0.height / k : natH, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
-      lw = Math.max(lw, b0 * f); lh = Math.max(lh, b1 * f);
+      lw = b0 * f; lh = b1 * f;
       room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      // The frame follows the dot exactly (its width and height each on their own; with "Rozmiar po strefach" the box
-      // between the thick lines), the content scaled to fit in it and centred.
-      { const kf = room.labelCardScale / cardScale0; room.labelCardW = Math.round(lw / kf * 100) / 100; room.labelCardH = Math.round(lh / kf * 100) / 100; room.hugFrameV1 = true; }
+      // The frame always hugs the parts: the dots scale the whole label in proportion (no frame size of its own).
+      delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; room.hugFrameV1 = true;
     } else if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.
