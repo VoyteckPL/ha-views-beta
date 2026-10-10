@@ -1,3 +1,7 @@
+## 0.6.1-beta.565
+
+- Etykieta z jednym widocznym elementem też może być rozgrupowana: przyciskiem „Rozgrupuj” albo dwuklikiem lub podwójnym stuknięciem. Element ma wtedy własne kropki (rogi i boki) i własną sekcję „Rozmiar”, a etykieta zachowuje jedno tło i jedną ramkę. Po wyjściu z edycji etykieta grupuje się z powrotem.
+
 ## 0.6.1-beta.564
 
 - Etykieta: ikona skaluje się tak jak nazwa i stan.
