@@ -1648,7 +1648,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
     // texts and margin stay as they are, centred in it).
-    const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se', ...(!isThermoRoom(r) ? ['n','e','s','w'] : [])].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${free && r.labelCardExact && r.labelCardCentred && Number(r.labelCardW) > 0 ? ' exact' : ''}${r.labelCardBg && !solo ? ' bg' : ''}${r.labelCardBlur && !solo ? ' blur' : ''}${solo ? ' solo' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
@@ -1663,7 +1663,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
     // A name / state also has a dot in the middle of each side: it changes that side only (the text keeps its size).
-    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se', ...(!isThermoRoom(r) && (BOX_TEXT_KEYS.includes(key) || key === 'labelIcon') ? ['n','e','s','w'] : [])].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${textLock(r, key) ? ' fit' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
@@ -2086,11 +2086,11 @@ function startFreeResize(event, handle) {
         room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
         if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       } else {
-      // Its proportions are kept (a box wider than its text would leave empty room beside it, margin 0 or not): the side
-      // moved further sets the scale, the other follows.
-      const rw = (lw - 2 * textPadX0) / iw0, rh = (lh - 2 * textPadY0) / ih0;
-      const f = clamp(Math.abs(Math.log(Math.max(.01, rw))) >= Math.abs(Math.log(Math.max(.01, rh))) ? rw : rh, fMin, 420 / Math.max(1, sizeStart));
-      lw = 2 * textPadX0 + iw0 * f; lh = 2 * textPadY0 + ih0 * f;
+      // Its width and height each follow the dot freely; the content scales with the tighter side (centred in the box).
+      lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
+      // (Measured against the content's own size, not the box: a box made wider, then taller, grows the content.)
+      const natIW = Math.max(1, boxWPerPx * sizeStart - 2 * textPadX0), natIH = Math.max(1, boxPerPx * sizeStart - 2 * textPadY0);
+      const f = clamp(Math.min((lw - 2 * textPadX0) / natIW, (lh - 2 * textPadY0) / natIH), fMin, 420 / Math.max(1, sizeStart));
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
       if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       // Corners keep their radius (an unset one, growing with the text, is kept at its present px).

@@ -1,3 +1,8 @@
+## 0.6.1-beta.575
+
+- Etykieta i jej elementy: zostały tylko 4 kropki narożne (bez kropek na środkach boków).
+- Narożnik elementu (ikona, nazwa, stan) zmienia szerokość i wysokość dowolnie; zawartość dopasowuje się do węższego boku i jest wyśrodkowana. Margines i zaokrąglenie zostają bez zmian.
+
 ## 0.6.1-beta.574
 
 - Etykieta: efekty 3D ikony (Wypukły, Głębia, Połysk, Metal, Unoszący się, Neon, Pochylony 3D, Wypukłe koło) w Ikona → Rozmiar → „Efekt”.
