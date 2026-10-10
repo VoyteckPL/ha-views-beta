@@ -1,3 +1,13 @@
+## 0.6.1-beta.566
+
+- Etykieta z jednym widocznym elementem: grupa jest niewidoczna, a element jest etykietą.
+  - Grupa nie rysuje tła, ramki ani marginesu, a na pasku Grupa znikają przyciski Tło i Ramka oraz sekcja „Rozmiar” grupy.
+  - Element ma swoje własne tło, ramkę i rozmiar; regulujesz je w jego sekcji (np. „Stan”).
+  - Kropki na planie skalują ten element: rogi proporcjonalnie, boki w jednym wymiarze.
+  - Rozgrupowanie dla jednego elementu jest wyłączone, wycofuje to zmianę z beta.565.
+  - Gdy pokażesz drugi element, grupa wraca z poprzednimi ustawieniami.
+  - Etykiety zmienione przez beta.555–565 (tło i ramka elementu przeniesione na grupę) dostają je z powrotem.
+
 ## 0.6.1-beta.565
 
 - Etykieta z jednym widocznym elementem też może być rozgrupowana: przyciskiem „Rozgrupuj” albo dwuklikiem lub podwójnym stuknięciem. Element ma wtedy własne kropki (rogi i boki) i własną sekcję „Rozmiar”, a etykieta zachowuje jedno tło i jedną ramkę. Po wyjściu z edycji etykieta grupuje się z powrotem.
