@@ -1507,7 +1507,8 @@ aside.editor.typing .typing-row{display:grid!important;margin:0!important}
 .editor .editor-head #room-group-toggle{color:#d8b4fe;border-color:rgba(192,132,252,.55);background:rgba(192,132,252,.12)}
 .editor .editor-head #room-group-toggle.active{color:#1e0a33;border-color:#c084fc;background:#c084fc;box-shadow:none}
 /* While a group's part is being placed, the plan's grid steps back: only the group's own grid counts. */
-.scene.group-editing:after{opacity:0!important}
+/* Parts of a label being edited: the plan's grid stays out of the label's background (the label's own grid is drawn there). */
+.scene.grid-hole:after{-webkit-mask:linear-gradient(#000 0 0),linear-gradient(#000 0 0) var(--hx) var(--hy)/var(--hw) var(--hh) no-repeat;-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0),linear-gradient(#000 0 0) var(--hx) var(--hy)/var(--hw) var(--hh) no-repeat;mask-composite:exclude}
 /* Zoomed in while editing on a computer: the plan card's own background and frame (at the plan's 100 % place) are not
    drawn - past the plan's edges only the page shows, not a leftover frame. */
 body.editing .scene-card.desk-zoom-expanded,body.editing .scene-viewport.desk-zoom-expanded{background:transparent!important;border-color:transparent!important;box-shadow:none!important}

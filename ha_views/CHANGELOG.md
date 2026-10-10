@@ -1,3 +1,7 @@
+## 0.6.1-beta.577
+
+- Edycja elementów etykiety (rozgrupowanej): główna siatka nie jest rysowana na tle etykiety, a siatka etykiety jest pokazywana tylko na jej tle (wcześniej przykrywała plan, a główna siatka znikała).
+
 ## 0.6.1-beta.576
 
 - Edycja: po kliknięciu etykiety lub elementu przybliżenie zostawia 20% marginesu z każdej strony (wcześniej 10%).

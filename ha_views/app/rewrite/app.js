@@ -1851,8 +1851,20 @@ function quickFit(room, key = 'labelState') {
   const p = room[`${key}Padding`]; if (!(p !== undefined && p !== null && p !== '' && Number.isFinite(Number(p))) && node && (room[`${key}Bg`] || room[`${key}Border`])) room[`${key}Padding`] = Math.round((parseFloat(getComputedStyle(node).paddingTop) || 0) * 10) / 10;
   delete room[`${key}W`]; delete room[`${key}H`]; delete room[`${key}Lock`]; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true);
 }
+// While a label's parts are edited (ungrouped), the plan's grid is left out of the label's background and the label's
+// own grid is drawn only on it.
+function syncGridHole() {
+  const scene = els.scene; if (!scene) return;
+  const b = editMode ? $('#room-labels .room-label-backdrop.ungrouped-edit') : null, r = b?.getBoundingClientRect(), gg = $('#group-grid');
+  if (!r?.width) { if (scene.classList.contains('grid-hole')) scene.classList.remove('grid-hole'); if (gg) gg.style.clipPath = ''; return; }
+  const sc = scene.getBoundingClientRect(), z = sc.width / Math.max(1, scene.offsetWidth) || 1;
+  const x = (r.left - sc.left) / z, y = (r.top - sc.top) / z, w = r.width / z, h = r.height / z, rad = (parseFloat(getComputedStyle(b).borderTopLeftRadius) || 0) * h / Math.max(1, b.offsetHeight);
+  scene.classList.add('grid-hole');
+  [['--hx', x], ['--hy', y], ['--hw', w], ['--hh', h]].forEach(([k, v]) => scene.style.setProperty(k, `${v.toFixed(1)}px`));
+  if (gg) { const L = parseFloat(gg.style.left) || 0, T = parseFloat(gg.style.top) || 0, W = parseFloat(gg.style.width) || 0, H = parseFloat(gg.style.height) || 0; gg.style.clipPath = `inset(${(y - T).toFixed(1)}px ${(L + W - x - w).toFixed(1)}px ${(T + H - y - h).toFixed(1)}px ${(x - L).toFixed(1)}px round ${rad.toFixed(1)}px)`; }
+}
 function fitCardHandles() {
-  const card = els.sceneCard; if (!card || !els.scene) return;
+  const card = els.sceneCard; if (!card || !els.scene) return; syncGridHole();
   let layer = $('#handle-overlay'); const handles = $$('#room-labels .card-handle');
   if (!handles.length) { layer?.replaceChildren(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'handle-overlay'; layer.setAttribute('aria-hidden', 'true'); card.append(layer); }
@@ -2361,6 +2373,7 @@ function showGroupGrid(ctx) {
   el.style.setProperty('--gox', `${((ax % st) + st) % st}px`); el.style.setProperty('--goy', `${((ay % st) + st) % st}px`);
   const mst = st * GROUP_GRID_MAJOR; el.style.setProperty('--gmst', `${mst}px`);
   el.style.setProperty('--gmox', `${((ax % mst) + mst) % mst}px`); el.style.setProperty('--gmoy', `${((ay % mst) + mst) % mst}px`);
+  syncGridHole();
 }
 function hideGroupGrid() { $('#group-grid')?.remove(); els.scene?.classList.remove('group-editing'); }
 // Two fingers are a zoom, never a move: fingers on the screen are counted; a finger landing while one label is being
