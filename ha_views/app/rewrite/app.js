@@ -4428,7 +4428,7 @@ function fitLabelFrameOnDesktop(room) {
   const zoom = clamp(Math.min((area.right - area.left) * .9 / w, (area.bottom - area.top) * .9 / h), zoomFloor(), 4);
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
 }
-// A label tapped in edit mode is centred and zoomed to fill the visible plan with a 10% margin on every side (on a phone:
+// A label tapped in edit mode is centred and zoomed to fill the visible plan with a 20% margin on every side (on a phone:
 // the band above the editor panel). The label's frame (ungrouped: its parts and frame) is what is fitted.
 function focusLabelBox(room) {
   if (!editMode || !room) return false;
@@ -4442,7 +4442,7 @@ function focusLabelBox(room) {
   // (On a phone: the band above the panel, at most the screen's upper half - the same view whichever section is open.)
   if (mobileView()) { const band = editorFreeBand(); area = { left: vp.left, right: vp.right, top: vp.top + band.top, bottom: Math.min(vp.top + band.top + band.height, innerHeight * .5 - 14) }; }
   else { const D = deskZoomRegion(); area = { left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) }; }
-  const zoom = clamp(Math.min((area.right - area.left) * .8 / w, (area.bottom - area.top) * .8 / h), zoomFloor(), 20);
+  const zoom = clamp(Math.min((area.right - area.left) * .6 / w, (area.bottom - area.top) * .6 / h), zoomFloor(), 20);
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
   return true;
 }
