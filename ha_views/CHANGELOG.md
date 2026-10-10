@@ -1,3 +1,7 @@
+## 0.6.1-beta.560
+
+- Etykieta: zaokrąglenie rogów nazwy i stanu zostaje stałe przy zmianie rozmiaru, zarówno kropkami, jak i suwakiem. Domyślne zaokrąglenie, które rosło razem z tekstem, zostaje przy pierwszej zmianie zapisane w obecnych pikselach. Później zmienia je tylko suwak „Zaokrąglenie”.
+
 ## 0.6.1-beta.559
 
 - Etykieta: zgrupowana etykieta ma kropki także na środku boków.

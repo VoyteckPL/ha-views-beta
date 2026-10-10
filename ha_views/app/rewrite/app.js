@@ -1839,6 +1839,7 @@ function startFreeResize(event, handle) {
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
   const textPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, textPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0;
+  const textRadPx0 = textBox && (room[`${key}Bg`] || room[`${key}Border`]) ? parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0 : 0;
   const [boxPerPx, boxWPerPx] = textBox ? (() => {
     const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
     Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
@@ -2000,7 +2001,8 @@ function startFreeResize(event, handle) {
       lw = 2 * textPadX0 + iw0 * f; lh = 2 * textPadY0 + ih0 * f;
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
       if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
-      if (textRad0 !== null) room[`${key}Radius`] = Math.round(clamp(textRad0 * f, 0, 200) * 10) / 10;
+      // Corners keep their radius (an unset one, growing with the text, is kept at its present px).
+      if (textRad0 === null && textRadPx0 > 0) room[`${key}Radius`] = Math.round(textRadPx0 * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
       }
     } else {
@@ -3392,7 +3394,8 @@ function onRoomEditorInput(event) {
       if (!num(room[`${k}Padding`]) && py > 0) room[`${k}Padding`] = Math.round(py * 10) / 10;
       if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round((2 * px + Math.max(1, room[`${k}W`] - 2 * px) * f) * 10) / 10;
       if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round((2 * py + Math.max(1, room[`${k}H`] - 2 * py) * f) * 10) / 10;
-      if (num(room[`${k}Radius`])) room[`${k}Radius`] = Math.round(clamp(Number(room[`${k}Radius`]) * f, 0, 200) * 10) / 10;
+      // Corners keep their radius too (an unset one, growing with the text, is kept at its present px).
+      if (!num(room[`${k}Radius`]) && cs && (room[`${k}Bg`] || room[`${k}Border`])) { const rad = parseFloat(cs.borderTopLeftRadius) || 0; if (rad > 0) room[`${k}Radius`] = Math.round(rad * 10) / 10; }
     }
   } }
   // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.
