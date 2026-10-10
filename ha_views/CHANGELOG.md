@@ -1,3 +1,9 @@
+## 0.6.1-beta.574
+
+- Etykieta: efekty 3D ikony (Wypukły, Głębia, Połysk, Metal, Unoszący się, Neon, Pochylony 3D, Wypukłe koło) w Ikona → Rozmiar → „Efekt”.
+- Etykieta: style ramki (Szkło matowe, Liquid glass, Gradientowa ramka, Soft UI, Poświata ON, Ciemny premium) w Grupa → Rozmiar → „Styl”; przy jednym widocznym elemencie w jego sekcji.
+- Każdy efekt ma suwak „Siła” (30–200%). Domyślnie wszystko wyłączone.
+
 ## 0.6.1-beta.573
 
 - Cofnięte z beta.572: po zmianie rozmiaru etykiety kamera nie dopasowuje się już sama. Widok zostaje taki, jak był.
