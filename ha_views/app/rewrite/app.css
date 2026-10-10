@@ -1732,3 +1732,7 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .editor .control.compact .seg-choice{justify-content:flex-end}
 .control.compact>label.ic{display:grid;place-items:center;font-size:17px;color:#9fc6d8;cursor:help}
 .control.compact .room-card-presets{flex-wrap:wrap;gap:4px}
+.editor-part-toggles{flex:1 0 100%;display:flex;gap:4px;margin:4px 0 0;box-sizing:border-box}
+.editor-part-toggles[hidden]{display:none!important}
+.editor-part-toggles .editor-icon-button{flex:0 0 auto;width:30px}
+.editor-part-toggles .editor-icon-button.active{border-color:var(--cyan,#20b9e7);color:#d7f5ff;background:#1e4a5e}

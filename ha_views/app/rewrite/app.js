@@ -3355,15 +3355,16 @@ function roomEditorMarkup(room) {
         + (soloLabel(r) ? '' : bgSub + borderSub))
     + `</div>`, [
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
-      ...(isThermoRoom(r) ? [] : [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(r) ? 'Podpis' : 'Stan', isTextRoom(r) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']]),
+      // (A label's parts are switched on / off from the editor's head.)
       // A lone part is the label: the group has no background / frame of its own then.
-      ...(soloLabel(r) ? [] : [['|'],['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']])]);
+      ...(isThermoRoom(r) ? [['|']] : []), ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
   // Sections in the order of "Pokaż": icon, name, mode text, the thermostat's parts, each mode button, extra entities.
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
     : [...ROOM_LABEL_PARTS.slice(0, 3), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
-  const label = group + sectionOrder.map(partSection).join('');
+  // A lone part is the label: no group section then (its part's own section holds everything).
+  const label = (soloLabel(r) ? '' : group) + sectionOrder.map(partSection).join('');
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
   return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;
@@ -3389,6 +3390,15 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   const openSubs = new Set($$('.gauge-subsection[open] > summary', content).map(subKey));
   content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on);
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
+  // A label's parts (icon, name, state) switched on / off from the editor's head - always at hand, under copy / paste.
+  const partRow = $('#room-part-toggles');
+  if (partRow) {
+    const showRow = isIconRoom(room) && !isThermoRoom(room); partRow.hidden = !showRow;
+    if (showRow) {
+      partRow.innerHTML = [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(room) ? 'Podpis' : 'Stan', isTextRoom(room) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']].map(([k, t, m]) => `<button type="button" class="editor-icon-button${room[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!room[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${m}"></i></button>`).join('');
+      requestAnimationFrame(() => { const copy = $('#room-copy-style'), head = partRow.parentElement; if (!copy || !head || copy.hidden) { partRow.style.paddingLeft = ''; return; } partRow.style.paddingLeft = `${Math.max(0, copy.getBoundingClientRect().left - head.getBoundingClientRect().left - (parseFloat(getComputedStyle(head).paddingLeft) || 0))}px`; });
+    }
+  }
   const groupButton = $('#room-group-toggle');
   if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1; groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
@@ -7886,7 +7896,7 @@ function bindEvents() {
   $('#room-draw-undo')?.addEventListener('click', () => { if (!roomDraft) return; roomDraft.points.pop(); roomDraft.cursor = null; updateRoomDrawBar(); renderRoomEditLayer(); });
   $('#room-draw-cancel')?.addEventListener('click', cancelRoomDrawing);
   $('#room-editor-close')?.addEventListener('click', closeRoomEditor);
-  $('#room-remove')?.addEventListener('click', removeRoom); $('#room-geometry-lock')?.addEventListener('click', toggleRoomLock); $('#room-copy-style')?.addEventListener('click', copyRoomStyle); $('#room-duplicate')?.addEventListener('click', confirmDuplicateRoom); $('#room-paste-style')?.addEventListener('click', pasteRoomStyle); $('#room-default-style')?.addEventListener('click', resetRoomStyle);   $('#room-editor-content')?.addEventListener('click', onRoomEditorClick); $('#room-group-toggle')?.addEventListener('click', onRoomEditorClick);
+  $('#room-remove')?.addEventListener('click', removeRoom); $('#room-geometry-lock')?.addEventListener('click', toggleRoomLock); $('#room-copy-style')?.addEventListener('click', copyRoomStyle); $('#room-duplicate')?.addEventListener('click', confirmDuplicateRoom); $('#room-paste-style')?.addEventListener('click', pasteRoomStyle); $('#room-default-style')?.addEventListener('click', resetRoomStyle);   $('#room-editor-content')?.addEventListener('click', onRoomEditorClick); $('#room-group-toggle')?.addEventListener('click', onRoomEditorClick); $('#room-part-toggles')?.addEventListener('click', onRoomEditorClick);
   $('#room-group-snap')?.addEventListener('click', event => toggleGroupSnapMenu(event.currentTarget));
   $('.room-editor .editor-head')?.addEventListener('pointerdown', event => { const panel = $('#room-editor'); if (panel && !mobileView() && !event.target.closest('button,input,select')) panel.dataset.dragged = '1'; startEditorDrag(event); });
   $('#editor-close').addEventListener('click', closeEditor); document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (els.confirmBox.classList.contains('visible')) closeAppConfirm(false); else if (els.moreInfo.classList.contains('visible')) closeMoreInfo(); else if (roomDraft) cancelRoomDrawing(); else { closeEditor(); closeFlowEditor(); closeRoomEditor(); } });

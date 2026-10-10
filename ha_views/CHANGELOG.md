@@ -1,3 +1,9 @@
+## 0.6.1-beta.567
+
+- Etykieta:
+  - Przełączniki ikony, nazwy i stanu przeniesione z paska Grupa do nagłówka panelu. Są zadokowane pod przyciskiem „Kopiuj styl” i zawsze widoczne, także przy zwiniętych sekcjach.
+  - Przy jednym widocznym elemencie sekcja Grupa jest całkiem ukryta.
+
 ## 0.6.1-beta.566
 
 - Etykieta z jednym widocznym elementem: grupa jest niewidoczna, a element jest etykietą.
