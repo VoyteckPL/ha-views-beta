@@ -1847,8 +1847,9 @@ function fitCardHandles() {
     }
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner;
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;
-    // A side's dot only where the part is big enough on screen to keep the dots apart (a phone's small part: corners only).
-    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || (side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 46) || (/[ew]/.test(h.dataset.corner) && ob.height < 40)));
+    // A side's dot is always there; on a small part (on screen) it is drawn smaller, so the dots stay apart.
+    proxy.hidden = !r.width || getComputedStyle(h).display === 'none';
+    proxy.classList.toggle('mini', !!(side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 60) || (/[ew]/.test(h.dataset.corner) && ob.height < 52))));
     proxy.style.left = `${((r.left + r.width / 2 - base.left) / kx).toFixed(1)}px`; proxy.style.top = `${((r.top + r.height / 2 - base.top) / ky).toFixed(1)}px`;
   });
   [...layer.children].forEach(n => { if (!keep.has(n.dataset.key)) n.remove(); });

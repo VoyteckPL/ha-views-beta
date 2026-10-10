@@ -1,3 +1,7 @@
+## 0.6.1-beta.568
+
+- Etykieta: kropki na bokach są zawsze widoczne, także przy małym elemencie (np. pojedynczy stan albo nazwa, zwłaszcza na telefonie). Wcześniej znikały i zostawało tylko skalowanie proporcjonalne rogami. Przy małym elemencie boczne kropki są mniejsze i leżą pod kropkami rogów, więc róg zawsze skaluje, a bok zawsze zmienia jeden wymiar. Pojedynczy element skaluje się tak samo jak nazwa w grupie kilku elementów.
+
 ## 0.6.1-beta.567
 
 - Etykieta:

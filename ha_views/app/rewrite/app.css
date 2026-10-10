@@ -1736,3 +1736,7 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .editor-part-toggles[hidden]{display:none!important}
 .editor-part-toggles .editor-icon-button{flex:0 0 auto;width:30px}
 .editor-part-toggles .editor-icon-button.active{border-color:var(--cyan,#20b9e7);color:#d7f5ff;background:#1e4a5e}
+.card-handle-proxy{z-index:2}
+.card-handle-proxy.mini{z-index:1;width:8px;height:8px;margin:-4px 0 0 -4px;border-width:1.5px}
+.card-handle-proxy.mini::before{inset:-4px}
+@media (pointer:coarse){.card-handle-proxy.mini{width:10px;height:10px;margin:-5px 0 0 -5px}.card-handle-proxy.mini::before{inset:-5px}}
