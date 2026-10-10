@@ -1,3 +1,7 @@
+## 0.6.1-beta.582
+
+- Etykieta: po zwężeniu i ponownym poszerzeniu narożnikiem zawartość wraca do swojego rozmiaru. Rozsunięcie elementów z poprzedniej zmiany nie zostaje już na stałe, więc tekst nie robi się coraz mniejszy.
+
 ## 0.6.1-beta.581
 
 - Etykieta: narożniki zmieniają kształt dowolnie, ale elementy zachowują proporcje (ikona zostaje kołem). Cała etykieta skaluje się do węższego boku, a w drugim kierunku elementy się rozsuwają. Gdy leżą w jednej linii, poszerzają się ramki nazwy i stanu (nie ikony). Ramka dalej otula elementy, a zwężenie przywraca teksty do ich szerokości.
