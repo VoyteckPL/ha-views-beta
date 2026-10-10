@@ -1186,11 +1186,9 @@ function keepLabelPlaceOnRegroup(room) {
     // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
     // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
     // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
-    if (card?.offsetWidth) {
+    if (card?.offsetWidth && fixedFrame(room)) {
       const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
-      if (!fixedFrame(room)) room.hugFrameV1 = true; // the kept frame (and the group's frame made from it) is the user's own
       room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
-      if (!fixedFrame(room)) room.labelUngroupBase = { ...room.labelUngroupFrame }; // the least it gets back to
     }
   } else {
     const snap = room.labelRegroupSnap; delete room.labelRegroupSnap;
@@ -1198,7 +1196,7 @@ function keepLabelPlaceOnRegroup(room) {
     const shownKeys = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width).map(partKey).filter(Boolean);
     const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
-    const kept = room.labelUngroupFrame || null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
+    const kept = fixedFrame(room) ? room.labelUngroupFrame : null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
     if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
@@ -1209,20 +1207,10 @@ function keepLabelPlaceOnRegroup(room) {
     let cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
     // The frame kept while ungrouped stays the group's frame: same place, same size (parts moved inside it do not move
     // or resize it, so a group laid on the grid stays on it). The group is then centred on its frame, not on its parts.
-    // A label's frame left with empty room on one side (its parts moved away from it): each pair of opposite sides keeps
-    // the smaller of its two margins, so the parts sit evenly inside the frame and no empty field is left.
-    if (kept && !fixedFrame(room) && Number(kept.w) > 0) {
-      const toScr = scene.width * k / w, loc = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 6);
-      const fx0 = anchorX + Number(kept.x) * toScr, fy0 = anchorY + Number(kept.y) * scene.height * k / h, hw = Number(kept.w) * loc / 2, hh = Number(kept.h) * loc / 2;
-      const l = Math.min(...rects.map(r => r.left)), r_ = Math.max(...rects.map(r => r.right)), t = Math.min(...rects.map(r => r.top)), b = Math.max(...rects.map(r => r.bottom));
-      const mx = Math.max(0, Math.min(l - (fx0 - hw), fx0 + hw - r_)), my = Math.max(0, Math.min(t - (fy0 - hh), fy0 + hh - b));
-      const L = l - mx, R = r_ + mx, T = t - my, B = b + my;
-      Object.assign(kept, { x: r2(((L + R) / 2 - anchorX) / toScr), y: r2(((T + B) / 2 - anchorY) / (scene.height * k / h)), w: r2((R - L) / loc), h: r2((B - T) / loc) });
-    }
     if (kept && Number.isFinite(Number(kept.x)) && Number(kept.w) > 0) {
       cx = anchorX + Number(kept.x) * scene.width * k / w; cy = anchorY + Number(kept.y) * scene.height * k / h;
       room.labelCardX = r2(Number(kept.x)); room.labelCardY = r2(Number(kept.y)); room.labelCardW = r2(Number(kept.w)); room.labelCardH = r2(Number(kept.h)); room.labelCardCentred = true;
-    } else { room.labelCardX = toOffsetX(cx); room.labelCardY = toOffsetY(cy); delete room.labelCardCentred; }
+    } else { room.labelCardX = toOffsetX(cx); room.labelCardY = toOffsetY(cy); delete room.labelCardCentred; if (!fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; delete room.labelUngroupFrame; delete room.labelUngroupBase; } }
     // Grouping again keeps the arrangement: each part's place inside the group (group-local px).
     const local = (scene.width / w) * k * clamp(Number(room.labelCardScale) || 1, .3, 6);
     nodes.forEach(node => { const key = partKey(node), r = node.getBoundingClientRect(); room[`${key}FX`] = r2(((r.left + r.right) / 2 - cx) / local); room[`${key}FY`] = r2(((r.top + r.bottom) / 2 - cy) / local); });
@@ -1288,25 +1276,14 @@ function equalizeLabelFrames(room, group) {
   group.querySelectorAll('.room-label-part, .room-label-card').forEach(node => node.classList.toggle('square', !!node.querySelector(':scope > .card-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
-// The ungrouped label whose part is being moved / resized now: only then its kept frame grows (a render right after
-// ungrouping, its parts not laid out yet, must not).
-let growFrameRoom = null;
 function fitLabelBackdrop(room, group) {
   const backdrop = group.querySelector('.room-label-backdrop'); if (!backdrop) return;
   const rects = [...group.querySelectorAll('.room-label-part')].map(node => node.getBoundingClientRect()).filter(r => r.width);
   const scene = els.scene.getBoundingClientRect(), w = els.scene.offsetWidth || 1, k = sceneScale || 1; if (!rects.length || !scene.width) return;
   // While ungrouped the frame keeps the group's size and place (it does not follow the parts being moved).
-  const kept = room.labelUngroupFrame;
-  // A label's frame kept from the group grows with a part taken past one of its sides (that side moves out, the
-  // others stay) - and keeps that shape when grouped again. A thermostat's frame holds its parts inside it.
-  if (kept && !fixedFrame(room) && growFrameRoom === room.id && Number(kept.w) > 0) {
-    const [ax0, ay0] = roomAnchor(room), toPlan0 = (scene.width / w) * k, local0 = toPlan0 * clamp(Number(room.labelCardScale) || 1, .3, 6), pad0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
-    const ox = scene.left + ax0 / 100 * scene.width, oy = scene.top + ay0 / 100 * scene.height, kx = ox + Number(kept.x) * toPlan0, ky = oy + Number(kept.y) * toPlan0, hw = Number(kept.w) * local0 / 2, hh = Number(kept.h) * local0 / 2;
-    // Grown from the frame it had when ungrouped (a part brought back in lets its side come back, never past that frame).
-    const base = room.labelUngroupBase && Number(room.labelUngroupBase.w) > 0 ? room.labelUngroupBase : kept, bx = ox + Number(base.x) * toPlan0, by = oy + Number(base.y) * toPlan0, bw = Number(base.w) * local0 / 2, bh = Number(base.h) * local0 / 2;
-    const L = Math.min(bx - bw, ...rects.map(r => r.left - pad0 * 1.35 * local0)), R = Math.max(bx + bw, ...rects.map(r => r.right + pad0 * 1.35 * local0)), T = Math.min(by - bh, ...rects.map(r => r.top - pad0 * local0)), B = Math.max(by + bh, ...rects.map(r => r.bottom + pad0 * local0));
-    if (Math.abs(L - (kx - hw)) > .5 || Math.abs(R - (kx + hw)) > .5 || Math.abs(T - (ky - hh)) > .5 || Math.abs(B - (ky + hh)) > .5) { const r2 = v => Math.round(v * 100) / 100; Object.assign(kept, { x: r2(((L + R) / 2 - ox) / toPlan0), y: r2(((T + B) / 2 - oy) / toPlan0), w: r2((R - L) / local0), h: r2((B - T) / local0) }); }
-  }
+  // A label's frame always hugs its parts exactly (plus its margin), live while they are moved; a thermostat's keeps
+  // the group's size and place.
+  const kept = fixedFrame(room) && room.labelUngroupFrame;
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
   const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
@@ -1912,7 +1889,7 @@ function startFreeResize(event, handle) {
   const partFrame = !isCard && !room.labelLinked && fixedFrame(room) ? groupFrameRect(room, scene) : null;
   const camera = dragCamera(last => move(last));
   const move = e => {
-    if (e.pointerId !== event.pointerId) return; moved = true; if (!isCard && !room.labelLinked) growFrameRoom = room.id;
+    if (e.pointerId !== event.pointerId) return; moved = true;
     // The camera may have moved the plan since the dot was grabbed (it follows a dot taken past the screen's edge): the
     // pointer is taken back into the plan's position at the start, where every other value of this resize lives.
     const now = els.scene.getBoundingClientRect(), shX = now.left - scene.left, shY = now.top - scene.top; camera.track(e);
@@ -2041,7 +2018,7 @@ function startFreeResize(event, handle) {
     $(sel)?.classList.toggle('square', square || Math.abs(r.width - r.height) < .5);
   };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; if (growFrameRoom === room.id) growFrameRoom = null;
+    if (e.pointerId !== event.pointerId) return;
     camera.stop(); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
@@ -2436,9 +2413,9 @@ function startRoomLabelDrag(event) {
       if (fix) { moving.forEach(kk => { room[`${kk}X`] = Math.round(((Number(room[`${kk}X`]) || 0) + fix.x / 100 * w / k) * 100) / 100; room[`${kk}Y`] = Math.round(((Number(room[`${kk}Y`]) || 0) + fix.y / 100 * h / k) * 100) / 100; }); renderRoomLabels(); }
     }
   };
-  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; if (!room.labelLinked) growFrameRoom = room.id; place(e); camera.track(e); };
+  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; place(e); camera.track(e); };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; alive = false; if (growFrameRoom === room.id) { growFrameRoom = null; scheduleSave(true); } camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
+    if (e.pointerId !== event.pointerId) return; alive = false;  camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
@@ -3381,8 +3358,6 @@ function onRoomEditorInput(event) {
     if (input._frame && (fixedFrame(room) || Number(room.labelCardW) > 0 || Number(room.labelCardH) > 0)) { const k = clamp(room.labelCardScale, .3, 6); room.labelCardW = Math.round(input._frame.w / k * 10) / 10; room.labelCardH = Math.round(input._frame.h / k * 10) / 10; }
     // Ungrouped: the frame kept from the group stays the same size on the plan as well.
     const kept = !room.labelLinked && room.labelUngroupFrame;
-    const base = !room.labelLinked && room.labelUngroupBase;
-    if (base) { if (!input._base) { input._base = { w: base.w * oldScale, h: base.h * oldScale }; input.addEventListener('change', () => { delete input._base; }, { once:true }); } const kb = clamp(room.labelCardScale, .3, 6); base.w = Math.round(input._base.w / kb * 100) / 100; base.h = Math.round(input._base.h / kb * 100) / 100; }
     if (kept) { if (!input._kept) { input._kept = { w: kept.w * oldScale, h: kept.h * oldScale }; input.addEventListener('change', () => { delete input._kept; }, { once:true }); } const k = clamp(room.labelCardScale, .3, 6); kept.w = Math.round(input._kept.w / k * 100) / 100; kept.h = Math.round(input._kept.h / k * 100) / 100; }
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;

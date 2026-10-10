@@ -1,3 +1,7 @@
+## 0.6.1-beta.557
+
+- Etykieta: ramka grupy zawsze dokładnie obejmuje elementy plus margines grupy. Po rozgrupowaniu podczas przesuwania elementów ramka zmienia rozmiar na żywo, rośnie i maleje. Po ponownym zgrupowaniu zostaje dopasowana do elementów. Zastępuje to trzymanie kształtu sprzed rozgrupowania (beta.546–548). Termostat i wskaźnik bez zmian.
+
 ## 0.6.1-beta.556
 
 - Nowa etykieta: margines grupy domyślnie 0, więc ramka grupy przylega do elementów. Dotyczy to także „Przywróć domyślne”.
