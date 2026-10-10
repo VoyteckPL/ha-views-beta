@@ -1,3 +1,11 @@
+## 0.6.1-beta.564
+
+- Etykieta: ikona skaluje się tak jak nazwa i stan.
+  - Kropki w rogach skalują ikonę z ramką proporcjonalnie, a margines i zaokrąglenie zostają stałe.
+  - Nowe kropki na bokach zmieniają tylko szerokość albo wysokość ramki ikony; ikona się nie zmienia.
+  - W sekcji „Rozmiar” ikony jest nowy przycisk „Dopasuj do ikony”, obok kłódki „Stała ramka”.
+- Nazwa miała już ten sam mechanizm co stan.
+
 ## 0.6.1-beta.563
 
 - Etykieta: ustawiony rozmiar ramki nie kasuje się po wejściu w edycję elementów (rozgrupowaniu).
