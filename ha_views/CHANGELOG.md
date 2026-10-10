@@ -1,3 +1,8 @@
+## 0.6.1-beta.579
+
+- Etykieta: domyślny margines grupy to 0 (inny tylko po ręcznej zmianie suwakiem).
+- Etykieta: ramka zawsze otula elementy. Narożniki skalują całą etykietę proporcjonalnie (decyduje bok przeciągnięty bardziej); zapisany wcześniej własny rozmiar ramki etykiety jest usuwany. Termostat i wskaźnik bez zmian.
+
 ## 0.6.1-beta.578
 
 - Edycja: po każdej zmianie rozmiaru etykiety (kropkami, suwakami rozmiaru, marginesu, odstępu, zaokrąglenia, wyrównaniem) kamera centruje etykietę i dopasowuje zoom tak, by była widoczna cała z 20% marginesu.

@@ -362,7 +362,7 @@ function ensureMultiViewModel() {
     Object.entries(view.rooms || {}).forEach(([key, room]) => { if (room?.draft) { delete view.rooms[key]; migrated = true; } });
     // A label's / room's group frame hugs its parts again (only a thermostat's / gauge's has its own size): a size kept
     // from before goes; the parts stay where they are (their offsets are from the same point).
-    Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.hugFrameV1) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); room.hugFrameV1 = true; });
+    Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); if (!room.hugFrameV1) { room.hugFrameV1 = true; migrated = true; } });
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
     Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
@@ -662,7 +662,7 @@ const MODE_PART_LIST = ['heat','cool','heat_cool','auto','dry','fan_only','off',
 const MODE_DEFAULT_COLOR = { heat:'#FF7A2F', cool:'#38BDF8', heat_cool:'#34D399', auto:'#34D399', dry:'#FBBF24', fan_only:'#A78BFA', off:'#4B5D6B' };
 const ROOM_DEFAULTS = Object.freeze(withExtraPartDefaults({ name:'Pomieszczenie', points:[], entityIds:[], tapAction:'toggle', mode:'glow', color:'#FFD27A', useLightColor:true, useBrightness:true, opacity:.45, feather:14, blend:'screen', litImage:'', stateEnabled:false, offColor:'#20B9E7', offOpacity:.2,
   lightEffect:'none', lightX:50, lightY:50, lightDirection:'left', lightWallPos:50, lightSpread:.6, lightFill:.15, labelLinked:false,
-  labelCardX:0, labelCardY:0, labelCardLayout:'column', labelCardAlign:'center', labelCardBg:true, labelCardBgColor:'#081822', labelCardBgOpacity:.62, labelCardBlur:false, labelCardRadius:14, labelCardPadding:10, labelCardGap:4,
+  labelCardX:0, labelCardY:0, labelCardLayout:'column', labelCardAlign:'center', labelCardBg:true, labelCardBgColor:'#081822', labelCardBgOpacity:.62, labelCardBlur:false, labelCardRadius:14, labelCardPadding:0, labelCardGap:4,
   labelCardBorder:false, labelCardBorderColor:'#FFFFFF', labelCardBorderOpacity:.3, labelCardBorderWidth:1,
   labelCardBgState:false, labelCardBgOnColor:'#3A2A08', labelCardBgOffColor:'#081822', labelCardBgOnOpacity:.62, labelCardBgOffOpacity:.62,
   labelCardBorderState:false, labelCardBorderOnColor:'#FFC46B', labelCardBorderOffColor:'#FFFFFF', labelCardBorderOnOpacity:.7, labelCardBorderOffOpacity:.3, labelCardBorderOnWidth:1.5, labelCardBorderOffWidth:1, labelCardScale:1, labelIconDX:0, labelIconDY:0, labelNameDX:0, labelNameDY:0, labelStateDX:0, labelStateDY:0,
@@ -2064,13 +2064,13 @@ function startFreeResize(event, handle) {
           // A corner's dot: the frame follows it (width and height each on their own; with "Rozmiar po strefach" the box
           // between the thick lines exactly); the parts (and margin) are scaled to fit in it by the tighter side, centred.
           // Taken back, the frame hugs them again as before.
+          // The frame always hugs the parts: the whole label is scaled in proportion, the side moved further sets the scale.
           lw = Math.max(8, lw); lh = Math.max(8, lh);
-          const f = clamp(Math.min(lw / Math.max(1, natW), lh / Math.max(1, natH)), .3 / cardScale0, 6 / cardScale0);
+          const rw = lw / Math.max(1, natW), rh = lh / Math.max(1, natH);
+          const f = clamp(Math.abs(Math.log(rw)) >= Math.abs(Math.log(rh)) ? rw : rh, .3 / cardScale0, 6 / cardScale0);
           room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = room.labelCardScale / cardScale0;
-          const W = lw / kf, H = lh / kf, cw = natW, ch = natH;
-          if (W > cw + .5) room.labelCardW = Math.round(W * 100) / 100; else delete room.labelCardW;
-          if (H > ch + .5) room.labelCardH = Math.round(H * 100) / 100; else delete room.labelCardH;
-          lw = Math.max(lw, cw * kf); lh = Math.max(lh, ch * kf); room.hugFrameV1 = true;
+          delete room.labelCardW; delete room.labelCardH;
+          lw = natW * kf; lh = natH * kf; room.hugFrameV1 = true;
         }
       }
     } else if (isCard) {
