@@ -1,3 +1,7 @@
+## 0.6.1-beta.580
+
+- Etykieta: narożniki znów zmieniają kształt dowolnie (szerokość i wysokość osobno), a ramka dalej otula elementy. Ikona, nazwa i stan rozciągają się w tej samej proporcji; ich zawartość dopasowuje się do węższego boku.
+
 ## 0.6.1-beta.579
 
 - Etykieta: domyślny margines grupy to 0 (inny tylko po ręcznej zmianie suwakiem).

@@ -1972,6 +1972,30 @@ function startFreeResize(event, handle) {
     const ext = [...(card?.querySelectorAll(':scope > .room-card-part') || [])].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => [Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2, Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2]);
     zoneParts = { w: ext.length ? 2 * Math.max(...ext.map(e => e[0])) + pad * 2.7 : node.offsetWidth, h: ext.length ? 2 * Math.max(...ext.map(e => e[1])) + pad * 2 : node.offsetHeight };
   }
+  // A label's corner (its frame hugs its parts): the parts are stretched - each box gets wider / taller in the same
+  // proportion, its content (icon, text) scaled to the box's tighter side against its own natural size - so the label
+  // takes any shape and its frame still hugs the parts.
+  const stretch = scaleWhole ? (() => {
+    const num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
+    const parts = [...node.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth && kk !== 'labelDial').map(([n, kk]) => {
+      const [w0, h0] = cssBox(n), cs = getComputedStyle(n), size0 = Number(room[`${kk}Size`]) || ROOM_DEFAULTS[`${kk}Size`] || 16;
+      const keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
+      Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
+      const [natW, natH] = cssBox(n); [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight] = keep; if (t) t.style.fontSize = fs;
+      const pad = !num(room[`${kk}Padding`]) && (parseFloat(cs.paddingTop) || 0) > 0 ? Math.round((parseFloat(cs.paddingTop) || 0) * 10) / 10 : null;
+      const rad = !num(room[`${kk}Radius`]) && kk !== 'labelIcon' && (room[`${kk}Bg`] || room[`${kk}Border`]) && (parseFloat(cs.borderTopLeftRadius) || 0) > 0 ? Math.round((parseFloat(cs.borderTopLeftRadius) || 0) * 10) / 10 : null;
+      return { kk, w0, h0, size0, natW: Math.max(1, natW), natH: Math.max(1, natH), fx0: Number(room[`${kk}FX`]) || 0, fy0: Number(room[`${kk}FY`]) || 0, pad, rad };
+    });
+    const [cw0, ch0] = cssBox(node);
+    return { parts, cw0: Math.max(1, cw0), ch0: Math.max(1, ch0), apply(qx, qy) {
+      parts.forEach(p => {
+        const bw = p.w0 * qx, bh = p.h0 * qy, f = clamp(Math.min(bw / p.natW, bh / p.natH), 6 / p.size0, 420 / p.size0);
+        room[`${p.kk}Size`] = Math.round(p.size0 * f * 10) / 10; room[`${p.kk}W`] = Math.round(Math.max(bw, p.natW * f) * 10) / 10; room[`${p.kk}H`] = Math.round(Math.max(bh, p.natH * f) * 10) / 10; delete room[`${p.kk}Lock`];
+        if (p.pad !== null) room[`${p.kk}Padding`] = p.pad; if (p.rad !== null) room[`${p.kk}Radius`] = p.rad;
+        if (room.labelCardFree) { room[`${p.kk}FX`] = Math.round(p.fx0 * qx * 100) / 100; room[`${p.kk}FY`] = Math.round(p.fy0 * qy * 100) / 100; }
+      });
+    } };
+  })() : null;
   const posX = soloNode ? 'labelCardX' : `${key}X`, posY = soloNode ? 'labelCardY' : `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : soloNode ? `.room-label-card[data-room-id="${id}"] > [data-label-part="${node.dataset.labelPart}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
   const groupMode = !isCard && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1, gctx = groupMode ? groupSnap(room, [node]) : null;
@@ -2064,13 +2088,17 @@ function startFreeResize(event, handle) {
           // A corner's dot: the frame follows it (width and height each on their own; with "Rozmiar po strefach" the box
           // between the thick lines exactly); the parts (and margin) are scaled to fit in it by the tighter side, centred.
           // Taken back, the frame hugs them again as before.
-          // The frame always hugs the parts: the whole label is scaled in proportion, the side moved further sets the scale.
-          lw = Math.max(8, lw); lh = Math.max(8, lh);
-          const rw = lw / Math.max(1, natW), rh = lh / Math.max(1, natH);
-          const f = clamp(Math.abs(Math.log(rw)) >= Math.abs(Math.log(rh)) ? rw : rh, .3 / cardScale0, 6 / cardScale0);
-          room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = room.labelCardScale / cardScale0;
-          delete room.labelCardW; delete room.labelCardH;
-          lw = natW * kf; lh = natH * kf; room.hugFrameV1 = true;
+          // Any shape, the frame still hugging the parts: the parts are stretched until the label has the dot's size
+          // (a few rounds - the gaps between the parts do not stretch).
+          lw = Math.max(8, lw); lh = Math.max(8, lh); delete room.labelCardW; delete room.labelCardH; room.hugFrameV1 = true;
+          let qx = lw / stretch.cw0, qy = lh / stretch.ch0;
+          for (let i = 0; i < 4; i++) {
+            stretch.apply(qx, qy); renderRoomLabels();
+            const cn = $(sel); if (!cn) break; const [cw, ch] = cssBox(cn);
+            if (Math.abs(cw - lw) < .4 && Math.abs(ch - lh) < .4) break;
+            qx = clamp(qx * lw / Math.max(1, cw), .05, 40); qy = clamp(qy * lh / Math.max(1, ch), .05, 40);
+          }
+          const cn = $(sel); if (cn) [lw, lh] = cssBox(cn);
         }
       }
     } else if (isCard) {
