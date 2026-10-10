@@ -1,3 +1,7 @@
+## 0.6.1-beta.569
+
+- Edycja: kliknięcie lub stuknięcie etykiety centruje ją i przybliża tak, żeby wypełniła widoczny plan z marginesem 10% z każdej strony. Na telefonie liczy się pas nad panelem edytora. Przybliżenie sięga do 20×, więc nawet mała etykieta jest dobrze widoczna. Rozgrupowana część etykiety działa jak wcześniej: pokazuje się sama ta część.
+
 ## 0.6.1-beta.568
 
 - Etykieta: kropki na bokach są zawsze widoczne, także przy małym elemencie (np. pojedynczy stan albo nazwa, zwłaszcza na telefonie). Wcześniej znikały i zostawało tylko skalowanie proporcjonalne rogami. Przy małym elemencie boczne kropki są mniejsze i leżą pod kropkami rogów, więc róg zawsze skaluje, a bok zawsze zmienia jeden wymiar. Pojedynczy element skaluje się tak samo jak nazwa w grupie kilku elementów.

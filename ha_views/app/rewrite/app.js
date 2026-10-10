@@ -2413,7 +2413,8 @@ function startRoomLabelDrag(event) {
   }
   // Ungrouped: a tapped part is brought into view on its own (like picking its section in the panel), else the whole label.
   const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
-  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); })) return;
+  const bringIntoView = () => { if (isIconRoom(room) && (room.labelLinked || node.dataset.labelPart === 'card') && focusLabelBox(room)) return; focusSceneBoxOnMobile(focusBox()); };
+  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(bringIntoView)); })) return;
   event.preventDefault(); event.stopPropagation();
   // The editor opens on a tap only (release without moving); grabbing and dragging right away just moves the label.
   const newlySelected = selectedRoomId !== room.id;
@@ -2510,7 +2511,7 @@ function startRoomLabelDrag(event) {
     // A tap (no move) always brings the room / icon into view, also when it was already selected.
     if (!moved) {
       if (newlySelected) { skipRoomFocus = true; try { openRoomEditor(room.id); } finally { skipRoomFocus = false; } }
-      requestAnimationFrame(() => requestAnimationFrame(() => focusSceneBoxOnMobile(focusBox()))); return;
+      requestAnimationFrame(() => requestAnimationFrame(bringIntoView)); return;
     }
     let [fx, fy] = partPct(key);
     // An icon has no shape: a moved group becomes its new position, so later centring, guides and copies use it.
@@ -4401,6 +4402,21 @@ function fitLabelFrameOnDesktop(room) {
   const area = { left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) };
   const zoom = clamp(Math.min((area.right - area.left) * .9 / w, (area.bottom - area.top) * .9 / h), zoomFloor(), 4);
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
+}
+// A label tapped in edit mode is centred and zoomed to fill the visible plan with a 10% margin on every side (on a phone:
+// the band above the editor panel). The label's frame (ungrouped: its parts and frame) is what is fitted.
+function focusLabelBox(room) {
+  if (!editMode || !room) return false;
+  const id = CSS.escape(room.id), rects = $$(`#room-labels .room-label-card[data-room-id="${id}"], #room-labels .room-label-backdrop[data-room-id="${id}"], #room-labels .room-label-part[data-room-id="${id}"]`).map(n => n.getBoundingClientRect()).filter(r => r.width);
+  const sc = els.scene.getBoundingClientRect(); if (!rects.length || !sc.width) return false;
+  const L = Math.min(...rects.map(r => r.left)), R = Math.max(...rects.map(r => r.right)), T = Math.min(...rects.map(r => r.top)), B = Math.max(...rects.map(r => r.bottom));
+  const l = (L - sc.left) / viewZoom, t = (T - sc.top) / viewZoom, w = Math.max(1, (R - L) / viewZoom), h = Math.max(1, (B - T) / viewZoom);
+  const vp = els.viewport.getBoundingClientRect(); let area;
+  if (mobileView()) { const band = editorFreeBand(); area = { left: vp.left, right: vp.right, top: vp.top + band.top, bottom: vp.top + band.top + band.height }; }
+  else { const D = deskZoomRegion(); area = { left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) }; }
+  const zoom = clamp(Math.min((area.right - area.left) * .8 / w, (area.bottom - area.top) * .8 / h), zoomFloor(), 20);
+  glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
+  return true;
 }
 function deskZoomExpanded() { return !mobileView() && viewZoom > 1.001; }
 function deskZoomRegion() {
