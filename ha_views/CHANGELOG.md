@@ -1,3 +1,7 @@
+## 0.6.1-beta.581
+
+- Etykieta: narożniki zmieniają kształt dowolnie, ale elementy zachowują proporcje (ikona zostaje kołem). Cała etykieta skaluje się do węższego boku, a w drugim kierunku elementy się rozsuwają. Gdy leżą w jednej linii, poszerzają się ramki nazwy i stanu (nie ikony). Ramka dalej otula elementy, a zwężenie przywraca teksty do ich szerokości.
+
 ## 0.6.1-beta.580
 
 - Etykieta: narożniki znów zmieniają kształt dowolnie (szerokość i wysokość osobno), a ramka dalej otula elementy. Ikona, nazwa i stan rozciągają się w tej samej proporcji; ich zawartość dopasowuje się do węższego boku.

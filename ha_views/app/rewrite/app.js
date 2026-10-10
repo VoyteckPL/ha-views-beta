@@ -765,7 +765,7 @@ function extraEntityText(r, key) {
 function extraEntityName(id) { return String(stateCache[id]?.attributes?.friendly_name || allEntitiesCache?.find(e => e.id === id)?.name || id || ''); }
 // Placed freely, a thermostat's dial is the bottom layer: the parts lying on it (name, icon, state...) stay grabbable.
 const layeredParts = list => [...list].sort((a, b) => (b[0] === 'dial') - (a[0] === 'dial'));
-const ROOM_LABEL_KEYS = ROOM_LABEL_PARTS.flatMap(([, k]) => [k, `${k}Size`, `${k}X`, `${k}Y`, `${k}Bg`, `${k}BgOpacity`, `${k}BgColor`]).concat(['labelCardX','labelCardY','labelCardW','labelCardH','labelCardLayout','labelCardAlign','labelCardBg','labelCardBgColor','labelCardBgOpacity','labelCardBlur','labelCardRadius','labelCardPadding','labelCardGap','labelCardBorder','labelCardBorderColor','labelCardBorderOpacity','labelCardBorderWidth','labelCardBgState','labelCardBgOnColor','labelCardBgOffColor','labelCardBgOnOpacity','labelCardBgOffOpacity','labelCardBorderState','labelCardBorderOnColor','labelCardBorderOffColor','labelCardBorderOnOpacity','labelCardBorderOffOpacity','labelCardBorderOnWidth','labelCardBorderOffWidth','labelCardScale','labelIconDX','labelIconDY','labelNameDX','labelNameDY','labelStateDX','labelStateDY']).concat(['labelLinked','labelIconName','labelIconOn','labelIconOff','labelNameColor','labelStateColor','labelIconVariant','labelIconNameOn','labelIconNameOff','labelIconOpacityOn','labelIconOpacityOff','labelIconFill','labelIconOutline','labelIconOutlineColor','labelIconOutlineWidth','labelIconSource','labelIconBorder','labelIconBorderColor','labelIconBorderOpacity','labelIconBorderWidth','labelIconShape','labelIconRadius','labelIconPadding','labelIconBlur','labelIconColorState','labelIconColor','labelIconOpacity','labelIconOutlineState','labelIconOutlineOnColor','labelIconOutlineOffColor','labelIconOutlineOnWidth','labelIconOutlineOffWidth','labelIconOutlineOpacity','labelIconOutlineOnOpacity','labelIconOutlineOffOpacity','labelIconBgState','labelIconBgOnColor','labelIconBgOffColor','labelIconBgOnOpacity','labelIconBgOffOpacity','labelIconBorderState','labelIconBorderOnColor','labelIconBorderOffColor','labelIconBorderOnOpacity','labelIconBorderOffOpacity','labelIconBorderOnWidth','labelIconBorderOffWidth','labelNameBorder','labelNameBorderColor','labelNameBorderOpacity','labelNameBorderWidth','labelStateBorder','labelStateBorderColor','labelStateBorderOpacity','labelStateBorderWidth','labelEqualFrames','labelCardFree','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelIconFX','labelIconFY','labelNameFX','labelNameFY','labelStateFX','labelStateFY','labelCardShadow','labelStateOnText','labelStateOffText','labelStateUnit','labelStateDecimals','labelRules','labelRulesLow','labelRulesHigh','labelRulesColorLow','labelRulesColorMid','labelRulesColorHigh','labelRulesSmooth','labelRulesIcon','labelRulesState'], ['labelName','labelState'].flatMap(k => ['ColorState', 'ColorOn', 'ColorOff', 'Opacity', 'OpacityOn', 'OpacityOff', 'Weight', 'BgState', 'BgOnColor', 'BgOffColor', 'BgOnOpacity', 'BgOffOpacity', 'Blur', 'BorderState', 'BorderOnColor', 'BorderOffColor', 'BorderOnOpacity', 'BorderOffOpacity', 'BorderOnWidth', 'BorderOffWidth', 'Radius', 'Padding', 'FixedBox'].map(f => k + f)), ['labelIconFx','labelIconFxPower','labelCardFx','labelCardFxPower']);
+const ROOM_LABEL_KEYS = ROOM_LABEL_PARTS.flatMap(([, k]) => [k, `${k}Size`, `${k}X`, `${k}Y`, `${k}Bg`, `${k}BgOpacity`, `${k}BgColor`]).concat(['labelCardX','labelCardY','labelCardW','labelCardH','labelCardLayout','labelCardAlign','labelCardBg','labelCardBgColor','labelCardBgOpacity','labelCardBlur','labelCardRadius','labelCardPadding','labelCardGap','labelCardBorder','labelCardBorderColor','labelCardBorderOpacity','labelCardBorderWidth','labelCardBgState','labelCardBgOnColor','labelCardBgOffColor','labelCardBgOnOpacity','labelCardBgOffOpacity','labelCardBorderState','labelCardBorderOnColor','labelCardBorderOffColor','labelCardBorderOnOpacity','labelCardBorderOffOpacity','labelCardBorderOnWidth','labelCardBorderOffWidth','labelCardScale','labelIconDX','labelIconDY','labelNameDX','labelNameDY','labelStateDX','labelStateDY']).concat(['labelLinked','labelIconName','labelIconOn','labelIconOff','labelNameColor','labelStateColor','labelIconVariant','labelIconNameOn','labelIconNameOff','labelIconOpacityOn','labelIconOpacityOff','labelIconFill','labelIconOutline','labelIconOutlineColor','labelIconOutlineWidth','labelIconSource','labelIconBorder','labelIconBorderColor','labelIconBorderOpacity','labelIconBorderWidth','labelIconShape','labelIconRadius','labelIconPadding','labelIconBlur','labelIconColorState','labelIconColor','labelIconOpacity','labelIconOutlineState','labelIconOutlineOnColor','labelIconOutlineOffColor','labelIconOutlineOnWidth','labelIconOutlineOffWidth','labelIconOutlineOpacity','labelIconOutlineOnOpacity','labelIconOutlineOffOpacity','labelIconBgState','labelIconBgOnColor','labelIconBgOffColor','labelIconBgOnOpacity','labelIconBgOffOpacity','labelIconBorderState','labelIconBorderOnColor','labelIconBorderOffColor','labelIconBorderOnOpacity','labelIconBorderOffOpacity','labelIconBorderOnWidth','labelIconBorderOffWidth','labelNameBorder','labelNameBorderColor','labelNameBorderOpacity','labelNameBorderWidth','labelStateBorder','labelStateBorderColor','labelStateBorderOpacity','labelStateBorderWidth','labelEqualFrames','labelCardFree','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelIconFX','labelIconFY','labelNameFX','labelNameFY','labelStateFX','labelStateFY','labelCardShadow','labelStateOnText','labelStateOffText','labelStateUnit','labelStateDecimals','labelRules','labelRulesLow','labelRulesHigh','labelRulesColorLow','labelRulesColorMid','labelRulesColorHigh','labelRulesSmooth','labelRulesIcon','labelRulesState'], ['labelName','labelState'].flatMap(k => ['ColorState', 'ColorOn', 'ColorOff', 'Opacity', 'OpacityOn', 'OpacityOff', 'Weight', 'BgState', 'BgOnColor', 'BgOffColor', 'BgOnOpacity', 'BgOffOpacity', 'Blur', 'BorderState', 'BorderOnColor', 'BorderOffColor', 'BorderOnOpacity', 'BorderOffOpacity', 'BorderOnWidth', 'BorderOffWidth', 'Radius', 'Padding', 'FixedBox'].map(f => k + f)), ['labelNameWideW','labelNameWideH','labelStateWideW','labelStateWideH','labelIconFx','labelIconFxPower','labelCardFx','labelCardFxPower']);
 // Outline of a room's shape (drawn on top of its light, not faded with it); can follow ON / OFF.
 const ROOM_OUTLINE_KEYS = ['outline','outlineColor','outlineOpacity','outlineWidth','outlineStyle','outlineState','outlineOnColor','outlineOffColor','outlineOnOpacity','outlineOffOpacity','outlineOnWidth','outlineOffWidth'];
 function pct100(value) { return Math.round(clamp(Number(value ?? 1), 0, 1) * 100); }
@@ -1849,7 +1849,7 @@ function quickFit(room, key = 'labelState') {
   if (key === 'labelIcon') { delete room.labelIconW; delete room.labelIconH; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); return; }
   const pn = key === 'labelName' ? 'name' : 'state', node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${pn}"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="${pn}"]`);
   const p = room[`${key}Padding`]; if (!(p !== undefined && p !== null && p !== '' && Number.isFinite(Number(p))) && node && (room[`${key}Bg`] || room[`${key}Border`])) room[`${key}Padding`] = Math.round((parseFloat(getComputedStyle(node).paddingTop) || 0) * 10) / 10;
-  delete room[`${key}W`]; delete room[`${key}H`]; delete room[`${key}Lock`]; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true);
+  delete room[`${key}W`]; delete room[`${key}H`]; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`]; room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true);
 }
 // While a label's parts are edited (ungrouped), the plan's grid is left out of the label's background and the label's
 // own grid is drawn only on it.
@@ -1972,27 +1972,36 @@ function startFreeResize(event, handle) {
     const ext = [...(card?.querySelectorAll(':scope > .room-card-part') || [])].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => [Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2, Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2]);
     zoneParts = { w: ext.length ? 2 * Math.max(...ext.map(e => e[0])) + pad * 2.7 : node.offsetWidth, h: ext.length ? 2 * Math.max(...ext.map(e => e[1])) + pad * 2 : node.offsetHeight };
   }
-  // A label's corner (its frame hugs its parts): the parts are stretched - each box gets wider / taller in the same
-  // proportion, its content (icon, text) scaled to the box's tighter side against its own natural size - so the label
-  // takes any shape and its frame still hugs the parts.
-  const stretch = scaleWhole ? (() => {
-    const num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
-    const parts = [...node.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth && kk !== 'labelDial').map(([n, kk]) => {
-      const [w0, h0] = cssBox(n), cs = getComputedStyle(n), size0 = Number(room[`${kk}Size`]) || ROOM_DEFAULTS[`${kk}Size`] || 16;
-      const keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
-      Object.assign(n.style, { width: '', height: '', minWidth: '', minHeight: '' }); if (t) t.style.fontSize = '';
-      const [natW, natH] = cssBox(n); [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight] = keep; if (t) t.style.fontSize = fs;
-      const pad = !num(room[`${kk}Padding`]) && (parseFloat(cs.paddingTop) || 0) > 0 ? Math.round((parseFloat(cs.paddingTop) || 0) * 10) / 10 : null;
-      const rad = !num(room[`${kk}Radius`]) && kk !== 'labelIcon' && (room[`${kk}Bg`] || room[`${kk}Border`]) && (parseFloat(cs.borderTopLeftRadius) || 0) > 0 ? Math.round((parseFloat(cs.borderTopLeftRadius) || 0) * 10) / 10 : null;
-      return { kk, w0, h0, size0, natW: Math.max(1, natW), natH: Math.max(1, natH), fx0: Number(room[`${kk}FX`]) || 0, fy0: Number(room[`${kk}FY`]) || 0, pad, rad };
+  // A label's corner (its frame hugs its parts): its parts keep their proportions - the whole label is scaled to the
+  // dot's tighter side - and the room left on the other side spreads them apart (laid out freely, each from the group's
+  // centre); parts in one line across that side (a column made wider) get wider boxes - the name and state, never the icon.
+  const spread = scaleWhole && freeLabelCard(room) ? (() => {
+    const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`); if (!card) return null; node = card;
+    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+    const parts = [...card.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => {
+      let [w, h] = cssBox(n); const text = BOX_TEXT_KEYS.includes(kk);
+      // A text box widened by an earlier stretch counts at its own (natural) size again, so the label can be narrowed back.
+      if (text && (room[`${kk}WideW`] || room[`${kk}WideH`])) {
+        const keep = [n.style.width, n.style.height], t = n.querySelector('b, small'), fs = t?.style.fontSize || ''; n.style.width = ''; n.style.height = ''; if (t) t.style.fontSize = '';
+        const [nw, nh] = cssBox(n); [n.style.width, n.style.height] = keep; if (t) t.style.fontSize = fs;
+        if (room[`${kk}WideW`]) w = Math.max(1, Number(room[`${kk}WideW`]) || nw); if (room[`${kk}WideH`]) h = Math.max(1, Number(room[`${kk}WideH`]) || nh);
+      }
+      return { kk, w, h, fx: Number(room[`${kk}FX`]) || 0, fy: Number(room[`${kk}FY`]) || 0, text };
     });
-    const [cw0, ch0] = cssBox(node);
-    return { parts, cw0: Math.max(1, cw0), ch0: Math.max(1, ch0), apply(qx, qy) {
-      parts.forEach(p => {
-        const bw = p.w0 * qx, bh = p.h0 * qy, f = clamp(Math.min(bw / p.natW, bh / p.natH), 6 / p.size0, 420 / p.size0);
-        room[`${p.kk}Size`] = Math.round(p.size0 * f * 10) / 10; room[`${p.kk}W`] = Math.round(Math.max(bw, p.natW * f) * 10) / 10; room[`${p.kk}H`] = Math.round(Math.max(bh, p.natH * f) * 10) / 10; delete room[`${p.kk}Lock`];
-        if (p.pad !== null) room[`${p.kk}Padding`] = p.pad; if (p.rad !== null) room[`${p.kk}Radius`] = p.rad;
-        if (room.labelCardFree) { room[`${p.kk}FX`] = Math.round(p.fx0 * qx * 100) / 100; room[`${p.kk}FY`] = Math.round(p.fy0 * qy * 100) / 100; }
+    if (!parts.length) return null;
+    const ext = (q, axis) => { const c = axis ? 'fy' : 'fx', d = axis ? 'h' : 'w'; return Math.max(...parts.map(p => p[c] * q + p[d] / 2)) - Math.min(...parts.map(p => p[c] * q - p[d] / 2)) + pad * (axis ? 2 : 2.7); };
+    const solve = (target, axis) => { if (ext(1, axis) >= target) return 1; const c = axis ? 'fy' : 'fx', d = axis ? 'h' : 'w', cs = parts.map(p => p[c]); if (Math.max(...cs) - Math.min(...cs) < .25 * Math.min(...parts.map(p => p[d]))) return null; if (ext(1e4, axis) < target) return null; let lo = 1, hi = 1e4; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (ext(m, axis) < target) lo = m; else hi = m; } return hi; };
+    return { cw: ext(1, 0), ch: ext(1, 1), apply(tw, th) {
+      [[tw, 0], [th, 1]].forEach(([t, axis]) => {
+        const q = solve(t, axis), c = axis ? 'fy' : 'fx', C = axis ? 'FY' : 'FX';
+        parts.forEach(p => { room[`${p.kk}${C}`] = Math.round(p[c] * (q || 1) * 100) / 100; });
+        // Nothing to spread across this side: the name / state boxes get as wide (tall) as the label.
+        // (Its own size is kept aside - WideW / WideH - for narrowing it back later.)
+        parts.filter(p => p.text).forEach(p => {
+          const D = axis ? 'H' : 'W', own = p[axis ? 'h' : 'w'], inner = t - pad * (axis ? 2 : 2.7) - Math.abs(p[c]) * 2, v = q === null ? Math.max(own, inner) : own;
+          room[`${p.kk}${D}`] = Math.round(v * 10) / 10; delete room[`${p.kk}Lock`];
+          if (v > own + .5) room[`${p.kk}Wide${D}`] = Math.round(own * 10) / 10; else delete room[`${p.kk}Wide${D}`];
+        });
       });
     } };
   })() : null;
@@ -2088,17 +2097,15 @@ function startFreeResize(event, handle) {
           // A corner's dot: the frame follows it (width and height each on their own; with "Rozmiar po strefach" the box
           // between the thick lines exactly); the parts (and margin) are scaled to fit in it by the tighter side, centred.
           // Taken back, the frame hugs them again as before.
-          // Any shape, the frame still hugging the parts: the parts are stretched until the label has the dot's size
-          // (a few rounds - the gaps between the parts do not stretch).
+          // Any shape, the frame still hugging the parts: the label scaled to the dot's tighter side, its parts spread
+          // (or the texts widened) over the rest.
           lw = Math.max(8, lw); lh = Math.max(8, lh); delete room.labelCardW; delete room.labelCardH; room.hugFrameV1 = true;
-          let qx = lw / stretch.cw0, qy = lh / stretch.ch0;
-          for (let i = 0; i < 4; i++) {
-            stretch.apply(qx, qy); renderRoomLabels();
-            const cn = $(sel); if (!cn) break; const [cw, ch] = cssBox(cn);
-            if (Math.abs(cw - lw) < .4 && Math.abs(ch - lh) < .4) break;
-            qx = clamp(qx * lw / Math.max(1, cw), .05, 40); qy = clamp(qy * lh / Math.max(1, ch), .05, 40);
+          if (spread) {
+            const f = clamp(Math.min(lw / spread.cw, lh / spread.ch), .3 / cardScale0, 6 / cardScale0);
+            room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = room.labelCardScale / cardScale0;
+            spread.apply(lw / kf, lh / kf); renderRoomLabels();
+            const cn = $(sel); if (cn) { const [cw, ch] = cssBox(cn); lw = cw * kf; lh = ch * kf; }
           }
-          const cn = $(sel); if (cn) [lw, lh] = cssBox(cn);
         }
       }
     } else if (isCard) {
@@ -2123,7 +2130,7 @@ function startFreeResize(event, handle) {
       if (c.length === 1) {
         // A side's dot: the box gets wider / taller, the text keeps its size (centred; fitted in when the box is narrower).
         lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
-        room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
+        room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
         if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       } else {
       // Its width and height each follow the dot freely; the content scales with the tighter side (centred in the box).
@@ -2135,7 +2142,7 @@ function startFreeResize(event, handle) {
       if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       // Corners keep their radius (an unset one, growing with the text, is kept at its present px).
       if (textRad0 === null && textRadPx0 > 0) room[`${key}Radius`] = Math.round(textRadPx0 * 10) / 10;
-      room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`];
+      room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
       }
     } else {
       // Below its own size the content shrinks (to the tighter side); a frame larger than the content is kept.
