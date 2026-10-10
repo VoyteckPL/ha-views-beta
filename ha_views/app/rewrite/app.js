@@ -1633,7 +1633,9 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
       free ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
-    const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
+    // texts and margin stay as they are, centred in it).
+    const corners = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se', ...(!isThermoRoom(r) ? ['n','e','s','w'] : [])].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${free && r.labelCardExact && r.labelCardCentred && Number(r.labelCardW) > 0 ? ' exact' : ''}${r.labelCardBg ? ' bg' : ''}${r.labelCardBlur ? ' blur' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
@@ -1790,7 +1792,7 @@ function fitCardHandles() {
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner;
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;
     // A side's dot only where the part is big enough on screen to keep the dots apart (a phone's small part: corners only).
-    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || (side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 72) || (/[ew]/.test(h.dataset.corner) && ob.height < 52)));
+    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || (side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 46) || (/[ew]/.test(h.dataset.corner) && ob.height < 40)));
     proxy.style.left = `${((r.left + r.width / 2 - base.left) / kx).toFixed(1)}px`; proxy.style.top = `${((r.top + r.height / 2 - base.top) / ky).toFixed(1)}px`;
   });
   [...layer.children].forEach(n => { if (!keep.has(n.dataset.key)) n.remove(); });
@@ -1939,7 +1941,7 @@ function startFreeResize(event, handle) {
       const W = Math.abs(ex - fx), H = Math.abs(ey - fy);
       // A group's grid line gives way to 1:1 (only a real line - a part, an axis - holds against it).
       const hard = b => b && !b.t?.grid;
-      if (!textBox && Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
+      if (!textBox && c.length === 2 && Math.abs(W - H) <= reach && !(hard(bx) && hard(by)) && !(bx && by && !groupMode)) { square = true; if (hard(bx) || (!hard(by) && bx && !by) || (!hard(by) && !by && W >= H) || (!hard(by) && bx && by && W >= H)) ey = fy + sy * W; else ex = fx + sx * H; }
     }
     // The moving corner never leaves the plan - nor, for a part of an ungrouped label, the group's frame.
     ex = clamp(ex, scene.left, scene.right); ey = clamp(ey, scene.top, scene.bottom);
@@ -1951,11 +1953,21 @@ function startFreeResize(event, handle) {
       // The whole label scaled as one picture (parts, texts, margin and the frame's own size alike).
       // The content fills the frame by its tighter side: measured against the content's own box (its parts and margin), not
       // against the frame - a frame made wider and then narrower again leaves the content as it was.
-      const free = node.classList.contains('free') && !centredCard, b0 = free ? rect0.width / k : natW, b1 = free ? rect0.height / k : natH, f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
-      lw = b0 * f; lh = b1 * f;
-      room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000;
-      // The frame always hugs the parts: the dots scale the whole label in proportion (no frame size of its own).
-      delete room.labelCardW; delete room.labelCardH; delete room.labelCardExact; room.hugFrameV1 = true;
+      const b0 = rect0.width / k, b1 = rect0.height / k;
+      if (c.length === 1) {
+        // A side's dot: the frame's width / height only, never less than its parts and margin (there it hugs them
+        // again, exactly as before); the parts stay as they are, centred.
+        const nw = Math.max(1, natW), nh = Math.max(1, natH);
+        const sw = Math.max(0, sx * (ex - fx)) / k, sh = Math.max(0, sy * (ey - fy)) / k; // past the side held still = none
+        if (c === 'e' || c === 'w') { lw = Math.max(nw, sw); lh = b1; if (lw > nw + .5) room.labelCardW = Math.round(lw * 10) / 10; else delete room.labelCardW; }
+        else { lh = Math.max(nh, sh); lw = b0; if (lh > nh + .5) room.labelCardH = Math.round(lh * 10) / 10; else delete room.labelCardH; }
+        delete room.labelCardExact; room.hugFrameV1 = true;
+      } else {
+        // A corner's dot: the whole label scaled as one picture - parts, texts, margin and any room the frame was given.
+        const f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
+        lw = b0 * f; lh = b1 * f;
+        room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000; room.hugFrameV1 = true;
+      }
     } else if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps
       // its size and place relative to the others - as if the finished group were scaled down.

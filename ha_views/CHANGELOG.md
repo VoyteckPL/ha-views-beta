@@ -1,3 +1,9 @@
+## 0.6.1-beta.559
+
+- Etykieta: zgrupowana etykieta ma kropki także na środku boków.
+  - Kropka na boku zmienia tylko szerokość (lewa i prawa) albo tylko wysokość (górna i dolna) ramki. Elementy, teksty i margines zostają, a elementy są wyśrodkowane w ramce. Po powrocie do poprzedniego rozmiaru ramka znów przylega dokładnie jak wcześniej i nie da się jej zmniejszyć bardziej.
+  - Kropka w rogu skaluje całość proporcjonalnie razem z dodatkowym miejscem w ramce.
+
 ## 0.6.1-beta.558
 
 - Etykieta: kropki grupy znów zmniejszają etykietę.
