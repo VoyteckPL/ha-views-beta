@@ -1893,8 +1893,10 @@ function startFreeResize(event, handle) {
   let zoneParts = null;
   // A label's hugging frame sized by its dots ("Rozmiar po strefach"): the corner held still goes to its nearest crossing
   // of the thick lines, the moving one from line to line; the parts stay centred in it (or scale down when it is smaller).
-  const hugZones = isCard && !fixedFrame(room) && majorSizing() ? gridMajorLines(scene.width, scene.height) : null;
-  // (A label's corner held still stays where it is: the thick lines only catch the moving corner when it comes near one.)
+  const hugZones = isCard && !fixedFrame(room) && majorSizing() ? gridMajorLines(scene.width, scene.height) : null; let zoneHit = null;
+  // "Rozmiar po strefach": the corner held still goes to its nearest crossing of the thick lines (a side's dot: only that
+  // side's line), the moving one from line to line - the frame always covers whole zones.
+  if (hugZones?.xs.length && hugZones.ys.length) { if (c !== 'n' && c !== 's') fx = scene.left + nearLine(hugZones.xs, fx - scene.left); if (c !== 'e' && c !== 'w') fy = scene.top + nearLine(hugZones.ys, fy - scene.top); }
   // A gauge's frame follows its dots freely (its width and height each on their own), the gauge scaled to fill it by the
   // tighter side and centred - as with the thick lines, only without them.
   const gaugeFree = isCard && isGaugeRoom(room) && !(zones?.xs.length && zones.ys.length);
@@ -1931,7 +1933,7 @@ function startFreeResize(event, handle) {
     // pointer is taken back into the plan's position at the start, where every other value of this resize lives.
     const now = els.scene.getBoundingClientRect(), shX = now.left - scene.left, shY = now.top - scene.top; camera.track(e);
     let ex = (sx > 0 ? rect0.right : rect0.left) + e.clientX - shX - event.clientX, ey = (sy > 0 ? rect0.bottom : rect0.top) + e.clientY - shY - event.clientY;
-    let bx = null, by = null, square = false;
+    let bx = null, by = null, square = false; zoneHit = null;
     if ((zones?.xs.length && zones.ys.length) || gaugeFree) {
       // The moving corner: the nearest thick line past the fixed one (at least one zone).
       const pickLine = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
@@ -1952,8 +1954,8 @@ function startFreeResize(event, handle) {
     } else if (hugZones?.xs.length && hugZones.ys.length && !e.altKey) {
       // A thick line near the moving corner catches it (past the corner held still); elsewhere the corner is free, so a
       // label smaller than a zone can be made smaller still.
-      const lineFrom = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1 && Math.abs(v - edge) <= snapReach() * 1.5); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : edge; };
-      ex = lineFrom(hugZones.xs, ex, fx, sx, scene.left); ey = lineFrom(hugZones.ys, ey, fy, sy, scene.top);
+      const lineFrom = (list, edge, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(v => sign * (v - fixed) > 1); return ok.length ? ok.reduce((b, v) => Math.abs(v - edge) < Math.abs(b - edge) ? v : b, ok[0]) : fixed + sign; };
+      const exRaw = ex, eyRaw = ey; ex = lineFrom(hugZones.xs, ex, fx, sx, scene.left); ey = lineFrom(hugZones.ys, ey, fy, sy, scene.top); zoneHit = { x: ex !== exRaw, y: ey !== eyRaw };
       const Ws = scene.width || 1, Hs = scene.height || 1;
       showAlignGuides([{ at: (ex - scene.left) / Ws * 100, kind: 'major' }, { at: (fx - scene.left) / Ws * 100, kind: 'major' }], [{ at: (ey - scene.top) / Hs * 100, kind: 'major' }, { at: (fy - scene.top) / Hs * 100, kind: 'major' }]);
     } else if (useSnap && !e.altKey) {
@@ -1994,14 +1996,23 @@ function startFreeResize(event, handle) {
         // again, exactly as before); the parts stay as they are, centred.
         const nw = Math.max(1, natW), nh = Math.max(1, natH);
         const sw = Math.max(0, sx * (ex - fx)) / k, sh = Math.max(0, sy * (ey - fy)) / k; // past the side held still = none
-        if (c === 'e' || c === 'w') { lw = Math.max(nw, sw); lh = b1; if (lw > nw + .5) room.labelCardW = Math.round(lw * 10) / 10; else delete room.labelCardW; }
-        else { lh = Math.max(nh, sh); lw = b0; if (lh > nh + .5) room.labelCardH = Math.round(lh * 10) / 10; else delete room.labelCardH; }
+        if (c === 'e' || c === 'w') { lw = Math.max(nw, sw); lh = b1; if (lw > nw + .5) room.labelCardW = Math.round(lw * 100) / 100; else delete room.labelCardW; }
+        else { lh = Math.max(nh, sh); lw = b0; if (lh > nh + .5) room.labelCardH = Math.round(lh * 100) / 100; else delete room.labelCardH; }
         delete room.labelCardExact; room.hugFrameV1 = true;
       } else {
         // A corner's dot: the whole label scaled as one picture - parts, texts, margin and any room the frame was given.
-        const f = clamp(Math.min(lw / b0, lh / b1), .3 / cardScale0, 6 / cardScale0);
-        lw = b0 * f; lh = b1 * f;
-        room.labelCardScale = Math.round(cardScale0 * f * 1000) / 1000; room.hugFrameV1 = true;
+        {
+          // A corner's dot: the frame follows it (width and height each on their own; with "Rozmiar po strefach" the box
+          // between the thick lines exactly); the parts (and margin) are scaled to fit in it by the tighter side, centred.
+          // Taken back, the frame hugs them again as before.
+          lw = Math.max(8, lw); lh = Math.max(8, lh);
+          const f = clamp(Math.min(lw / Math.max(1, natW), lh / Math.max(1, natH)), .3 / cardScale0, 6 / cardScale0);
+          room.labelCardScale = Math.round(cardScale0 * f * 1e4) / 1e4; const kf = room.labelCardScale / cardScale0;
+          const W = lw / kf, H = lh / kf, cw = natW, ch = natH;
+          if (W > cw + .5) room.labelCardW = Math.round(W * 100) / 100; else delete room.labelCardW;
+          if (H > ch + .5) room.labelCardH = Math.round(H * 100) / 100; else delete room.labelCardH;
+          lw = Math.max(lw, cw * kf); lh = Math.max(lh, ch * kf); room.hugFrameV1 = true;
+        }
       }
     } else if (isCard) {
       // Down to its content the frame shrinks; below that the whole group gets smaller (its scale), so every part keeps

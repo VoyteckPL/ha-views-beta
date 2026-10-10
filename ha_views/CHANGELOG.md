@@ -1,3 +1,9 @@
+## 0.6.1-beta.562
+
+- Etykieta, kropki grupy:
+  - Rogi zmieniają kształt dowolnie, szerokość i wysokość naraz. Ramka idzie za kropką, a elementy dopasowują się do niej po ciaśniejszym boku i są wyśrodkowane. Po cofnięciu ramka znów przylega do elementów.
+  - Przy „Rozmiarze po strefach” kropki znów przyciągają się do grubych linii. Nieruchomy róg trafia na najbliższe skrzyżowanie, a przesuwany przeskakuje z linii na linię, więc ramka obejmuje całe strefy. Boczne kropki stawiają swój bok na linii.
+
 ## 0.6.1-beta.561
 
 - Etykieta: wszystkie rozmiary i kształty są w jednym miejscu, w sekcji „Rozmiar” grupy i każdego elementu. Sekcja jest zawsze otwarta, także na telefonie, a wiersze są kompaktowe: zamiast podpisu jest ikona, a nazwa pokazuje się po najechaniu.
