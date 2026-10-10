@@ -1,3 +1,7 @@
+## 0.6.1-beta.573
+
+- Cofnięte z beta.572: po zmianie rozmiaru etykiety kamera nie dopasowuje się już sama. Widok zostaje taki, jak był.
+
 ## 0.6.1-beta.572
 
 - Edycja etykiety: po zmianie rozmiaru kamera dopasowuje się tak, że etykieta znowu wypełnia widok z marginesem 10% i jest wyśrodkowana. Dotyczy to kropek grupy i elementów (po puszczeniu) oraz suwaków rozmiaru, marginesu, zaokrąglenia, grubości ramki, grubości czcionki i odstępu (po puszczeniu). Dotyczy też przycisków „Dopasuj”, wyrównania i pogrubienia.
