@@ -1,3 +1,11 @@
+## 0.6.1-beta.563
+
+- Etykieta: ustawiony rozmiar ramki nie kasuje się po wejściu w edycję elementów (rozgrupowaniu).
+  - Ramka zostaje w swoim rozmiarze i miejscu.
+  - Gdy element wyjdzie poza ramkę, ramka poszerza się na żywo, a po zgrupowaniu zostaje z tym poszerzeniem.
+  - Bez przesuwania elementów etykieta wraca dokładnie taka jak była.
+  - Etykiety bez własnego rozmiaru ramki działają po staremu: ramka obejmuje elementy.
+
 ## 0.6.1-beta.562
 
 - Etykieta, kropki grupy:

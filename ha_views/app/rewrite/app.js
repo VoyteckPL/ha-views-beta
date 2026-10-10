@@ -1186,7 +1186,7 @@ function keepLabelPlaceOnRegroup(room) {
     // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
     // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
     // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
-    if (card?.offsetWidth && fixedFrame(room)) {
+    if (card?.offsetWidth && (fixedFrame(room) || Number(room.labelCardW) > 0 || Number(room.labelCardH) > 0)) {
       const cs = getComputedStyle(card), lsc = clamp(Number(room.labelCardScale) || 1, .3, 6), fsx = parseFloat(card.style.getPropertyValue('--fsx')) || 0, fsy = parseFloat(card.style.getPropertyValue('--fsy')) || 0;
       room.labelUngroupFrame = { w: r2(parseFloat(cs.width) || card.offsetWidth), h: r2(parseFloat(cs.height) || card.offsetHeight), x: r2((Number(room.labelCardX) || 0) + fsx * lsc), y: r2((Number(room.labelCardY) || 0) + fsy * lsc) };
     }
@@ -1196,7 +1196,7 @@ function keepLabelPlaceOnRegroup(room) {
     const shownKeys = $$(`.room-label-part[data-room-id="${id}"]`).filter(node => node.getBoundingClientRect().width).map(partKey).filter(Boolean);
     const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
-    const kept = fixedFrame(room) ? room.labelUngroupFrame : null; if (kept && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
+    let kept = room.labelUngroupFrame && Number(room.labelUngroupFrame.w) > 0 ? room.labelUngroupFrame : null; if (kept && fixedFrame(room) && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
     if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
@@ -1207,6 +1207,8 @@ function keepLabelPlaceOnRegroup(room) {
     let cx = (Math.min(...rects.map(r => r.left)) + Math.max(...rects.map(r => r.right))) / 2, cy = (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2;
     // The frame kept while ungrouped stays the group's frame: same place, same size (parts moved inside it do not move
     // or resize it, so a group laid on the grid stays on it). The group is then centred on its frame, not on its parts.
+    // A label's own frame comes back as it was - widened where a part was taken past it.
+    if (kept && !fixedFrame(room)) { kept = labelUnionFrame(room, kept, rects, scene, w, k); delete room.labelUngroupFrame; }
     if (kept && Number.isFinite(Number(kept.x)) && Number(kept.w) > 0) {
       cx = anchorX + Number(kept.x) * scene.width * k / w; cy = anchorY + Number(kept.y) * scene.height * k / h;
       room.labelCardX = r2(Number(kept.x)); room.labelCardY = r2(Number(kept.y)); room.labelCardW = r2(Number(kept.w)); room.labelCardH = r2(Number(kept.h)); room.labelCardCentred = true;
@@ -1276,6 +1278,15 @@ function equalizeLabelFrames(room, group) {
   group.querySelectorAll('.room-label-part, .room-label-card').forEach(node => node.classList.toggle('square', !!node.querySelector(':scope > .card-handle') && Math.abs(node.offsetWidth - node.offsetHeight) < .5));
 }
 // The backdrop of ungrouped parts covers all of them (plus the group's margin), however far apart they are.
+// The frame a label keeps while ungrouped together with its parts (plus the group's margin): its centre offset (plan px)
+// and size (group px).
+function labelUnionFrame(room, kept, rects, scene, w, k) {
+  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+  const ox = scene.left + ax / 100 * scene.width, oy = scene.top + ay / 100 * scene.height, kx = ox + Number(kept.x) * toPlan, ky = oy + Number(kept.y) * toPlan, hw = Number(kept.w) * local / 2, hh = Number(kept.h) * local / 2;
+  const L = Math.min(kx - hw, ...rects.map(r => r.left - pad * 1.35 * local)), R = Math.max(kx + hw, ...rects.map(r => r.right + pad * 1.35 * local)), T = Math.min(ky - hh, ...rects.map(r => r.top - pad * local)), B = Math.max(ky + hh, ...rects.map(r => r.bottom + pad * local));
+  const r2 = v => Math.round(v * 100) / 100;
+  return { x: r2(((L + R) / 2 - ox) / toPlan), y: r2(((T + B) / 2 - oy) / toPlan), w: r2((R - L) / local), h: r2((B - T) / local) };
+}
 function fitLabelBackdrop(room, group) {
   const backdrop = group.querySelector('.room-label-backdrop'); if (!backdrop) return;
   const rects = [...group.querySelectorAll('.room-label-part')].map(node => node.getBoundingClientRect()).filter(r => r.width);
@@ -1283,7 +1294,9 @@ function fitLabelBackdrop(room, group) {
   // While ungrouped the frame keeps the group's size and place (it does not follow the parts being moved).
   // A label's frame always hugs its parts exactly (plus its margin), live while they are moved; a thermostat's keeps
   // the group's size and place.
-  const kept = fixedFrame(room) && room.labelUngroupFrame;
+  const kept = room.labelUngroupFrame && Number(room.labelUngroupFrame.w) > 0 ? room.labelUngroupFrame : null;
+  // A label given its own frame size keeps it while ungrouped; a part taken past it widens it (live, never stored).
+  if (kept && !fixedFrame(room)) { const u = labelUnionFrame(room, kept, rects, scene, w, k); backdrop.style.setProperty('--lx', `${u.x}px`); backdrop.style.setProperty('--ly', `${u.y}px`); backdrop.style.width = `${u.w}px`; backdrop.style.height = `${u.h}px`; return; }
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
   const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
