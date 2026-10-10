@@ -1,3 +1,8 @@
+## 0.6.1-beta.570
+
+- Edycja etykiety: kliknięcie elementu (ikony, nazwy, stanu) po rozgrupowaniu oraz samo rozgrupowanie dają ten sam widok co kliknięcie etykiety: cała etykieta wyśrodkowana z marginesem 10%. Widok już nie skacze.
+  - Na telefonie etykieta mieści się w górnej połowie ekranu nad panelem, niezależnie od otwartej sekcji.
+
 ## 0.6.1-beta.569
 
 - Edycja: kliknięcie lub stuknięcie etykiety centruje ją i przybliża tak, żeby wypełniła widoczny plan z marginesem 10% z każdej strony. Na telefonie liczy się pas nad panelem edytora. Przybliżenie sięga do 20×, więc nawet mała etykieta jest dobrze widoczna. Rozgrupowana część etykiety działa jak wcześniej: pokazuje się sama ta część.
