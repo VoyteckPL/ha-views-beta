@@ -1724,3 +1724,11 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 
 /* Quick controls on top of a label's state section */
 .part-quick{padding:2px 0 6px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.editor .control.compact.range-control{grid-template-columns:24px minmax(0,1fr) 46px 26px!important;min-height:32px}
+.editor .control.compact.range-control>input[type=range]{grid-column:2}
+.editor .control.compact.range-control>output{grid-column:3}
+.editor .control.compact.range-control>.slider-reset{grid-column:4}
+.editor .control.compact:not(.range-control){grid-template-columns:24px minmax(0,1fr)!important;min-height:32px}
+.editor .control.compact .seg-choice{justify-content:flex-end}
+.control.compact>label.ic{display:grid;place-items:center;font-size:17px;color:#9fc6d8;cursor:help}
+.control.compact .room-card-presets{flex-wrap:wrap;gap:4px}

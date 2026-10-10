@@ -1,3 +1,18 @@
+## 0.6.1-beta.561
+
+- Etykieta: wszystkie rozmiary i kształty są w jednym miejscu, w sekcji „Rozmiar” grupy i każdego elementu. Sekcja jest zawsze otwarta, także na telefonie, a wiersze są kompaktowe: zamiast podpisu jest ikona, a nazwa pokazuje się po najechaniu.
+  - Grupa:
+    - rozmiar,
+    - margines,
+    - nowy suwak odstępu między elementami (ustawia elementy w kolumnie lub rzędzie z tym odstępem),
+    - zaokrąglenie (zawsze dostępne, niezależnie od tła i ramki),
+    - grubość ramki,
+    - nowe wyrównanie elementów do lewej, środka, prawej, góry, środka w pionie i dołu,
+    - nowy przycisk „Jednakowa szerokość nazwy i stanu”.
+  - Ikona: rozmiar, margines, kształt (koło, kwadrat, dowolny) jako ikony, zaokrąglenie, grubość ramki i nowa kłódka „Stała ramka” (ramka stoi, a ikona zmienia się w środku).
+  - Nazwa i stan: rozmiar tekstu, margines, zaokrąglenie, grubość ramki, grubość czcionki oraz „Dopasuj do tekstu” i „Stała ramka”.
+  - Te ustawienia zniknęły z podsekcji Tło i Ramka. Zostały tam tylko kolory i grubości ON/OFF.
+
 ## 0.6.1-beta.560
 
 - Etykieta: zaokrąglenie rogów nazwy i stanu zostaje stałe przy zmianie rozmiaru, zarówno kropkami, jak i suwakiem. Domyślne zaokrąglenie, które rosło razem z tekstem, zostaje przy pierwszej zmianie zapisane w obecnych pikselach. Później zmienia je tylko suwak „Zaokrąglenie”.
