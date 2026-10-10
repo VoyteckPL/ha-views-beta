@@ -1,3 +1,7 @@
+## 0.6.1-beta.556
+
+- Nowa etykieta: margines grupy domyślnie 0, więc ramka grupy przylega do elementów. Dotyczy to także „Przywróć domyślne”.
+
 ## 0.6.1-beta.555
 
 - Etykieta z jednym widocznym elementem ma jedno tło i jedną ramkę: etykiety.
