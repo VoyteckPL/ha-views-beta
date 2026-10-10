@@ -1,3 +1,7 @@
+## 0.6.1-beta.578
+
+- Edycja: po każdej zmianie rozmiaru etykiety (kropkami, suwakami rozmiaru, marginesu, odstępu, zaokrąglenia, wyrównaniem) kamera centruje etykietę i dopasowuje zoom tak, by była widoczna cała z 20% marginesu.
+
 ## 0.6.1-beta.577
 
 - Edycja elementów etykiety (rozgrupowanej): główna siatka nie jest rysowana na tle etykiety, a siatka etykiety jest pokazywana tylko na jej tle (wcześniej przykrywała plan, a główna siatka znikała).
