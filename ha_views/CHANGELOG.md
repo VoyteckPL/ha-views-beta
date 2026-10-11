@@ -1,3 +1,7 @@
+## 0.6.1-beta.583
+
+- Panel etykiety: „Przywróć domyślne”, „Usuń” i „Zamknij” są w jednym górnym rzędzie z równymi odstępami.
+
 ## 0.6.1-beta.582
 
 - Etykieta: po zwężeniu i ponownym poszerzeniu narożnikiem zawartość wraca do swojego rozmiaru. Rozsunięcie elementów z poprzedniej zmiany nie zostaje już na stałe, więc tekst nie robi się coraz mniejszy.
