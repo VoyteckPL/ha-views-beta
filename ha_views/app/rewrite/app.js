@@ -3659,15 +3659,16 @@ function onRoomEditorInput(event) {
   if (path === 'labelIconName') value = String(value).trim();
   // A name's / state's size slider scales its box with the text (and its margin and corners, as its dots do): the box
   // is fixed, so a bigger text in the old box would only be fitted back down.
-  { const own = !isThermoRoom(room) && /^(label(?:Name|State|Icon))Size$/.exec(path); if (own && !room[`${own[1]}FixedBox`]) {
+  { const own = !isThermoRoom(room) && /^(label(?:Name|State|Icon))Size$/.exec(path); if (own) { const fixedBox = !!room[`${own[1]}FixedBox`];
     const k = own[1], old = Number(room[path]) || ROOM_DEFAULTS[path], f = Number(value) / Math.max(1, old), num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     if (f > 0 && Math.abs(f - 1) > .001) {
       // The margin stays (an unset one, growing with the text, is kept at its present px): the box grows by the text only.
       const pn = k === 'labelName' ? 'name' : k === 'labelIcon' ? 'icon' : 'state', node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${pn}"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="${pn}"]`), cs = node ? getComputedStyle(node) : null;
       const px = cs ? parseFloat(cs.paddingLeft) || 0 : 0, py = cs ? parseFloat(cs.paddingTop) || 0 : 0;
-      if (!num(room[`${k}Padding`]) && py > 0) room[`${k}Padding`] = Math.round(py * 10) / 10;
-      if (Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round((2 * px + Math.max(1, room[`${k}W`] - 2 * px) * f) * 10) / 10;
-      if (Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round((2 * py + Math.max(1, room[`${k}H`] - 2 * py) * f) * 10) / 10;
+      // (With "Stała ramka" as well: the margin never changes with the text size.)
+      if (!num(room[`${k}Padding`]) && py > 0) { room[`${k}Padding`] = Math.round(py * 10) / 10; const pin = input.closest('#room-editor-content')?.querySelector(`input[data-path="${k}Padding"]`); if (pin) { pin.value = room[`${k}Padding`]; const o = pin.closest('.control')?.querySelector('output'); if (o) o.textContent = Math.round(room[`${k}Padding`]) + (o.dataset.suffix || ''); } }
+      if (!fixedBox && Number(room[`${k}W`]) > 0) room[`${k}W`] = Math.round((2 * px + Math.max(1, room[`${k}W`] - 2 * px) * f) * 10) / 10;
+      if (!fixedBox && Number(room[`${k}H`]) > 0) room[`${k}H`] = Math.round((2 * py + Math.max(1, room[`${k}H`] - 2 * py) * f) * 10) / 10;
       // Corners keep their radius too (an unset one, growing with the text, is kept at its present px).
       if (k !== 'labelIcon' && !num(room[`${k}Radius`]) && cs && (room[`${k}Bg`] || room[`${k}Border`])) { const rad = parseFloat(cs.borderTopLeftRadius) || 0; if (rad > 0) room[`${k}Radius`] = Math.round(rad * 10) / 10; }
     }

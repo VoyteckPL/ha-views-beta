@@ -1,3 +1,7 @@
+## 0.6.1-beta.605
+
+- Nazwa/Stan/Ikona: suwak rozmiaru tekstu nie zmienia marginesu, także przy włączonej „Stałej ramce” (wcześniej nieustawiony margines rósł razem z tekstem). Suwak marginesu od razu pokazuje aktualną wartość.
+
 ## 0.6.1-beta.604
 
 - Ikona/Nazwa/Stan → Rozmiar: przyciski „Dopasuj” i „Stała ramka” są w rzędzie suwaka rozmiaru, między suwakiem a resetem (zamiast osobnego rzędu „Pudełko”).
