@@ -1,3 +1,7 @@
+## 0.6.1-beta.622
+
+- Margines etykiety działa do środka: etykieta zachowuje rozmiar, a elementy zmniejszają się, robiąc miejsce na margines. Po zmniejszeniu marginesu wracają dokładnie do poprzedniej wielkości (także przy kolejnym chwyceniu suwaka).
+
 ## 0.6.1-beta.621
 
 - Suwaki rozmiaru tekstu (nazwa, stan) i ikony w etykiecie: zakres do 420 px.
