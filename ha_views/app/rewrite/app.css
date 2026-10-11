@@ -1791,3 +1791,6 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
   #room-editor .editor-title-block>code,#room-editor .editor-title-block .editor-meta code{line-height:1.1}
   #room-editor .editor-head [id$="editor-close"],#room-editor .editor-head #room-remove,#room-editor .editor-head #room-default-style{top:6px}
 }
+/* The label's parts (icon, name, state) on the actions' row, on its left (after the ON / OFF preview). */
+#room-editor .editor-quick-actions>.editor-part-toggles{flex:0 0 auto;margin:0 auto 0 0!important;padding:0!important}
+#room-editor .editor-head .head-preview:has(+ .editor-part-toggles:not([hidden])){margin-right:0}

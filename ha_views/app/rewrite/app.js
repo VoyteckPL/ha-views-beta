@@ -3486,7 +3486,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     const showRow = isIconRoom(room) && !isThermoRoom(room); partRow.hidden = !showRow;
     if (showRow) {
       partRow.innerHTML = [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(room) ? 'Podpis' : 'Stan', isTextRoom(room) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']].map(([k, t, m]) => `<button type="button" class="editor-icon-button${room[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!room[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${m}"></i></button>`).join('');
-      requestAnimationFrame(() => { const copy = $('#room-copy-style'), head = partRow.parentElement; if (!copy || !head || copy.hidden) { partRow.style.paddingLeft = ''; return; } partRow.style.paddingLeft = `${Math.max(0, copy.getBoundingClientRect().left - head.getBoundingClientRect().left - (parseFloat(getComputedStyle(head).paddingLeft) || 0))}px`; });
+      partRow.style.paddingLeft = '';
     }
   }
   const groupButton = $('#room-group-toggle');

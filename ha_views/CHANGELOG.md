@@ -1,3 +1,7 @@
+## 0.6.1-beta.586
+
+- Panel etykiety: przyciski widoczności ikony, nazwy i stanu są w rzędzie z kopiuj/wklej, po lewej stronie. Nagłówek ma teraz dwa rzędy.
+
 ## 0.6.1-beta.585
 
 - Telefon: panel etykiety zawsze zaczyna się w połowie ekranu. Nagłówek (nazwa z przyciskami, akcje, ikona/nazwa/stan) to trzy zwarte rzędy z równymi odstępami, maksymalnie 20% wysokości ekranu. Sekcje przewijają się pod nim.
