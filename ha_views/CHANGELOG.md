@@ -1,3 +1,7 @@
+## 0.6.1-beta.621
+
+- Suwaki rozmiaru tekstu (nazwa, stan) i ikony w etykiecie: zakres do 420 px.
+
 ## 0.6.1-beta.620
 
 - Suwak grubości czcionki nie zmienia już rozmiaru ramki nazwy i stanu (także w termostacie i wskaźniku), a ramka etykiety zostaje taka sama.
