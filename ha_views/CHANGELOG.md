@@ -1,3 +1,7 @@
+## 0.6.1-beta.587
+
+- Telefon: suwaki w panelu zmieniają się tylko po złapaniu gałki i przeciągnięciu w bok. Stuknięcie w tor ani przewijanie w górę/dół przez suwak nie zmienia już wartości.
+
 ## 0.6.1-beta.586
 
 - Panel etykiety: przyciski widoczności ikony, nazwy i stanu są w rzędzie z kopiuj/wklej, po lewej stronie. Nagłówek ma teraz dwa rzędy.

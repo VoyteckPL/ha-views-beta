@@ -1794,3 +1794,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 /* The label's parts (icon, name, state) on the actions' row, on its left (after the ON / OFF preview). */
 #room-editor .editor-quick-actions>.editor-part-toggles{flex:0 0 auto;margin:0 auto 0 0!important;padding:0!important}
 #room-editor .editor-head .head-preview:has(+ .editor-part-toggles:not([hidden])){margin-right:0}
+/* Phone: sliders take no touches of their own (a tap or a scroll across them changes nothing); the knob is dragged by script. */
+@media (pointer:coarse){.editor input[type=range]{pointer-events:none}}

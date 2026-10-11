@@ -4424,6 +4424,28 @@ function refocusWhileTyping() {
 // Height used to lay out the plan. While a text field is being edited on a phone the on-screen keyboard shrinks the
 // window; the plan keeps the height from before the keyboard, so its size, zoom and camera do not jump.
 let stableViewportHeight = 0;
+// Phone: a panel's slider moves only when its knob is taken and pulled sideways - a tap on its track or a swipe up / down
+// across it (scrolling the panel) never changes it. The sliders take no touches themselves (CSS); this follows the finger.
+function guardTouchSliders() {
+  let g = null;
+  document.addEventListener('touchstart', event => {
+    g = null; if (event.touches.length !== 1) return;
+    const input = event.target.closest?.('.editor .control')?.querySelector('input[type=range]'); if (!input || input.disabled) return;
+    const t = event.touches[0], r = input.getBoundingClientRect(), min = Number(input.min) || 0, max = Number(input.max === '' ? 100 : input.max), v0 = Number(input.value);
+    const thumb = 18, x = r.left + thumb / 2 + (max > min ? (v0 - min) / (max - min) : 0) * (r.width - thumb);
+    if (Math.abs(t.clientX - x) > 26 || t.clientY < r.top - 16 || t.clientY > r.bottom + 16) return; // not on the knob
+    g = { input, x0: t.clientX, y0: t.clientY, v0, min, max, span: Math.max(1, r.width - thumb), on: false };
+  }, { passive: true, capture: true });
+  document.addEventListener('touchmove', event => {
+    if (!g) return; const t = event.touches[0], dx = t.clientX - g.x0, dy = t.clientY - g.y0;
+    if (!g.on) { if (Math.abs(dy) > 8 && Math.abs(dy) >= Math.abs(dx)) { g = null; return; } if (Math.abs(dx) < 6) return; g.on = true; }
+    event.preventDefault();
+    const step = Number(g.input.step) || 1, raw = clamp(g.v0 + dx / g.span * (g.max - g.min), g.min, g.max), v = g.input.step === 'any' ? raw : Math.round((raw - g.min) / step) * step + g.min;
+    const val = String(Math.round(clamp(v, g.min, g.max) * 1e6) / 1e6); if (g.input.value !== val) { g.input.value = val; g.input.dispatchEvent(new Event('input', { bubbles: true })); }
+  }, { passive: false, capture: true });
+  const end = () => { if (g?.on) g.input.dispatchEvent(new Event('change', { bubbles: true })); g = null; };
+  document.addEventListener('touchend', end, { capture: true }); document.addEventListener('touchcancel', end, { capture: true });
+}
 function typingOnPhone() { const el = document.activeElement; return mobileView() && !!el?.matches?.('input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=button]),textarea,[contenteditable="true"]'); }
 let stableViewportWidth = 0;
 function keyboardOpen() { const h = window.visualViewport?.height || innerHeight; return mobileView() && stableViewportHeight > 0 && innerWidth === stableViewportWidth && h < stableViewportHeight - 90; }
@@ -8152,6 +8174,7 @@ function bindEvents() {
   });
   document.addEventListener('focusout', event => { if (!editorTyping || event.target !== editorTyping.input) return; setTimeout(() => { if (editorTyping && document.activeElement !== editorTyping.input) endEditorTyping(); }, 0); });
   // Enter in an editor field closes the on-screen keyboard instead of jumping to the next field.
+  guardTouchSliders();
   document.addEventListener('focusin', event => { const el = event.target; if (el?.matches?.('.editor input:not([type=range]):not([type=checkbox]):not([type=color])')) el.enterKeyHint = 'done'; });
   document.addEventListener('keydown', event => { const el = event.target; if (event.key === 'Enter' && !event.isComposing && el?.matches?.('.editor input:not([type=range]):not([type=checkbox]):not([type=color])')) { event.preventDefault(); el.blur(); } });
   if ('ResizeObserver' in window) new ResizeObserver(updateSceneGeometry).observe(els.scene);
