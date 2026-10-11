@@ -1,3 +1,7 @@
+## 0.6.1-beta.602
+
+- Komputer: przy przeciąganiu lub zmianie rozmiaru myszą kamera nie przesuwa się już sama przy krawędzi ekranu. Na telefonie (palcem) bez zmian.
+
 ## 0.6.1-beta.601
 
 - Kafelki: podwójne stuknięcie (i podwójny klik) rozgrupowuje i grupuje też etykietę z jednym widocznym elementem.

@@ -6071,7 +6071,8 @@ function dragCamera(onPan) {
     // Keeps going on its own while the finger rests at the edge (a still finger sends no move events).
     if (!frame) frame = requestAnimationFrame(step);
   };
-  return { track(event) { last = event; if (!frame) frame = requestAnimationFrame(step); }, stop() { cancelAnimationFrame(frame); frame = 0; last = null; since = 0; } };
+  // Only for a finger (a phone / tablet): with a mouse the camera stays put at the screen's edge.
+  return { track(event) { if (event.pointerType === 'mouse') return; last = event; if (!frame) frame = requestAnimationFrame(step); }, stop() { cancelAnimationFrame(frame); frame = 0; last = null; since = 0; } };
 }
 function animateViewPan(toX, toY, ms = 280) {
   cancelAnimationFrame(animateViewPan.frame); stopCameraGlide();
