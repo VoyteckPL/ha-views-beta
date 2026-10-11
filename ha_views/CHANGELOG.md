@@ -1,3 +1,7 @@
+## 0.6.1-beta.614
+
+- Etykieta: „Zablokuj rozmiar” to przełącznik z kłódką na pasku sekcji Etykieta, obok Tła i Ramki (przy jednym elemencie na pasku jego sekcji). Pole wyboru w Rozmiarze usunięte.
+
 ## 0.6.1-beta.613
 
 - Cofnięte z beta.612: kropki elementu w zgrupowanej etykiecie.
