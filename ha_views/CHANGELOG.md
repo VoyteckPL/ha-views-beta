@@ -1,3 +1,7 @@
+## 0.6.1-beta.598
+
+- Kafelki: rozgrupowana etykieta zostaje przypięta do swoich kafelków. Ramka to dalej kafelek (lub kafelki), elementy mają ten sam rozmiar i nie wychodzą poza nią. Po zgrupowaniu etykieta znów wypełnia kafelki.
+
 ## 0.6.1-beta.597
 
 - Kafelki: narożnikami etykiety rozciągasz ją na kilka kafelków (np. 2×1, 2×2), ze skokiem co cały kafelek. Przy włączonych kafelkach główna siatka jest ukryta.

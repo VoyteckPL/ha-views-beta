@@ -924,7 +924,7 @@ function isTextRoom(room) { return isIconRoom(room) && !!room?.textEl; }
 function isThermoRoom(room) { return isIconRoom(room) && !!room?.thermo; }
 // Only a thermostat / gauge has a group frame of its own size (designed, kept while ungrouped, sized on the thick grid
 // lines). A label's or room's frame always hugs its shown parts: they can be laid out freely and the frame follows.
-function fixedFrame(room) { return isThermoRoom(room) || (isIconRoom(room) && !!room?.labelSizeLock); }
+function fixedFrame(room) { return isThermoRoom(room) || (isIconRoom(room) && (!!room?.labelSizeLock || !!dashSpan(room))); }
 // "Zablokuj rozmiar": the label's frame keeps the size it has now (the parts can still be changed and moved inside it).
 // Its parts are laid out from the frame's centre, so nothing moves on the plan.
 function lockLabelFrame(room) {
@@ -1019,7 +1019,7 @@ function dashGeom(view = activeSceneView()) {
 }
 // The scene-% box of a pinned label (null when the grid is off or the label is not pinned).
 function dashSpan(room, view = activeSceneView()) {
-  const d = room?.dash; if (!d || !room.labelLinked) return null; const g = dashGeom(view); if (!g.on) return null;
+  const d = room?.dash; if (!d) return null; /* ungrouped too: its parts stay on its tiles */ const g = dashGeom(view); if (!g.on) return null;
   const c = clamp(Math.round(d.c) || 0, 0, g.cols - 1), r = clamp(Math.round(d.r) || 0, 0, g.rows - 1), w = clamp(Math.round(d.w) || 1, 1, g.cols - c), h = clamp(Math.round(d.h) || 1, 1, g.rows - r);
   return { x: g.gx + c * (g.cw + g.gx), y: g.gy + r * (g.ch + g.gy), w: w * g.cw + (w - 1) * g.gx, h: h * g.ch + (h - 1) * g.gy, c, r, cw: w, ch: h };
 }
@@ -1081,6 +1081,8 @@ function fitDashLabels() {
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
     const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
+    // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
+    const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
     if (card.classList.contains('free')) { card.style.width = `${(tw / s).toFixed(2)}px`; card.style.height = `${(th / s).toFixed(2)}px`; card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px'); }
     void keep;
@@ -1344,6 +1346,9 @@ function fitLabelBackdrop(room, group) {
   // While ungrouped the frame keeps the group's size and place (it does not follow the parts being moved).
   // A label's frame always hugs its parts exactly (plus its margin), live while they are moved; a thermostat's keeps
   // the group's size and place.
+  // On tiles: the frame is its tiles (the parts are moved inside them).
+  const pin = isIconRoom(room) && dashSpan(room);
+  if (pin) { const lsc = clamp(Number(room.labelCardScale) || 1, .1, 8); backdrop.style.setProperty('--lscale', String(lsc)); backdrop.style.setProperty('--lx', '0px'); backdrop.style.setProperty('--ly', '0px'); backdrop.style.width = `${(pin.w / 100 * w / k / lsc).toFixed(2)}px`; backdrop.style.height = `${(pin.h / 100 * (els.scene.offsetHeight || 1) / k / lsc).toFixed(2)}px`; return; }
   const kept = room.labelUngroupFrame && Number(room.labelUngroupFrame.w) > 0 ? room.labelUngroupFrame : null;
   // A label given its own frame size keeps it while ungrouped; a part taken past it widens it (live, never stored).
   if (kept && !fixedFrame(room)) { const u = labelUnionFrame(room, kept, rects, scene, w, k); backdrop.style.setProperty('--lx', `${u.x}px`); backdrop.style.setProperty('--ly', `${u.y}px`); backdrop.style.width = `${u.w}px`; backdrop.style.height = `${u.h}px`; return; }
