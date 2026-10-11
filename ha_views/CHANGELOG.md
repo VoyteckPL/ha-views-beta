@@ -1,3 +1,7 @@
+## 0.6.1-beta.617
+
+- Zablokowana etykieta: przy zmianie rozmiaru kropkami narożnik łapie się na linie głównej siatki, a przy „Rozmiarze po strefach” przeskakuje po grubych liniach. Alt wyłącza przyciąganie.
+
 ## 0.6.1-beta.616
 
 - Cofnięte z beta.615 (zachowana ramka po odblokowaniu, przycisk „Dopasuj ramkę”).

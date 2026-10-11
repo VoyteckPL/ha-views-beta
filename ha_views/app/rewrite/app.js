@@ -2060,10 +2060,20 @@ function startLockedResize(event, handle, room) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, sx = c.includes('w') ? -1 : 1, sy = c.includes('n') ? -1 : 1, rect0 = node.getBoundingClientRect(), s0 = clamp(Number(room.labelCardScale) || 1, .3, 6);
   const W0 = Number(room.labelCardW), H0 = Number(room.labelCardH) || node.offsetHeight, keys = ROOM_LABEL_PARTS.map(([, k]) => k), pos0 = Object.fromEntries(keys.map(k => [k, [Number(room[`${k}FX`]) || 0, Number(room[`${k}FY`]) || 0]]));
-  const fx = sx > 0 ? rect0.left : rect0.right, fy = sy > 0 ? rect0.top : rect0.bottom; let moved = false;
+  let fx = sx > 0 ? rect0.left : rect0.right, fy = sy > 0 ? rect0.top : rect0.bottom, moved = false;
+  // "Rozmiar po strefach": the corner held still goes to its nearest crossing of the thick lines as well.
+  { const scn = els.scene.getBoundingClientRect(), zones = majorSizing() ? gridMajorLines(scn.width, scn.height) : null; if (zones?.xs.length && zones.ys.length) { const near = (list, v, o) => o + list.reduce((b, l) => Math.abs(o + l - v) < Math.abs(o + b - v) ? l : b, list[0]); fx = near(zones.xs, fx, scn.left); fy = near(zones.ys, fy, scn.top); } }
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
-    const qx = Math.max(12, sx * (e.clientX - fx)) / Math.max(1, rect0.width), qy = Math.max(12, sy * (e.clientY - fy)) / Math.max(1, rect0.height);
+    // The moving corner is caught by the plan's grid ("Rozmiar po strefach": by its thick lines, from line to line).
+    let ex = e.clientX, ey = e.clientY; const scn = els.scene.getBoundingClientRect(), Ws = scn.width || 1, Hs = scn.height || 1, gx = [], gy = [];
+    if (!e.altKey) {
+      const zones = majorSizing() ? gridMajorLines(scn.width, scn.height) : null;
+      if (zones?.xs.length && zones.ys.length) { const pick = (list, v, fixed, sign, origin) => { const ok = list.map(l => origin + l).filter(t => sign * (t - fixed) > 4); return ok.length ? ok.reduce((b, t) => Math.abs(t - v) < Math.abs(b - v) ? t : b, ok[0]) : v; }; ex = pick(zones.xs, ex, fx, sx, scn.left); ey = pick(zones.ys, ey, fy, sy, scn.top); gx.push({ at: (ex - scn.left) / Ws * 100, kind: 'major' }); gy.push({ at: (ey - scn.top) / Hs * 100, kind: 'major' }); }
+      else { const lx = gridLineNear(ex, true), ly = gridLineNear(ey, false); if (lx !== null && sx * (lx - fx) > 4) { ex = lx; gx.push({ at: (ex - scn.left) / Ws * 100, kind: 'grid' }); } if (ly !== null && sy * (ly - fy) > 4) { ey = ly; gy.push({ at: (ey - scn.top) / Hs * 100, kind: 'grid' }); } }
+    }
+    showAlignGuides(gx, gy);
+    const qx = Math.max(12, sx * (ex - fx)) / Math.max(1, rect0.width), qy = Math.max(12, sy * (ey - fy)) / Math.max(1, rect0.height);
     const f = clamp(Math.min(qx, qy), .3 / s0, 6 / s0), r2 = v => Math.round(v * 100) / 100;
     room.labelCardScale = Math.round(s0 * f * 1e4) / 1e4; room.labelCardW = r2(W0 * qx / f); room.labelCardH = r2(H0 * qy / f);
     keys.forEach(k => { room[`${k}FX`] = r2(pos0[k][0] * qx / f); room[`${k}FY`] = r2(pos0[k][1] * qy / f); });
@@ -2072,7 +2082,7 @@ function startLockedResize(event, handle, room) {
     if (q) { const dx = fx - (sx > 0 ? q.left : q.right), dy = fy - (sy > 0 ? q.top : q.bottom); if (Math.abs(dx) > .2 || Math.abs(dy) > .2) { room.labelCardX = r2((Number(room.labelCardX) || 0) + dx / toPlan); room.labelCardY = r2((Number(room.labelCardY) || 0) + dy / toPlan); renderRoomLabels(); } }
   };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
   };
