@@ -1,3 +1,8 @@
+## 0.6.1-beta.615
+
+- Etykieta: odblokowanie rozmiaru zostawia ramkę taką, jaka była, z ustawionym wolnym miejscem wokół elementów. Kropki etykiety skalują wtedy całość proporcjonalnie (ramkę, elementy i odstępy).
+- Nowy przycisk na pasku Etykiety „Dopasuj ramkę do elementów” (widoczny przy zachowanej ramce) przywraca ramkę przylegającą do elementów.
+
 ## 0.6.1-beta.614
 
 - Etykieta: „Zablokuj rozmiar” to przełącznik z kłódką na pasku sekcji Etykieta, obok Tła i Ramki (przy jednym elemencie na pasku jego sekcji). Pole wyboru w Rozmiarze usunięte.
