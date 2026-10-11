@@ -365,7 +365,7 @@ function ensureMultiViewModel() {
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.labelSizeLock) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); if (!room.hugFrameV1) { room.hugFrameV1 = true; migrated = true; } });
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
-    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
+    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && !(room.dash && view.dashGrid?.on) && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
     // A label's name / state box is kept in plan px (its W / H) - an em width taken on one device cut the text on another.
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo) return; ['labelName','labelState'].forEach(k => { const v = room[`${k}Lock`]; if (v === undefined) return; if (Array.isArray(v) && !(Number(room[`${k}W`]) > 0)) { const fs = Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`]; room[`${k}W`] = Math.round((v[0] * fs + fs * .5) * 10) / 10; room[`${k}H`] = Math.round(v[1] * fs * 10) / 10; } delete room[`${k}Lock`]; migrated = true; }); });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
@@ -1274,7 +1274,7 @@ function keepLabelPlaceOnRegroup(room) {
 // Ungrouping is for arranging the parts: when the label / thermostat is left (panel closed, another element picked,
 // edit mode or view left) it is grouped again, as with the "Grupa" button - every part stays where it was placed.
 function regroupOnLeave(room) {
-  if (!room || room.labelLinked || room.labelAutoUngrouped || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) return false;
+  if (!room || room.labelLinked || room.labelAutoUngrouped || (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1 && !dashSpan(room))) return false;
   if (!$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`)) return false;
   keepLabelPlaceOnRegroup(room); room.labelLinked = true; room.updatedAt = new Date().toISOString(); scheduleSave(true); return true;
 }
@@ -1710,7 +1710,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   // Ungrouped and being edited: the group's frame glows and an icon above it says so (drawn even when the label has no background / frame).
   // (A label left with one part is ungrouped only so the part has its own dots: it looks selected as usual.)
-  const ungroupEdit = interactive && r.id === selectedRoomId && ROOM_LABEL_PARTS.filter(([part]) => content[part]).length > 1, look = r.labelCardBg || r.labelCardBorder;
+  const ungroupEdit = interactive && r.id === selectedRoomId && (ROOM_LABEL_PARTS.filter(([part]) => content[part]).length > 1 || !!(isIconRoom(r) && dashSpan(r))), look = r.labelCardBg || r.labelCardBorder;
   const backdrop = look || ungroupEdit ? `<div class="room-label-backdrop${r.labelCardBlur && look ? ' blur' : ''}${r.labelCardExact ? ' exact' : ''}${ungroupEdit ? ' ungrouped-edit' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${look ? cardLook(r, on) : ''}">${ungroupEdit ? `<span class="ungroup-badge" title="${escapeHtml(translateValue('Rozgrupowane'))}"><i class="mdi mdi-ungroup"></i></span>` : ''}</div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : '';
@@ -1785,7 +1785,8 @@ function ensureLabelFxDefs() {
   </defs></svg>`;
   document.body.append(d);
 }
-function soloLabel(room) { return !!room && isIconRoom(room) && !isThermoRoom(room) && !isTextRoom(room) && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1; }
+// (On tiles a lone part is not "the label": the tile stays its frame and it can be ungrouped to be placed in the tile.)
+function soloLabel(room) { return !!room && isIconRoom(room) && !isThermoRoom(room) && !isTextRoom(room) && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1 && !dashSpan(room); }
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
   if (room?.soloPartLook) { const saved = room.soloPartLook, k = saved.key; room[`${k}Bg`] = saved.bg; room[`${k}Border`] = saved.border; if (k !== 'labelIcon' && (saved.bg || saved.border)) partMarginBox(room, k, 1); if (!saved.cardBg) room.labelCardBg = false; if (!saved.cardBorder) room.labelCardBorder = false; if (saved.cardPad !== undefined) room.labelCardPadding = saved.cardPad; delete room.soloPartLook; return true; }
@@ -2444,7 +2445,7 @@ function groupSnap(room, exclude = []) {
 function syncGroupSnapButton(room = roomsOf()[selectedRoomId]) {
   const button = $('#room-group-snap'); if (!button) return;
   const shown = room ? ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length : 0, on = groupSnapOpts().on;
-  button.hidden = !room || room.labelLinked || shown <= 1; button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on));
+  button.hidden = !room || room.labelLinked || (shown <= 1 && !dashSpan(room)); button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on));
   button.innerHTML = `<i class="mdi ${on ? 'mdi-magnet' : 'mdi-magnet-off'}"></i>`;
   if (button.hidden) closeGroupSnapMenu();
 }
@@ -3573,7 +3574,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     }
   }
   const groupButton = $('#room-group-toggle');
-  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1; groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
+  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1 && !dashSpan(room); groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
   if (!newlySelected) $$('.gauge-subsection > summary', content).forEach(node => { if (openSubs.has(subKey(node))) node.parentElement.open = true; });
   const sections = $$('.editor-section', content);

@@ -1,3 +1,7 @@
+## 0.6.1-beta.599
+
+- Kafelki: etykieta z jednym widocznym elementem (np. sama ikona) ma ramkę kafelka i można ją rozgrupować, żeby ustawić element w dowolnym miejscu kafelka. Poza kafelkami bez zmian.
+
 ## 0.6.1-beta.598
 
 - Kafelki: rozgrupowana etykieta zostaje przypięta do swoich kafelków. Ramka to dalej kafelek (lub kafelki), elementy mają ten sam rozmiar i nie wychodzą poza nią. Po zgrupowaniu etykieta znów wypełnia kafelki.
