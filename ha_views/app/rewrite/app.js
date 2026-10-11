@@ -1079,7 +1079,7 @@ function fitDashLabels() {
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
-    const s = clamp(Math.min(tw * .86 / nw, th * .86 / nh), .1, 8);
+    const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
     if (card.classList.contains('free')) { card.style.width = `${(tw / s).toFixed(2)}px`; card.style.height = `${(th / s).toFixed(2)}px`; card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px'); }
     void keep;
@@ -2606,6 +2606,13 @@ function startRoomLabelDrag(event) {
     const snapped = zoneMove ? { xPercent: x - grab[0], yPercent: y - grab[1] } : guides?.boxes ? alignLabel(guides, gp(x - grab[0]), gp(y - grab[1]), e) : alignToGuides(guides, gp(x - grab[0]), gp(y - grab[1]), e);
     const dx = Math.round((snapped.xPercent - ax) / 100 * w / k * 100) / 100 - startOffsets[key][0], dy = Math.round((snapped.yPercent - ay) / 100 * h / k * 100) / 100 - startOffsets[key][1];
     moving.forEach(kk => { room[`${kk}X`] = startOffsets[kk][0] + dx; room[`${kk}Y`] = startOffsets[kk][1] + dy; });
+    // Tiles: a grouped label jumps from tile to tile while it is dragged (the tile under its centre, its size in tiles kept).
+    if (isIconRoom(room) && key === 'labelCard' && room.labelLinked && dashGrid().on) {
+      const g = dashGeom(), keep = room.dash && dashSpan(room) ? room.dash : { w: 1, h: 1 }, bw = keep.w * g.cw + (keep.w - 1) * g.gx, bh = keep.h * g.ch + (keep.h - 1) * g.gy;
+      const t = dashTarget({ x: snapped.xPercent - bw / 2, y: snapped.yPercent - bh / 2, w: bw, h: bh }, keep); room.dash = t; const span = dashSpan(room);
+      if (span) { room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
+      renderRoomLabels(); renderDashGrid(t); return;
+    }
     renderRoomLabels();
     if (zoneMove) {
       // Its top-left corner goes to the nearest crossing (a group sized in zones then covers whole zones again).

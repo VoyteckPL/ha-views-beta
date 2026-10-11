@@ -1,3 +1,7 @@
+## 0.6.1-beta.596
+
+- Kafelki: etykieta przeskakuje z kafelka na kafelek już w trakcie przeciągania. Zawartość wypełnia kafelek prawie w całości (94% węższego boku zamiast 86%).
+
 ## 0.6.1-beta.595
 
 - Tło: nowa sekcja „Kafelki” (obok Obrazu i Koloru). Plan dzieli się na równe kafelki: presety 1×1–4×6 albo własne kolumny × wiersze, odstęp (domyślnie 4 px).
