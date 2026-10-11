@@ -1818,3 +1818,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .editor .control.range-control.has-extra>.range-extra{grid-column:4;grid-row:1;display:flex;gap:3px}
 .editor .control.range-control.has-extra>.slider-reset{grid-column:5}
 .editor .control.range-control.has-extra .range-extra .room-card-preset{width:26px!important;min-width:26px!important;height:26px!important;flex:0 0 26px!important;font-size:14px}
+/* One shown part is the label: only the label's outline is drawn (not a second one round the part). */
+.room-label-card > .room-card-part.panel-part:only-of-type{outline:none!important}

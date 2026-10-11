@@ -1,3 +1,7 @@
+## 0.6.1-beta.609
+
+- Etykieta z jednym elementem: przy otwartej sekcji elementu widać tylko jeden obrys (etykiety), bez drugiego niebieskiego obrysu wokół elementu.
+
 ## 0.6.1-beta.608
 
 - Etykieta z jednym elementem: bez osobnego „Rozmiaru etykiety”. W Rozmiarze elementu są też „Zablokuj rozmiar” i „Margines” (oraz kafelki), a Tło i Ramka na końcu sekcji.
