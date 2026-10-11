@@ -1,3 +1,7 @@
+## 0.6.1-beta.620
+
+- Suwak grubości czcionki nie zmienia już rozmiaru ramki nazwy i stanu (także w termostacie i wskaźniku), a ramka etykiety zostaje taka sama.
+
 ## 0.6.1-beta.619
 
 - Etykieta: margines etykiety do 150 px (wcześniej 60).

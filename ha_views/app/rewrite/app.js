@@ -3821,9 +3821,10 @@ function onRoomEditorInput(event) {
   if (path === 'labelIconSize' && room.labelIconFixedBox && !(Number(room.labelIconW) > 0)) { const n = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="icon"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="icon"]`); if (n?.offsetWidth) { room.labelIconW = n.offsetWidth; room.labelIconH = n.offsetHeight; } }
   // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.
   if (path === 'labelCardPadding' && !fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; }
-  // What fills the name / state boxes changed by hand: their size is taken again from the new text.
-  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Weight|Padding)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; if (!(/Padding$/.test(path) && room[`${k}FixedBox`])) { delete room[`${k}W`]; delete room[`${k}Lock`]; if (/Padding$/.test(path)) delete room[`${k}H`]; } }
-  { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Weight|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
+  // What fills the name / state boxes changed by hand: their size is taken again from the new text. (Not the font
+  // weight: a bolder / lighter text keeps its frame.)
+  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)Padding$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; if (!(/Padding$/.test(path) && room[`${k}FixedBox`])) { delete room[`${k}W`]; delete room[`${k}Lock`]; if (/Padding$/.test(path)) delete room[`${k}H`]; } }
+  { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Tekst' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }
   room[path] = value; room.updatedAt = new Date().toISOString();
