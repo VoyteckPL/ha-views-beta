@@ -1796,3 +1796,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 #room-editor .editor-head .head-preview:has(+ .editor-part-toggles:not([hidden])){margin-right:0}
 /* Phone: sliders take no touches of their own (a tap or a scroll across them changes nothing); the knob is dragged by script. */
 @media (pointer:coarse){.editor input[type=range]{pointer-events:none}}
+/* Ungrouped (only the parts are edited): the plan's grid is not shown at all - only the label's own grid, on its background. */
+.scene.grid-hole:after{opacity:0!important}

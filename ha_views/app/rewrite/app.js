@@ -2308,8 +2308,8 @@ function focusPartSection(part) {
 // Editing the parts of an ungrouped label / thermostat is its own little world: a part snaps only to the other parts
 // of the same group, to the group's centre axes and outer edges, and to the group's own fine grid (shown while moving or
 // resizing) - not to the plan's grid or other elements, whatever "Przyciągaj do" says (only switching the guides off stops it).
-const GROUP_GRID = 10; // group grid step (M), in the label's own px (grows and shrinks with the label)
-const GROUP_GRID_MAJOR = 4; // every 4th line of the group grid (counted from the frame's centre) is a thick one
+const GROUP_GRID = 5; // group grid step (M), in the label's own px (grows and shrinks with the label)
+const GROUP_GRID_MAJOR = 8; // every 8th line of the group grid (counted from the frame's centre) is a thick one
 // Its own settings (the magnet on the panel's head, saved for the whole dashboard): on / off, and what a part snaps to.
 const GROUP_SNAP_DEFAULTS = Object.freeze({ on: true, parts: true, frame: true, spacing: true, grid: 'M' });
 function groupSnapOpts() { return { ...GROUP_SNAP_DEFAULTS, ...(model.settings?.groupSnap || {}), plan: false }; } // "Elementy planu" is gone from the group's snapping
@@ -2333,7 +2333,7 @@ function groupSnap(room, exclude = []) {
   // One grid size for every group (no S / M / L): on or off.
   const ref = parts[0], k = ref ? ref.getBoundingClientRect().width / Math.max(1, ref.offsetWidth) : 1, grid = o.grid !== 'off';
   // Zoomed out the grid gets coarser: its lines stay at least twice the snap reach apart, so it never catches everywhere.
-  let step = GROUP_GRID * k; const minStep = Math.max(16, snapReach() * 2); while (step < minStep) step *= 2;
+  let step = GROUP_GRID * k; const minStep = Math.max(12, snapReach() * 1.5); while (step < minStep) step *= 2;
   const [axp, ayp] = roomAnchor(room), anchor = { x: scene.left + axp / 100 * scene.width, y: scene.top + ayp / 100 * scene.height };
   const rects = parts.map(n => n.getBoundingClientRect()), orects = others.map(n => n.getBoundingClientRect());
   const union = rs => rs.length ? { l: Math.min(...rs.map(r => r.left)), r: Math.max(...rs.map(r => r.right)), t: Math.min(...rs.map(r => r.top)), b: Math.max(...rs.map(r => r.bottom)) } : { l: anchor.x, r: anchor.x, t: anchor.y, b: anchor.y };

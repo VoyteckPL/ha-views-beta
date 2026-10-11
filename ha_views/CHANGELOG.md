@@ -1,3 +1,7 @@
+## 0.6.1-beta.593
+
+- Rozgrupowana etykieta: główna siatka nie jest widoczna. Siatka etykiety (gdy włączona) jest 2× gęstsza; grube linie zostają co tyle samo.
+
 ## 0.6.1-beta.592
 
 - Etykieta: sekcja „Grupa” nazywa się teraz „Etykieta”. Po rozgrupowaniu jest ukryta, bo zmienia się wtedy tylko elementy. Termostat i wskaźnik bez zmian.
