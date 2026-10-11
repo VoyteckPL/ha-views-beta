@@ -1,3 +1,9 @@
+## 0.6.1-beta.606
+
+- Etykieta z jednym widocznym elementem ma jedną warstwę: tło i ramka elementu są automatycznie scalane z tłem i ramką etykiety, a wygląd zostaje taki sam (przezroczystości i kolory nałożonych warstw są przeliczane, ramka i zaokrąglenie przechodzą na etykietę). Tło i ramkę ustawia się wtedy tylko w sekcji Etykieta.
+- Po pokazaniu drugiego elementu wracają osobne tła i ramki jak przed scaleniem. Zmiany zrobione w etykiecie przy jednym elemencie zostają.
+- Istniejące etykiety z jednym elementem i dwoma warstwami są scalane raz przy wczytaniu.
+
 ## 0.6.1-beta.605
 
 - Nazwa/Stan/Ikona: suwak rozmiaru tekstu nie zmienia marginesu, także przy włączonej „Stałej ramce” (wcześniej nieustawiony margines rósł razem z tekstem). Suwak marginesu od razu pokazuje aktualną wartość.

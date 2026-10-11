@@ -765,7 +765,7 @@ function extraEntityText(r, key) {
 function extraEntityName(id) { return String(stateCache[id]?.attributes?.friendly_name || allEntitiesCache?.find(e => e.id === id)?.name || id || ''); }
 // Placed freely, a thermostat's dial is the bottom layer: the parts lying on it (name, icon, state...) stay grabbable.
 const layeredParts = list => [...list].sort((a, b) => (b[0] === 'dial') - (a[0] === 'dial'));
-const ROOM_LABEL_KEYS = ROOM_LABEL_PARTS.flatMap(([, k]) => [k, `${k}Size`, `${k}X`, `${k}Y`, `${k}Bg`, `${k}BgOpacity`, `${k}BgColor`]).concat(['labelCardX','labelCardY','labelCardW','labelCardH','labelCardLayout','labelCardAlign','labelCardBg','labelCardBgColor','labelCardBgOpacity','labelCardBlur','labelCardRadius','labelCardPadding','labelCardGap','labelCardBorder','labelCardBorderColor','labelCardBorderOpacity','labelCardBorderWidth','labelCardBgState','labelCardBgOnColor','labelCardBgOffColor','labelCardBgOnOpacity','labelCardBgOffOpacity','labelCardBorderState','labelCardBorderOnColor','labelCardBorderOffColor','labelCardBorderOnOpacity','labelCardBorderOffOpacity','labelCardBorderOnWidth','labelCardBorderOffWidth','labelCardScale','labelIconDX','labelIconDY','labelNameDX','labelNameDY','labelStateDX','labelStateDY']).concat(['labelLinked','labelIconName','labelIconOn','labelIconOff','labelNameColor','labelStateColor','labelIconVariant','labelIconNameOn','labelIconNameOff','labelIconOpacityOn','labelIconOpacityOff','labelIconFill','labelIconOutline','labelIconOutlineColor','labelIconOutlineWidth','labelIconSource','labelIconBorder','labelIconBorderColor','labelIconBorderOpacity','labelIconBorderWidth','labelIconShape','labelIconRadius','labelIconPadding','labelIconBlur','labelIconColorState','labelIconColor','labelIconOpacity','labelIconOutlineState','labelIconOutlineOnColor','labelIconOutlineOffColor','labelIconOutlineOnWidth','labelIconOutlineOffWidth','labelIconOutlineOpacity','labelIconOutlineOnOpacity','labelIconOutlineOffOpacity','labelIconBgState','labelIconBgOnColor','labelIconBgOffColor','labelIconBgOnOpacity','labelIconBgOffOpacity','labelIconBorderState','labelIconBorderOnColor','labelIconBorderOffColor','labelIconBorderOnOpacity','labelIconBorderOffOpacity','labelIconBorderOnWidth','labelIconBorderOffWidth','labelNameBorder','labelNameBorderColor','labelNameBorderOpacity','labelNameBorderWidth','labelStateBorder','labelStateBorderColor','labelStateBorderOpacity','labelStateBorderWidth','labelEqualFrames','labelCardFree','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelIconFX','labelIconFY','labelNameFX','labelNameFY','labelStateFX','labelStateFY','labelCardShadow','labelStateOnText','labelStateOffText','labelStateUnit','labelStateDecimals','labelRules','labelRulesLow','labelRulesHigh','labelRulesColorLow','labelRulesColorMid','labelRulesColorHigh','labelRulesSmooth','labelRulesIcon','labelRulesState'], ['labelName','labelState'].flatMap(k => ['ColorState', 'ColorOn', 'ColorOff', 'Opacity', 'OpacityOn', 'OpacityOff', 'Weight', 'BgState', 'BgOnColor', 'BgOffColor', 'BgOnOpacity', 'BgOffOpacity', 'Blur', 'BorderState', 'BorderOnColor', 'BorderOffColor', 'BorderOnOpacity', 'BorderOffOpacity', 'BorderOnWidth', 'BorderOffWidth', 'Radius', 'Padding', 'FixedBox'].map(f => k + f)), ['labelSizeLock','labelSpreadBase','labelNameWideW','labelNameWideH','labelStateWideW','labelStateWideH','labelIconFx','labelIconFxPower','labelCardFx','labelCardFxPower']);
+const ROOM_LABEL_KEYS = ROOM_LABEL_PARTS.flatMap(([, k]) => [k, `${k}Size`, `${k}X`, `${k}Y`, `${k}Bg`, `${k}BgOpacity`, `${k}BgColor`]).concat(['labelCardX','labelCardY','labelCardW','labelCardH','labelCardLayout','labelCardAlign','labelCardBg','labelCardBgColor','labelCardBgOpacity','labelCardBlur','labelCardRadius','labelCardPadding','labelCardGap','labelCardBorder','labelCardBorderColor','labelCardBorderOpacity','labelCardBorderWidth','labelCardBgState','labelCardBgOnColor','labelCardBgOffColor','labelCardBgOnOpacity','labelCardBgOffOpacity','labelCardBorderState','labelCardBorderOnColor','labelCardBorderOffColor','labelCardBorderOnOpacity','labelCardBorderOffOpacity','labelCardBorderOnWidth','labelCardBorderOffWidth','labelCardScale','labelIconDX','labelIconDY','labelNameDX','labelNameDY','labelStateDX','labelStateDY']).concat(['labelLinked','labelIconName','labelIconOn','labelIconOff','labelNameColor','labelStateColor','labelIconVariant','labelIconNameOn','labelIconNameOff','labelIconOpacityOn','labelIconOpacityOff','labelIconFill','labelIconOutline','labelIconOutlineColor','labelIconOutlineWidth','labelIconSource','labelIconBorder','labelIconBorderColor','labelIconBorderOpacity','labelIconBorderWidth','labelIconShape','labelIconRadius','labelIconPadding','labelIconBlur','labelIconColorState','labelIconColor','labelIconOpacity','labelIconOutlineState','labelIconOutlineOnColor','labelIconOutlineOffColor','labelIconOutlineOnWidth','labelIconOutlineOffWidth','labelIconOutlineOpacity','labelIconOutlineOnOpacity','labelIconOutlineOffOpacity','labelIconBgState','labelIconBgOnColor','labelIconBgOffColor','labelIconBgOnOpacity','labelIconBgOffOpacity','labelIconBorderState','labelIconBorderOnColor','labelIconBorderOffColor','labelIconBorderOnOpacity','labelIconBorderOffOpacity','labelIconBorderOnWidth','labelIconBorderOffWidth','labelNameBorder','labelNameBorderColor','labelNameBorderOpacity','labelNameBorderWidth','labelStateBorder','labelStateBorderColor','labelStateBorderOpacity','labelStateBorderWidth','labelEqualFrames','labelCardFree','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelIconFX','labelIconFY','labelNameFX','labelNameFY','labelStateFX','labelStateFY','labelCardShadow','labelStateOnText','labelStateOffText','labelStateUnit','labelStateDecimals','labelRules','labelRulesLow','labelRulesHigh','labelRulesColorLow','labelRulesColorMid','labelRulesColorHigh','labelRulesSmooth','labelRulesIcon','labelRulesState'], ['labelName','labelState'].flatMap(k => ['ColorState', 'ColorOn', 'ColorOff', 'Opacity', 'OpacityOn', 'OpacityOff', 'Weight', 'BgState', 'BgOnColor', 'BgOffColor', 'BgOnOpacity', 'BgOffOpacity', 'Blur', 'BorderState', 'BorderOnColor', 'BorderOffColor', 'BorderOnOpacity', 'BorderOffOpacity', 'BorderOnWidth', 'BorderOffWidth', 'Radius', 'Padding', 'FixedBox'].map(f => k + f)), ['singleSaved','labelSizeLock','labelSpreadBase','labelNameWideW','labelNameWideH','labelStateWideW','labelStateWideH','labelIconFx','labelIconFxPower','labelCardFx','labelCardFxPower']);
 // Outline of a room's shape (drawn on top of its light, not faded with it); can follow ON / OFF.
 const ROOM_OUTLINE_KEYS = ['outline','outlineColor','outlineOpacity','outlineWidth','outlineStyle','outlineState','outlineOnColor','outlineOffColor','outlineOnOpacity','outlineOffOpacity','outlineOnWidth','outlineOffWidth'];
 function pct100(value) { return Math.round(clamp(Number(value ?? 1), 0, 1) * 100); }
@@ -1154,7 +1154,7 @@ function roomLabelIconSpec(room, on) {
 }
 // Background and frame of the icon share one shape: square, circle or a free corner radius.
 function roomIconFrameStyle(r, on = false) {
-  if (!r.labelIconBg && !r.labelIconBorder) return '';
+  if (!r.labelIconBg && !r.labelIconBorder) return r.singleSaved?.key === 'labelIcon' ? `;padding:${clamp(Number(r.labelIconPadding ?? 6), 0, 120)}px` : '';
   const pick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const shape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
   const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px`;
@@ -1164,6 +1164,45 @@ function roomIconFrameStyle(r, on = false) {
     + (r.labelIconBorder ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Width')) || 1.5, .5, 12)}px ${rgba(pick('labelIconBorderState', 'labelIconBorder', 'Color') || '#FFFFFF', clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Opacity') ?? .6), 0, 1))}` : '');
 }
 // beta.256 had one label block (shared colour, size, layout, offset); it becomes three parts placed the same way.
+// One shown part = one layer: its own background / frame are merged into the label's (the label's then is the only one
+// to set), looking the same as the two did together; showing a second part gives both their own back.
+const LOOK_SUFFIX = ['', 'State', 'Color', 'Opacity', 'OnColor', 'OffColor', 'OnOpacity', 'OffOpacity', 'Width', 'OnWidth', 'OffWidth'];
+const lookKeys = base => LOOK_SUFFIX.map(sfx => `${base}${sfx}`);
+function mergeSingleLook(room) {
+  if (!room || !isIconRoom(room) || isThermoRoom(room) || isTextRoom(room) || room.singleSaved) return false;
+  const shown = ROOM_LABEL_PARTS.map(([, k]) => k).filter(k => room[k]); if (shown.length !== 1) return false;
+  const k = shown[0]; if (!room[`${k}Bg`] && !room[`${k}Border`]) return false;
+  const r = { ...ROOM_DEFAULTS, ...room }, keys = [...lookKeys('labelCardBg'), ...lookKeys('labelCardBorder'), 'labelCardRadius', 'labelCardBlur', ...lookKeys(`${k}Bg`), ...lookKeys(`${k}Border`), `${k}Blur`];
+  const saved = Object.fromEntries(keys.map(x => [x, room[x]]));
+  const hex = c => { const raw = String(c || '#000000').replace('#', ''), n = parseInt(raw.length === 3 ? raw.split('').map(x => x + x).join('') : raw, 16) || 0; return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const toHex = rgb => '#' + rgb.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('').toUpperCase();
+  const layer = (base, on, defC, defA) => { if (!r[base]) return { c: [0, 0, 0], a: 0 }; const st = !!r[`${base}State`]; const c = (st ? r[`${base}${on ? 'On' : 'Off'}Color`] : r[`${base}Color`]) || defC, a = Number((st ? r[`${base}${on ? 'On' : 'Off'}Opacity`] : r[`${base}Opacity`]) ?? defA); return { c: hex(c), a: clamp(a, 0, 1) }; };
+  // Two layers seen together: the part's over the label's.
+  const over = on => { const lo = layer('labelCardBg', on, '#081822', .62), hi = layer(`${k}Bg`, on, '#081822', .55), a = hi.a + lo.a * (1 - hi.a); return { a, c: a > 0 ? hi.c.map((v, i) => (v * hi.a + lo.c[i] * lo.a * (1 - hi.a)) / a) : lo.c }; };
+  if (room.labelCardBg || room[`${k}Bg`]) {
+    const on = over(true), off = over(false), stateful = !!(r.labelCardBg && r.labelCardBgState) || !!(r[`${k}Bg`] && r[`${k}BgState`]);
+    room.labelCardBg = true;
+    if (stateful) Object.assign(room, { labelCardBgState: true, labelCardBgOnColor: toHex(on.c), labelCardBgOffColor: toHex(off.c), labelCardBgOnOpacity: Math.round(on.a * 100) / 100, labelCardBgOffOpacity: Math.round(off.a * 100) / 100 });
+    else Object.assign(room, { labelCardBgState: false, labelCardBgColor: toHex(off.c), labelCardBgOpacity: Math.round(off.a * 100) / 100 });
+    if (r[`${k}Blur`]) room.labelCardBlur = true;
+  }
+  // The frame: the label's own when it has one, else the part's.
+  if (!room.labelCardBorder && room[`${k}Border`]) { room.labelCardBorder = true; LOOK_SUFFIX.slice(1).forEach(sfx => { if (r[`${k}Border${sfx}`] !== undefined) room[`labelCardBorder${sfx}`] = r[`${k}Border${sfx}`]; }); }
+  // Corners: the part's, when the label hugs it.
+  if (!(Number(room.labelCardPadding) > 0)) { const pn = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', node = $(`#room-labels [data-room-id="${CSS.escape(room.id)}"] [data-label-part="${pn}"], #room-labels .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${pn}"]`), rad = node ? getComputedStyle(node).borderTopLeftRadius : ''; if (rad && !rad.endsWith('%') && parseFloat(rad) >= 0) room.labelCardRadius = Math.round(parseFloat(rad) * 10) / 10; }
+  room[`${k}Bg`] = false; room[`${k}Border`] = false;
+  room.singleSaved = { key: k, saved, merged: Object.fromEntries(keys.map(x => [x, room[x]])) };
+  return true;
+}
+function restoreSingleLook(room) {
+  const s = room?.singleSaved; if (!s) return false;
+  const k = s.key; Object.entries(s.saved).forEach(([x, v]) => {
+    // The label's own look changed while it had one part: that change stays; the part gets its own look back.
+    if (!x.startsWith(k) && room[x] !== s.merged[x]) return;
+    if (v === undefined) delete room[x]; else room[x] = v;
+  });
+  delete room.singleSaved; return true;
+}
 function migrateRoomLabel(room) {
   // beta.258–260: a typed icon name meant "own icon"; it is now the explicit "Własna ikona MDI" source.
   let changed = false;
@@ -1173,6 +1212,7 @@ function migrateRoomLabel(room) {
   if (room && !room.soloFrameV2) { room.soloFrameV2 = true; changed = true; }
   // beta.603: a label with one part is a label like any other again - the background / frame it had are given back.
   if (room?.soloSaved) { Object.assign(room, room.soloSaved); delete room.soloSaved; changed = true; }
+  if (room && !room.singleLookV1) { room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
@@ -1198,7 +1238,7 @@ function roomTextPartStyle(r, key, on = false) {
   const bg = r[`${key}Bg`] ? `;background:${rgba(pick('Color', 'Bg') || '#081822', clamp(Number(pick('Opacity', 'Bg') ?? .55), 0, 1))}` + (r[`${key}Blur`] ? ';-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)' : '') : '';
   const border = r[`${key}Border`] ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('Width', 'Border')) || 1.5, .5, 12)}px ${rgba(pick('Color', 'Border') || '#FFFFFF', clamp(Number(pick('Opacity', 'Border') ?? .6), 0, 1))}` : '';
   // Corners and inner margin (px); unset = the default, which grows with the text size.
-  const shape = (r[`${key}Bg`] || r[`${key}Border`]) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
+  const shape = (r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
     + (Number.isFinite(Number(r[`${key}Padding`])) && r[`${key}Padding`] !== '' && r[`${key}Padding`] != null ? `;padding:${clamp(Number(r[`${key}Padding`]), 0, 120)}px ${Math.round(clamp(Number(r[`${key}Padding`]), 0, 120) * 2)}px` : '') : '';
   return bg + border + shape;
 }
@@ -3362,7 +3402,8 @@ function roomEditorMarkup(room) {
   // Section with its own colour and on / off buttons on its bar (outline, background, frame).
   const noData = thermoMissingParts(r), noDataTag = `<em class="no-data-tag" title="${escapeHtml(translateValue('Encja nie podaje tej wartości — ta część nic nie pokaże'))}">${escapeHtml(translateValue('brak w encji'))}</em>`;
   const partBar = (part, title, body, toggles) => `<details class="editor-section part-section part-${part}${noData.has(part) ? ' no-data' : ''}"><summary><span>${escapeHtml(translateValue(title))}${noData.has(part) ? noDataTag : ''}</span><span class="section-tools">${toggles.map(([k, t, mdi]) => k === '|' ? '<span class="section-sep" aria-hidden="true"></span>' : `<button type="button" class="section-toggle${r[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!r[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${mdi}"></i></button>`).join('')}${partStyleTools(part)}</span></summary><div class="editor-section-body">${body}</div></details>`;
-  const frameToggles = key => [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
+  // One shown part: its background / frame are the label's (set in the Etykieta section).
+  const frameToggles = key => r.singleSaved?.key === key ? [] : [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
   const partSection = ([part, key, title]) => {
     if (isTextRoom(r) && part === 'state') title = 'Podpis';
     if (isExtraPart(part)) { if (!r[`${key}Entity`]) return ''; title = String(r[`${key}Prefix`] || '').trim() || extraEntityName(r[`${key}Entity`]); }
@@ -3406,7 +3447,7 @@ function roomEditorMarkup(room) {
       + sub('Kolory stanu pracy', thermoActsUsed(r).filter(k => THERMO_ACT_COLORS[k]).map(k => control(THERMO_ACTIONS[k]?.[0] || k, `thermoActColor_${k}`, 'color', thermoActColor(r, k))).join('') + control('Tor tarczy','thermoTrackColor','color',r.thermoTrackColor))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
-    const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = r.labelIconBg || r.labelIconBorder;
+    const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon';
     if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
@@ -3451,7 +3492,7 @@ function roomEditorMarkup(room) {
         + control('Ramki przycisków','thermoModeFrame','checkbox',r.thermoModeFrame !== false)
         + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
     const boxText = !isThermoRoom(r) && BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
-    const framed = r[`${key}Bg`] || r[`${key}Border`];
+    const framed = r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key;
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
     const textRadius = range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px');
@@ -3770,6 +3811,7 @@ function onRoomEditorClick(event) {
     const showing = parts.includes(key) && !room[key];
     if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
     room[key] = !room[key];
+    if (partKeys.includes(key)) { const n = partKeys.filter(k => room[k]).length; if (n > 1) restoreSingleLook(room); else if (n === 1) { restoreSingleLook(room); renderRoomLabels(); mergeSingleLook(room); } }
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
     // and state leaves the frame around the icon only. The parts stay where they are.
@@ -3918,7 +3960,9 @@ async function resetRoomStyle() {
   Object.assign(room, Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in ROOM_DEFAULTS).map(key => [key, clone(ROOM_DEFAULTS[key])])), NEW_ROOM_LABEL, icon ? { labelCardScale:ICON_LABEL_SCALE } : {}, isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : isThermoRoom(room) ? thermoLook() : {});
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
+  delete room.singleSaved;
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
+  if (icon && mergeSingleLook(room)) renderRooms();
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
   notify(isGaugeRoom(room) ? 'Przywrócono domyślny wygląd wskaźnika' : isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
