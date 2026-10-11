@@ -1,3 +1,8 @@
+## 0.6.1-beta.608
+
+- Etykieta z jednym elementem: bez osobnego „Rozmiaru etykiety”. W Rozmiarze elementu są też „Zablokuj rozmiar” i „Margines” (oraz kafelki), a Tło i Ramka na końcu sekcji.
+- Pokazany ponownie element nie nakłada się na pozostałe: ikona trafia nad nie, tekst pod nie, a ramka etykiety się poszerza.
+
 ## 0.6.1-beta.607
 
 - Etykieta z jednym widocznym elementem: nie ma osobnej sekcji Etykieta. Wszystko jest w sekcji tego elementu: przyciski Tło/Ramka na jej pasku, a na końcu „Rozmiar etykiety” (blokada, skala, margines, kafelki) oraz Tło i Ramka.

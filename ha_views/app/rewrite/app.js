@@ -1194,6 +1194,20 @@ function mergeSingleLook(room) {
   room.singleSaved = { key: k, saved, merged: Object.fromEntries(keys.map(x => [x, room[x]])) };
   return true;
 }
+// A part shown again in a group laid out freely is put next to the others (the icon above them, a text below), not on
+// top of them; the label's frame then grows round it.
+function placeShownPart(room, key) {
+  const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`); if (!card) return false;
+  const nodes = [...card.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, k]) => k && n.offsetWidth);
+  const me = nodes.find(([, k]) => k === key), others = nodes.filter(([, k]) => k !== key); if (!me || !others.length) return false;
+  const box = ([n, k]) => { const [w, h] = cssBox(n), fx = Number(room[`${k}FX`]) || 0, fy = Number(room[`${k}FY`]) || 0; return { l: fx - w / 2, r: fx + w / 2, t: fy - h / 2, b: fy + h / 2 }; };
+  const o = others.map(box), m = box(me), gap = clamp(Number(room.labelPartGap ?? 12), 0, 80), h = m.b - m.t;
+  const overlaps = o.some(q => m.l < q.r && m.r > q.l && m.t < q.b && m.b > q.t); if (!overlaps) return false;
+  const cx = (Math.min(...o.map(q => q.l)) + Math.max(...o.map(q => q.r))) / 2;
+  room[`${key}FX`] = Math.round(cx * 100) / 100;
+  room[`${key}FY`] = Math.round((key === 'labelIcon' ? Math.min(...o.map(q => q.t)) - gap - h / 2 : Math.max(...o.map(q => q.b)) + gap + h / 2) * 100) / 100;
+  renderRoomLabels(); return true;
+}
 function restoreSingleLook(room) {
   const s = room?.singleSaved; if (!s) return false;
   const k = s.key; Object.entries(s.saved).forEach(([x, v]) => {
@@ -3449,7 +3463,7 @@ function roomEditorMarkup(room) {
       + sub('Kolory stanu pracy', thermoActsUsed(r).filter(k => THERMO_ACT_COLORS[k]).map(k => control(THERMO_ACTIONS[k]?.[0] || k, `thermoActColor_${k}`, 'color', thermoActColor(r, k))).join('') + control('Tor tarczy','thermoTrackColor','color',r.thermoTrackColor))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
-    const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon';
+    const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = oneShown !== 'labelIcon' && (r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon');
     if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
@@ -3494,7 +3508,7 @@ function roomEditorMarkup(room) {
         + control('Ramki przycisków','thermoModeFrame','checkbox',r.thermoModeFrame !== false)
         + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
     const boxText = !isThermoRoom(r) && BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
-    const framed = r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key;
+    const framed = oneShown !== key && (r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key);
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
     const textRadius = range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px');
@@ -3542,6 +3556,10 @@ function roomEditorMarkup(room) {
     + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     );
+  const dashRows = (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
+          ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
+            + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
+          : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
   const group = partBar('group', icon && !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
@@ -3551,10 +3569,7 @@ function roomEditorMarkup(room) {
     // Labels (and thermostats) are laid out freely and keep their own look: no layout presets and no style presets
     // (a drawn room's label still has them).
     + ((r.labelLinked && !isIconRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
-        + (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
-          ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
-            + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
-          : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '')
+        + dashRows
         + (isIconRoom(r) ? '' : row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join('')))
         + (soloLabel(r) ? '' : bgSub + borderSub))
     + `</div>`, [
@@ -3579,8 +3594,11 @@ function roomEditorMarkup(room) {
   // Ungrouped, only the parts are worked on: no label section then (a thermostat keeps it - its parts are switched there).
   // One shown part: no label section - the label's controls (its size, margin, tiles, background, frame) go to the end of
   // that part's section, the label's size titled apart from the part's own.
-  const groupBody = oneShown ? (m => m ? m[1] : '')(/<div class="editor-section-body">([\s\S]*)<\/div><\/details>$/.exec(group)).replace(`<summary>${escapeHtml(translateValue('Rozmiar'))}</summary>`, `<summary>${escapeHtml(translateValue('Rozmiar etykiety'))}</summary>`) : '';
-  const partHtml = item => { const h = partSection(item), key = item[1]; return oneShown === key && groupBody ? h.replace(/<\/div><\/details>$/, `${groupBody}</div></details>`) : h; };
+  const oneSize = oneShown ? control('Zablokuj rozmiar','labelSizeLock','checkbox',!!r.labelSizeLock) + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true })) + dashRows : '';
+  const partHtml = item => { const key = item[1]; let h = partSection(item); if (oneShown !== key) return h;
+    // (Its own Size subsection is the first one: the label's rows go at its end.)
+    h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
+    return h.replace(/<\/div><\/details>$/, `${bgSub}${borderSub}</div></details>`); };
   const label = (soloLabel(r) || oneShown || (icon && !isThermoRoom(r) && !r.labelLinked && !dashSpan(r)) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
@@ -3818,6 +3836,7 @@ function onRoomEditorClick(event) {
     if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
     room[key] = !room[key];
     if (partKeys.includes(key)) { const n = partKeys.filter(k => room[k]).length; if (n > 1) restoreSingleLook(room); else if (n === 1) { restoreSingleLook(room); renderRoomLabels(); mergeSingleLook(room); } }
+    if (showing && partKeys.includes(key) && room.labelLinked && room.labelCardFree && !isThermoRoom(room)) { renderRoomLabels(); placeShownPart(room, key); }
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
     // and state leaves the frame around the icon only. The parts stay where they are.
