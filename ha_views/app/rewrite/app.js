@@ -2094,7 +2094,7 @@ function startFreeResize(event, handle) {
   })() : null;
   const posX = soloNode ? 'labelCardX' : `${key}X`, posY = soloNode ? 'labelCardY' : `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : soloNode ? `.room-label-card[data-room-id="${id}"] > [data-label-part="${node.dataset.labelPart}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
-  const groupMode = !isCard && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1, gctx = groupMode ? groupSnap(room, [node]) : null;
+  const groupMode = !isCard && !room.labelLinked && (ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1 || !!dashSpan(room)), gctx = groupMode ? groupSnap(room, [node]) : null;
   const gopts = groupSnapOpts(), st = groupMode ? { ...snapTargets(), edges: true, centers: true, labels: true } : snapTargets(), view = visibleSceneRect(), useSnap = groupMode ? gopts.on : st.guides;
   const g = groupMode ? { xs: [...gctx.xs], ys: [...gctx.ys] } : useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
   const planBoxes = groupMode && gopts.plan ? (p => { g.xs.push(...p.xs); g.ys.push(...p.ys); return p.boxes; })(groupPlanTargets(room, scene)) : [];
@@ -2584,7 +2584,7 @@ function startRoomLabelDrag(event) {
   const [sx, sy] = scenePercentAt(event), [px, py] = partPct(key), grab = [sx - px, sy - py];
   // Guides only of this room: its outline edges and centre, the label anchor, and its label parts that stay in place.
   let guides = null;
-  const groupMode = key !== 'labelCard' && !room.labelLinked && ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1;
+  const groupMode = key !== 'labelCard' && !room.labelLinked && (ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1 || !!dashSpan(room)); // (on tiles a lone part too: it snaps to its label's grid and frame)
   const roomGuides = () => {
     if (groupMode) {
       // Worked out again on every move (the parts pushed apart, the camera), from the part as it is drawn now.
@@ -3538,7 +3538,7 @@ function roomEditorMarkup(room) {
       + sub(soloLabel(r) ? 'Ramka elementu' : 'Ramka', fxRows('labelCardFx', 'labelCardFxPower', LABEL_FRAME_FX, 'mdi-creation', 'Styl')), []);
   })();
   // Ungrouped, only the parts are worked on: no label section then (a thermostat keeps it - its parts are switched there).
-  const label = (soloLabel(r) || (icon && !isThermoRoom(r) && !r.labelLinked) ? '' : group) + sectionOrder.map(partSection).join('') + fxSection;
+  const label = (soloLabel(r) || (icon && !isThermoRoom(r) && !r.labelLinked && !dashSpan(r)) ? '' : group) + sectionOrder.map(partSection).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
   return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;

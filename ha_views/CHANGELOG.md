@@ -1,3 +1,7 @@
+## 0.6.1-beta.600
+
+- Kafelki: rozgrupowany pojedynczy element (np. sama ikona) przyciąga się jak przy kilku elementach: do siatki etykiety, ramki kafelka i jej środka. Sekcja Etykieta w panelu nie znika po rozgrupowaniu (tylko w trybie kafelków).
+
 ## 0.6.1-beta.599
 
 - Kafelki: etykieta z jednym widocznym elementem (np. sama ikona) ma ramkę kafelka i można ją rozgrupować, żeby ustawić element w dowolnym miejscu kafelka. Poza kafelkami bez zmian.
