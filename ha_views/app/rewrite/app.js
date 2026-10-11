@@ -3830,11 +3830,16 @@ function pasteRoomStyle() {
 async function resetRoomStyle() {
   const room = roomsOf()[selectedRoomId]; if (!room) return; const icon = isIconRoom(room);
   if (!await appConfirm({ title:'Przywrócić domyślny wygląd?', message: icon ? 'Wygląd i akcja dotknięcia etykiety wrócą do domyślnych. Położenie, nazwa i encja zostaną.' : 'Wygląd i akcja dotknięcia pomieszczenia wrócą do domyślnych. Kształt, nazwa i encje zostaną.', confirmText:'Przywróć', danger:true })) return;
+  // A label stays where it is: its centre on the plan before the reset (its group, or the frame round its parts).
+  const id = CSS.escape(room.id), centre = () => { const rs = [`#room-labels .room-label-card[data-room-id="${id}"]`, `#room-labels .room-label-backdrop[data-room-id="${id}"]`].map(q => $(q)?.getBoundingClientRect()).filter(q => q?.width); const ps = rs.length ? rs : $$(`#room-labels .room-label-part[data-room-id="${id}"]`).map(n => n.getBoundingClientRect()).filter(q => q.width); return ps.length ? [(Math.min(...ps.map(q => q.left)) + Math.max(...ps.map(q => q.right))) / 2, (Math.min(...ps.map(q => q.top)) + Math.max(...ps.map(q => q.bottom))) / 2] : null; };
+  const before = icon ? centre() : null;
   ROOM_STYLE_KEYS.forEach(key => delete room[key]);
   Object.assign(room, Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in ROOM_DEFAULTS).map(key => [key, clone(ROOM_DEFAULTS[key])])), NEW_ROOM_LABEL, icon ? { labelCardScale:ICON_LABEL_SCALE } : {}, isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : isThermoRoom(room) ? thermoLook() : {});
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
-  room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id); openRoomEditor(room.id); scheduleSave(true);
+  room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
+  if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
+  openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
   notify(isGaugeRoom(room) ? 'Przywrócono domyślny wygląd wskaźnika' : isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
 }
 let actPickOpen = false; // the work-state list stays open while states are being ticked

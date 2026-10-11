@@ -1,3 +1,7 @@
+## 0.6.1-beta.591
+
+- Etykieta: „Przywróć domyślne” zostawia etykietę w tym samym miejscu na planie (zgrupowaną i rozgrupowaną), a potem kamera centruje się na niej z 20% marginesu.
+
 ## 0.6.1-beta.590
 
 - Etykieta, Ikona/Nazwa/Stan: „Zaokrąglenie” i „Grubość ramki” przeniesione do podsekcji Ramka (bez ramki zaokrąglenie jest w Tle). Suwaki w Rozmiarze mają nazwy.
