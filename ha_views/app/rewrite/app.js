@@ -1256,6 +1256,8 @@ function migrateRoomLabel(room) {
   if (room && !room.soloFrameV2) { room.soloFrameV2 = true; changed = true; }
   // beta.603: a label with one part is a label like any other again - the background / frame it had are given back.
   if (room?.soloSaved) { Object.assign(room, room.soloSaved); delete room.soloSaved; changed = true; }
+  // beta.619: the size lock is gone - a locked label hugs its parts again (its margin slider sets the room round them).
+  if (room?.labelSizeLock && !isThermoRoom(room)) { ['labelSizeLock','labelLockBase','labelCardW','labelCardH','labelCardCentred','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]); changed = true; }
   if (room && !room.singleLookV1) { room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
@@ -1413,7 +1415,7 @@ function equalizeLabelFrames(room, group) {
 // The frame a label keeps while ungrouped together with its parts (plus the group's margin): its centre offset (plan px)
 // and size (group px).
 function labelUnionFrame(room, kept, rects, scene, w, k) {
-  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
   const ox = scene.left + ax / 100 * scene.width, oy = scene.top + ay / 100 * scene.height, kx = ox + Number(kept.x) * toPlan, ky = oy + Number(kept.y) * toPlan, hw = Number(kept.w) * local / 2, hh = Number(kept.h) * local / 2;
   const L = Math.min(kx - hw, ...rects.map(r => r.left - pad * 1.35 * local)), R = Math.max(kx + hw, ...rects.map(r => r.right + pad * 1.35 * local)), T = Math.min(ky - hh, ...rects.map(r => r.top - pad * local)), B = Math.max(ky + hh, ...rects.map(r => r.bottom + pad * local));
   const r2 = v => Math.round(v * 100) / 100;
@@ -1433,7 +1435,7 @@ function fitLabelBackdrop(room, group) {
   // A label given its own frame size keeps it while ungrouped; a part taken past it widens it (live, never stored).
   if (kept && !fixedFrame(room)) { const u = labelUnionFrame(room, kept, rects, scene, w, k); backdrop.style.setProperty('--lx', `${u.x}px`); backdrop.style.setProperty('--ly', `${u.y}px`); backdrop.style.width = `${u.w}px`; backdrop.style.height = `${u.h}px`; return; }
   if (kept) { backdrop.style.setProperty('--lx', `${kept.x}px`); backdrop.style.setProperty('--ly', `${kept.y}px`); backdrop.style.width = `${kept.w}px`; backdrop.style.height = `${kept.h}px`; return; }
-  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+  const [ax, ay] = roomAnchor(room), toPlan = (scene.width / w) * k, local = toPlan * clamp(Number(room.labelCardScale) || 1, .3, 6), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
   backdrop.style.setProperty('--lx', `${((left + right) / 2 - scene.left - ax / 100 * scene.width) / toPlan}px`);
   backdrop.style.setProperty('--ly', `${((top + bottom) / 2 - scene.top - ay / 100 * scene.height) / toPlan}px`);
@@ -1466,7 +1468,7 @@ function fitFreeCard(room, group) {
   // The group hugs the parts that are shown (a hidden part leaves no empty space): sized to their box, and the box's
   // centre offset is moved onto the card, so the shown parts stay exactly where they are on the plan.
   const parts = [...card.children].map(node => [node, partKey(node)]).filter(([, key]) => key); if (!parts.length) return;
-  const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+  const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
   const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
   // A group centred on its frame (grouped again with the frame it kept): the frame's size, its centre on the group's point.
@@ -1779,7 +1781,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : solo ? 'box-sizing:border-box' : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
-      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 60)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 60) * 1.35)}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
+      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 150)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 150) * 1.35)}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
     // texts and margin stay as they are, centred in it).
@@ -2096,7 +2098,7 @@ function startLockedResize(event, handle, room) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 function startFreeResize(event, handle) {
-  { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; if (cardNode && r0 && isIconRoom(r0) && !isThermoRoom(r0) && r0.labelSizeLock && !dashSpan(r0)) return startLockedResize(event, handle, r0); }
+  { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; /* (the size lock was removed: the label's margin slider sets the room round its parts) */ }
   { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; if (cardNode && r0 && isIconRoom(r0) && dashSpan(r0)) return startDashResize(event, handle, r0); }
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   let node = handle.closest('.room-label-card, .room-label-part'); const room = roomsOf()[node?.dataset.roomId]; if (!room) return;
@@ -2120,7 +2122,7 @@ function startFreeResize(event, handle) {
   // centre plus the margin (not its current frame), and its frame size is always kept (never handed back to the parts).
   const centredCard = node.classList.contains('room-label-card') && !!room.labelCardCentred && Number(room.labelCardW) > 0 && !!room.labelCardFree;
   if (centredCard) {
-    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60), parts = [...node.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth);
+    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150), parts = [...node.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth);
     if (parts.length) { natW = 2 * Math.max(...parts.map(([n, kk]) => Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2)) + (parts.length > 1 ? pad * 2.7 : 0); natH = 2 * Math.max(...parts.map(([n, kk]) => Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2)) + (parts.length > 1 ? pad * 2 : 0); }
   }
   const cardScale0 = clamp(Number(room.labelCardScale) || 1, .3, 6), cardBase = Math.max(cardScale0, Number(room.labelCardFitBase) || 0);
@@ -2171,7 +2173,7 @@ function startFreeResize(event, handle) {
     } else if (!room.labelCardCentred) ROOM_LABEL_PARTS.forEach(([, kk]) => { if (room[`${kk}FX`] !== undefined) { room[`${kk}FX`] = Math.round(((Number(room[`${kk}FX`]) || 0) - fsx) * 100) / 100; room[`${kk}FY`] = Math.round(((Number(room[`${kk}FY`]) || 0) - fsy) * 100) / 100; } });
     if (!room.labelCardCentred) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + fsx * lsc) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + fsy * lsc) * 100) / 100; room.labelCardW = parseFloat(cs.width) || node.offsetWidth; room.labelCardH = parseFloat(cs.height) || node.offsetHeight; room.labelCardCentred = true; renderRoomLabels(); }
     // The parts' extent around the centre (group px at the starting scale) and the margin: the least frame they need.
-    const card = $(`.room-label-card[data-room-id="${id}"]`), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+    const card = $(`.room-label-card[data-room-id="${id}"]`), pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
     const ext = [...(card?.querySelectorAll(':scope > .room-card-part') || [])].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => [Math.abs(Number(room[`${kk}FX`]) || 0) + n.offsetWidth / 2, Math.abs(Number(room[`${kk}FY`]) || 0) + n.offsetHeight / 2]);
     zoneParts = { w: ext.length ? 2 * Math.max(...ext.map(e => e[0])) + pad * 2.7 : node.offsetWidth, h: ext.length ? 2 * Math.max(...ext.map(e => e[1])) + pad * 2 : node.offsetHeight };
   }
@@ -2180,7 +2182,7 @@ function startFreeResize(event, handle) {
   // centre); parts in one line across that side (a column made wider) get wider boxes - the name and state, never the icon.
   const spread = scaleWhole && freeLabelCard(room) ? (() => {
     const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`); if (!card) return null; node = card;
-    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60);
+    const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
     const parts = [...card.querySelectorAll(':scope > .room-card-part')].map(n => [n, partKey(n)]).filter(([n, kk]) => kk && n.offsetWidth).map(([n, kk]) => {
       let [w, h] = cssBox(n); const text = BOX_TEXT_KEYS.includes(kk);
       // A text box widened by an earlier stretch counts at its own (natural) size again, so the label can be narrowed back.
@@ -3494,7 +3496,7 @@ function roomEditorMarkup(room) {
   // One shown part: its background / frame are the label's (set in the Etykieta section).
   // One shown part is the label: its section holds the label's background / frame (and all its sizes, below).
   const oneShown = icon && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 ? ROOM_LABEL_PARTS.find(([, k]) => r[k])[1] : '';
-  const frameToggles = key => oneShown === key ? [['labelSizeLock', r.labelSizeLock ? 'Rozmiar zablokowany' : 'Zablokuj rozmiar', r.labelSizeLock ? 'mdi-lock' : 'mdi-lock-open-variant-outline'], ['|'], ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']] : [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
+  const frameToggles = key => oneShown === key ? [['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']] : [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
   const partSection = ([part, key, title]) => {
     if (isTextRoom(r) && part === 'state') title = 'Podpis';
     if (isExtraPart(part)) { if (!r[`${key}Entity`]) return ''; title = String(r[`${key}Prefix`] || '').trim() || extraEntityName(r[`${key}Entity`]); }
@@ -3628,7 +3630,7 @@ function roomEditorMarkup(room) {
   // arranging the parts (aligned left / centre / right, top / middle / bottom) and giving name and state one width.
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
   const groupSize = !ownSize ? '' : sizeOpen((control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
-    + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
+    + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }))
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     );
   const dashRows = (icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
@@ -3640,7 +3642,7 @@ function roomEditorMarkup(room) {
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
     // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
-    + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true })))
+    + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true })))
     // Labels (and thermostats) are laid out freely and keep their own look: no layout presets and no style presets
     // (a drawn room's label still has them).
     + ((r.labelLinked && !isIconRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
@@ -3651,7 +3653,7 @@ function roomEditorMarkup(room) {
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
       // (A label's parts are switched on / off from the editor's head.)
       // A lone part is the label: the group has no background / frame of its own then.
-      ...(isThermoRoom(r) ? [['|']] : [['labelSizeLock', r.labelSizeLock ? 'Rozmiar zablokowany' : 'Zablokuj rozmiar', r.labelSizeLock ? 'mdi-lock' : 'mdi-lock-open-variant-outline'], ['|']]), ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
+      ...(isThermoRoom(r) ? [['|']] : []), ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
   // Sections in the order of "Pokaż": icon, name, mode text, the thermostat's parts, each mode button, extra entities.
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
@@ -3669,7 +3671,7 @@ function roomEditorMarkup(room) {
   // Ungrouped, only the parts are worked on: no label section then (a thermostat keeps it - its parts are switched there).
   // One shown part: no label section - the label's controls (its size, margin, tiles, background, frame) go to the end of
   // that part's section, the label's size titled apart from the part's own.
-  const oneSize = oneShown ? (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true })) + dashRows : '';
+  const oneSize = oneShown ? (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true })) + dashRows : '';
   const partHtml = item => { const key = item[1]; let h = partSection(item); if (oneShown !== key) return h;
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);

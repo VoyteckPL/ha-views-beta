@@ -1,3 +1,8 @@
+## 0.6.1-beta.619
+
+- Etykieta: margines etykiety do 150 px (wcześniej 60).
+- Usunięta blokada rozmiaru (kłódka). Odstęp ramki od elementów ustawia się suwakiem Margines. Zablokowane wcześniej etykiety znów dopasowują ramkę do elementów.
+
 ## 0.6.1-beta.618
 
 - Zablokowana etykieta: zmiana kształtu kropkami jest liczona zawsze od stanu z chwili zablokowania (albo ostatniej edycji elementów). Po mocnym zwężeniu i ponownym poszerzeniu tekst wraca do swojego rozmiaru.
