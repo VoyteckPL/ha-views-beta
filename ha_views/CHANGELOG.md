@@ -1,3 +1,8 @@
+## 0.6.1-beta.590
+
+- Etykieta, Ikona/Nazwa/Stan: „Zaokrąglenie” i „Grubość ramki” przeniesione do podsekcji Ramka (bez ramki zaokrąglenie jest w Tle). Suwaki w Rozmiarze mają nazwy.
+- Grubość czcionki to teraz suwak (100–900), który płynnie pogrubia tekst. Jest w każdej sekcji z tekstem, także w termostacie.
+
 ## 0.6.1-beta.589
 
 - Etykieta, Grupa: „Grubość ramki” i „Zaokrąglenie” przeniesione do podsekcji Ramka (a gdy ramka jest wyłączona, zaokrąglenie jest w Tle). Suwaki w Grupa → Rozmiar mają znowu nazwy (Rozmiar, Margines, Odstęp).

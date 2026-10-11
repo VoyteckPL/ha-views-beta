@@ -1157,11 +1157,13 @@ function roomTextPartStyle(r, key, on = false) {
   return bg + border + shape;
 }
 const TEXT_WEIGHTS = { normal:400, medium:600, bold:700 };
+// A text's weight: a named one (older labels, the bold button) or any number 100-900 (the slider).
+const textWeight = (r, key, fallback) => { const v = r?.[`${key}Weight`]; return TEXT_WEIGHTS[v] || (Number(v) >= 100 && Number(v) <= 900 ? Number(v) : fallback); };
 // Colour (fixed or ON / OFF), opacity and weight of the name / state text.
 function roomTextStyle(r, key, on = false) {
   const state = !!r[`${key}ColorState`], color = state ? sv(r, `${key}ColorOn`, `${key}ColorOff`, on) : r[`${key}Color`];
   const opacity = clamp(Number(state ? sv(r, `${key}OpacityOn`, `${key}OpacityOff`, on) : r[`${key}Opacity`]) ?? 1, 0, 1);
-  return `color:${rgba(color || '#FFFFFF', Number.isFinite(opacity) ? opacity : 1)};font-weight:${TEXT_WEIGHTS[r[`${key}Weight`]] || (key === 'labelName' ? 700 : 400)}`;
+  return `color:${rgba(color || '#FFFFFF', Number.isFinite(opacity) ? opacity : 1)};font-weight:${textWeight(r, key, key === 'labelName' ? 700 : 400)}`;
 }
 // Ungrouped, the name and state get their own background and frame (like the icon) when they had none;
 // grouping again keeps the look they have.
@@ -1475,7 +1477,7 @@ const THERMO_DIAL_STYLES = [['classic','Klasyczna'],['segments','Segmenty LED'],
 function thermoContent(r, on, previewMode = null, previewAct = '') {
   const gauge = isGaugeRoom(r), marker = { entityId: (r.entityIds || [])[0] || '' }, info = gauge ? gaugeInfo(r) : climateInfo(marker, previewMode); if (previewAct && !gauge) info.action = previewAct;
   const accent = gauge ? gaugeAccent(r, info.target) : thermoAccent(r, info), esc = escapeHtml, tr = translateValue;
-  const text = (key, inner, cls = '') => `<span class="thermo-part ${cls}" data-no-i18n style="${r[`${key}Accent`] ? `color:var(--accent);font-weight:${TEXT_WEIGHTS[r[`${key}Weight`]] || 600}` : roomTextStyle(r, key, on)}">${inner}</span>`;
+  const text = (key, inner, cls = '') => `<span class="thermo-part ${cls}" data-no-i18n style="${r[`${key}Accent`] ? `color:var(--accent);font-weight:${textWeight(r, key, 600)}` : roomTextStyle(r, key, on)}">${inner}</span>`;
   // Like Home Assistant's own card: a thermostat that is off still shows (and lets you change) its set temperature.
   const value = info.target ?? info.high ?? null, active = !info.unavailable && value !== null;
   const working = info.mode !== 'off' && ['heating','cooling','preheating','drying','fan','defrosting'].includes(info.action);
@@ -3242,7 +3244,6 @@ function roomEditorMarkup(room) {
   const icRow = (mdi, title, body) => `<div class="control room-card-row compact"><label class="ic" title="${escapeHtml(translateValue(title))}"><i class="mdi ${mdi}"></i></label><div class="room-card-presets">${body}</div></div>`;
   const icBtn = (attr, mdi, title, active = false) => `<button type="button" class="room-card-preset${active ? ' active' : ''}" ${attr} title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${mdi}"></i></button>`;
   const ownSize = !isThermoRoom(r);
-  const borderWidthRow = key => r[`${key}Border`] && !r[`${key}BorderState`] ? ic('mdi-format-line-weight', range('Grubość ramki',`${key}BorderWidth`,clamp(Number(r[`${key}BorderWidth`]) || 1.5, .5, 12),.5,12,.5,'px')) : '';
   const snapValues = (path, fields) => { const vals = new Set(); fields.forEach(f => { if (f && f !== path && okNum(r[f])) vals.add(Math.round(Number(r[f]) * 10) / 10); });
     Object.values(roomsOf()).forEach(o => { if (o && o.id !== r.id && !isThermoRoom(o) && okNum(o[path]) && o[path.replace(/(Size|Padding)$/, '')]) vals.add(Math.round(Number(o[path]) * 10) / 10); });
     return [...vals].filter(v => v >= 0 && v <= 420).sort((a, b) => a - b).slice(0, 12); };
@@ -3272,7 +3273,7 @@ function roomEditorMarkup(room) {
       + range('Przezrocz. ON',`${key}${base}OnOpacity`,pct(r[`${key}${base}OnOpacity`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}${base}OffOpacity`,pct(r[`${key}${base}OffOpacity`]),0,100,1,'%')
       + (width ? range('Grubość ON',`${key}${base}OnWidth`,clamp(Number(r[`${key}${base}OnWidth`]) || 2, .5, 12),.5,12,.5,'px') + range('Grubość OFF',`${key}${base}OffWidth`,clamp(Number(r[`${key}${base}OffWidth`]) || 1.5, .5, 12),.5,12,.5,'px') : '')
     : control(`Kolor ${field}`,`${key}${base}Color`,'color',r[`${key}${base}Color`] || fallbackColor) + range(`Przezrocz. ${field}`,`${key}${base}Opacity`,pct(r[`${key}${base}Opacity`] ?? fallbackOpacity),0,100,1,'%')
-      + (width && (isThermoRoom(r) || !['labelIcon','labelName','labelState'].includes(key)) ? range('Grubość ramki',`${key}${base}Width`,clamp(Number(r[`${key}${base}Width`]) || 1.5, .5, 12),.5,12,.5,'px') : '');
+      + (width ? range('Grubość ramki',`${key}${base}Width`,clamp(Number(r[`${key}${base}Width`]) || 1.5, .5, 12),.5,12,.5,'px') : '');
   // Background / frame are switched on with the buttons on the section bar; a switched-off one has no sub-section.
   // The frame's shape (corners, margin) sits in Ramka, or in Tło when there is no frame.
   const frameSubs = (key, shape) => (r[`${key}Bg`] ? sub('Tło', control('Zależne ON/OFF',`${key}BgState`,'checkbox',!!r[`${key}BgState`],refresh) + stateColours(key, 'Bg', 'tła', '#081822', .55) + control('Rozmycie',`${key}Blur`,'checkbox',!!r[`${key}Blur`]) + (r[`${key}Border`] ? '' : shape)) : '')
@@ -3325,12 +3326,11 @@ function roomEditorMarkup(room) {
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = r.labelIconBg || r.labelIconBorder;
-    if (part === 'icon') return partBar(part, title, sizeOpen(ic('mdi-resize', snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
-      + (iconFramed ? ic('mdi-border-outside', snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
+    if (part === 'icon') return partBar(part, title, sizeOpen((snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
+      + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
         + (ownSize ? icRow('mdi-crop-free', 'Pudełko', icBtn('data-quick-fit="labelIcon"', 'mdi-arrow-collapse-horizontal', 'Dopasuj do ikony') + lockBtn('labelIcon')) : '')
-        + (iconShape === 'custom' ? ic('mdi-rounded-corner', range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px')) : '')
-        + borderWidthRow('labelIcon') : (ownSize ? icRow('mdi-crop-free', 'Pudełko', icBtn('data-quick-fit="labelIcon"', 'mdi-arrow-collapse-horizontal', 'Dopasuj do ikony') + lockBtn('labelIcon')) : ''))) + animSub + iconOptions() + frameSubs(key, ''),
+        : (ownSize ? icRow('mdi-crop-free', 'Pudełko', icBtn('data-quick-fit="labelIcon"', 'mdi-arrow-collapse-horizontal', 'Dopasuj do ikony') + lockBtn('labelIcon')) : ''))) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
       [['labelIconAnim','Animacja','mdi-rotate-right'], ...(source !== 'integration' ? [['labelIconOutline','Obrys','mdi-vector-circle-variant']] : []), ...frameToggles(key)]);
     const fontPx = clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420), has = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
@@ -3372,12 +3372,15 @@ function roomEditorMarkup(room) {
         + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
     const boxText = !isThermoRoom(r) && BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
     const framed = r[`${key}Bg`] || r[`${key}Border`];
-    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen(ic('mdi-format-size', snapSlider(range('Rozmiar tekstu',`${key}Size`,fontPx,6,Math.max(120, Math.ceil(fontPx)),1,'px'), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2))
-        + (framed ? ic('mdi-border-outside', snapSlider(range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px'), `${key}Padding`, snapValues(`${key}Padding`, r[`${other}Bg`] || r[`${other}Border`] ? [`${other}Padding`] : []), 1.5))
-          + ic('mdi-rounded-corner', range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')) + borderWidthRow(key) : '')
-        + ic('mdi-format-bold', control('Grubość czcionki',`${key}Weight`,'select',TEXT_WEIGHTS[r[`${key}Weight`]] ? r[`${key}Weight`] : (key === 'labelName' ? 'bold' : 'normal'),{ items:[['normal','Normalna'],['medium','Średnia'],['bold','Pogrubiona']] }))
+    // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
+    const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
+    const textRadius = range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px');
+    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen((snapSlider(range('Rozmiar tekstu',`${key}Size`,fontPx,6,Math.max(120, Math.ceil(fontPx)),1,'px'), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2))
+        + (framed ? (snapSlider(range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px'), `${key}Padding`, snapValues(`${key}Padding`, r[`${other}Bg`] || r[`${other}Border`] ? [`${other}Padding`] : []), 1.5))
+          : '')
+        + weightRow
         + boxTools(key))
-      : sub('Rozmiar', size + control('Grubość czcionki',`${key}Weight`,'select',TEXT_WEIGHTS[r[`${key}Weight`]] ? r[`${key}Weight`] : (key === 'labelName' ? 'bold' : 'normal'),{ items:[['normal','Normalna'],['medium','Średnia'],['bold','Pogrubiona']] }));
+      : sub('Rozmiar', size + weightRow);
     const accentable = ['labelTarget','labelCurrent','labelAction'].includes(key);
     if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
@@ -3388,7 +3391,7 @@ function roomEditorMarkup(room) {
           ? control('Kolor ON',`${key}ColorOn`,'color',r[`${key}ColorOn`]) + control('Kolor OFF',`${key}ColorOff`,'color',r[`${key}ColorOff`])
             + range('Przezrocz. ON',`${key}OpacityOn`,pct(r[`${key}OpacityOn`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}OpacityOff`,pct(r[`${key}OpacityOff`]),0,100,1,'%')
           : control('Kolor',`${key}Color`,'color',r[`${key}Color`]) + range('Przezroczystość',`${key}Opacity`,pct(r[`${key}Opacity`]),0,100,1,'%')))
-      + frameSubs(key, boxText ? '' : range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
+      + frameSubs(key, boxText ? textRadius : range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
         + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')), frameToggles(key));
   };
   const presetRow = (attr, items, active) => `<div class="room-card-presets">${items.map(([value, title, icon]) => `<button type="button" class="room-card-preset${active === value ? ' active' : ''}" ${attr}="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${icon ? `<i class="mdi ${icon}"></i>` : `<span class="room-card-swatch ${value}"></span>`}</button>`).join('')}</div>`;
