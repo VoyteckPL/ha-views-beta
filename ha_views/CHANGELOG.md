@@ -1,3 +1,7 @@
+## 0.6.1-beta.612
+
+- Etykieta (zgrupowana, kilka elementów): gdy sekcja elementu jest otwarta, element ma własne 4 kropki. Zmieniają szerokość i wysokość jego ramki symetrycznie wokół środka, a tekst zostaje tej samej wielkości. Krawędź łapie szerokość i wysokość innych elementów (zielone podświetlenie), a etykieta dopasowuje się sama.
+
 ## 0.6.1-beta.611
 
 - Etykieta: poszerzanie narożnikiem poszerza ramki nazwy i stanu proporcjonalnie, a nie do pełnej szerokości etykiety. Ramka węższa od etykiety zostaje tak samo węższa i odstęp do krawędzi się zachowuje.

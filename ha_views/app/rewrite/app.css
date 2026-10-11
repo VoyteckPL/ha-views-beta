@@ -1820,3 +1820,7 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .editor .control.range-control.has-extra .range-extra .room-card-preset{width:26px!important;min-width:26px!important;height:26px!important;flex:0 0 26px!important;font-size:14px}
 /* One shown part is the label: only the label's outline is drawn (not a second one round the part). */
 .room-label-card > .room-card-part.panel-part:only-of-type{outline:none!important}
+/* A part's own dots in a grouped label: placed on its frame; caught on another part's width / height (green). */
+.room-label-card > .room-card-part.panel-part{position:relative}
+.room-label-card.free > .room-card-part.panel-part{position:absolute}
+.room-card-part.size-hit{outline-color:#22d69b!important}
