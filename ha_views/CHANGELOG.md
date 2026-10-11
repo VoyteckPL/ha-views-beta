@@ -1,3 +1,7 @@
+## 0.6.1-beta.603
+
+- Etykieta z jednym widocznym elementem działa jak każda inna (we wszystkich trybach): ma widoczną ramkę/tło etykiety i sekcję Etykieta. Można ją rozgrupować (przycisk lub podwójne stuknięcie), a element przyciąga się do siatki i ramki etykiety. Wcześniej wyłączone tło/ramka takich etykiet zostają przywrócone.
+
 ## 0.6.1-beta.602
 
 - Komputer: przy przeciąganiu lub zmianie rozmiaru myszą kamera nie przesuwa się już sama przy krawędzi ekranu. Na telefonie (palcem) bez zmian.

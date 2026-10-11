@@ -365,7 +365,7 @@ function ensureMultiViewModel() {
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo || room.labelSizeLock) return; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => { if (k in room) { delete room[k]; migrated = true; } }); if (!room.hugFrameV1) { room.hugFrameV1 = true; migrated = true; } });
     // A label left with one part is a group again (it used to be ungrouped by itself to give that part its own dots; the
     // group's dots now size its frame, and a group moves and snaps like every other label).
-    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && !(room.dash && view.dashGrid?.on) && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
+    Object.values(view.rooms || {}).forEach(room => { if (room && !room.labelLinked && room.labelAutoUngrouped && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) { regroupAutoLabel(room); migrated = true; } });
     // A label's name / state box is kept in plan px (its W / H) - an em width taken on one device cut the text on another.
     Object.values(view.rooms || {}).forEach(room => { if (!room || room.thermo) return; ['labelName','labelState'].forEach(k => { const v = room[`${k}Lock`]; if (v === undefined) return; if (Array.isArray(v) && !(Number(room[`${k}W`]) > 0)) { const fs = Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`]; room[`${k}W`] = Math.round((v[0] * fs + fs * .5) * 10) / 10; room[`${k}H`] = Math.round(v[1] * fs * 10) / 10; } delete room[`${k}Lock`]; migrated = true; }); });
     // The geometry lock was removed (to be solved another way): nothing stays locked.
@@ -1170,13 +1170,9 @@ function migrateRoomLabel(room) {
   // beta.487: a label showing one part keeps its group background / frame / margin (switched with the Group's buttons);
   // before, they were simply not drawn. Labels like that are given exactly the look they had (switched off), and the
   // previous values are kept to come back when a second part is shown again.
-  if (room && !room.soloFrameV2) {
-    room.soloFrameV2 = true; changed = true;
-    if (ROOM_LABEL_PARTS.filter(([, k]) => room[k] ?? ROOM_DEFAULTS[k]).length === 1 && (room.labelCardBg || room.labelCardBorder || Number(room.labelCardPadding))) {
-      room.soloSaved = { labelCardBg: !!room.labelCardBg, labelCardBorder: !!room.labelCardBorder, labelCardPadding: room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding };
-      room.labelCardBg = false; room.labelCardBorder = false; room.labelCardPadding = 0;
-    }
-  }
+  if (room && !room.soloFrameV2) { room.soloFrameV2 = true; changed = true; }
+  // beta.603: a label with one part is a label like any other again - the background / frame it had are given back.
+  if (room?.soloSaved) { Object.assign(room, room.soloSaved); delete room.soloSaved; changed = true; }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
@@ -1274,7 +1270,7 @@ function keepLabelPlaceOnRegroup(room) {
 // Ungrouping is for arranging the parts: when the label / thermostat is left (panel closed, another element picked,
 // edit mode or view left) it is grouped again, as with the "Grupa" button - every part stays where it was placed.
 function regroupOnLeave(room) {
-  if (!room || room.labelLinked || room.labelAutoUngrouped || (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1 && !dashSpan(room))) return false;
+  if (!room || room.labelLinked || room.labelAutoUngrouped || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 1) return false;
   if (!$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`)) return false;
   keepLabelPlaceOnRegroup(room); room.labelLinked = true; room.updatedAt = new Date().toISOString(); scheduleSave(true); return true;
 }
@@ -1710,7 +1706,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
   // Ungrouped and being edited: the group's frame glows and an icon above it says so (drawn even when the label has no background / frame).
   // (A label left with one part is ungrouped only so the part has its own dots: it looks selected as usual.)
-  const ungroupEdit = interactive && r.id === selectedRoomId && (ROOM_LABEL_PARTS.filter(([part]) => content[part]).length > 1 || !!(isIconRoom(r) && dashSpan(r))), look = r.labelCardBg || r.labelCardBorder;
+  const ungroupEdit = interactive && r.id === selectedRoomId && ROOM_LABEL_PARTS.filter(([part]) => content[part]).length >= 1, look = r.labelCardBg || r.labelCardBorder;
   const backdrop = look || ungroupEdit ? `<div class="room-label-backdrop${r.labelCardBlur && look ? ' blur' : ''}${r.labelCardExact ? ' exact' : ''}${ungroupEdit ? ' ungrouped-edit' : ''}" data-room-id="${escapeHtml(r.id)}" style="left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};${look ? cardLook(r, on) : ''}">${ungroupEdit ? `<span class="ungroup-badge" title="${escapeHtml(translateValue('Rozgrupowane'))}"><i class="mdi mdi-ungroup"></i></span>` : ''}</div>` : '';
   // Only the part last touched shows its corner dots (the others keep a plain outline), so the dots never pile up.
   const shownParts = ROOM_LABEL_PARTS.filter(([part]) => content[part]).map(([part]) => part), activePart = shownParts.includes(selectedLabelPart) ? selectedLabelPart : '';
@@ -1785,8 +1781,8 @@ function ensureLabelFxDefs() {
   </defs></svg>`;
   document.body.append(d);
 }
-// (On tiles a lone part is not "the label": the tile stays its frame and it can be ungrouped to be placed in the tile.)
-function soloLabel(room) { return !!room && isIconRoom(room) && !isThermoRoom(room) && !isTextRoom(room) && ['labelIcon','labelName','labelState'].filter(k => room[k]).length === 1 && !dashSpan(room); }
+// A lone part is no longer "the label": the label keeps its frame and can be ungrouped like any other (kept for its callers).
+function soloLabel() { return false; }
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
   if (room?.soloPartLook) { const saved = room.soloPartLook, k = saved.key; room[`${k}Bg`] = saved.bg; room[`${k}Border`] = saved.border; if (k !== 'labelIcon' && (saved.bg || saved.border)) partMarginBox(room, k, 1); if (!saved.cardBg) room.labelCardBg = false; if (!saved.cardBorder) room.labelCardBorder = false; if (saved.cardPad !== undefined) room.labelCardPadding = saved.cardPad; delete room.soloPartLook; return true; }
@@ -2094,7 +2090,7 @@ function startFreeResize(event, handle) {
   })() : null;
   const posX = soloNode ? 'labelCardX' : `${key}X`, posY = soloNode ? 'labelCardY' : `${key}Y`, startX = Number(room[posX]) || 0, startY = Number(room[posY]) || 0;
   const sel = isCard ? `.room-label-card[data-room-id="${id}"]` : soloNode ? `.room-label-card[data-room-id="${id}"] > [data-label-part="${node.dataset.labelPart}"]` : `.room-label-part[data-room-id="${id}"][data-label-part="${node.dataset.labelPart}"]`;
-  const groupMode = !isCard && !room.labelLinked && (ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1 || !!dashSpan(room)), gctx = groupMode ? groupSnap(room, [node]) : null;
+  const groupMode = !isCard && !room.labelLinked, gctx = groupMode ? groupSnap(room, [node]) : null;
   const gopts = groupSnapOpts(), st = groupMode ? { ...snapTargets(), edges: true, centers: true, labels: true } : snapTargets(), view = visibleSceneRect(), useSnap = groupMode ? gopts.on : st.guides;
   const g = groupMode ? { xs: [...gctx.xs], ys: [...gctx.ys] } : useSnap ? guideTargets({ roomId: room.id }) : { xs: [], ys: [] };
   const planBoxes = groupMode && gopts.plan ? (p => { g.xs.push(...p.xs); g.ys.push(...p.ys); return p.boxes; })(groupPlanTargets(room, scene)) : [];
@@ -2445,7 +2441,7 @@ function groupSnap(room, exclude = []) {
 function syncGroupSnapButton(room = roomsOf()[selectedRoomId]) {
   const button = $('#room-group-snap'); if (!button) return;
   const shown = room ? ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length : 0, on = groupSnapOpts().on;
-  button.hidden = !room || room.labelLinked || (shown <= 1 && !dashSpan(room)); button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on));
+  button.hidden = !room || room.labelLinked || shown < 1; button.classList.toggle('active', on); button.setAttribute('aria-pressed', String(on));
   button.innerHTML = `<i class="mdi ${on ? 'mdi-magnet' : 'mdi-magnet-off'}"></i>`;
   if (button.hidden) closeGroupSnapMenu();
 }
@@ -2544,7 +2540,7 @@ function startRoomLabelDrag(event) {
   // (and the plan's own double tap, the zoom, is skipped for them).
   const now = performance.now(), twice = groupTap && groupTap.roomId === room.id && now - groupTap.t < 380 && Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 24;
   groupTap = twice ? null : { roomId: room.id, t: now, x: event.clientX, y: event.clientY };
-  if (twice && (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length > 1 || dashSpan(room))) { event.preventDefault(); event.stopPropagation(); handleTapAt = now; return toggleLabelGroupFromPlan(room); }
+  if (twice && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length >= 1) { event.preventDefault(); event.stopPropagation(); handleTapAt = now; return toggleLabelGroupFromPlan(room); }
   // Ungrouped, on a phone: only the active part moves at once. A finger landing on another part does not grab it - a
   // tap makes it the active one (then it can be moved), a drag moves the plan - so passing fingers move nothing by mistake.
   if (event.pointerType === 'touch' && selectedRoomId === room.id && !room.labelLinked && node.dataset.labelPart !== 'card' && !node.classList.contains('active-part')) {
@@ -2584,7 +2580,7 @@ function startRoomLabelDrag(event) {
   const [sx, sy] = scenePercentAt(event), [px, py] = partPct(key), grab = [sx - px, sy - py];
   // Guides only of this room: its outline edges and centre, the label anchor, and its label parts that stay in place.
   let guides = null;
-  const groupMode = key !== 'labelCard' && !room.labelLinked && (ROOM_LABEL_PARTS.filter(([, kk]) => room[kk]).length > 1 || !!dashSpan(room)); // (on tiles a lone part too: it snaps to its label's grid and frame)
+  const groupMode = key !== 'labelCard' && !room.labelLinked; // (a lone part too: it snaps to its label's grid and frame)
   const roomGuides = () => {
     if (groupMode) {
       // Worked out again on every move (the parts pushed apart, the camera), from the part as it is drawn now.
@@ -3574,7 +3570,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     }
   }
   const groupButton = $('#room-group-toggle');
-  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown <= 1 && !dashSpan(room); groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
+  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown < 1; groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
   if (!newlySelected) $$('.gauge-subsection > summary', content).forEach(node => { if (openSubs.has(subKey(node))) node.parentElement.open = true; });
   const sections = $$('.editor-section', content);
@@ -3783,8 +3779,7 @@ function onRoomEditorClick(event) {
       if (key === 'labelModes') MODE_PART_LIST.forEach(m => { if (room[`labelMode_${m}`] !== undefined || room.labelModes) room[`labelMode_${m}`] = !!room.labelModes && room[`thermoModeShow_${m}`] !== false; });
       const mm = /^labelMode_(.+)$/.exec(key); if (mm) { room[`thermoModeShow_${mm[1]}`] = !!room[key]; if (room[key]) room.labelModes = true; }
     }
-    // An ungrouped label left with one part is grouped again (one part has nothing to arrange).
-    if (partKeys.includes(key) && !room.labelLinked && partKeys.filter(k => room[k]).length === 1) { keepLabelPlaceOnRegroup(room); togglePartFrames(room, true); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
+    // (An ungrouped label left with one part stays ungrouped: that part is arranged in its label like any other.)
     room.updatedAt = new Date().toISOString(); renderRooms();
     if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part) keepApart(room, key, part); }
     openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
@@ -8067,7 +8062,7 @@ function bindEvents() {
   els.viewport?.addEventListener('pointerdown', event => {
     if (!groupTap || event.pointerType !== 'touch' || !editMode || event.target.closest?.('.room-label-card, .room-label-part, .card-handle')) return;
     const now = performance.now(), room = roomsOf()[groupTap.roomId], near = Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 30, quick = now - groupTap.t < 380; groupTap = null;
-    if (!room || !near || !quick || (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 2 && !dashSpan(room))) return;
+    if (!room || !near || !quick || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 1) return;
     event.preventDefault(); event.stopPropagation(); handleTapAt = now; toggleLabelGroupFromPlan(room);
   }, true);
   // No browser context menu (copy / share / save image) on a long press anywhere on the plan.
