@@ -2164,7 +2164,9 @@ function startFreeResize(event, handle) {
         // Nothing to spread across this side: the name / state boxes get as wide (tall) as the label.
         // (Its own size is kept aside - WideW / WideH - for narrowing it back later.)
         parts.filter(p => p.text).forEach(p => {
-          const D = axis ? 'H' : 'W', own = p[axis ? 'h' : 'w'], inner = t - pad * (axis ? 2 : 2.7) - Math.abs(p[c]) * 2, v = q === null ? Math.max(own, inner) : own;
+          // (In proportion: each box widens by as much as the label does, so a box narrower than the label stays as much
+          // narrower - its room to the label's edges grows with it, never filled.)
+          const D = axis ? 'H' : 'W', own = p[axis ? 'h' : 'w'], padA = pad * (axis ? 2 : 2.7), ratio = Math.max(1, (t - padA) / Math.max(1, ext(1, axis) - padA)), v = q === null ? own * ratio : own;
           room[`${p.kk}${D}`] = Math.round(v * 10) / 10; delete room[`${p.kk}Lock`];
           if (v > own + .5) room[`${p.kk}Wide${D}`] = Math.round(own * 10) / 10; else delete room[`${p.kk}Wide${D}`];
         });

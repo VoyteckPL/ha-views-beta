@@ -1,3 +1,7 @@
+## 0.6.1-beta.611
+
+- Etykieta: poszerzanie narożnikiem poszerza ramki nazwy i stanu proporcjonalnie, a nie do pełnej szerokości etykiety. Ramka węższa od etykiety zostaje tak samo węższa i odstęp do krawędzi się zachowuje.
+
 ## 0.6.1-beta.610
 
 - Kafelki: etykiety się nie nakładają. Po upuszczeniu, rozciągnięciu albo zmianie podziału etykieta, która znalazła się pod inną, przenosi się na najbliższe wolne kafelki (gdy brak miejsca: 1 kafelek, a w ostateczności zostaje odpięta).
