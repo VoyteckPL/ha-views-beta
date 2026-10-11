@@ -1060,6 +1060,7 @@ function setDashGrid(change) {
 function renderDashGrid(target = null) {
   applyDashUi();
   const view = activeSceneView(), g = dashGeom(view); let layer = $('#dash-grid');
+  els.scene?.classList.toggle('dash-on', !!(editMode && g.on));
   if (!editMode || !g.on || !els.scene) { layer?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-grid'; layer.setAttribute('aria-hidden', 'true'); els.scene.insertBefore(layer, $('#rooms') || null); }
   const key = [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
@@ -1698,7 +1699,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
     // texts and margin stay as they are, centred in it).
     // A label whose size is locked has no dots on its frame (its parts keep theirs).
-    const corners = interactive && r.id === selectedRoomId && !(r.labelSizeLock && !isThermoRoom(r) && !soloLabel(r)) && !(isIconRoom(r) && dashSpan(r)) ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    const corners = interactive && r.id === selectedRoomId && !(r.labelSizeLock && !isThermoRoom(r) && !soloLabel(r)) ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-card layout-${layout} align-${align}${free ? ' free' : ''}${free && r.labelCardExact && r.labelCardCentred && Number(r.labelCardW) > 0 ? ' exact' : ''}${r.labelCardBg && !solo ? ' bg' : ''}${r.labelCardBlur && !solo ? ' blur' : ''}${solo ? ' solo' : ''}${interactive ? ' editable' : ''}${tap}" data-room-id="${escapeHtml(r.id)}" data-label-part="card" style="${style}">${inner}${corners}</div>`;
   }
   // Ungrouped, the group's background (when on) stays behind the parts and is sized around them (fitLabelBackdrop).
@@ -1946,7 +1947,28 @@ function fitCardHandles() {
 // scales proportionally). A part's content shrinks with its frame below its own size; a label's frame never gets smaller
 // than its content. Each moving side snaps to the lines of other elements on screen and to the width / height of another
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
+// A label on tiles: its corner dot spans it over whole tiles (the corner held still stays on its tile).
+function startDashResize(event, handle, room) {
+  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
+  const c = handle.dataset.corner, d0 = { ...room.dash }, g = dashGeom(), stepX = g.cw + g.gx, stepY = g.ch + g.gy;
+  const fixC = c.includes('w') ? d0.c + d0.w - 1 : d0.c, fixR = c.includes('n') ? d0.r + d0.h - 1 : d0.r; let moved = false;
+  const move = e => {
+    if (e.pointerId !== event.pointerId) return; moved = true;
+    const [x, y] = scenePercentAt(e), col = clamp(Math.floor((x - g.gx / 2) / stepX), 0, g.cols - 1), row = clamp(Math.floor((y - g.gy / 2) / stepY), 0, g.rows - 1);
+    const c0 = Math.min(fixC, col), c1 = Math.max(fixC, col), r0 = Math.min(fixR, row), r1 = Math.max(fixR, row);
+    const t = { c: c0, r: r0, w: c1 - c0 + 1, h: r1 - r0 + 1 }; if (t.c === room.dash.c && t.r === room.dash.r && t.w === room.dash.w && t.h === room.dash.h) return;
+    room.dash = t; const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0;
+    renderRoomLabels(); renderDashGrid(t);
+  };
+  const up = e => {
+    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); renderDashGrid();
+    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
 function startFreeResize(event, handle) {
+  { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; if (cardNode && r0 && isIconRoom(r0) && dashSpan(r0)) return startDashResize(event, handle, r0); }
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   let node = handle.closest('.room-label-card, .room-label-part'); const room = roomsOf()[node?.dataset.roomId]; if (!room) return;
   const zoneSize = majorSizing() && !!handle.closest('.room-label-card') && fixedFrame(room); // "Rozmiar po grubych liniach": no free scaling with Shift

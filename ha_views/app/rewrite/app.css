@@ -1811,3 +1811,5 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .vm-tiles-zone .dash-size-row input[type=range]{width:100%;height:auto;padding:0;border:0;background:none}
 .vm-tiles-zone .dash-own{grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr)}
 .vm-tiles-zone .dash-size-row .vm-range{grid-template-columns:20px minmax(0,1fr) 44px}
+/* Tiles on: the plan's grid is not shown (the tiles are the grid). */
+.scene.dash-on:after{opacity:0!important}

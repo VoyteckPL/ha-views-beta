@@ -1,3 +1,7 @@
+## 0.6.1-beta.597
+
+- Kafelki: narożnikami etykiety rozciągasz ją na kilka kafelków (np. 2×1, 2×2), ze skokiem co cały kafelek. Przy włączonych kafelkach główna siatka jest ukryta.
+
 ## 0.6.1-beta.596
 
 - Kafelki: etykieta przeskakuje z kafelka na kafelek już w trakcie przeciągania. Zawartość wypełnia kafelek prawie w całości (94% węższego boku zamiast 86%).
