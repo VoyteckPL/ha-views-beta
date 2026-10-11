@@ -1,3 +1,7 @@
+## 0.6.1-beta.589
+
+- Etykieta, Grupa: „Grubość ramki” i „Zaokrąglenie” przeniesione do podsekcji Ramka (a gdy ramka jest wyłączona, zaokrąglenie jest w Tle). Suwaki w Grupa → Rozmiar mają znowu nazwy (Rozmiar, Margines, Odstęp).
+
 ## 0.6.1-beta.588
 
 - Etykieta: usunięty rząd „Wyrównanie” z sekcji Grupa → Rozmiar (do lewej/środka/prawej, góra/środek/dół i jednakowa szerokość nazwy i stanu).

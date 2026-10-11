@@ -3402,21 +3402,20 @@ function roomEditorMarkup(room) {
         ? control('Kolor ON','labelCardBgOnColor','color',r.labelCardBgOnColor) + control('Kolor OFF','labelCardBgOffColor','color',r.labelCardBgOffColor)
           + control('Przezrocz. ON','labelCardBgOnOpacity','range',pct(r.labelCardBgOnOpacity),{ min:0, max:100, step:1, suffix:'%', integer:true }) + control('Przezrocz. OFF','labelCardBgOffOpacity','range',pct(r.labelCardBgOffOpacity),{ min:0, max:100, step:1, suffix:'%', integer:true })
         : control('Kolor tła','labelCardBgColor','color',r.labelCardBgColor || '#081822') + control('Przezrocz. tła','labelCardBgOpacity','range',pct(r.labelCardBgOpacity ?? .62),{ min:0, max:100, step:1, suffix:'%', integer:true }))
-      + control('Rozmycie','labelCardBlur','checkbox',!!r.labelCardBlur) + control('Cień','labelCardShadow','checkbox',r.labelCardShadow !== false) + (r.labelCardBorder || ownSize ? '' : radius));
+      + control('Rozmycie','labelCardBlur','checkbox',!!r.labelCardBlur) + control('Cień','labelCardShadow','checkbox',r.labelCardShadow !== false) + (r.labelCardBorder ? '' : radius));
   const borderSub = !r.labelCardBorder ? '' : sub('Ramka', control('Zależne ON/OFF','labelCardBorderState','checkbox',!!r.labelCardBorderState,refresh)
       + (r.labelCardBorderState
         ? control('Kolor ON','labelCardBorderOnColor','color',r.labelCardBorderOnColor) + control('Kolor OFF','labelCardBorderOffColor','color',r.labelCardBorderOffColor)
           + control('Przezrocz. ON','labelCardBorderOnOpacity','range',pct(r.labelCardBorderOnOpacity),{ min:0, max:100, step:1, suffix:'%', integer:true }) + control('Przezrocz. OFF','labelCardBorderOffOpacity','range',pct(r.labelCardBorderOffOpacity),{ min:0, max:100, step:1, suffix:'%', integer:true })
           + control('Grubość ON','labelCardBorderOnWidth','range',clamp(Number(r.labelCardBorderOnWidth) || 1.5, .5, 12),{ min:.5, max:12, step:.5, suffix:'px' }) + control('Grubość OFF','labelCardBorderOffWidth','range',clamp(Number(r.labelCardBorderOffWidth) || 1, .5, 12),{ min:.5, max:12, step:.5, suffix:'px' })
-        : control('Kolor ramki','labelCardBorderColor','color',r.labelCardBorderColor || '#FFFFFF') + control('Przezrocz. ramki','labelCardBorderOpacity','range',pct(r.labelCardBorderOpacity ?? .3),{ min:0, max:100, step:1, suffix:'%', integer:true }) + (ownSize ? '' : control('Grubość ramki','labelCardBorderWidth','range',clamp(Number(r.labelCardBorderWidth) || 1, .5, 12),{ min:.5, max:12, step:.5, suffix:'px' })))
-      + (ownSize ? '' : radius));
+        : control('Kolor ramki','labelCardBorderColor','color',r.labelCardBorderColor || '#FFFFFF') + control('Przezrocz. ramki','labelCardBorderOpacity','range',pct(r.labelCardBorderOpacity ?? .3),{ min:0, max:100, step:1, suffix:'%', integer:true }) + control('Grubość ramki','labelCardBorderWidth','range',clamp(Number(r.labelCardBorderWidth) || 1, .5, 12),{ min:.5, max:12, step:.5, suffix:'px' }))
+      + radius);
   // A label's group: all its sizes and shape in one place - scale, margin, spacing of the parts, corners, frame width,
   // arranging the parts (aligned left / centre / right, top / middle / bottom) and giving name and state one width.
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
-  const groupSize = !ownSize ? '' : sizeOpen(ic('mdi-resize', control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
-    + ic('mdi-border-outside', control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
-    + (arrangeable ? ic('mdi-arrow-split-horizontal', range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
-    + ic('mdi-rounded-corner', radius) + borderWidthRow('labelCard')
+  const groupSize = !ownSize ? '' : sizeOpen((control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
+    + (control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
+    + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     );
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
