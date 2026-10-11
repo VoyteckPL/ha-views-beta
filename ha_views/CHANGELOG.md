@@ -1,3 +1,7 @@
+## 0.6.1-beta.607
+
+- Etykieta z jednym widocznym elementem: nie ma osobnej sekcji Etykieta. Wszystko jest w sekcji tego elementu: przyciski Tło/Ramka na jej pasku, a na końcu „Rozmiar etykiety” (blokada, skala, margines, kafelki) oraz Tło i Ramka.
+
 ## 0.6.1-beta.606
 
 - Etykieta z jednym widocznym elementem ma jedną warstwę: tło i ramka elementu są automatycznie scalane z tłem i ramką etykiety, a wygląd zostaje taki sam (przezroczystości i kolory nałożonych warstw są przeliczane, ramka i zaokrąglenie przechodzą na etykietę). Tło i ramkę ustawia się wtedy tylko w sekcji Etykieta.
