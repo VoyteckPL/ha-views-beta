@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-594">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-595">
 </head>
 <body>
   <header class="topbar">
@@ -85,6 +85,17 @@
             <div class="vm-size-row">
               <label><input id="canvas-width" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Szerokość"></label><span>×</span><label><input id="canvas-height" type="number" min="100" max="10000" step="10" inputmode="numeric" aria-label="Wysokość"></label>
               <button id="canvas-resize-start" class="vm-icon" type="button" title="Ustaw rozmiar na ekranie" aria-label="Ustaw rozmiar na ekranie"><i class="mdi mdi-resize-bottom-right"></i></button>
+            </div>
+          </section>
+          <section class="vm-zone vm-tiles-zone">
+            <div class="vm-zone-title"><i class="mdi mdi-view-grid-outline"></i><b>Kafelki</b><button id="dash-toggle" class="vm-icon dash-toggle" type="button" title="Kafelki" aria-label="Kafelki"><span id="dash-status">OFF</span></button></div>
+            <div id="dash-size-row" class="dash-size-row">
+              <div class="dash-presets" role="group" aria-label="Podział">
+                <button type="button" data-dash-preset="1x1">1×1</button><button type="button" data-dash-preset="2x2">2×2</button><button type="button" data-dash-preset="2x3">2×3</button><button type="button" data-dash-preset="2x4">2×4</button><button type="button" data-dash-preset="3x3">3×3</button><button type="button" data-dash-preset="3x4">3×4</button><button type="button" data-dash-preset="3x5">3×5</button><button type="button" data-dash-preset="4x4">4×4</button><button type="button" data-dash-preset="4x6">4×6</button>
+              </div>
+              <div class="vm-size-row dash-own"><label><input id="dash-cols" type="number" min="1" max="12" step="1" inputmode="numeric" aria-label="Kolumny"></label><span>×</span><label><input id="dash-rows" type="number" min="1" max="12" step="1" inputmode="numeric" aria-label="Wiersze"></label></div>
+              <div class="vm-range"><i class="mdi mdi-arrow-expand-horizontal" title="Odstęp" aria-hidden="true"></i><input id="dash-gap" type="range" min="0" max="24" step="1" value="4" aria-label="Odstęp"><output id="dash-gap-out">4 px</output></div>
+              <button id="dash-arrange" class="vm-tile" type="button"><i class="mdi mdi-view-dashboard-variant-outline"></i><span>Rozłóż etykiety</span></button>
             </div>
           </section>
           <span id="background-status" class="vm-status"></span>
@@ -360,6 +371,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-594"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-595"></script>
 </body>
 </html>

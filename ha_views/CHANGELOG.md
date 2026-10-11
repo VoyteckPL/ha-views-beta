@@ -1,3 +1,10 @@
+## 0.6.1-beta.595
+
+- Tło: nowa sekcja „Kafelki” (obok Obrazu i Koloru). Plan dzieli się na równe kafelki: presety 1×1–4×6 albo własne kolumny × wiersze, odstęp (domyślnie 4 px).
+- Etykieta przeciągnięta na kafelek przypina się do niego. Ramka wypełnia kafelek, a zawartość dopasowuje się do niego. Rozmiar w kafelkach zmienia się w sekcji Etykieta.
+- Po zmianie podziału przypięte etykiety zostają w tych samych proporcjonalnych miejscach i dopasowują się do nowych kafelków.
+- „Rozłóż etykiety” układa zgrupowane etykiety widoku po kolei w kafelki.
+
 ## 0.6.1-beta.594
 
 - Etykieta → Rozmiar: nowe pole „Zablokuj rozmiar”. Ramka etykiety zachowuje obecny rozmiar i nie ma kropek, a elementy nadal można zmieniać (rozmiary, suwak Rozmiar, przesuwanie po rozgrupowaniu; zostają w ramce). Po odblokowaniu ramka znów otula elementy.
