@@ -1,3 +1,8 @@
+## 0.6.1-beta.584
+
+- Etykieta: nowa sekcja „Efekty” na końcu panelu, z podsekcjami Presety, Ikona i Ramka. Efekty usunięte z sekcji Rozmiar.
+- Presety gotowych stylów (efekt ikony i styl ramki razem): Brak, Szkło, Liquid, Neon, Metal, Soft UI, Gradient, Unoszący, 3D.
+
 ## 0.6.1-beta.583
 
 - Panel etykiety: „Przywróć domyślne”, „Usuń” i „Zamknij” są w jednym górnym rzędzie z równymi odstępami.
