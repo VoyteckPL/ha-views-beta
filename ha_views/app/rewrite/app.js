@@ -1031,6 +1031,28 @@ function dashTarget(box, keep, view = activeSceneView()) {
   const c = clamp(Math.round((cx - g.gx - (w * g.cw + (w - 1) * g.gx) / 2) / stepX), 0, g.cols - w), r = clamp(Math.round((cy - g.gy - (h * g.ch + (h - 1) * g.gy) / 2) / stepY), 0, g.rows - h);
   return { c, r, w, h };
 }
+// Tiles never overlap: the label just placed / resized keeps its tiles, every other one that now lies on them moves to
+// the nearest free tiles of its size (else one free tile; with none left it is unpinned).
+function resolveDashOverlaps(view = activeSceneView(), firstId = null) {
+  const g = dashGrid(view); if (!view || !g.on) return false;
+  const rooms = Object.values(view.rooms || {}).filter(r => r && isIconRoom(r) && r.dash).sort((a, b) => (a.id === firstId ? -1 : b.id === firstId ? 1 : 0) || (a.dash.r - b.dash.r) || (a.dash.c - b.dash.c));
+  const occ = Array.from({ length: g.rows }, () => Array(g.cols).fill(false)); let moved = false;
+  const free = (c, r, w, h) => { if (c < 0 || r < 0 || c + w > g.cols || r + h > g.rows) return false; for (let y = r; y < r + h; y++) for (let x = c; x < c + w; x++) if (occ[y][x]) return false; return true; };
+  rooms.forEach(room => {
+    const d0 = room.dash, w = clamp(Math.round(d0.w) || 1, 1, g.cols), h = clamp(Math.round(d0.h) || 1, 1, g.rows);
+    let d = { c: clamp(Math.round(d0.c) || 0, 0, g.cols - w), r: clamp(Math.round(d0.r) || 0, 0, g.rows - h), w, h };
+    if (!free(d.c, d.r, d.w, d.h)) {
+      let best = null;
+      for (const [sw, sh] of [[w, h], [1, 1]]) { for (let r = 0; r <= g.rows - sh; r++) for (let c = 0; c <= g.cols - sw; c++) if (free(c, r, sw, sh)) { const dist = Math.abs(c - d.c) + Math.abs(r - d.r); if (!best || dist < best.dist) best = { c, r, w: sw, h: sh, dist }; } if (best) break; }
+      if (!best) { delete room.dash; moved = true; return; }
+      d = { c: best.c, r: best.r, w: best.w, h: best.h };
+    }
+    for (let y = d.r; y < d.r + d.h; y++) for (let x = d.c; x < d.c + d.w; x++) occ[y][x] = true;
+    if (d.c !== d0.c || d.r !== d0.r || d.w !== d0.w || d.h !== d0.h) { room.dash = d; moved = true; room.updatedAt = new Date().toISOString(); }
+    const span = dashSpan(room, view); if (span) { room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
+  });
+  return moved;
+}
 function cardBoxPct(room) {
   const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`), s = els.scene.getBoundingClientRect(); if (!card || !s.width) return null;
   const r = card.getBoundingClientRect(); return { x: (r.left - s.left) / s.width * 100, y: (r.top - s.top) / s.height * 100, w: r.width / s.width * 100, h: r.height / s.height * 100 };
@@ -1055,6 +1077,7 @@ function setDashGrid(change) {
   if (now.cols !== old.cols || now.rows !== old.rows) Object.values(view.rooms || {}).forEach(room => { const d = room?.dash; if (!d) return;
     const w = clamp(Math.floor((d.w || 1) * now.cols / old.cols) || 1, 1, now.cols), h = clamp(Math.floor((d.h || 1) * now.rows / old.rows) || 1, 1, now.rows);
     room.dash = { c: clamp(Math.floor((d.c + (d.w || 1) / 2) * now.cols / old.cols - w / 2 + .5), 0, now.cols - w), r: clamp(Math.floor((d.r + (d.h || 1) / 2) * now.rows / old.rows - h / 2 + .5), 0, now.rows - h), w, h }; });
+  if (now.cols !== old.cols || now.rows !== old.rows) resolveDashOverlaps(view);
   applyDashUi(); renderRooms(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
 }
 function renderDashGrid(target = null) {
@@ -1203,9 +1226,16 @@ function placeShownPart(room, key) {
   const box = ([n, k]) => { const [w, h] = cssBox(n), fx = Number(room[`${k}FX`]) || 0, fy = Number(room[`${k}FY`]) || 0; return { l: fx - w / 2, r: fx + w / 2, t: fy - h / 2, b: fy + h / 2 }; };
   const o = others.map(box), m = box(me), gap = clamp(Number(room.labelPartGap ?? 12), 0, 80), h = m.b - m.t;
   const overlaps = o.some(q => m.l < q.r && m.r > q.l && m.t < q.b && m.b > q.t); if (!overlaps) return false;
-  const cx = (Math.min(...o.map(q => q.l)) + Math.max(...o.map(q => q.r))) / 2;
-  room[`${key}FX`] = Math.round(cx * 100) / 100;
-  room[`${key}FY`] = Math.round((key === 'labelIcon' ? Math.min(...o.map(q => q.t)) - gap - h / 2 : Math.max(...o.map(q => q.b)) + gap + h / 2) * 100) / 100;
+  // Its place in the order icon → name → state: under the parts before it; the parts after it move down to make room.
+  const order = ROOM_LABEL_PARTS.map(([, k]) => k), idx = order.indexOf(key), withBox = others.map(n => [n[1], box(n)]);
+  const before = withBox.filter(([k]) => order.indexOf(k) < idx), after = withBox.filter(([k]) => order.indexOf(k) > idx);
+  const cx = (Math.min(...o.map(q => q.l)) + Math.max(...o.map(q => q.r))) / 2, r2 = v => Math.round(v * 100) / 100;
+  room[`${key}FX`] = r2(cx);
+  if (before.length) {
+    const top = Math.max(...before.map(([, q]) => q.b)) + gap; room[`${key}FY`] = r2(top + h / 2);
+    const push = after.length ? Math.max(0, top + h + gap - Math.min(...after.map(([, q]) => q.t))) : 0;
+    after.forEach(([k]) => { room[`${k}FY`] = r2((Number(room[`${k}FY`]) || 0) + push); });
+  } else room[`${key}FY`] = r2(Math.min(...after.map(([, q]) => q.t)) - gap - h / 2);
   renderRoomLabels(); return true;
 }
 function restoreSingleLook(room) {
@@ -2017,7 +2047,7 @@ function startDashResize(event, handle, room) {
     renderRoomLabels(); renderDashGrid(t);
   };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); renderDashGrid();
+    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (moved && resolveDashOverlaps(activeSceneView(), room.id)) renderRoomLabels(); renderDashGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
   };
@@ -2732,7 +2762,7 @@ function startRoomLabelDrag(event) {
     if (isIconRoom(room) && key === 'labelCard' && !zoneMoved) {
       // On the dashboard grid the group snaps to whole cells (keeping its size in cells once pinned).
       const box = dashGrid().on && room.labelLinked ? cardBoxPct(room) : null;
-      if (box) { const keep = room.dash; room.dash = dashTarget(box, keep && dashSpan(room) ? keep : { w: 1, h: 1 }); const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
+      if (box) { const keep = room.dash; room.dash = dashTarget(box, keep && dashSpan(room) ? keep : { w: 1, h: 1 }); const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; resolveDashOverlaps(activeSceneView(), room.id); }
       else { room.x = Math.round(clamp(fx, 0, 100) * 100) / 100; room.y = Math.round(clamp(fy, 0, 100) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
       [fx, fy] = [room.x, room.y]; renderDashGrid(); renderRoomLabels();
     }
@@ -3960,7 +3990,7 @@ function pastePartStyle(room, part, title) {
 function toggleRoomLock() { const room = roomsOf()[selectedRoomId]; if (!room) return; room.geometryLocked = !room.geometryLocked; room.updatedAt = new Date().toISOString(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); notify(room.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); }
 // Every look setting of a room / label / thermostat: the style list plus every label part and thermostat option.
 const roomLookKey = key => ROOM_STYLE_KEYS.includes(key) || (/^(label|thermo[A-Z_])/.test(key) && !/^labelX\d(Entity)?$/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key));
-function copyRoomStyle() { const room = roomsOf()[selectedRoomId]; if (!room) return; roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(roomLookKey).map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
+function copyRoomStyle() { const live = roomsOf()[selectedRoomId]; if (!live) return; const room = clone(live); restoreSingleLook(room); /* a one-part label's look is copied as its two layers */ roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(key => roomLookKey(key) && key !== 'singleSaved').map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
 // Pasting a style keeps where the target stands: the label / part offsets from its point are its own (a room's label
 // offsets would move a plain label away); only looks (and the group's inner arrangement) are taken over.
 const isLabelPositionKey = key => key.startsWith('label') && /[XY]$/.test(key) && !/F[XY]$/.test(key);
@@ -3971,7 +4001,7 @@ function pasteRoomStyle() {
   Object.keys(room).filter(key => roomLookKey(key) && !keep(key)).forEach(key => delete room[key]);
   if (exact) Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(roomLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])));
   Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && !keep(key))), { updatedAt:new Date().toISOString() });
-  delete room.labelAutoUngrouped; renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
+  delete room.labelAutoUngrouped; delete room.singleSaved; renderRooms(); if (mergeSingleLook(room)) renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
 }
 // "Default look" is the look of a freshly added room / icon (label visible, grouped, icon with outline and frame),
 // not the bare defaults of the data model, in which every label part is hidden.

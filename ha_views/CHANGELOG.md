@@ -1,3 +1,9 @@
+## 0.6.1-beta.610
+
+- Kafelki: etykiety się nie nakładają. Po upuszczeniu, rozciągnięciu albo zmianie podziału etykieta, która znalazła się pod inną, przenosi się na najbliższe wolne kafelki (gdy brak miejsca: 1 kafelek, a w ostateczności zostaje odpięta).
+- Kopiuj/wklej styl uwzględnia scalanie warstw: etykieta z jednym elementem kopiuje się jako dwie warstwy, a po wklejeniu na etykietę z jednym elementem warstwy są scalane od razu.
+- Element pokazany ponownie trafia na swoje miejsce w kolejności ikona → nazwa → stan, a elementy pod nim przesuwają się w dół.
+
 ## 0.6.1-beta.609
 
 - Etykieta z jednym elementem: przy otwartej sekcji elementu widać tylko jeden obrys (etykiety), bez drugiego niebieskiego obrysu wokół elementu.
