@@ -1,3 +1,7 @@
+## 0.6.1-beta.594
+
+- Etykieta → Rozmiar: nowe pole „Zablokuj rozmiar”. Ramka etykiety zachowuje obecny rozmiar i nie ma kropek, a elementy nadal można zmieniać (rozmiary, suwak Rozmiar, przesuwanie po rozgrupowaniu; zostają w ramce). Po odblokowaniu ramka znów otula elementy.
+
 ## 0.6.1-beta.593
 
 - Rozgrupowana etykieta: główna siatka nie jest widoczna. Siatka etykiety (gdy włączona) jest 2× gęstsza; grube linie zostają co tyle samo.
