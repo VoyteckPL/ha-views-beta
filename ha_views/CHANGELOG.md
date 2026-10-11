@@ -1,3 +1,7 @@
+## 0.6.1-beta.585
+
+- Telefon: panel etykiety zawsze zaczyna się w połowie ekranu. Nagłówek (nazwa z przyciskami, akcje, ikona/nazwa/stan) to trzy zwarte rzędy z równymi odstępami, maksymalnie 20% wysokości ekranu. Sekcje przewijają się pod nim.
+
 ## 0.6.1-beta.584
 
 - Etykieta: nowa sekcja „Efekty” na końcu panelu, z podsekcjami Presety, Ikona i Ramka. Efekty usunięte z sekcji Rozmiar.
