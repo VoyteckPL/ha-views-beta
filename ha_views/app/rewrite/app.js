@@ -3417,9 +3417,7 @@ function roomEditorMarkup(room) {
     + ic('mdi-border-outside', control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
     + (arrangeable ? ic('mdi-arrow-split-horizontal', range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     + ic('mdi-rounded-corner', radius) + borderWidthRow('labelCard')
-    + (arrangeable ? icRow('mdi-align-horizontal-center', 'Wyrównanie', icBtn('data-arrange="left"', 'mdi-align-horizontal-left', 'Do lewej') + icBtn('data-arrange="hcenter"', 'mdi-align-horizontal-center', 'Do środka') + icBtn('data-arrange="right"', 'mdi-align-horizontal-right', 'Do prawej')
-        + icBtn('data-arrange="top"', 'mdi-align-vertical-top', 'Do góry') + icBtn('data-arrange="vmid"', 'mdi-align-vertical-center', 'Do środka (pionowo)') + icBtn('data-arrange="bottom"', 'mdi-align-vertical-bottom', 'Do dołu')
-        + (r.labelName && r.labelState ? icBtn('data-arrange="equal"', 'mdi-arrow-expand-horizontal', 'Jednakowa szerokość nazwy i stanu') : '')) : ''));
+    );
   const group = partBar('group', 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })

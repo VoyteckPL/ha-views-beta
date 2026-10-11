@@ -1,3 +1,7 @@
+## 0.6.1-beta.588
+
+- Etykieta: usunięty rząd „Wyrównanie” z sekcji Grupa → Rozmiar (do lewej/środka/prawej, góra/środek/dół i jednakowa szerokość nazwy i stanu).
+
 ## 0.6.1-beta.587
 
 - Telefon: suwaki w panelu zmieniają się tylko po złapaniu gałki i przeciągnięciu w bok. Stuknięcie w tor ani przewijanie w górę/dół przez suwak nie zmienia już wartości.
