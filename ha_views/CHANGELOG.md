@@ -1,3 +1,7 @@
+## 0.6.1-beta.618
+
+- Zablokowana etykieta: zmiana kształtu kropkami jest liczona zawsze od stanu z chwili zablokowania (albo ostatniej edycji elementów). Po mocnym zwężeniu i ponownym poszerzeniu tekst wraca do swojego rozmiaru.
+
 ## 0.6.1-beta.617
 
 - Zablokowana etykieta: przy zmianie rozmiaru kropkami narożnik łapie się na linie głównej siatki, a przy „Rozmiarze po strefach” przeskakuje po grubych liniach. Alt wyłącza przyciąganie.
