@@ -2544,7 +2544,7 @@ function startRoomLabelDrag(event) {
   // (and the plan's own double tap, the zoom, is skipped for them).
   const now = performance.now(), twice = groupTap && groupTap.roomId === room.id && now - groupTap.t < 380 && Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 24;
   groupTap = twice ? null : { roomId: room.id, t: now, x: event.clientX, y: event.clientY };
-  if (twice && ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length > 1) { event.preventDefault(); event.stopPropagation(); handleTapAt = now; return toggleLabelGroupFromPlan(room); }
+  if (twice && (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length > 1 || dashSpan(room))) { event.preventDefault(); event.stopPropagation(); handleTapAt = now; return toggleLabelGroupFromPlan(room); }
   // Ungrouped, on a phone: only the active part moves at once. A finger landing on another part does not grab it - a
   // tap makes it the active one (then it can be moved), a drag moves the plan - so passing fingers move nothing by mistake.
   if (event.pointerType === 'touch' && selectedRoomId === room.id && !room.labelLinked && node.dataset.labelPart !== 'card' && !node.classList.contains('active-part')) {
@@ -8066,7 +8066,7 @@ function bindEvents() {
   els.viewport?.addEventListener('pointerdown', event => {
     if (!groupTap || event.pointerType !== 'touch' || !editMode || event.target.closest?.('.room-label-card, .room-label-part, .card-handle')) return;
     const now = performance.now(), room = roomsOf()[groupTap.roomId], near = Math.hypot(event.clientX - groupTap.x, event.clientY - groupTap.y) < 30, quick = now - groupTap.t < 380; groupTap = null;
-    if (!room || !near || !quick || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 2) return;
+    if (!room || !near || !quick || (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length < 2 && !dashSpan(room))) return;
     event.preventDefault(); event.stopPropagation(); handleTapAt = now; toggleLabelGroupFromPlan(room);
   }, true);
   // No browser context menu (copy / share / save image) on a long press anywhere on the plan.

@@ -1,3 +1,7 @@
+## 0.6.1-beta.601
+
+- Kafelki: podwójne stuknięcie (i podwójny klik) rozgrupowuje i grupuje też etykietę z jednym widocznym elementem.
+
 ## 0.6.1-beta.600
 
 - Kafelki: rozgrupowany pojedynczy element (np. sama ikona) przyciąga się jak przy kilku elementach: do siatki etykiety, ramki kafelka i jej środka. Sekcja Etykieta w panelu nie znika po rozgrupowaniu (tylko w trybie kafelków).
