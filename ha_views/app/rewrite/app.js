@@ -3420,7 +3420,7 @@ function roomEditorMarkup(room) {
     + (control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 60),{ min:0, max:60, step:1, suffix:'px', integer:true }))
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     );
-  const group = partBar('group', 'Grupa', `<div class="group-tight">`
+  const group = partBar('group', icon && !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
@@ -3454,7 +3454,8 @@ function roomEditorMarkup(room) {
       + sub('Ikona', fxRows('labelIconFx', 'labelIconFxPower', LABEL_ICON_FX, 'mdi-cube-outline', 'Efekt'))
       + sub(soloLabel(r) ? 'Ramka elementu' : 'Ramka', fxRows('labelCardFx', 'labelCardFxPower', LABEL_FRAME_FX, 'mdi-creation', 'Styl')), []);
   })();
-  const label = (soloLabel(r) ? '' : group) + sectionOrder.map(partSection).join('') + fxSection;
+  // Ungrouped, only the parts are worked on: no label section then (a thermostat keeps it - its parts are switched there).
+  const label = (soloLabel(r) || (icon && !isThermoRoom(r) && !r.labelLinked) ? '' : group) + sectionOrder.map(partSection).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
   return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;

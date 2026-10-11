@@ -1,3 +1,7 @@
+## 0.6.1-beta.592
+
+- Etykieta: sekcja „Grupa” nazywa się teraz „Etykieta”. Po rozgrupowaniu jest ukryta, bo zmienia się wtedy tylko elementy. Termostat i wskaźnik bez zmian.
+
 ## 0.6.1-beta.591
 
 - Etykieta: „Przywróć domyślne” zostawia etykietę w tym samym miejscu na planie (zgrupowaną i rozgrupowaną), a potem kamera centruje się na niej z 20% marginesu.
