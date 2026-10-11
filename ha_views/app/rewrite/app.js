@@ -3328,6 +3328,8 @@ function roomEditorMarkup(room) {
     return [...vals].filter(v => v >= 0 && v <= 420).sort((a, b) => a - b).slice(0, 12); };
   const snapSlider = (html, path, vals, reach) => vals.length ? html.replace(`data-path="${path}"`, `data-path="${path}" list="qs-${path}" data-snap="${vals.join(',')}" data-snap-reach="${reach}"`) + `<datalist id="qs-${path}">${vals.map(v => `<option value="${v}"></option>`).join('')}</datalist>` : html;
   const lockBtn = key => { const fixed = !!r[`${key}FixedBox`]; return icBtn(`data-quick-lock="${key}" aria-pressed="${fixed}"`, fixed ? 'mdi-lock-outline' : 'mdi-lock-open-variant-outline', fixed ? 'Stała ramka: zawartość zmienia się w ramce' : 'Ramka rośnie z zawartością', fixed); };
+  // "Dopasuj" and "Stała ramka" in a size slider's row, between the slider and its reset.
+  const withBox = (html, key, fitTitle) => html.replace('<div class="control ', '<div class="control has-extra ').replace('<button type="button" class="slider-reset"', `<span class="range-extra">${icBtn(`data-quick-fit="${key}"`, 'mdi-arrow-collapse-horizontal', fitTitle)}${lockBtn(key)}</span><button type="button" class="slider-reset"`);
   const boxTools = key => icRow('mdi-crop-free', 'Pudełko', icBtn(`data-quick-fit="${key}"`, 'mdi-arrow-collapse-horizontal', 'Dopasuj do tekstu') + lockBtn(key));
   const iconOptions = () => sub('Źródło', control('Źródło','labelIconSource','select',source,{ items:[['entity','Z encji'],['integration','Logo integracji'],['mdi','Własna ikona MDI']], refresh:true })
       + (source === 'mdi' ? control('Ikona zależna ON/OFF','labelIconVariant','checkbox',!!r.labelIconVariant,refresh)
@@ -3405,11 +3407,10 @@ function roomEditorMarkup(room) {
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = r.labelIconBg || r.labelIconBorder;
-    if (part === 'icon') return partBar(part, title, sizeOpen((snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
+    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,Math.max(200, Math.ceil(Number(r.labelIconSize) || 0)),1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
-        + (ownSize ? icRow('mdi-crop-free', 'Pudełko', icBtn('data-quick-fit="labelIcon"', 'mdi-arrow-collapse-horizontal', 'Dopasuj do ikony') + lockBtn('labelIcon')) : '')
-        : (ownSize ? icRow('mdi-crop-free', 'Pudełko', icBtn('data-quick-fit="labelIcon"', 'mdi-arrow-collapse-horizontal', 'Dopasuj do ikony') + lockBtn('labelIcon')) : ''))) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
+        : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
       [['labelIconAnim','Animacja','mdi-rotate-right'], ...(source !== 'integration' ? [['labelIconOutline','Obrys','mdi-vector-circle-variant']] : []), ...frameToggles(key)]);
     const fontPx = clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420), has = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
@@ -3454,11 +3455,10 @@ function roomEditorMarkup(room) {
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
     const textRadius = range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px');
-    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen((snapSlider(range('Rozmiar tekstu',`${key}Size`,fontPx,6,Math.max(120, Math.ceil(fontPx)),1,'px'), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2))
+    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen(withBox(snapSlider(range('Rozmiar tekstu',`${key}Size`,fontPx,6,Math.max(120, Math.ceil(fontPx)),1,'px'), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2), key, 'Dopasuj do tekstu')
         + (framed ? (snapSlider(range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px'), `${key}Padding`, snapValues(`${key}Padding`, r[`${other}Bg`] || r[`${other}Border`] ? [`${other}Padding`] : []), 1.5))
           : '')
-        + weightRow
-        + boxTools(key))
+        + weightRow)
       : sub('Rozmiar', size + weightRow);
     const accentable = ['labelTarget','labelCurrent','labelAction'].includes(key);
     if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
