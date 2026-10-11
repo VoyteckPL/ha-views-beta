@@ -1772,8 +1772,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const inner = (free ? layeredParts : list => list)(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
       const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, thermo?.active?.[part] ?? on);
       const place = free ? `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translate(${Number(r[`${key}FX`]) || 0}px,${Number(r[`${key}FY`]) || 0}px)` : `transform:translate(${Number(r[`${key}DX`]) || 0}px,${Number(r[`${key}DY`]) || 0}px)`;
-      const partDots = interactive && r.id === selectedRoomId && panelPart?.roomId === r.id && panelPart.part === part && !isThermoRoom(r) && ROOM_LABEL_PARTS.filter(([pp]) => content[pp]).length > 1 ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
-      return `<div class="room-card-part ${part}${textLock(r, key) ? ' fit' : ''}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}${partDots}</div>`;
+      return `<div class="room-card-part ${part}${textLock(r, key) ? ' fit' : ''}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
     }).join('');
     if (!inner) return '';
     const solo = soloLabel(r), layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
@@ -2054,36 +2053,7 @@ function startDashResize(event, handle, room) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
-// A part's own dots in a grouped label (its section open): its frame's width / height change around its centre, the
-// text keeps its size; the label's frame hugs it as always. A side catches the other parts' widths / heights.
-function startPartBoxResize(event, handle, room, node) {
-  const key = partKey(node); if (!key) return;
-  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
-  const r0 = node.getBoundingClientRect(), [w0] = cssBox(node), k = r0.width / Math.max(1, w0), cx = (r0.left + r0.right) / 2, cy = (r0.top + r0.bottom) / 2;
-  const cs = getComputedStyle(node), num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
-  // Margin and corners stay as they are now (unset ones grow with the text otherwise).
-  if (!num(room[`${key}Padding`]) && (parseFloat(cs.paddingTop) || 0) > 0 && key !== 'labelIcon') room[`${key}Padding`] = Math.round(parseFloat(cs.paddingTop) * 10) / 10;
-  if (!num(room[`${key}Radius`]) && key !== 'labelIcon' && (room[`${key}Bg`] || room[`${key}Border`])) { const rad = parseFloat(cs.borderTopLeftRadius) || 0; if (rad > 0) room[`${key}Radius`] = Math.round(rad * 10) / 10; }
-  const sibs = [...(node.closest('.room-label-card')?.querySelectorAll(':scope > .room-card-part') || [])].filter(n => n !== node && n.offsetWidth).map(n => cssBox(n));
-  const reach = snapReach() * 1.5 / k, catchTo = (v, list) => { let best = null; list.forEach(t => { const d = Math.abs(t - v); if (d <= reach && (!best || d < best.d)) best = { d, t }; }); return best ? best.t : v; };
-  let moved = false;
-  const move = e => {
-    if (e.pointerId !== event.pointerId) return; moved = true;
-    const w = catchTo(Math.max(12, Math.abs(e.clientX - cx) * 2 / k), sibs.map(b => b[0])), h = catchTo(Math.max(10, Math.abs(e.clientY - cy) * 2 / k), sibs.map(b => b[1]));
-    room[`${key}W`] = Math.round(w * 10) / 10; room[`${key}H`] = Math.round(h * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
-    renderRoomLabels();
-    const hit = sibs.some(b => Math.abs(b[0] - w) < .05) || sibs.some(b => Math.abs(b[1] - h) < .05);
-    $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${node.dataset.labelPart}"]`)?.classList.toggle('size-hit', hit);
-  };
-  const up = e => {
-    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
-    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
-    if (moved) { room.updatedAt = new Date().toISOString(); renderRoomLabels(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); }
-  };
-  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
-}
 function startFreeResize(event, handle) {
-  { const part = handle.closest('.room-card-part'), host = part?.closest('.room-label-card'), r0 = roomsOf()[host?.dataset.roomId]; if (part && r0) return startPartBoxResize(event, handle, r0, part); }
   { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; if (cardNode && r0 && isIconRoom(r0) && dashSpan(r0)) return startDashResize(event, handle, r0); }
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).
   let node = handle.closest('.room-label-card, .room-label-part'); const room = roomsOf()[node?.dataset.roomId]; if (!room) return;

@@ -1,3 +1,7 @@
+## 0.6.1-beta.613
+
+- Cofnięte z beta.612: kropki elementu w zgrupowanej etykiecie.
+
 ## 0.6.1-beta.612
 
 - Etykieta (zgrupowana, kilka elementów): gdy sekcja elementu jest otwarta, element ma własne 4 kropki. Zmieniają szerokość i wysokość jego ramki symetrycznie wokół środka, a tekst zostaje tej samej wielkości. Krawędź łapie szerokość i wysokość innych elementów (zielone podświetlenie), a etykieta dopasowuje się sama.
