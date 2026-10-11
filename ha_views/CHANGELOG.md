@@ -1,3 +1,8 @@
+## 0.6.1-beta.616
+
+- Cofnięte z beta.615 (zachowana ramka po odblokowaniu, przycisk „Dopasuj ramkę”).
+- Kłódka „Zablokuj rozmiar”: ramka etykiety nie zmienia się przy edycji elementów, ale ma kropki. Zmieniają jej kształt w pionie i poziomie osobno, a elementy z marginesami skalują się razem z nią (rozmiar elementów według węższego boku, położenia i marginesy proporcjonalnie w obu osiach). Blokada zostaje zapisana. Odblokowanie wraca do ramki dopasowanej do elementów.
+
 ## 0.6.1-beta.615
 
 - Etykieta: odblokowanie rozmiaru zostawia ramkę taką, jaka była, z ustawionym wolnym miejscem wokół elementów. Kropki etykiety skalują wtedy całość proporcjonalnie (ramkę, elementy i odstępy).
