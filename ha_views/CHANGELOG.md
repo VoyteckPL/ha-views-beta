@@ -1,3 +1,8 @@
+## 0.6.1-beta.645
+
+- Cofnięte zmiany ustawień etykiety w kafelkach z wersji 0.6.1-beta.636–644 (rozmiary w % kafla, zakresy suwaków, dopasowywanie / zmniejszanie elementów, układy zestawów, tryb Auto / Własny). Kafelki działają jak w 0.6.1-beta.635; etykiety zapisane przez te wersje odzyskują rozmiary i układ sprzed nich.
+- Zostaje: nowa etykieta / przycisk / termostat i kopia etykiety trafiają w pierwszy wolny kafel; po wyłączeniu kafli etykieta wraca do swojej wielkości.
+
 ## 0.6.1-beta.644
 
 - Kafelki – nowy, prostszy model etykiety:
