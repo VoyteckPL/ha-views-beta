@@ -1134,11 +1134,20 @@ function shrinkTileParts(room, f, grow = false) {
     if (selectedRoomId === room.id) $$('#room-editor input[type=range][data-path$="Size"]').forEach(i => { const v = Number(room[i.dataset.path]); if (!Number.isFinite(v)) return; i.value = String(v); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(v)}${o.dataset.suffix || ''}`; });
   });
 }
+// Off its tile (tiles switched off, the label unpinned): the parts get back the sizes they had before a tile made them smaller.
+function restoreTileBase(room) {
+  const base = room.tileBase || {}; delete room.tileBase;
+  if (Number(room.preTileScale) > 0) room.labelCardScale = Number(room.preTileScale); delete room.preTileScale;
+  Object.entries(base).forEach(([k, b]) => { room[`${k}Size`] = b.Size; ['W', 'H'].forEach(d => { if (b[d] > 0) room[`${k}${d}`] = b[d]; }); ['FX', 'FY'].forEach(d => { if (b[d] !== undefined) room[`${k}${d}`] = b[d]; }); });
+  room.updatedAt = new Date().toISOString(); scheduleSave();
+  cancelAnimationFrame(tileShrinkFrame); tileShrinkFrame = requestAnimationFrame(() => renderRoomLabels());
+}
 function fitDashLabels() {
   const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   $$('#room-labels .room-label-card').forEach(card => {
     const room = roomsOf()[card.dataset.roomId], pin = room && isIconRoom(room) && dashSpan(room);
-    card.classList.toggle('dash-pinned', !!pin); if (!pin) return;
+    card.classList.toggle('dash-pinned', !!pin); if (!pin) { if (editMode && (room?.tileBase || room?.preTileScale)) restoreTileBase(room); return; }
+    if (!(Number(room.preTileScale) > 0)) room.preTileScale = Number(room.labelCardScale) || ICON_LABEL_SCALE; // (its own size, back when off the tiles)
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
@@ -1147,8 +1156,9 @@ function fitDashLabels() {
     const ref = Math.min(tw, th) * .94 / DASH_REF, fit = Math.min(tw * .94 / nw, th * .94 / nh);
     // What does not fit (a bigger gap / margin, a part shown, a smaller tile) makes the parts' own sizes smaller, so their
     // sliders show what is seen; a thermostat (laid out by design) is only scaled.
-    if (!isThermoRoom(room) && fit < ref * .995) shrinkTileParts(room, fit / ref);
-    else if (!isThermoRoom(room) && room.tileBase && fit > ref * 1.005) shrinkTileParts(room, fit / ref, true);
+    // (Only while editing: a state text getting longer on the dashboard only scales the label, nothing is stored.)
+    if (editMode && !isThermoRoom(room) && fit < ref * .995) shrinkTileParts(room, fit / ref);
+    else if (editMode && !isThermoRoom(room) && room.tileBase && fit > ref * 1.005) shrinkTileParts(room, fit / ref, true);
     const s = clamp(Math.min(fit, ref), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
@@ -4188,7 +4198,7 @@ async function confirmDuplicateRoom() {
 function duplicateRoom() {
   const view = activeSceneView(), room = view?.rooms?.[selectedRoomId]; if (!room) return;
   const id = 'room_' + uid(), now = new Date().toISOString(), copy = clone(room);
-  if (isIconRoom(room)) { Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, x: clamp((Number(room.x) || 50) + 3, 0, 100), y: clamp((Number(room.y) || 50) + 3, 0, 100), geometryLocked:false, createdAt:now, updatedAt:now }); view.rooms[id] = copy; renderRooms(); openRoomEditor(id); scheduleSave(true); return notify('Utworzono kopię etykiety'); }
+  if (isIconRoom(room)) { Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, x: clamp((Number(room.x) || 50) + 3, 0, 100), y: clamp((Number(room.y) || 50) + 3, 0, 100), geometryLocked:false, createdAt:now, updatedAt:now }); view.rooms[id] = copy; if (copy.dash) { delete copy.dash; pinToFreeTile(copy, view); } /* (on tiles the copy takes the first free tile) */ renderRooms(); openRoomEditor(id); scheduleSave(true); return notify('Utworzono kopię etykiety'); }
   const xs = room.points.map(p => p[0]), ys = room.points.map(p => p[1]);
   const dx = Math.max(...xs) + 3 <= 100 ? 3 : -3, dy = Math.max(...ys) + 3 <= 100 ? 3 : -3;
   Object.assign(copy, { id, name: `${room.name} (${translateValue('kopia')})`, points: room.points.map(([x, y]) => [clamp(x + dx, 0, 100), clamp(y + dy, 0, 100)]), geometryLocked:false, createdAt:now, updatedAt:now });

@@ -1,3 +1,9 @@
+## 0.6.1-beta.641
+
+- Kafelki: dopasowywanie rozmiarów elementów do kafla działa tylko w trybie edycji – zmiana stanu encji (np. dłuższy tekst stanu) w podglądzie tylko skaluje etykietę i niczego nie zapisuje.
+- Kafelki: po wyłączeniu kafli (lub odpięciu etykiety) etykieta wraca do swojej wielkości sprzed kafli, a elementy do swoich rozmiarów (wcześniej zostawała ogromna / zmniejszona).
+- Kafelki: kopia etykiety (Duplikuj) trafia w pierwszy wolny kafel.
+
 ## 0.6.1-beta.640
 
 - Kafelki: gdy elementy etykiety nie mieszczą się w kaflu (większy odstęp / margines, pokazany element, mniejszy kafel), zmniejszają się ich własne rozmiary – suwaki rozmiaru pokazują to, co widać. Gdy miejsca znów przybędzie, elementy wracają do poprzednich rozmiarów. Przeciągany suwak rozmiaru zatrzymuje się na największym rozmiarze, który się mieści (pozostałe elementy się nie zmieniają). Termostat bez zmian.
