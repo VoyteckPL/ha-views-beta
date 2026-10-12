@@ -1,3 +1,7 @@
+## 0.6.1-beta.635
+
+- Nowe efekty przejścia przycisku do widoku, w których oba piętra widać naraz: „Piętra 3D” (parter odjeżdża przechylony jak płyta stropu, piętro nadlatuje z góry i się prostuje), „Odsłonięcie z przycisku” (nowy widok odsłania się kołem od przycisku, stary przygasa), „Miękkie przenikanie” (rozmycie i lekkie oddalenie / przybliżenie), „Winda z przenikaniem” (oba piętra jadą razem). Kierunek z ikony przycisku lub kolejności widoków; ograniczenie ruchu w systemie = bez animacji.
+
 ## 0.6.1-beta.634
 
 - Wyszukiwarka ikon: w każdym polu ikony MDI (etykieta, przycisk, pomieszczenie, marker) po wpisaniu słów (np. „arrow left”) pod polem pojawia się siatka wszystkich pasujących ikon MDI z symbolem i nazwą; działa też po polsku dla popularnych ikon (np. „deszcz”). Kliknięcie wstawia ikonę. Lista nazw jest czytana raz z już wczytanego arkusza ikon – bez dodatkowego obciążenia.
