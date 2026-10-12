@@ -1,3 +1,7 @@
+## 0.6.1-beta.650
+
+- Cofnięty podział na „automat / własny układ” z 0.6.1-beta.648 – kafelki działają jak w 0.6.1-beta.647 (presety układu, odstęp przelicza układ presetu). Wyszukiwanie pomocników (0.6.1-beta.649) zostaje.
+
 ## 0.6.1-beta.649
 
 - Wyszukiwanie encji w etykiecie / pomieszczeniu znajduje też encje bez integracji: pomocników utworzonych w HA (np. suwak input_number, przełącznik input_boolean) oraz encje z YAML / spoza rejestru (grupa „Pomocnicy i inne”). Wcześniej serwer je pomijał.
