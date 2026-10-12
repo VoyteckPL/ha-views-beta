@@ -1834,8 +1834,13 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .mdi-pick-preview{display:inline-grid;place-items:center;min-width:22px}
 .mdi-pick-preview .mdi{font-size:20px;line-height:1}
 /* The grouping / snap buttons: a little apart from the copy / paste buttons on their right. */
-#room-editor .editor-quick-actions #room-group-toggle:not([hidden]),#room-editor .editor-quick-actions #room-group-snap:not([hidden]):has(+ #room-group-toggle[hidden]){margin-right:10px}
+#room-editor .editor-quick-actions #room-group-toggle:not([hidden]),#room-editor .editor-quick-actions #room-group-snap:not([hidden]):has(+ #room-group-toggle[hidden]){margin-right:4px}
 /* A label on a tile, icon on the left: the icon and the two texts kept together in the middle of the tile. */
 .room-label-card.dash-pinned.layout-iconLeft{align-content:center;justify-content:center}
 .room-label-card.dash-pinned.layout-iconLeft .room-card-part.name{align-self:end}.room-label-card.dash-pinned.layout-iconLeft .room-card-part.state{align-self:start}
 .room-label-card.dash-pinned.layout-column{justify-content:center;align-content:center}
+/* An ungrouped part's dots: a little smaller than the label's and amber, the side dots smaller still. */
+.card-handle-proxy.part{width:10px;height:10px;margin:-5px 0 0 -5px;border-color:#f5a524;background:#fff7e6}
+.card-handle-proxy.part[data-corner="n"],.card-handle-proxy.part[data-corner="s"],.card-handle-proxy.part[data-corner="e"],.card-handle-proxy.part[data-corner="w"]{width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:3px}
+.card-handle-proxy.part.square{border-color:#4ade80}
+@media (pointer:coarse){.card-handle-proxy.part{width:13px;height:13px;margin:-6.5px 0 0 -6.5px}.card-handle-proxy.part[data-corner="n"],.card-handle-proxy.part[data-corner="s"],.card-handle-proxy.part[data-corner="e"],.card-handle-proxy.part[data-corner="w"]{width:11px;height:11px;margin:-5.5px 0 0 -5.5px}}

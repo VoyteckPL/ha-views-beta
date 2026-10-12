@@ -1,3 +1,8 @@
+## 0.6.1-beta.654
+
+- Etykieta rozgrupowana: kropki elementów są trochę mniejsze i pomarańczowe (odróżniają się od kropek etykiety); doszły kropki na środku każdego boku – rozciągają ramkę elementu tylko w poziomie albo w pionie (ikona / tekst w środku zostaje tej samej wielkości).
+- Nagłówek panelu: mniejsze odsunięcie przycisków grupowania / magnesu, żeby przyciski mieściły się w jednym rzędzie.
+
 ## 0.6.1-beta.653
 
 - Kafelki: ramki nazwy i stanu mają takie samo zaokrąglenie (20, jak pokazuje suwak) – wcześniej rosło z wielkością tekstu, więc stan (większy tekst) był dużo bardziej zaokrąglony niż nazwa. Zaokrąglenie ustawione suwakiem zostaje.

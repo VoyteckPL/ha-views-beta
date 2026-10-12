@@ -1877,9 +1877,9 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   return backdrop + layeredParts(ROOM_LABEL_PARTS.filter(([part]) => content[part])).map(([part, key]) => {
     const bg = part === 'icon' ? roomIconFrameStyle(r, on) : roomTextPartStyle(r, key, thermo?.active?.[part] ?? on);
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
-    // Selected and ungrouped: a dot on each corner changes the part's width and height (Shift: proportionally).
-    // A name / state also has a dot in the middle of each side: it changes that side only (the text keeps its size).
-    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    // Selected and ungrouped: a dot on each corner scales the part; a dot in the middle of each side stretches its box
+    // that way only (the icon / text inside keeps its size).
+    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se','n','s','e','w'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${textLock(r, key) ? ' fit' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
@@ -2096,7 +2096,7 @@ function fitCardHandles() {
       proxy = document.createElement('i'); proxy.className = 'card-handle-proxy'; proxy.dataset.key = key; layer.append(proxy);
       proxy.addEventListener('pointerdown', event => { if (secondFingerToZoom(event)) return; const real = proxy.__real; if (real?.isConnected && editMode) startFreeResize(event, real); });
     }
-    proxy.__real = h; proxy.dataset.corner = h.dataset.corner;
+    proxy.__real = h; proxy.dataset.corner = h.dataset.corner; proxy.classList.toggle('part', !!owner?.classList.contains('room-label-part')); // (a part's dots: smaller, their own colour)
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;
     // A side's dot is always there; on a small part (on screen) it is drawn smaller, so the dots stay apart.
     proxy.hidden = !r.width || getComputedStyle(h).display === 'none';
