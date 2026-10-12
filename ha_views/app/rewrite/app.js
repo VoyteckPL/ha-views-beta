@@ -1105,6 +1105,35 @@ function pinToFreeTile(room, view = activeSceneView()) {
     room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; }
   return false;
 }
+let tileShrinkFrame = 0;
+// (The sizes they had are kept in tileBase: with room again - a gap / margin made smaller, a bigger tile - they grow back
+// up to them; a size set by hand becomes the new one.)
+function shrinkTileParts(room, f, grow = false) {
+  const shown = ROOM_LABEL_PARTS.map(([, k]) => k).filter(k => room[k]), a = document.activeElement;
+  const dims = k => ({ Size: Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], W: Number(room[`${k}W`]) || 0, H: Number(room[`${k}H`]) || 0, FX: room[`${k}FX`], FY: room[`${k}FY`] });
+  // The size slider being dragged: only that part gives way (the others keep theirs).
+  const drag = a?.matches?.('#room-editor input[type=range]') && selectedRoomId === room.id && /^label(Icon|Name|State)Size$/.test(a.dataset.path || '') ? a.dataset.path.replace(/Size$/, '') : '';
+  let changed = false; const set = (key, v, lo) => { const n = Math.round(Math.max(lo, v) * 10) / 10; if (Math.abs(n - Number(room[key])) > .05) { room[key] = n; changed = true; } };
+  if (grow) {
+    if (drag) return; const base = room.tileBase || {}; let done = true;
+    shown.forEach(k => { const b = base[k]; if (!b) return; const cur = dims(k), g = Math.min(f, b.Size / cur.Size); if (!(g > 1.001)) return; done = false;
+      set(`${k}Size`, cur.Size * g, 6); ['W', 'H'].forEach(d => { if (b[d] > 0 && cur[d] > 0) set(`${k}${d}`, Math.min(b[d], cur[d] * g), 4); });
+      ['FX', 'FY'].forEach(d => { if (Number.isFinite(Number(b[d])) && b[d] !== undefined && cur[d] !== undefined) { room[`${k}${d}`] = Math.abs(Number(cur[d]) * g) > Math.abs(Number(b[d])) ? b[d] : Math.round(Number(cur[d]) * g * 100) / 100; } }); });
+    if (done) { delete room.tileBase; return; }
+  } else (drag ? [drag] : shown).forEach(k => {
+    if (!drag) { room.tileBase ||= {}; room.tileBase[k] ||= dims(k); }
+    set(`${k}Size`, (Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`]) * f, 6);
+    ['W', 'H'].forEach(d => { if (Number(room[`${k}${d}`]) > 0) set(`${k}${d}`, Number(room[`${k}${d}`]) * f, 4); });
+    if (!drag) ['FX', 'FY'].forEach(d => { if (Number.isFinite(Number(room[`${k}${d}`])) && room[`${k}${d}`] !== undefined) { const n = Math.round(Number(room[`${k}${d}`]) * f * 100) / 100; if (n !== room[`${k}${d}`]) room[`${k}${d}`] = n; } });
+  });
+  if (!changed) return;
+  room.updatedAt = new Date().toISOString(); scheduleSave();
+  cancelAnimationFrame(tileShrinkFrame); tileShrinkFrame = requestAnimationFrame(() => {
+    renderRoomLabels();
+    // The open panel's size sliders follow (the one held keeps its place under the finger, with the value it now has).
+    if (selectedRoomId === room.id) $$('#room-editor input[type=range][data-path$="Size"]').forEach(i => { const v = Number(room[i.dataset.path]); if (!Number.isFinite(v)) return; i.value = String(v); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(v)}${o.dataset.suffix || ''}`; });
+  });
+}
 function fitDashLabels() {
   const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   $$('#room-labels .room-label-card').forEach(card => {
@@ -1115,7 +1144,12 @@ function fitDashLabels() {
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
     // The parts keep their own sizes: a tile's shorter side is 100 "px" of them (an icon of size 50 takes about half of it),
     // so the size sliders do change what is seen; only what would not fit is made smaller, to fill the tile at most.
-    const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh, Math.min(tw, th) * .94 / DASH_REF), .1, 8);
+    const ref = Math.min(tw, th) * .94 / DASH_REF, fit = Math.min(tw * .94 / nw, th * .94 / nh);
+    // What does not fit (a bigger gap / margin, a part shown, a smaller tile) makes the parts' own sizes smaller, so their
+    // sliders show what is seen; a thermostat (laid out by design) is only scaled.
+    if (!isThermoRoom(room) && fit < ref * .995) shrinkTileParts(room, fit / ref);
+    else if (!isThermoRoom(room) && room.tileBase && fit > ref * 1.005) shrinkTileParts(room, fit / ref, true);
+    const s = clamp(Math.min(fit, ref), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
@@ -3838,6 +3872,7 @@ function onRoomEditorInput(event) {
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
+  if (/^label(Icon|Name|State)Size$/.test(path)) delete room.tileBase; // (a size set by hand on a tile is the one to keep)
   if (path === 'labelSizeUi') {
     // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
     // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.

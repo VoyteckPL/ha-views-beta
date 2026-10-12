@@ -1,3 +1,7 @@
+## 0.6.1-beta.640
+
+- Kafelki: gdy elementy etykiety nie mieszczą się w kaflu (większy odstęp / margines, pokazany element, mniejszy kafel), zmniejszają się ich własne rozmiary – suwaki rozmiaru pokazują to, co widać. Gdy miejsca znów przybędzie, elementy wracają do poprzednich rozmiarów. Przeciągany suwak rozmiaru zatrzymuje się na największym rozmiarze, który się mieści (pozostałe elementy się nie zmieniają). Termostat bez zmian.
+
 ## 0.6.1-beta.639
 
 - Kafelki: etykieta przypięta do kafla nie ma suwaka „Rozmiar” w sekcji Etykieta (wypełnia kafel; margines i odstęp zostają).
