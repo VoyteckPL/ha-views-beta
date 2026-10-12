@@ -1118,6 +1118,9 @@ function applyTilePreset(room, preset = room.tilePreset || 'v') {
   // (the tile scales the label to fill it, so the icon's own size only sets how big the gaps and frames are next to it: a
   // big one leaves the share of the icon / text free over its whole range)
   if (icon && texts.length) room.labelIconSize = 80;
+  // The name's / state's frame keeps one margin (16, in the label's own units - the tile scales it with the rest), not one
+  // that grows with its text size; a margin set with its slider stays.
+  texts.forEach(k => { const v = room[`${k}Padding`]; if (v === undefined || v === null || v === '' || !Number.isFinite(Number(v))) room[`${k}Padding`] = 16; });
   const node = part => $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${part}"]`);
   for (let pass = 0; pass < 4; pass++) {
     texts.forEach(k => { delete room[`${k}W`]; delete room[`${k}H`]; }); // (their boxes are taken again from the new sizes)
