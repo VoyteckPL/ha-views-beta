@@ -1,3 +1,7 @@
+## 0.6.1-beta.623
+
+- Etykieta z samą ikoną: ramka etykiety przejmuje kształt ikony (Koło, Kwadrat, Dowolny), także po rozgrupowaniu. Wybór kształtu jest w sekcji Ikona → Rozmiar. Przy kole i kwadracie margines jest równy ze wszystkich stron, więc koło jest okrągłe.
+
 ## 0.6.1-beta.622
 
 - Margines etykiety działa do środka: etykieta zachowuje rozmiar, a elementy zmniejszają się, robiąc miejsce na margines. Po zmniejszeniu marginesu wracają dokładnie do poprzedniej wielkości (także przy kolejnym chwyceniu suwaka).

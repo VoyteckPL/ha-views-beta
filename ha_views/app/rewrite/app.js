@@ -1439,7 +1439,8 @@ function fitLabelBackdrop(room, group) {
   const left = Math.min(...rects.map(r => r.left)), right = Math.max(...rects.map(r => r.right)), top = Math.min(...rects.map(r => r.top)), bottom = Math.max(...rects.map(r => r.bottom));
   backdrop.style.setProperty('--lx', `${((left + right) / 2 - scene.left - ax / 100 * scene.width) / toPlan}px`);
   backdrop.style.setProperty('--ly', `${((top + bottom) / 2 - scene.top - ay / 100 * scene.height) / toPlan}px`);
-  backdrop.style.width = `${(right - left) / local + pad * 2.7}px`; backdrop.style.height = `${(bottom - top) / local + pad * 2}px`;
+  const hx = iconOnlyLabel(room) && iconShapeOf(room) !== 'custom' ? 2 : 2.7; // (a round / square icon-only label: the same margin all round)
+  backdrop.style.width = `${(right - left) / local + pad * hx}px`; backdrop.style.height = `${(bottom - top) / local + pad * 2}px`;
 }
 // Frame size set with the side dots (box-local px; never smaller than the content).
 // A label's name and state keep one size whatever they show (a state "Wł." → "Niedostępny" must not resize the label):
@@ -1479,14 +1480,18 @@ function fitFreeCard(room, group) {
     return;
   }
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  card.style.width = `${Math.round(maxX - minX + pad * 2.7)}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`;
+  card.style.width = `${Math.round(maxX - minX + pad * (iconOnlyLabel(room) && iconShapeOf(room) !== 'custom' ? 2 : 2.7))}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`;
   card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`);
   parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${(Number(room[`${key}FX`]) || 0) - cx}px,${(Number(room[`${key}FY`]) || 0) - cy}px)`; });
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
+// A label showing only its icon is the icon: its frame takes the icon's shape (circle / square / own corners).
+const iconOnlyLabel = r => !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState;
+const iconShapeOf = r => ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
 function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
-  return [`border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px`,
+  const iconOnly = iconOnlyLabel(r), shape = iconOnly ? iconShapeOf(r) : '';
+  return [shape === 'circle' ? 'border-radius:50%' : shape === 'square' ? 'border-radius:0' : `border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px`,
     r.labelCardBg ? `background:${rgba(cardPick('labelCardBgState', 'labelCardBg', 'Color') || '#081822', clamp(Number(cardPick('labelCardBgState', 'labelCardBg', 'Opacity') ?? .62), 0, 1))}` : '',
     // The frame is drawn inside the card (inset shadow), so a thicker ON / OFF frame never changes the card's size.
     `box-shadow:${[r.labelCardBorder ? `inset 0 0 0 ${clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Width')) || 1, .5, 12)}px ${rgba(cardPick('labelCardBorderState', 'labelCardBorder', 'Color') || '#FFFFFF', clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Opacity') ?? .3), 0, 1))}` : '', r.labelCardBg && r.labelCardShadow !== false ? '0 6px 18px rgba(0,0,0,.25)' : ''].filter(Boolean).join(',') || 'none'}`].filter(Boolean).join(';');
@@ -1781,7 +1786,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : solo ? 'box-sizing:border-box' : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
-      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 150)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 150) * 1.35)}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
+      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 150)}px ${Math.round(clamp(Number(r.labelCardPadding) || 0, 0, 150) * (iconOnlyLabel(r) && iconShapeOf(r) !== 'custom' ? 1 : 1.35))}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
     // texts and margin stay as they are, centred in it).
@@ -3544,7 +3549,7 @@ function roomEditorMarkup(room) {
     if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,420,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
-        : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
+        : oneShown === 'labelIcon' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
       [['labelIconAnim','Animacja','mdi-rotate-right'], ...(source !== 'integration' ? [['labelIconOutline','Obrys','mdi-vector-circle-variant']] : []), ...frameToggles(key)]);
     const fontPx = clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420), has = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
