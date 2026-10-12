@@ -1120,7 +1120,8 @@ function applyTilePreset(room, preset = room.tilePreset || 'v') {
   if (icon && texts.length) room.labelIconSize = 80;
   // The name's / state's frame keeps one margin (16, in the label's own units - the tile scales it with the rest), not one
   // that grows with its text size; a margin set with its slider stays.
-  texts.forEach(k => { const v = room[`${k}Padding`]; if (v === undefined || v === null || v === '' || !Number.isFinite(Number(v))) room[`${k}Padding`] = 16; });
+  // (the same for their corners: 20, as their sliders show, not rounder with a bigger text)
+  texts.forEach(k => { [['Padding', 16], ['Radius', 20]].forEach(([d, def]) => { const v = room[`${k}${d}`]; if (v === undefined || v === null || v === '' || !Number.isFinite(Number(v))) room[`${k}${d}`] = def; }); });
   const node = part => $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${part}"]`);
   for (let pass = 0; pass < 4; pass++) {
     texts.forEach(k => { delete room[`${k}W`]; delete room[`${k}H`]; }); // (their boxes are taken again from the new sizes)

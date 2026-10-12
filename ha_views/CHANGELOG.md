@@ -1,3 +1,7 @@
+## 0.6.1-beta.653
+
+- Kafelki: ramki nazwy i stanu mają takie samo zaokrąglenie (20, jak pokazuje suwak) – wcześniej rosło z wielkością tekstu, więc stan (większy tekst) był dużo bardziej zaokrąglony niż nazwa. Zaokrąglenie ustawione suwakiem zostaje.
+
 ## 0.6.1-beta.652
 
 - Kafelki: ramki nazwy i stanu mają stały margines 16 (w jednostkach etykiety – kafel skaluje go razem z resztą), zamiast marginesu zależnego od rozmiaru tekstu (wcześniej w tej samej etykiecie np. 4 i 8, a przy zmianie udziału ikony od 2 do 21). Margines ustawiony suwakiem zostaje.
