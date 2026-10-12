@@ -1,3 +1,7 @@
+## 0.6.1-beta.643
+
+- Kafelki, etykieta rozgrupowana: element zawsze zostaje w swoim kaflu – także przy zmianie rozmiaru suwakiem (zatrzymuje się na krawędzi kafla); przesuwanie i kropki już wcześniej były ograniczone.
+
 ## 0.6.1-beta.642
 
 - Kafelki: zwiększanie rozmiaru jednego elementu (np. ikony na maksimum) nie zmniejsza już pozostałych (np. nazwy) – ustępuje tylko zmieniany element i zatrzymuje się na największym rozmiarze, który się mieści. Działa też na telefonie i po puszczeniu suwaka.

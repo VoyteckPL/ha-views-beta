@@ -2473,6 +2473,24 @@ function startFreeResize(event, handle) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 // Ungrouped, a part stays inside the group's frame (the frame kept from the group): moved back in when it would stick out.
+// The tile an ungrouped label is pinned to, on screen.
+function tileScreenRect(room) {
+  const pin = isIconRoom(room) && !room.labelLinked && dashSpan(room); if (!pin) return null;
+  const sc = els.scene.getBoundingClientRect(), l = sc.left + pin.x / 100 * sc.width, t = sc.top + pin.y / 100 * sc.height;
+  return { l, t, r: l + pin.w / 100 * sc.width, b: t + pin.h / 100 * sc.height };
+}
+// Ungrouped on its tile: a part moved stays inside the tile (one bigger than the tile is made to fit it).
+function keepInTile(room, key, part) {
+  const t = tileScreenRect(room), node = () => $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${part}"]`); if (!t || !node()) return false;
+  let r = node().getBoundingClientRect(); if (!r.width) return false;
+  const f = Math.min(1, (t.r - t.l) / r.width, (t.b - t.t) / r.height);
+  if (f < .999) { const k = `${key}Size`; room[k] = Math.round(clamp((Number(room[k]) || ROOM_DEFAULTS[k]) * f, 6, 420) * 10) / 10; ['W', 'H'].forEach(d => { if (Number(room[`${key}${d}`]) > 0) room[`${key}${d}`] = Math.round(Number(room[`${key}${d}`]) * f * 10) / 10; }); renderRoomLabels(); r = node()?.getBoundingClientRect() || r; }
+  const dx = r.left < t.l ? t.l - r.left : r.right > t.r ? t.r - r.right : 0, dy = r.top < t.t ? t.t - r.top : r.bottom > t.b ? t.b - r.bottom : 0;
+  if (Math.abs(dx) < .01 && Math.abs(dy) < .01) return f < .999;
+  const toPlan = (els.scene.getBoundingClientRect().width) / (els.scene.offsetWidth || 1) * (sceneScale || 1);
+  room[`${key}X`] = Math.round(((Number(room[`${key}X`]) || 0) + dx / toPlan) * 100) / 100; room[`${key}Y`] = Math.round(((Number(room[`${key}Y`]) || 0) + dy / toPlan) * 100) / 100;
+  renderRoomLabels(); return true;
+}
 function keepInFrame(room, key, part) {
   if (!fixedFrame(room)) return false; // a hugging frame follows its parts, nothing is kept inside it
   const sc = els.scene.getBoundingClientRect(), fr = groupFrameRect(room, sc), node = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${part}"]`); if (!fr || !node) return false;
@@ -2564,6 +2582,8 @@ function startCardResize(event, handle) {
       if (snap) f = snap.size / (snap.want === 'w' ? r0.width : r0.height);
     }
     { const room_ = els.scene.getBoundingClientRect(), maxX = (sx > 0 ? room_.right - fixed.x : fixed.x - room_.left) / Math.max(1, r0.width), maxY = (sy > 0 ? room_.bottom - fixed.y : fixed.y - room_.top) / Math.max(1, r0.height); f = Math.min(f, maxX, maxY); }
+    // Ungrouped on its tile: a part grows only up to the tile's edges.
+    { const t = !isCard && tileScreenRect(room); if (t) f = Math.min(f, Math.max(.05, (sx > 0 ? t.r - fixed.x : fixed.x - t.l) / Math.max(1, r0.width)), Math.max(.05, (sy > 0 ? t.b - fixed.y : fixed.y - t.t) / Math.max(1, r0.height))); }
     apply(f); let r = render(); if (!r) return;
     // Text and margins do not scale exactly linearly: one correction lands a snapped size on the pixel.
     if (snap) { const got = snap.want === 'w' ? r.width : r.height; if (got > 1 && Math.abs(got - snap.size) > .3) { f *= snap.size / got; apply(f); r = render() || r; } }
@@ -2883,7 +2903,7 @@ function startRoomLabelDrag(event) {
         showAlignGuides([{ at: tx / W * 100, kind: 'major' }, { at: (tx + cw) / W * 100, kind: 'major' }], [{ at: ty / H * 100, kind: 'major' }, { at: (ty + ch) / H * 100, kind: 'major' }]);
       }
     }
-    if (key !== 'labelCard' && !room.labelLinked) { keepApart(room, key, node.dataset.labelPart); keepInFrame(room, key, node.dataset.labelPart); }
+    if (key !== 'labelCard' && !room.labelLinked) { keepApart(room, key, node.dataset.labelPart); keepInFrame(room, key, node.dataset.labelPart); keepInTile(room, key, node.dataset.labelPart); }
     if (isIconRoom(room) && key === 'labelCard' && room.labelLinked && dashGrid().on) { const box = cardBoxPct(room); if (box) renderDashGrid(dashTarget(box, room.dash && dashSpan(room) ? room.dash : { w: 1, h: 1 })); }
     // "Granice tła": the label (the whole group, or the one part being moved) stays inside the background.
     if (keepInBounds()) {
@@ -3883,7 +3903,8 @@ function onRoomEditorInput(event) {
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
-  if (/^label(Icon|Name|State)Size$/.test(path)) { delete room.tileBase; lastTileSizeEdit = { id: room.id, key: path.replace(/Size$/, ''), at: performance.now() }; } // (a size set by hand on a tile is the one to keep; it is the one to give way)
+  if (/^label(Icon|Name|State)Size$/.test(path)) { delete room.tileBase; lastTileSizeEdit = { id: room.id, key: path.replace(/Size$/, ''), at: performance.now() };
+    if (!room.labelLinked && tileScreenRect(room)) requestAnimationFrame(() => { const k = path.replace(/Size$/, ''), part = ROOM_LABEL_PARTS.find(([, kk]) => kk === k)?.[0]; if (part && keepInTile(room, k, part)) { input.value = String(room[path]); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room[path])}${o.dataset.suffix || ''}`; } }); } // (a size set by hand on a tile is the one to keep; it is the one to give way)
   if (path === 'labelSizeUi') {
     // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
     // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.
