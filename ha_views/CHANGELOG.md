@@ -1,3 +1,7 @@
+## 0.6.1-beta.634
+
+- Wyszukiwarka ikon: w każdym polu ikony MDI (etykieta, przycisk, pomieszczenie, marker) po wpisaniu słów (np. „arrow left”) pod polem pojawia się siatka wszystkich pasujących ikon MDI z symbolem i nazwą; działa też po polsku dla popularnych ikon (np. „deszcz”). Kliknięcie wstawia ikonę. Lista nazw jest czytana raz z już wczytanego arkusza ikon – bez dodatkowego obciążenia.
+
 ## 0.6.1-beta.633
 
 - Przycisk: sekcja „Etykieta” nazywa się „Przycisk”; w ikonie zamiast wyboru źródła (encja / logo – przycisk nie ma encji) od razu wybór ikony MDI; przyciski w nagłówku i okno usuwania mówią o przycisku („Kopiuj styl przycisku”, „Usunąć przycisk?”…).

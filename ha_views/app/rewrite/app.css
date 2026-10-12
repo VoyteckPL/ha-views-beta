@@ -1824,3 +1824,12 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .room-label-group :is(.room-label-card,.room-label-backdrop).bare,:is(.room-label-card,.room-label-backdrop).bare{background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-color:transparent!important}
 .room-label-group :is(.room-label-card,.room-label-backdrop:not(.ungrouped-edit)).bare,:is(.room-label-card,.room-label-backdrop:not(.ungrouped-edit)).bare{box-shadow:none!important}
 .room-label-group .room-label-backdrop.ungrouped-edit.bare,.room-label-backdrop.ungrouped-edit.bare{box-shadow:0 0 calc(22px * var(--inv)) calc(2px * var(--inv)) rgba(192,132,252,.55)!important}
+/* Icon search: a grid of matching MDI icons under the icon field. */
+.mdi-picker{position:fixed;z-index:10050;display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:4px;padding:6px;overflow:auto;box-sizing:border-box;background:#0d1d27;border:1px solid rgba(124,196,230,.35);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.mdi-picker button{height:auto!important;min-height:52px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:5px 2px;border:1px solid transparent;border-radius:7px;background:rgba(255,255,255,.04);color:#dbe9f1;cursor:pointer;font:inherit}
+.mdi-picker button:hover,.mdi-picker button:focus-visible{border-color:var(--cyan,#20b9e7);background:#1e4a5e}
+.mdi-picker button .mdi{font-size:22px;line-height:1}
+.mdi-picker button span{display:block!important;height:auto!important;line-height:1.25!important;width:auto!important;position:static!important;color:#9fb7c4!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;opacity:.75}
+.mdi-picker small{grid-column:1/-1;padding:4px;text-align:center;font-size:11px;opacity:.7}
+.mdi-pick-preview{display:inline-grid;place-items:center;min-width:22px}
+.mdi-pick-preview .mdi{font-size:20px;line-height:1}
