@@ -1,3 +1,8 @@
+## 0.6.1-beta.651
+
+- Kafelki: w sekcji Ikona zamiast „Rozmiar” suwak „Udział ikony” (30–70%) – ile wysokości etykiety (Jedno pod drugim) lub szerokości (Ikona z lewej) zajmuje ikona; tekst wypełnia resztę, kafel skaluje całość. Suwaki rozmiaru nazwy i stanu ukryte (wynikają z udziału). Sama ikona wypełnia kafel (bez suwaka).
+- Poprawka: wyśrodkowanie elementów w układach kafla było pomijane.
+
 ## 0.6.1-beta.650
 
 - Cofnięty podział na „automat / własny układ” z 0.6.1-beta.648 – kafelki działają jak w 0.6.1-beta.647 (presety układu, odstęp przelicza układ presetu). Wyszukiwanie pomocników (0.6.1-beta.649) zostaje.
