@@ -1124,7 +1124,7 @@ function applyTilePreset(room, preset = room.tilePreset || 'v') {
     if (texts.length === 2) { const a = box('labelName'), b = box('labelState'); if (a?.w && b?.w) room.labelStateSize = Math.round(clamp((Number(room.labelStateSize) || ROOM_DEFAULTS.labelStateSize) * a.w / b.w, 6, 420) * 10) / 10; }
     // The icon as tall as the text (both texts and the gap between them when there are two).
     if (icon && texts.length) {
-      const hs = texts.map(box).filter(Boolean), gap = room.labelCardLayout === 'column' && hs.length > 1 ? clamp(Number(room.labelPartGap ?? 12), 0, 80) : 0, want = hs.reduce((t, b) => t + b.h, 0) + gap, ib = box('labelIcon');
+      const hs = texts.map(box).filter(Boolean), gap = hs.length > 1 ? clamp(Number(room.labelPartGap ?? 12), 0, 80) : 0, want = hs.reduce((t, b) => t + b.h, 0) + gap, ib = box('labelIcon');
       // (the text is sized to the icon - an icon cannot get smaller than its own frame's margin)
       if (ib?.h && want > 0) { const f = (ib.h - gap) / Math.max(1, want - gap); if (Math.abs(f - 1) > .01) texts.forEach(k => { room[`${k}Size`] = Math.round(clamp((Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`]) * f, 6, 420) * 10) / 10; }); }
     }
@@ -3704,7 +3704,7 @@ function roomEditorMarkup(room) {
   const tilePresets = onTile && shownCount > 2 && r.labelLinked ? icRow('mdi-view-dashboard-outline', 'Układ', icBtn('data-tile-preset="v"', 'mdi-view-agenda-outline', 'Jedno pod drugim', tp === 'v') + icBtn('data-tile-preset="h"', 'mdi-page-layout-sidebar-left', 'Ikona z lewej', tp === 'h')) : '';
   const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }))
-    + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
+    + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
     + tilePresets
     );
   // (On tiles a label is always on its tile, sized with its dots: no tile rows.)
@@ -3892,7 +3892,10 @@ function onRoomEditorInput(event) {
     }
   } }
   // The parts' spacing in a label's group (a free group: its parts restacked along their row / column).
-  if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked) { room.labelPartGap = value; arrangeLabelParts(room, 'gap'); }
+  // On a tile with a ready layout the gap is just the space between the parts (icon - text, name - state): the layout is
+  // worked out again with it, nothing is moved apart one by one.
+  if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked && isIconRoom(room) && dashSpan(room) && !room.labelCardFree) { room.labelPartGap = value; applyTilePreset(room); }
+  else if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked) { room.labelPartGap = value; arrangeLabelParts(room, 'gap'); }
   // An icon with "Stała ramka": its frame keeps the size it has now, the icon changes inside it.
   if (path === 'labelIconSize' && room.labelIconFixedBox && !(Number(room.labelIconW) > 0)) { const n = $(`.room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="icon"]`) || $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] [data-label-part="icon"]`); if (n?.offsetWidth) { room.labelIconW = n.offsetWidth; room.labelIconH = n.offsetHeight; } }
   // A label's margin sets its frame (0 = the frame tight round the parts, both ways): a frame size kept from its dots goes.

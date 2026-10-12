@@ -1,3 +1,7 @@
+## 0.6.1-beta.647
+
+- Kafelki: suwak „Odstęp” przy układzie z presetu (np. „Ikona z lewej”) zmienia tylko przerwę między ikoną a tekstem oraz między nazwą a stanem – układ jest przeliczany na nowo i się nie rozjeżdża (wcześniej przełączał etykietę na układ dowolny). Odstęp w kafelkach 0–30.
+
 ## 0.6.1-beta.646
 
 - Kafelki, sekcja Etykieta: bez suwaka „Rozmiar”, bez szerokości / wysokości w kratkach i przycisku siatki – etykieta zawsze jest w kaflu (rozmiar w kaflach ustawia się kropkami); etykieta bez kafla dostaje go przy otwarciu.
