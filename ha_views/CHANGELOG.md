@@ -1,3 +1,10 @@
+## 0.6.1-beta.648
+
+- Kafelki – dwa stany etykiety:
+  - Automat (wybrany układ z presetu): pilnuje układu; ustawiasz rozmiar ikony, a tekst sam się do niej dopasowuje (suwaki rozmiaru tekstu ukryte); odstęp i włączanie / wyłączanie elementów przeliczają układ.
+  - Własny (po rozgrupowaniu / ręcznym ustawieniu): nic nie przelicza się samo – odstęp jest wyłączony, przełączanie elementów nie zmienia układu, ponowne zgrupowanie zostawia elementy tam, gdzie były.
+  - Powrót do automatu: kliknięcie układu (przy dwóch elementach przycisk „Ułóż automatycznie”).
+
 ## 0.6.1-beta.647
 
 - Kafelki: suwak „Odstęp” przy układzie z presetu (np. „Ikona z lewej”) zmienia tylko przerwę między ikoną a tekstem oraz między nazwą a stanem – układ jest przeliczany na nowo i się nie rozjeżdża (wcześniej przełączał etykietę na układ dowolny). Odstęp w kafelkach 0–30.
