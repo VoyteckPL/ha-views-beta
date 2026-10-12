@@ -1095,6 +1095,7 @@ function renderDashGrid(target = null) {
   if (t) { t.style.display = target ? 'block' : 'none'; if (target) Object.assign(t.style, { left:`${g.gx + target.c * (g.cw + g.gx)}%`, top:`${g.gy + target.r * (g.ch + g.gy)}%`, width:`${target.w * g.cw + (target.w - 1) * g.gx}%`, height:`${target.h * g.ch + (target.h - 1) * g.gy}%` }); }
 }
 // A label on a tile fills it: its frame is the tile, its content scaled (as one) to fit inside with a little room.
+const DASH_REF = 100;
 function fitDashLabels() {
   const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   $$('#room-labels .room-label-card').forEach(card => {
@@ -1103,7 +1104,9 @@ function fitDashLabels() {
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
-    const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
+    // The parts keep their own sizes: a tile's shorter side is 100 "px" of them (an icon of size 50 takes about half of it),
+    // so the size sliders do change what is seen; only what would not fit is made smaller, to fill the tile at most.
+    const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh, Math.min(tw, th) * .94 / DASH_REF), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;

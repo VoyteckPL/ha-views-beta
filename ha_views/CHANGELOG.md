@@ -1,3 +1,7 @@
+## 0.6.1-beta.636
+
+- Kafelki: suwaki rozmiaru ikony / tekstu działają naprawdę – element rośnie płynnie w kaflu (krótszy bok kafla = 100 jednostek rozmiaru, np. ikona 50 zajmuje ok. połowy), aż wypełni kafel; dalej już nie rośnie. Wcześniej etykieta zawsze dopasowywała skalę do kafla, więc rozmiar prawie się nie zmieniał i „skakał” (np. przy samej ikonie, bez stałej ramki). Etykiety z kilkoma elementami wyglądają jak dotąd.
+
 ## 0.6.1-beta.635
 
 - Nowe efekty przejścia przycisku do widoku, w których oba piętra widać naraz: „Piętra 3D” (parter odjeżdża przechylony jak płyta stropu, piętro nadlatuje z góry i się prostuje), „Odsłonięcie z przycisku” (nowy widok odsłania się kołem od przycisku, stary przygasa), „Miękkie przenikanie” (rozmycie i lekkie oddalenie / przybliżenie), „Winda z przenikaniem” (oba piętra jadą razem). Kierunek z ikony przycisku lub kolejności widoków; ograniczenie ruchu w systemie = bez animacji.
