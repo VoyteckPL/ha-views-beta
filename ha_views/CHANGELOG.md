@@ -1,3 +1,7 @@
+## 0.6.1-beta.631
+
+- Element „Tekst” nazywa się teraz „Przycisk” (menu dodawania, szablony, panel, kreator, lista elementów) i ma ikonę przycisku. Ustawienia są takie same jak w etykiecie (ikona, nazwa, podpis, tło, ramka, margines, efekty) – bez opcji ON/OFF, bo przycisk nie ma encji.
+
 ## 0.6.1-beta.630
 
 - Etykieta pomieszczenia działa tak samo jak etykieta: przełączniki ikona / nazwa / stan w nagłówku panelu, sekcja „Etykieta” (ukryta po rozgrupowaniu), sekcja „Efekty”, margines rosnący do środka, bez rozgrupowania przy jednym widocznym elemencie. Usunięte presety „Układ” i „Styl” (etykieta zachowuje swój wygląd).
