@@ -1,3 +1,8 @@
+## 0.6.1-beta.639
+
+- Kafelki: etykieta przypięta do kafla nie ma suwaka „Rozmiar” w sekcji Etykieta (wypełnia kafel; margines i odstęp zostają).
+- Kafelki: nowa etykieta / przycisk / termostat / wskaźnik trafia od razu w pierwszy wolny kafel (od lewej, od góry) i go wypełnia.
+
 ## 0.6.1-beta.638
 
 - Kafelki, etykieta rozgrupowana: element pokazany ponownie (np. nazwa, stan) trafia w wolne miejsce kafla (nad lub pod pozostałymi elementami – tam, gdzie więcej miejsca) i jest zmniejszany, gdy by się nie zmieścił. Wcześniej pojawiał się w skali etykiety, potrafił być ogromny i wychodzić poza kafel.

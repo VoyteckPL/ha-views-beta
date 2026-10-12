@@ -1096,6 +1096,15 @@ function renderDashGrid(target = null) {
 }
 // A label on a tile fills it: its frame is the tile, its content scaled (as one) to fit inside with a little room.
 const DASH_REF = 100;
+// A label added while the view has tiles goes to the first free tile (left to right, top to bottom) and fills it.
+function pinToFreeTile(room, view = activeSceneView()) {
+  const g = dashGrid(view); if (!g.on || !room) return false;
+  const used = new Set(); Object.values(view.rooms || {}).forEach(r => { if (r === room || !isIconRoom(r)) return; const s = dashSpan(r, view); if (s) for (let y = s.r; y < s.r + s.ch; y++) for (let x = s.c; x < s.c + s.cw; x++) used.add(`${x},${y}`); });
+  for (let y = 0; y < g.rows; y++) for (let x = 0; x < g.cols; x++) if (!used.has(`${x},${y}`)) {
+    room.dash = { c: x, r: y, w: 1, h: 1 }; const span = dashSpan(room, view); if (!span) return false;
+    room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; }
+  return false;
+}
 function fitDashLabels() {
   const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   $$('#room-labels .room-label-card').forEach(card => {
@@ -3678,7 +3687,8 @@ function roomEditorMarkup(room) {
   // A label's group: all its sizes and shape in one place - scale, margin, spacing of the parts, corners, frame width,
   // arranging the parts (aligned left / centre / right, top / middle / bottom) and giving name and state one width.
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
-  const groupSize = !ownSize ? '' : sizeOpen((control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
+  // (On tiles the label fills its tile: no size slider - its margin and gap still set the room round the parts.)
+  const groupSize = !ownSize ? '' : sizeOpen(((icon && dashSpan(r)) ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }))
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, 80),0,80,1,'px')) : '')
     );
@@ -3688,7 +3698,7 @@ function roomEditorMarkup(room) {
           : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
   const group = partBar('group', isTextRoom(r) ? 'Przycisk' : !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
-    + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
+    + (ownSize ? (soloLabel(r) ? '' : groupSize) : (icon && dashSpan(r)) ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
     // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
     + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true })))
@@ -7179,6 +7189,7 @@ function addIconElement([x, y], entity = null) {
   const view = activeSceneView(); if (!view || !editMode) return; view.rooms ||= {};
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(isIconRoom).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, kind:'icon', draft:true, id, name: entity?.name || `${translateValue('Etykieta')} ${count}`, entityIds: entity ? [entity.entity_id] : [], points: [], x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
+  pinToFreeTile(view.rooms[id], view);
   if (entity) { rememberAdded(entity.entity_id); refreshStates(); }
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
 }
@@ -7340,6 +7351,7 @@ function addGaugeLabel([x, y], entity) {
   const count = Object.values(view.rooms).filter(isGaugeRoom).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...gaugeLook(entity?.entity_id || ''), kind:'icon', thermo:true, gauge:true, draft:true, id, name: entity ? entity.name || entity.entity_id : `${translateValue('Wskaźnik')} ${count}`, entityIds: entity ? [entity.entity_id] : [], points:[],
     x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
+  pinToFreeTile(view.rooms[id], view);
   if (entity) { rememberAdded(entity.entity_id); refreshStates(); }
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
 }
@@ -7405,6 +7417,7 @@ function addThermostatLabel([x, y], entity) {
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(r => isThermoRoom(r) && !isGaugeRoom(r)).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...thermoLook(), kind:'icon', thermo:true, draft:true, id, name: entity ? entity.name || entity.entity_id : `${translateValue('Termostat')} ${count}`, entityIds: entity ? [entity.entity_id] : [], points:[],
     x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
+  pinToFreeTile(view.rooms[id], view);
   if (entity) { rememberAdded(entity.entity_id); refreshStates(); }
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id, { skipEntities: !!entity });
 }
@@ -7413,6 +7426,7 @@ function addTextLabel([x, y]) {
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(isTextRoom).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, kind:'icon', textEl:true, draft:true, id, name: `${translateValue('Przycisk')} ${count}`, entityIds: [], points: [],
     labelIconSource:'mdi', labelIconName:'mdi:gesture-tap-button', labelState:false, textCaption:'', linkAction:'none', tapAction:'none', x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
+  pinToFreeTile(view.rooms[id], view);
   closeEditor(); closeFlowEditor(); closeRoomEditor(); openRoomWizard(id);
 }
 function createAddedElement(type, entity, [x, y]) {
