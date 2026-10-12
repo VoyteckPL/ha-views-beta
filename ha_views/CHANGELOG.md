@@ -1,3 +1,7 @@
+## 0.6.1-beta.628
+
+- Etykieta z wyłączonym tłem i ramką jest całkiem niewidoczna: nie rysuje się też rozmycie, cień ani styl ramki z Efektów (szkło, poświata…). Tak samo w trybie rozgrupowanym. Elementy (ikona, nazwa, stan) już tak działały.
+
 ## 0.6.1-beta.627
 
 - Etykieta z jednym elementem znów ma dwie warstwy: etykieta (sekcja Etykieta: tło, ramka, margines) i element (własne tło, ramka, margines, kształt). Etykietę chowa się, wyłączając jej tło i ramkę. Rozgrupowanie i zmiana rozmiaru pojedynczego elementu działają jak dotąd.
