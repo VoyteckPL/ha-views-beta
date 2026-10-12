@@ -1177,7 +1177,7 @@ function roomLabelIconSpec(room, on) {
 }
 // Background and frame of the icon share one shape: square, circle or a free corner radius.
 function roomIconFrameStyle(r, on = false) {
-  if (!r.labelIconBg && !r.labelIconBorder) return r.singleSaved?.key === 'labelIcon' ? `;padding:${clamp(Number(r.labelIconPadding ?? 6), 0, 120)}px` : '';
+  if (!r.labelIconBg && !r.labelIconBorder) return '';
   const pick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const shape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
   const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px`;
@@ -1195,7 +1195,7 @@ function mergeSingleLook(room) {
   if (!room || !isIconRoom(room) || isThermoRoom(room) || isTextRoom(room) || room.singleSaved) return false;
   const shown = ROOM_LABEL_PARTS.map(([, k]) => k).filter(k => room[k]); if (shown.length !== 1) return false;
   const k = shown[0]; if (!room[`${k}Bg`] && !room[`${k}Border`]) return false;
-  const r = { ...ROOM_DEFAULTS, ...room }, keys = [...lookKeys('labelCardBg'), ...lookKeys('labelCardBorder'), 'labelCardRadius', 'labelCardBlur', ...lookKeys(`${k}Bg`), ...lookKeys(`${k}Border`), `${k}Blur`];
+  const r = { ...ROOM_DEFAULTS, ...room }, keys = ['labelCardPadding', ...lookKeys('labelCardBg'), ...lookKeys('labelCardBorder'), 'labelCardRadius', 'labelCardBlur', ...lookKeys(`${k}Bg`), ...lookKeys(`${k}Border`), `${k}Blur`];
   const saved = Object.fromEntries(keys.map(x => [x, room[x]]));
   const hex = c => { const raw = String(c || '#000000').replace('#', ''), n = parseInt(raw.length === 3 ? raw.split('').map(x => x + x).join('') : raw, 16) || 0; return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const toHex = rgb => '#' + rgb.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('').toUpperCase();
@@ -1213,8 +1213,11 @@ function mergeSingleLook(room) {
   if (!room.labelCardBorder && room[`${k}Border`]) { room.labelCardBorder = true; LOOK_SUFFIX.slice(1).forEach(sfx => { if (r[`${k}Border${sfx}`] !== undefined) room[`labelCardBorder${sfx}`] = r[`${k}Border${sfx}`]; }); }
   // Corners: the part's, when the label hugs it.
   if (!(Number(room.labelCardPadding) > 0) && k !== 'labelIcon') { const own = room[`${k}Radius`], size = clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420); room.labelCardRadius = Math.round(clamp(own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)) ? Number(own) : size * .7, 0, 80) * 10) / 10; }
+  // The part's own margin (inside its frame) becomes the label's: one margin, on the one slider.
+  { const own = room[`${k}Padding`], set = own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)); const pp = k === 'labelIcon' ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : set ? clamp(Number(own), 0, 120) : clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420) * .28;
+    room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) + pp, 0, 150) * 10) / 10; }
   room[`${k}Bg`] = false; room[`${k}Border`] = false;
-  room.singleSaved = { key: k, saved, merged: Object.fromEntries(keys.map(x => [x, room[x]])) };
+  room.singleSaved = { key: k, saved, merged: Object.fromEntries(keys.map(x => [x, room[x]])) }; room.singlePadV1 = true;
   return true;
 }
 // A part shown again in a group laid out freely is put next to the others (the icon above them, a text below), not on
@@ -1240,7 +1243,10 @@ function placeShownPart(room, key) {
 }
 function restoreSingleLook(room) {
   const s = room?.singleSaved; if (!s) return false;
-  const k = s.key; Object.entries(s.saved).forEach(([x, v]) => {
+  const k = s.key;
+  // A margin changed while it was one layer: the part takes its own back, the label keeps the rest of the change.
+  if ('labelCardPadding' in s.saved && room.labelCardPadding !== s.merged.labelCardPadding) { const moved = (Number(s.merged.labelCardPadding) || 0) - (Number(s.saved.labelCardPadding) || 0); room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) - moved, 0, 150) * 10) / 10; s.merged.labelCardPadding = room.labelCardPadding; s.saved.labelCardPadding = room.labelCardPadding; }
+  Object.entries(s.saved).forEach(([x, v]) => {
     // The label's own look changed while it had one part: that change stays; the part gets its own look back.
     if (!x.startsWith(k) && room[x] !== s.merged[x]) return;
     if (v === undefined) delete room[x]; else room[x] = v;
@@ -1261,7 +1267,8 @@ function migrateRoomLabel(room) {
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
-  if (room && !room.singleLookV1) { room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
+  if (room?.singleSaved && !room.singlePadV1) { room.singlePadV1 = true; changed = true; const k = room.singleSaved.key, own = room[`${k}Padding`], set = own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)), pp = k === 'labelIcon' ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : set ? clamp(Number(own), 0, 120) : clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420) * .28; if (!('labelCardPadding' in room.singleSaved.saved)) room.singleSaved.saved.labelCardPadding = room.labelCardPadding; room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) + pp, 0, 150) * 10) / 10; room.singleSaved.merged.labelCardPadding = room.labelCardPadding; }
+  if (room && !room.singleLookV1) { room.singlePadV1 = true; room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
   if (!room || !['labelLayout','labelScale','labelX','labelY','labelColor','labelBg','labelBgOpacity'].some(key => key in room)) return changed;
   const k = clamp(Number(room.labelScale) || 1, .4, 4), dx = Number(room.labelX) || 0, dy = Number(room.labelY) || 0, row = room.labelLayout === 'row';
   const at = row ? { icon:[-46, 0], name:[30, -10], state:[30, 12] } : { icon:[0, -30], name:[0, 6], state:[0, 30] };
@@ -1284,7 +1291,7 @@ function roomTextPartStyle(r, key, on = false) {
   const bg = r[`${key}Bg`] ? `;background:${rgba(pick('Color', 'Bg') || '#081822', clamp(Number(pick('Opacity', 'Bg') ?? .55), 0, 1))}` + (r[`${key}Blur`] ? ';-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)' : '') : '';
   const border = r[`${key}Border`] ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('Width', 'Border')) || 1.5, .5, 12)}px ${rgba(pick('Color', 'Border') || '#FFFFFF', clamp(Number(pick('Opacity', 'Border') ?? .6), 0, 1))}` : '';
   // Corners and inner margin (px); unset = the default, which grows with the text size.
-  const shape = (r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
+  const shape = (r[`${key}Bg`] || r[`${key}Border`]) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
     + (Number.isFinite(Number(r[`${key}Padding`])) && r[`${key}Padding`] !== '' && r[`${key}Padding`] != null ? `;padding:${clamp(Number(r[`${key}Padding`]), 0, 120)}px ${Math.round(clamp(Number(r[`${key}Padding`]), 0, 120) * 2)}px` : '') : '';
   return bg + border + shape;
 }

@@ -1,3 +1,7 @@
+## 0.6.1-beta.625
+
+- Etykieta z jednym elementem: własny margines elementu (np. ikony w jej ramce) przechodzi do marginesu etykiety. Jeden suwak pokazuje cały odstęp i da się go zmniejszyć także po rozgrupowaniu. Po pokazaniu drugiego elementu element odzyskuje swój margines. Wcześniej scalone etykiety są poprawiane raz przy wczytaniu.
+
 ## 0.6.1-beta.624
 
 - Poprawki etykiet z jednym elementem:
