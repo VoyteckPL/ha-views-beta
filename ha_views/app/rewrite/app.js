@@ -1212,7 +1212,7 @@ function mergeSingleLook(room) {
   // The frame: the label's own when it has one, else the part's.
   if (!room.labelCardBorder && room[`${k}Border`]) { room.labelCardBorder = true; LOOK_SUFFIX.slice(1).forEach(sfx => { if (r[`${k}Border${sfx}`] !== undefined) room[`labelCardBorder${sfx}`] = r[`${k}Border${sfx}`]; }); }
   // Corners: the part's, when the label hugs it.
-  if (!(Number(room.labelCardPadding) > 0)) { const pn = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', node = $(`#room-labels [data-room-id="${CSS.escape(room.id)}"] [data-label-part="${pn}"], #room-labels .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${pn}"]`), rad = node ? getComputedStyle(node).borderTopLeftRadius : ''; if (rad && !rad.endsWith('%') && parseFloat(rad) >= 0) room.labelCardRadius = Math.round(parseFloat(rad) * 10) / 10; }
+  if (!(Number(room.labelCardPadding) > 0) && k !== 'labelIcon') { const own = room[`${k}Radius`], size = clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420); room.labelCardRadius = Math.round(clamp(own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)) ? Number(own) : size * .7, 0, 80) * 10) / 10; }
   room[`${k}Bg`] = false; room[`${k}Border`] = false;
   room.singleSaved = { key: k, saved, merged: Object.fromEntries(keys.map(x => [x, room[x]])) };
   return true;
@@ -1258,10 +1258,10 @@ function migrateRoomLabel(room) {
   if (room?.soloSaved) { Object.assign(room, room.soloSaved); delete room.soloSaved; changed = true; }
   // beta.619: the size lock is gone - a locked label hugs its parts again (its margin slider sets the room round them).
   if (room?.labelSizeLock && !isThermoRoom(room)) { ['labelSizeLock','labelLockBase','labelCardW','labelCardH','labelCardCentred','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]); changed = true; }
-  if (room && !room.singleLookV1) { room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
+  if (room && !room.singleLookV1) { room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
   if (!room || !['labelLayout','labelScale','labelX','labelY','labelColor','labelBg','labelBgOpacity'].some(key => key in room)) return changed;
   const k = clamp(Number(room.labelScale) || 1, .4, 4), dx = Number(room.labelX) || 0, dy = Number(room.labelY) || 0, row = room.labelLayout === 'row';
   const at = row ? { icon:[-46, 0], name:[30, -10], state:[30, 12] } : { icon:[0, -30], name:[0, 6], state:[0, 30] };
@@ -1300,7 +1300,7 @@ function roomTextStyle(r, key, on = false) {
 // Ungrouped, the name and state get their own background and frame (like the icon) when they had none;
 // grouping again keeps the look they have.
 function togglePartFrames(room, grouping) {
-  if (grouping || room.soloPartLook) return; // one part shown: its look is the label's own (one background, one frame)
+  if (grouping || room.soloPartLook || room.singleSaved || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) return; // one part shown: its look is the label's own (one background, one frame)
   ['labelName','labelState'].filter(key => !room[`${key}Bg`] && !room[`${key}Border`]).forEach(key => { room[`${key}Bg`] = true; room[`${key}Border`] = true; });
 }
 // Switching grouping on / off keeps everything where it is on the plan: ungrouped parts take the places they had
@@ -1486,7 +1486,7 @@ function fitFreeCard(room, group) {
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
 // A label showing only its icon is the icon: its frame takes the icon's shape (circle / square / own corners).
-const iconOnlyLabel = r => !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState;
+const iconOnlyLabel = r => !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState && !dashSpan(r); // (on tiles the tile is its frame)
 const iconShapeOf = r => ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
 function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
@@ -3832,8 +3832,8 @@ function onRoomEditorInput(event) {
     const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`);
     // (The base is kept with the label: taken again only when its size / margin were changed some other way since.)
     const p0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150), s0 = clamp(Number(room.labelCardScale) || 1, .3, 6), pb = room.labelPadBase;
-    if (!input._padBase) { input._padBase = pb && Math.abs(pb.s - s0) < 1e-3 && Math.abs(pb.p - p0) < .01 ? pb.base : null; if (!input._padBase && card) { const [w, h] = cssBox(card); input._padBase = { W: w * s0, H: h * s0, cw: Math.max(1, w - 2.7 * p0), ch: Math.max(1, h - 2 * p0) }; } input.addEventListener('change', () => { delete input._padBase; }, { once: true }); }
-    const b = input._padBase; if (b) { const p = clamp(Number(value) || 0, 0, 150); room.labelCardScale = Math.round(clamp(Math.min(b.W / (b.cw + 2.7 * p), b.H / (b.ch + 2 * p)), .3, 6) * 1e4) / 1e4; room.labelPadBase = { base: b, p, s: room.labelCardScale }; }
+    if (!input._padBase) { input._padBase = pb && Math.abs(pb.s - s0) < 1e-3 && Math.abs(pb.p - p0) < .01 ? pb.base : null; if (!input._padBase && card) { const [w, h] = cssBox(card); const fx = iconOnlyLabel(room) && iconShapeOf(room) !== 'custom' ? 2 : 2.7; input._padBase = { W: w * s0, H: h * s0, cw: Math.max(1, w - fx * p0), ch: Math.max(1, h - 2 * p0), fx }; } input.addEventListener('change', () => { delete input._padBase; }, { once: true }); }
+    const b = input._padBase; if (b) { const p = clamp(Number(value) || 0, 0, 150); room.labelCardScale = Math.round(clamp(Math.min(b.W / (b.cw + (b.fx || 2.7) * p), b.H / (b.ch + 2 * p)), .3, 6) * 1e4) / 1e4; room.labelPadBase = { base: b, p, s: room.labelCardScale }; }
   }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text. (Not the font
   // weight: a bolder / lighter text keeps its frame.)

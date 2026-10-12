@@ -1,3 +1,11 @@
+## 0.6.1-beta.624
+
+- Poprawki etykiet z jednym elementem:
+  - Rozgrupowanie nie przywraca elementowi drugiego tła i ramki.
+  - Sama ikona na kafelku nie robi się owalna (kafelek ma zwykłe zaokrąglenie).
+  - Margines do środka przy okrągłej/kwadratowej samej ikonie zachowuje rozmiar etykiety.
+  - Zaokrąglenie przejęte z nazwy/stanu jest zawsze takie samo (wcześniej różne przy wczytaniu i po ukryciu części).
+
 ## 0.6.1-beta.623
 
 - Etykieta z samą ikoną: ramka etykiety przejmuje kształt ikony (Koło, Kwadrat, Dowolny), także po rozgrupowaniu. Wybór kształtu jest w sekcji Ikona → Rozmiar. Przy kole i kwadracie margines jest równy ze wszystkich stron, więc koło jest okrągłe.
