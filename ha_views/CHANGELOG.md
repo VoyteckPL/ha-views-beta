@@ -1,3 +1,9 @@
+## 0.6.1-beta.646
+
+- Kafelki, sekcja Etykieta: bez suwaka „Rozmiar”, bez szerokości / wysokości w kratkach i przycisku siatki – etykieta zawsze jest w kaflu (rozmiar w kaflach ustawia się kropkami); etykieta bez kafla dostaje go przy otwarciu.
+- Kafelki: układy etykiety pod „Odstęp” (przy 3 elementach): „Jedno pod drugim” (ikona, nazwa, stan) i „Ikona z lewej” (nazwa i stan po prawej, jedno pod drugim). Nazwa i stan mają tę samą szerokość, a tekst razem wysokość ikony. Włączanie / wyłączanie elementów układa je od nowa wybranym układem; przy dwóch elementach zawsze jedno pod drugim, tej samej wysokości.
+- Przyciski grupowania i magnesu w nagłówku odsunięte od przycisków po prawej.
+
 ## 0.6.1-beta.645
 
 - Cofnięte zmiany ustawień etykiety w kafelkach z wersji 0.6.1-beta.636–644 (rozmiary w % kafla, zakresy suwaków, dopasowywanie / zmniejszanie elementów, układy zestawów, tryb Auto / Własny). Kafelki działają jak w 0.6.1-beta.635; etykiety zapisane przez te wersje odzyskują rozmiary i układ sprzed nich.

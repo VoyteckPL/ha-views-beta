@@ -1833,3 +1833,9 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .mdi-picker small{grid-column:1/-1;padding:4px;text-align:center;font-size:11px;opacity:.7}
 .mdi-pick-preview{display:inline-grid;place-items:center;min-width:22px}
 .mdi-pick-preview .mdi{font-size:20px;line-height:1}
+/* The grouping / snap buttons: a little apart from the copy / paste buttons on their right. */
+#room-editor .editor-quick-actions #room-group-toggle:not([hidden]),#room-editor .editor-quick-actions #room-group-snap:not([hidden]):has(+ #room-group-toggle[hidden]){margin-right:10px}
+/* A label on a tile, icon on the left: the icon and the two texts kept together in the middle of the tile. */
+.room-label-card.dash-pinned.layout-iconLeft{align-content:center;justify-content:center;column-gap:12px}
+.room-label-card.dash-pinned.layout-iconLeft .room-card-part.name{align-self:end}.room-label-card.dash-pinned.layout-iconLeft .room-card-part.state{align-self:start}
+.room-label-card.dash-pinned.layout-column{justify-content:center;align-content:center}
