@@ -1,3 +1,7 @@
+## 0.6.1-beta.633
+
+- Przycisk: sekcja „Etykieta” nazywa się „Przycisk”; w ikonie zamiast wyboru źródła (encja / logo – przycisk nie ma encji) od razu wybór ikony MDI; przyciski w nagłówku i okno usuwania mówią o przycisku („Kopiuj styl przycisku”, „Usunąć przycisk?”…).
+
 ## 0.6.1-beta.632
 
 - Przycisk bez podpisu: tylko ikona i tekst (przełączniki w nagłówku, sekcje „Ikona” i „Tekst”, kreator). Podpis istniejących przycisków jest ukrywany; „Przywróć domyślne” i „Wklej styl” go nie włączają.
