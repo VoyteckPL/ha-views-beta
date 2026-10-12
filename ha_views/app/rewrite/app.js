@@ -1105,14 +1105,15 @@ function pinToFreeTile(room, view = activeSceneView()) {
     room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; }
   return false;
 }
-let tileShrinkFrame = 0;
+let tileShrinkFrame = 0, lastTileSizeEdit = null;
 // (The sizes they had are kept in tileBase: with room again - a gap / margin made smaller, a bigger tile - they grow back
 // up to them; a size set by hand becomes the new one.)
 function shrinkTileParts(room, f, grow = false) {
   const shown = ROOM_LABEL_PARTS.map(([, k]) => k).filter(k => room[k]), a = document.activeElement;
   const dims = k => ({ Size: Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], W: Number(room[`${k}W`]) || 0, H: Number(room[`${k}H`]) || 0, FX: room[`${k}FX`], FY: room[`${k}FY`] });
-  // The size slider being dragged: only that part gives way (the others keep theirs).
-  const drag = a?.matches?.('#room-editor input[type=range]') && selectedRoomId === room.id && /^label(Icon|Name|State)Size$/.test(a.dataset.path || '') ? a.dataset.path.replace(/Size$/, '') : '';
+  // A part whose size was just changed (its slider, held or let go, on a phone too): only that part gives way - the others
+  // keep theirs.
+  const e = lastTileSizeEdit, drag = e && e.id === room.id && performance.now() - e.at < 1500 ? e.key : (a?.matches?.('#room-editor input[type=range]') && selectedRoomId === room.id && /^label(Icon|Name|State)Size$/.test(a.dataset.path || '') ? a.dataset.path.replace(/Size$/, '') : '');
   let changed = false; const set = (key, v, lo) => { const n = Math.round(Math.max(lo, v) * 10) / 10; if (Math.abs(n - Number(room[key])) > .05) { room[key] = n; changed = true; } };
   if (grow) {
     if (drag) return; const base = room.tileBase || {}; let done = true;
@@ -3882,7 +3883,7 @@ function onRoomEditorInput(event) {
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return;
   }
-  if (/^label(Icon|Name|State)Size$/.test(path)) delete room.tileBase; // (a size set by hand on a tile is the one to keep)
+  if (/^label(Icon|Name|State)Size$/.test(path)) { delete room.tileBase; lastTileSizeEdit = { id: room.id, key: path.replace(/Size$/, ''), at: performance.now() }; } // (a size set by hand on a tile is the one to keep; it is the one to give way)
   if (path === 'labelSizeUi') {
     // The group's frame keeps its size on the plan: only the icon, name and state inside get smaller / bigger
     // (the frame grows only when the content no longer fits). Its size is taken once, when the slider is grabbed.

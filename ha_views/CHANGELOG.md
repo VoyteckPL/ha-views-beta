@@ -1,3 +1,7 @@
+## 0.6.1-beta.642
+
+- Kafelki: zwiększanie rozmiaru jednego elementu (np. ikony na maksimum) nie zmniejsza już pozostałych (np. nazwy) – ustępuje tylko zmieniany element i zatrzymuje się na największym rozmiarze, który się mieści. Działa też na telefonie i po puszczeniu suwaka.
+
 ## 0.6.1-beta.641
 
 - Kafelki: dopasowywanie rozmiarów elementów do kafla działa tylko w trybie edycji – zmiana stanu encji (np. dłuższy tekst stanu) w podglądzie tylko skaluje etykietę i niczego nie zapisuje.
