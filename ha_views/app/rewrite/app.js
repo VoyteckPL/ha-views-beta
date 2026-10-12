@@ -2431,6 +2431,25 @@ function keepInFrame(room, key, part) {
 }
 // Icon, name and state never overlap: a dragged part that runs into another one stops touching it
 // (it is pushed out the shortest way, so it slides along the other part's side).
+// Ungrouped on its tile: a part shown again is put in the free room of the tile (above or below the parts there, the
+// bigger side) and made smaller when it would not fit there - never bigger than the tile.
+function fitShownPartInTile(room, key, part) {
+  const pin = isIconRoom(room) && dashSpan(room); if (!pin) return false;
+  const id = CSS.escape(room.id), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
+  const tile = { l: sc.left + pin.x / 100 * sc.width, t: sc.top + pin.y / 100 * sc.height }; tile.r = tile.l + pin.w / 100 * sc.width; tile.b = tile.t + pin.h / 100 * sc.height;
+  const node = () => $(`.room-label-part[data-room-id="${id}"][data-label-part="${part}"]`);
+  const others = $$(`.room-label-part[data-room-id="${id}"]`).filter(n => n !== node() && n.offsetWidth).map(n => n.getBoundingClientRect());
+  const u = others.length ? { t: Math.min(...others.map(b => b.top)), b: Math.max(...others.map(b => b.bottom)) } : { t: tile.t, b: tile.t };
+  const pad = Math.min(tile.r - tile.l, tile.b - tile.t) * .04, below = { t: Math.max(u.b, tile.t) + pad, b: tile.b - pad }, above = { t: tile.t + pad, b: Math.min(u.t, tile.b) - pad };
+  const band = (below.b - below.t) >= (above.b - above.t) ? below : above, bw = tile.r - tile.l - 2 * pad, bh = Math.max(4, band.b - band.t);
+  let n = node(); if (!n) return false; let a = n.getBoundingClientRect(); if (!a.width) return false;
+  const f = Math.min(1, bw / a.width, bh / a.height);
+  if (f < .999) { const k = `${key}Size`; room[k] = Math.round(clamp((Number(room[k]) || ROOM_DEFAULTS[k]) * f, 6, 420) * 10) / 10;
+    ['W', 'H'].forEach(d => { if (Number(room[`${key}${d}`]) > 0) room[`${key}${d}`] = Math.round(Number(room[`${key}${d}`]) * f * 10) / 10; }); renderRoomLabels(); n = node(); a = n?.getBoundingClientRect() || a; }
+  const cx = (tile.l + tile.r) / 2, cy = (band.t + band.b) / 2, ax = (a.left + a.right) / 2, ay = (a.top + a.bottom) / 2;
+  room[`${key}X`] = Math.round(((Number(room[`${key}X`]) || 0) + (cx - ax) / toPlan) * 100) / 100; room[`${key}Y`] = Math.round(((Number(room[`${key}Y`]) || 0) + (cy - ay) / toPlan) * 100) / 100;
+  renderRoomLabels(); return true;
+}
 function keepApart(room, key, part) {
   if (part === 'dial') return; // a thermostat's dial may carry other parts (its centre is free space)
   const id = CSS.escape(room.id), scene = els.scene.getBoundingClientRect(), toPlan = scene.width / (els.scene.offsetWidth || 1) * (sceneScale || 1);
@@ -3971,7 +3990,7 @@ function onRoomEditorClick(event) {
     }
     // (An ungrouped label left with one part stays ungrouped: that part is arranged in its label like any other.)
     room.updatedAt = new Date().toISOString(); renderRooms();
-    if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part) keepApart(room, key, part); }
+    if (showing && !room.labelLinked) { const part = ROOM_LABEL_PARTS.find(([, k]) => k === key)?.[0]; if (part && !fitShownPartInTile(room, key, part)) keepApart(room, key, part); }
     openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
     if (key === 'labelLinked' && !room.labelLinked) requestAnimationFrame(() => requestAnimationFrame(() => { if (!focusLabelBox(room)) fitLabelFrameOnDesktop(room); else setTimeout(() => focusLabelBox(room), 450); })); // the same view as the label tapped (again once the panel has settled): nothing jumps
     return;

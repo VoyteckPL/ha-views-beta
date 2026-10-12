@@ -1,3 +1,7 @@
+## 0.6.1-beta.638
+
+- Kafelki, etykieta rozgrupowana: element pokazany ponownie (np. nazwa, stan) trafia w wolne miejsce kafla (nad lub pod pozostałymi elementami – tam, gdzie więcej miejsca) i jest zmniejszany, gdy by się nie zmieścił. Wcześniej pojawiał się w skali etykiety, potrafił być ogromny i wychodzić poza kafel.
+
 ## 0.6.1-beta.637
 
 - Kafelki: suwak rozmiaru ikony i tekstu ma zakres 6–100% kafla (zamiast 6–420 px, z czego w kaflu znaczyło tylko pierwsze ~20% – mały ruch skakał od kropki do pełnego kafla). Poza kafelkami bez zmian (6–420 px).
