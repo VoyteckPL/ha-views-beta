@@ -1,3 +1,7 @@
+## 0.6.1-beta.626
+
+- Etykieta z jednym elementem: margines zmieniony przy jednym widocznym elemencie należy do tego elementu – po pokazaniu pozostałych elementów ikona (lub tekst) zachowuje ustawiony margines (np. 50), zamiast wracać do poprzedniego (np. 6).
+
 ## 0.6.1-beta.625
 
 - Etykieta z jednym elementem: własny margines elementu (np. ikony w jej ramce) przechodzi do marginesu etykiety. Jeden suwak pokazuje cały odstęp i da się go zmniejszyć także po rozgrupowaniu. Po pokazaniu drugiego elementu element odzyskuje swój margines. Wcześniej scalone etykiety są poprawiane raz przy wczytaniu.

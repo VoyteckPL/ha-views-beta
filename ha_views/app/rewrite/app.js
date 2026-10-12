@@ -1244,13 +1244,16 @@ function placeShownPart(room, key) {
 function restoreSingleLook(room) {
   const s = room?.singleSaved; if (!s) return false;
   const k = s.key;
-  // A margin changed while it was one layer: the part takes its own back, the label keeps the rest of the change.
-  if ('labelCardPadding' in s.saved && room.labelCardPadding !== s.merged.labelCardPadding) { const moved = (Number(s.merged.labelCardPadding) || 0) - (Number(s.saved.labelCardPadding) || 0); room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) - moved, 0, 150) * 10) / 10; s.merged.labelCardPadding = room.labelCardPadding; s.saved.labelCardPadding = room.labelCardPadding; }
+  // A margin changed while it was one layer: the change belongs to the part (its margin inside its frame); the label
+  // keeps its own margin and gives only what is below it.
+  let pad = null;
+  if ('labelCardPadding' in s.saved && room.labelCardPadding !== s.merged.labelCardPadding) { const t = clamp(Number(room.labelCardPadding) || 0, 0, 150), l0 = clamp(Number(s.saved.labelCardPadding) || 0, 0, 150); pad = { label: Math.min(t, l0), part: Math.round(clamp(t - l0, 0, 120) * 10) / 10 }; }
   Object.entries(s.saved).forEach(([x, v]) => {
     // The label's own look changed while it had one part: that change stays; the part gets its own look back.
     if (!x.startsWith(k) && room[x] !== s.merged[x]) return;
     if (v === undefined) delete room[x]; else room[x] = v;
   });
+  if (pad) { room.labelCardPadding = pad.label; room[`${k}Padding`] = pad.part; }
   delete room.singleSaved; return true;
 }
 function migrateRoomLabel(room) {
