@@ -1070,7 +1070,9 @@ async def api_all_integration_entities(request):
         device_id = item.get("device_id")
         entry_ids.update(device_entries.get(device_id, set()))
         if not entry_ids:
-            continue
+            # Helpers made in HA (input_number, input_boolean…), template / YAML entities: no config entry, still
+            # searchable - kept under one group of their own.
+            entry_ids = {"_other"}
         state_obj = state_map.get(entity_id) or {}
         attributes = state_obj.get("attributes") or {}
         entity = {
@@ -1086,6 +1088,24 @@ async def api_all_integration_entities(request):
         }
         for entry_id in entry_ids:
             grouped.setdefault(entry_id, []).append(entity)
+
+    # Entities with a state but not in the entity registry at all (YAML without a unique_id).
+    registered = {item.get("entity_id") for item in entity_registry if isinstance(item, dict)}
+    for entity_id, state_obj in state_map.items():
+        if entity_id in registered:
+            continue
+        attributes = state_obj.get("attributes") or {}
+        grouped.setdefault("_other", []).append({
+            "entity_id": entity_id,
+            "name": attributes.get("friendly_name") or entity_id,
+            "state": state_obj.get("state"),
+            "unit": attributes.get("unit_of_measurement"),
+            "platform": entity_id.split(".", 1)[0],
+            "disabled_by": None,
+            "enabled": True,
+            "device_id": None,
+            "device_name": "",
+        })
 
     for entities in grouped.values():
         entities.sort(key=lambda value: (str(value.get("name", "")).lower(), value.get("entity_id", "")))

@@ -1,3 +1,7 @@
+## 0.6.1-beta.649
+
+- Wyszukiwanie encji w etykiecie / pomieszczeniu znajduje też encje bez integracji: pomocników utworzonych w HA (np. suwak input_number, przełącznik input_boolean) oraz encje z YAML / spoza rejestru (grupa „Pomocnicy i inne”). Wcześniej serwer je pomijał.
+
 ## 0.6.1-beta.648
 
 - Kafelki – dwa stany etykiety:
