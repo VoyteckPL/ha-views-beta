@@ -1,3 +1,7 @@
+## 0.6.1-beta.656
+
+- Kafelki: na środku każdego pustego kafla (w trybie edycji) mały „+” – otwiera okno dodawania jak przycisk „+” na górze, a dodany element trafia do tego kafla.
+
 ## 0.6.1-beta.655
 
 - Etykieta rozgrupowana: kropki elementów łatwiej odróżnić – narożne to pomarańczowe kółka (skalują element), boczne to fioletowe paski ułożone wzdłuż boku (rozciągają tylko w poziomie albo w pionie).
