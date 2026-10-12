@@ -3660,7 +3660,7 @@ function roomEditorMarkup(room) {
           ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
             + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
           : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
-  const group = partBar('group', icon && !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
+  const group = partBar('group', !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
@@ -3668,9 +3668,9 @@ function roomEditorMarkup(room) {
     + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true })))
     // Labels (and thermostats) are laid out freely and keep their own look: no layout presets and no style presets
     // (a drawn room's label still has them).
-    + ((r.labelLinked && !isIconRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
+    + ((false && r.labelLinked && !isIconRoom(r) ? row('Układ', ROOM_CARD_LAYOUTS.map(([value, title, icon]) => `<button type="button" class="room-card-preset${(r.labelCardLayout || 'column') === value ? ' active' : ''}" data-card-layout="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${icon}"></i></button>`).join('')) : '')
         + dashRows
-        + (isIconRoom(r) ? '' : row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join('')))
+        + (true ? '' : row('Styl', ROOM_CARD_STYLES.map(([value, title]) => `<button type="button" class="room-card-preset" data-card-style="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><span class="room-card-swatch ${value}"></span></button>`).join('')))
         + (soloLabel(r) ? '' : bgSub + borderSub))
     + `</div>`, [
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
@@ -3684,7 +3684,7 @@ function roomEditorMarkup(room) {
     : [...ROOM_LABEL_PARTS.slice(0, 3), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
-  const fxSection = !icon ? '' : (() => {
+  const fxSection = isThermoRoom(r) ? '' : (() => {
     const t = text => escapeHtml(translateValue(text)), cur = [r.labelIconFx || 'none', r.labelCardFx || 'none'];
     const presets = LABEL_FX_PRESETS.map(([id, name, ifx, cfx, mdi]) => `<button type="button" class="fx-preset${cur[0] === ifx && cur[1] === cfx ? ' active' : ''}" data-fx-preset="${id}" title="${t(name)}"><i class="mdi ${mdi}"></i><span>${t(name)}</span></button>`).join('');
     return partBar('effects', 'Efekty', `<details class="gauge-subsection size-open" open><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-presets">${presets}</div></div></details>`
@@ -3699,7 +3699,7 @@ function roomEditorMarkup(room) {
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
     return h.replace(/<\/div><\/details>$/, `${bgSub}${borderSub}</div></details>`); };
-  const label = (soloLabel(r) || oneShown || (icon && !isThermoRoom(r) && !r.labelLinked && !dashSpan(r)) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
+  const label = (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
   return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;
@@ -3728,7 +3728,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   // A label's parts (icon, name, state) switched on / off from the editor's head - always at hand, under copy / paste.
   const partRow = $('#room-part-toggles');
   if (partRow) {
-    const showRow = isIconRoom(room) && !isThermoRoom(room); partRow.hidden = !showRow;
+    const showRow = !isThermoRoom(room); /* (a room's label too: the same system as a label's) */ partRow.hidden = !showRow;
     if (showRow) {
       partRow.innerHTML = [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(room) ? 'Podpis' : 'Stan', isTextRoom(room) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']].map(([k, t, m]) => `<button type="button" class="editor-icon-button${room[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!room[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${m}"></i></button>`).join('');
       partRow.style.paddingLeft = '';
@@ -3846,7 +3846,7 @@ function onRoomEditorInput(event) {
   if (path === 'labelCardPadding' && !fixedFrame(room)) { delete room.labelCardW; delete room.labelCardH; }
   // A label's margin grows inwards: the label keeps its size, its parts get smaller (bigger) to make the room. The size
   // and margin it had when the slider was taken are the base, so the parts come back exactly as the margin goes back.
-  if (path === 'labelCardPadding' && isIconRoom(room) && !isThermoRoom(room) && !dashSpan(room)) {
+  if (path === 'labelCardPadding' && !isThermoRoom(room) && !(isIconRoom(room) && dashSpan(room))) {
     const card = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`);
     // (The base is kept with the label: taken again only when its size / margin were changed some other way since.)
     const p0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150), s0 = clamp(Number(room.labelCardScale) || 1, .3, 6), pb = room.labelPadBase;

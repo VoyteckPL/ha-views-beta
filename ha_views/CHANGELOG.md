@@ -1,3 +1,7 @@
+## 0.6.1-beta.630
+
+- Etykieta pomieszczenia działa tak samo jak etykieta: przełączniki ikona / nazwa / stan w nagłówku panelu, sekcja „Etykieta” (ukryta po rozgrupowaniu), sekcja „Efekty”, margines rosnący do środka, bez rozgrupowania przy jednym widocznym elemencie. Usunięte presety „Układ” i „Styl” (etykieta zachowuje swój wygląd).
+
 ## 0.6.1-beta.629
 
 - Etykieta z jednym widocznym elementem nie jest rozgrupowywana (poza trybem Kafelki): przycisk Rozgrupuj znika, podwójne kliknięcie / tapnięcie nic nie robi. Rozgrupowana etykieta po schowaniu elementów do jednego sama się grupuje w tym samym miejscu. Po pokazaniu drugiego elementu rozgrupowanie znów jest dostępne.
