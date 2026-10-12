@@ -3508,6 +3508,8 @@ function roomEditorMarkup(room) {
     ;
   // Background and frame of any part (icon, name, state): the same options, each can follow ON / OFF.
   const range = (label, path, value, min, max, step, suffix) => control(label, path, 'range', value, { min, max, step, suffix, integer: step >= 1 });
+  // On tiles a part's size is a share of its tile (the shorter side = 100): only up to 100 means anything there.
+  const onTile = icon && !!dashSpan(r), tileMax = onTile ? 100 : 420, tileUnit = onTile ? '%' : 'px';
   const stateColours = (key, base, field, fallbackColor, fallbackOpacity, width) => r[`${key}${base}State`]
     ? control('Kolor ON',`${key}${base}OnColor`,'color',r[`${key}${base}OnColor`]) + control('Kolor OFF',`${key}${base}OffColor`,'color',r[`${key}${base}OffColor`])
       + range('Przezrocz. ON',`${key}${base}OnOpacity`,pct(r[`${key}${base}OnOpacity`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}${base}OffOpacity`,pct(r[`${key}${base}OffOpacity`]),0,100,1,'%')
@@ -3569,7 +3571,7 @@ function roomEditorMarkup(room) {
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = oneShown !== 'labelIcon' && (r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon');
-    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, 420),6,420,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
+    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range('Rozmiar','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, tileMax),6,tileMax,1,tileUnit), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
         : oneShown === 'labelIcon' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
@@ -3617,7 +3619,7 @@ function roomEditorMarkup(room) {
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
     const textRadius = range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px');
-    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen(withBox(snapSlider(range('Rozmiar tekstu',`${key}Size`,fontPx,6,420,1,'px'), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2), key, 'Dopasuj do tekstu')
+    const sizeSub = iconParts ? sub('Rozmiar', size) : boxText ? sizeOpen(withBox(snapSlider(range('Rozmiar tekstu',`${key}Size`,Math.min(fontPx, tileMax),6,tileMax,1,tileUnit), `${key}Size`, snapValues(`${key}Size`, [`${other}Size`]), 2), key, 'Dopasuj do tekstu')
         + (framed ? (snapSlider(range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px'), `${key}Padding`, snapValues(`${key}Padding`, r[`${other}Bg`] || r[`${other}Border`] ? [`${other}Padding`] : []), 1.5))
           : '')
         + weightRow)

@@ -1,3 +1,7 @@
+## 0.6.1-beta.637
+
+- Kafelki: suwak rozmiaru ikony i tekstu ma zakres 6–100% kafla (zamiast 6–420 px, z czego w kaflu znaczyło tylko pierwsze ~20% – mały ruch skakał od kropki do pełnego kafla). Poza kafelkami bez zmian (6–420 px).
+
 ## 0.6.1-beta.636
 
 - Kafelki: suwaki rozmiaru ikony / tekstu działają naprawdę – element rośnie płynnie w kaflu (krótszy bok kafla = 100 jednostek rozmiaru, np. ikona 50 zajmuje ok. połowy), aż wypełni kafel; dalej już nie rośnie. Wcześniej etykieta zawsze dopasowywała skalę do kafla, więc rozmiar prawie się nie zmieniał i „skakał” (np. przy samej ikonie, bez stałej ramki). Etykiety z kilkoma elementami wyglądają jak dotąd.
