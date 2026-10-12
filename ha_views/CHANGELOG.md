@@ -1,3 +1,12 @@
+## 0.6.1-beta.644
+
+- Kafelki – nowy, prostszy model etykiety:
+  - Każdy zestaw widocznych elementów (sama ikona / ikona + stan / ikona + nazwa + stan…) ma swój zapamiętany układ: rozmiary, położenie i tryb. Przełączenie widoczności przywraca układ tego zestawu; nowy zestaw zaczyna od rozmiarów dobranych tak, żeby mieściły się w kaflu.
+  - Dwa tryby (przycisk w nagłówku): „Układ automatyczny” (elementy same układają się w kaflu) i „Własny układ” (przesuwasz i zmieniasz rozmiar kropkami, w granicach kafla).
+  - Nic nie zmienia rozmiarów elementów w tle; przy zmianie rozmiaru suwakiem ustępuje tylko zmieniany element (zatrzymuje się na największym, który się mieści).
+  - Zakresy bez skrajności: ikona 20–100%, tekst 8–40%, odstęp do 20, margines do 15.
+  - Po wyłączeniu kafli etykieta wraca do układu i rozmiarów sprzed kafli. Etykiety już przypięte do kafli są raz układane od nowa.
+
 ## 0.6.1-beta.643
 
 - Kafelki, etykieta rozgrupowana: element zawsze zostaje w swoim kaflu – także przy zmianie rozmiaru suwakiem (zatrzymuje się na krawędzi kafla); przesuwanie i kropki już wcześniej były ograniczone.
