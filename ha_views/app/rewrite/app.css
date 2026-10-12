@@ -1839,8 +1839,10 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 .room-label-card.dash-pinned.layout-iconLeft{align-content:center;justify-content:center}
 .room-label-card.dash-pinned.layout-iconLeft .room-card-part.name{align-self:end}.room-label-card.dash-pinned.layout-iconLeft .room-card-part.state{align-self:start}
 .room-label-card.dash-pinned.layout-column{justify-content:center;align-content:center}
-/* An ungrouped part's dots: a little smaller than the label's and amber, the side dots smaller still. */
+/* An ungrouped part's dots: corners - amber circles, a little smaller than the label's; sides - violet bars along their
+   side (they stretch that way only). */
 .card-handle-proxy.part{width:10px;height:10px;margin:-5px 0 0 -5px;border-color:#f5a524;background:#fff7e6}
-.card-handle-proxy.part[data-corner="n"],.card-handle-proxy.part[data-corner="s"],.card-handle-proxy.part[data-corner="e"],.card-handle-proxy.part[data-corner="w"]{width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:3px}
-.card-handle-proxy.part.square{border-color:#4ade80}
-@media (pointer:coarse){.card-handle-proxy.part{width:13px;height:13px;margin:-6.5px 0 0 -6.5px}.card-handle-proxy.part[data-corner="n"],.card-handle-proxy.part[data-corner="s"],.card-handle-proxy.part[data-corner="e"],.card-handle-proxy.part[data-corner="w"]{width:11px;height:11px;margin:-5.5px 0 0 -5.5px}}
+.card-handle-proxy.part:is([data-corner="n"],[data-corner="s"]){width:16px;height:7px;margin:-3.5px 0 0 -8px;border-radius:4px;border-color:#a78bfa;background:#f3efff}
+.card-handle-proxy.part:is([data-corner="e"],[data-corner="w"]){width:7px;height:16px;margin:-8px 0 0 -3.5px;border-radius:4px;border-color:#a78bfa;background:#f3efff}
+.card-handle-proxy.part.square:not([data-corner="n"]):not([data-corner="s"]):not([data-corner="e"]):not([data-corner="w"]){border-color:#4ade80}
+@media (pointer:coarse){.card-handle-proxy.part{width:13px;height:13px;margin:-6.5px 0 0 -6.5px}.card-handle-proxy.part:is([data-corner="n"],[data-corner="s"]){width:20px;height:9px;margin:-4.5px 0 0 -10px}.card-handle-proxy.part:is([data-corner="e"],[data-corner="w"]){width:9px;height:20px;margin:-10px 0 0 -4.5px}}

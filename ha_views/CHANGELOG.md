@@ -1,3 +1,7 @@
+## 0.6.1-beta.655
+
+- Etykieta rozgrupowana: kropki elementów łatwiej odróżnić – narożne to pomarańczowe kółka (skalują element), boczne to fioletowe paski ułożone wzdłuż boku (rozciągają tylko w poziomie albo w pionie).
+
 ## 0.6.1-beta.654
 
 - Etykieta rozgrupowana: kropki elementów są trochę mniejsze i pomarańczowe (odróżniają się od kropek etykiety); doszły kropki na środku każdego boku – rozciągają ramkę elementu tylko w poziomie albo w pionie (ikona / tekst w środku zostaje tej samej wielkości).
