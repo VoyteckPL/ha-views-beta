@@ -1,3 +1,7 @@
+## 0.6.1-beta.629
+
+- Etykieta z jednym widocznym elementem nie jest rozgrupowywana (poza trybem Kafelki): przycisk Rozgrupuj znika, podwójne kliknięcie / tapnięcie nic nie robi. Rozgrupowana etykieta po schowaniu elementów do jednego sama się grupuje w tym samym miejscu. Po pokazaniu drugiego elementu rozgrupowanie znów jest dostępne.
+
 ## 0.6.1-beta.628
 
 - Etykieta z wyłączonym tłem i ramką jest całkiem niewidoczna: nie rysuje się też rozmycie, cień ani styl ramki z Efektów (szkło, poświata…). Tak samo w trybie rozgrupowanym. Elementy (ikona, nazwa, stan) już tak działały.

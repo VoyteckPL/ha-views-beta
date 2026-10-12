@@ -2672,7 +2672,11 @@ function secondFingerToZoom(event) {
   event.preventDefault(); event.stopPropagation(); viewportPointerDown(event); return true;
 }
 let groupTap = null;
+// One part shown (and not on tiles): nothing to arrange, so it is not ungrouped - the label hugs it, its dots and margin
+// slider do the rest. On tiles the label keeps the tile's size and the part can be placed / sized in it.
+const singleNoUngroup = r => !!r && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 && !dashSpan(r);
 function toggleLabelGroupFromPlan(room) {
+  if (room?.labelLinked && singleNoUngroup(room)) return;
   // The click that ends this tap would land on the plan (the label may have moved away) and deselect - and so group again.
   const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 450);
   // The panel's "Grupuj" button's own handler does the rest; called directly, since the click that follows a press on a
@@ -3731,7 +3735,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
     }
   }
   const groupButton = $('#room-group-toggle');
-  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown < 1; groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
+  if (groupButton) { const shown = ROOM_LABEL_PARTS.filter(([, k]) => ({ ...ROOM_DEFAULTS, ...room })[k]).length; groupButton.hidden = shown < 1 || (!!room.labelLinked && singleNoUngroup(room)); groupButton.classList.toggle('active', !!room.labelLinked); groupButton.setAttribute('aria-pressed', String(!!room.labelLinked)); groupButton.title = translateValue(room.labelLinked ? 'Rozgrupuj' : 'Grupuj'); groupButton.setAttribute('aria-label', groupButton.title); }
   syncGroupSnapButton(room);
   if (!newlySelected) $$('.gauge-subsection > summary', content).forEach(node => { if (openSubs.has(subKey(node))) node.parentElement.open = true; });
   const sections = $$('.editor-section', content);
@@ -3931,6 +3935,7 @@ function onRoomEditorClick(event) {
     { const own = !isThermoRoom(room) && /^(label(?:Name|State))(Bg|Border)$/.exec(key), k = own?.[1];
       if (own && !room[`${k}${own[2] === 'Bg' ? 'Border' : 'Bg'}`]) partMarginBox(room, k, room[key] ? -1 : 1); } // on now = being switched off
     if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
+    if (key === 'labelLinked' && room.labelLinked && singleNoUngroup(room)) return;
     if (key === 'labelLinked' && room.labelLinked) { selectedLabelPart = ''; panelPart = null; } // ungrouped: no part picked yet, all only outlined
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }
     // Hiding all but one part ungroups it, so the remaining part gets its own resize handles (a one-part group has none).
@@ -3944,6 +3949,8 @@ function onRoomEditorClick(event) {
     if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
     room[key] = !room[key];
     if (partKeys.includes(key)) restoreSingleLook(room);
+    // Left with one part (not on tiles): grouped again, where the parts were.
+    if (partKeys.includes(key) && !room.labelLinked && singleNoUngroup(room)) { renderRooms(); keepLabelPlaceOnRegroup(room); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
     if (showing && partKeys.includes(key) && room.labelLinked && room.labelCardFree && !isThermoRoom(room)) { renderRoomLabels(); placeShownPart(room, key); }
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
