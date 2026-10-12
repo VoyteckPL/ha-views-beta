@@ -1,3 +1,8 @@
+## 0.6.1-beta.632
+
+- Przycisk bez podpisu: tylko ikona i tekst (przełączniki w nagłówku, sekcje „Ikona” i „Tekst”, kreator). Podpis istniejących przycisków jest ukrywany; „Przywróć domyślne” i „Wklej styl” go nie włączają.
+- Przycisk z jednym widocznym elementem (np. sama ikona) nie jest rozgrupowywany – tak jak etykieta.
+
 ## 0.6.1-beta.631
 
 - Element „Tekst” nazywa się teraz „Przycisk” (menu dodawania, szablony, panel, kreator, lista elementów) i ma ikonę przycisku. Ustawienia są takie same jak w etykiecie (ikona, nazwa, podpis, tło, ramka, margines, efekty) – bez opcji ON/OFF, bo przycisk nie ma encji.

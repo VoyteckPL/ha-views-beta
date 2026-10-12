@@ -1273,6 +1273,8 @@ function migrateRoomLabel(room) {
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
   if (room?.singleSaved && !room.singlePadV1) { room.singlePadV1 = true; changed = true; const k = room.singleSaved.key, own = room[`${k}Padding`], set = own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)), pp = k === 'labelIcon' ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : set ? clamp(Number(own), 0, 120) : clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420) * .28; if (!('labelCardPadding' in room.singleSaved.saved)) room.singleSaved.saved.labelCardPadding = room.labelCardPadding; room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) + pp, 0, 150) * 10) / 10; room.singleSaved.merged.labelCardPadding = room.labelCardPadding; }
+  // beta.632: a button has no caption.
+  if (isTextRoom(room) && room.labelState) { room.labelState = false; changed = true; }
   if (room && !room.singleLookV1) { room.singlePadV1 = true; room.singleLookV1 = true; changed = true; }
   // beta.627: one-part labels merged into one layer get their two layers back (a margin changed meanwhile stays with the part).
   if (room?.singleSaved) { restoreSingleLook(room); changed = true; }
@@ -2674,7 +2676,7 @@ function secondFingerToZoom(event) {
 let groupTap = null;
 // One part shown (and not on tiles): nothing to arrange, so it is not ungrouped - the label hugs it, its dots and margin
 // slider do the rest. On tiles the label keeps the tile's size and the part can be placed / sized in it.
-const singleNoUngroup = r => !!r && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 && !dashSpan(r);
+const singleNoUngroup = r => !!r && !isThermoRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 && !dashSpan(r);
 function toggleLabelGroupFromPlan(room) {
   if (room?.labelLinked && singleNoUngroup(room)) return;
   // The click that ends this tap would land on the plan (the label may have moved away) and deselect - and so group again.
@@ -3011,7 +3013,7 @@ function gaugeShowRows(r, row, toggleButton) {
   return `<div class="thermo-show">` + row('Pokaż', [['labelIcon','Ikona','mdi-emoticon-outline'],['labelName','Nazwa','mdi-label-outline']].map(([key, title, mdi]) => toggleButton(key, title, mdi, ' show-basic')).join(''))
     + row('Wskaźnik', [['labelDial','Łuk','mdi-gauge'],['labelTarget','Wartość','mdi-numeric'],['thermoDialRange','Liczby min / max','mdi-arrow-expand-horizontal'],['labelPercent','Procent','mdi-percent']].map(([key, title, mdi]) => toggleButton(key, title, mdi)).join('')) + `</div>`;
 }
-function wizardPartsFor(room) { return isGaugeRoom(room) ? GAUGE_WIZARD_PARTS : isThermoRoom(room) ? THERMO_WIZARD_PARTS : WIZARD_PARTS; }
+function wizardPartsFor(room) { return isGaugeRoom(room) ? GAUGE_WIZARD_PARTS : isThermoRoom(room) ? THERMO_WIZARD_PARTS : isTextRoom(room) ? WIZARD_PARTS.slice(0, 2) : WIZARD_PARTS; } // (a button has no caption)
 // What the wizard is creating: a room / label, or (flow mode) a Flow of the active view.
 function wizardItem() { return roomWizard?.flow ? activeSceneView()?.flows?.[roomWizard.id] : roomsOf()[roomWizard?.id]; }
 function wizardSteps() { if (roomWizard?.flow) return roomWizard.skipEntities ? ['name','action'] : ['name','entities','action']; const room = roomsOf()[roomWizard?.id]; if (isTextRoom(room)) return ['name','action','parts']; const steps = isIconRoom(room) ? ['name','entities','parts'] : ['name','entities']; return roomWizard?.skipEntities ? steps.filter(step => step !== 'entities') : steps; }
@@ -3432,7 +3434,7 @@ function roomEditorMarkup(room) {
   const workStates = isThermoRoom(r) && !isGaugeRoom(r) ? entityLine('Stany pracy', 'act-states', `<details class="act-pick"${actPickOpen ? ' open' : ''}><summary><span>${actsUsed.length ? actsUsed.map(a => esc(THERMO_ACTIONS[a][0])).join(', ') : esc('Brak')}</span><i class="mdi mdi-chevron-down"></i></summary><div class="act-pick-list">`
     + Object.keys(THERMO_ACTIONS).map(a => `<button type="button" class="act-pick-row${actsUsed.includes(a) ? ' on' : ''}" data-act-toggle="${a}" aria-pressed="${actsUsed.includes(a)}"><i class="mdi ${THERMO_ACTIONS[a][1]}"></i><span>${esc(THERMO_ACTIONS[a][0])}</span><code data-no-i18n>${a}</code><i class="mdi ${actsUsed.includes(a) ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'}"></i></button>`).join('')
     + `</div></details>`, '') : '';
-  const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + control('Podpis','textCaption','text',r.textCaption || '') + linkControls(r)) : section('Ogólne', control('Nazwa','name','text',r.name)
+  const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + linkControls(r)) : section('Ogólne', control('Nazwa','name','text',r.name)
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
@@ -3681,7 +3683,7 @@ function roomEditorMarkup(room) {
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
-    : [...ROOM_LABEL_PARTS.slice(0, 3), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
+    : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
   const fxSection = isThermoRoom(r) ? '' : (() => {
@@ -3730,7 +3732,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   if (partRow) {
     const showRow = !isThermoRoom(room); /* (a room's label too: the same system as a label's) */ partRow.hidden = !showRow;
     if (showRow) {
-      partRow.innerHTML = [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName','Nazwa','mdi-format-text'],['labelState', isTextRoom(room) ? 'Podpis' : 'Stan', isTextRoom(room) ? 'mdi-text-short' : 'mdi-toggle-switch-outline']].map(([k, t, m]) => `<button type="button" class="editor-icon-button${room[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!room[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${m}"></i></button>`).join('');
+      partRow.innerHTML = [['labelIcon','Ikona','mdi-lightbulb-outline'],['labelName', isTextRoom(room) ? 'Tekst' : 'Nazwa','mdi-format-text'],['labelState','Stan','mdi-toggle-switch-outline']].filter(([k]) => !(isTextRoom(room) && k === 'labelState')).map(([k, t, m]) => `<button type="button" class="editor-icon-button${room[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!room[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${m}"></i></button>`).join('');
       partRow.style.paddingLeft = '';
     }
   }
@@ -4086,6 +4088,7 @@ function pasteRoomStyle() {
   Object.keys(room).filter(key => roomLookKey(key) && !keep(key)).forEach(key => delete room[key]);
   if (exact) Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(roomLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])));
   Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && !keep(key))), { updatedAt:new Date().toISOString() });
+  if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
   delete room.labelAutoUngrouped; delete room.singleSaved; renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
 }
 // "Default look" is the look of a freshly added room / icon (label visible, grouped, icon with outline and frame),
@@ -4100,7 +4103,7 @@ async function resetRoomStyle() {
   Object.assign(room, Object.fromEntries(ROOM_STYLE_KEYS.filter(key => key in ROOM_DEFAULTS).map(key => [key, clone(ROOM_DEFAULTS[key])])), NEW_ROOM_LABEL, icon ? { labelCardScale:ICON_LABEL_SCALE } : {}, isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : isThermoRoom(room) ? thermoLook() : {});
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
-  delete room.singleSaved;
+  delete room.singleSaved; if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
