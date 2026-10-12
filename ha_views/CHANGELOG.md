@@ -1,3 +1,9 @@
+## 0.6.1-beta.627
+
+- Etykieta z jednym elementem znów ma dwie warstwy: etykieta (sekcja Etykieta: tło, ramka, margines) i element (własne tło, ramka, margines, kształt). Etykietę chowa się, wyłączając jej tło i ramkę. Rozgrupowanie i zmiana rozmiaru pojedynczego elementu działają jak dotąd.
+- Etykiety wcześniej scalone w jedną warstwę dostają z powrotem obie warstwy (margines zmieniony w międzyczasie przechodzi do elementu).
+- Rozgrupowanie dodaje tło i ramkę tylko widocznym elementom tekstowym.
+
 ## 0.6.1-beta.626
 
 - Etykieta z jednym elementem: margines zmieniony przy jednym widocznym elemencie należy do tego elementu – po pokazaniu pozostałych elementów ikona (lub tekst) zachowuje ustawiony margines (np. 50), zamiast wracać do poprzedniego (np. 6).

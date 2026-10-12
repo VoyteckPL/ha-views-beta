@@ -1191,8 +1191,10 @@ function roomIconFrameStyle(r, on = false) {
 // to set), looking the same as the two did together; showing a second part gives both their own back.
 const LOOK_SUFFIX = ['', 'State', 'Color', 'Opacity', 'OnColor', 'OffColor', 'OnOpacity', 'OffOpacity', 'Width', 'OnWidth', 'OffWidth'];
 const lookKeys = base => LOOK_SUFFIX.map(sfx => `${base}${sfx}`);
+// beta.627: a label with one part is two layers again (the label's, the part's) - the label can be hidden by switching
+// its background and frame off. The merge below is kept only for history; nothing calls it any more.
 function mergeSingleLook(room) {
-  if (!room || !isIconRoom(room) || isThermoRoom(room) || isTextRoom(room) || room.singleSaved) return false;
+  if (true || !room || !isIconRoom(room) || isThermoRoom(room) || isTextRoom(room) || room.singleSaved) return false;
   const shown = ROOM_LABEL_PARTS.map(([, k]) => k).filter(k => room[k]); if (shown.length !== 1) return false;
   const k = shown[0]; if (!room[`${k}Bg`] && !room[`${k}Border`]) return false;
   const r = { ...ROOM_DEFAULTS, ...room }, keys = ['labelCardPadding', ...lookKeys('labelCardBg'), ...lookKeys('labelCardBorder'), 'labelCardRadius', 'labelCardBlur', ...lookKeys(`${k}Bg`), ...lookKeys(`${k}Border`), `${k}Blur`];
@@ -1271,7 +1273,9 @@ function migrateRoomLabel(room) {
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
   if (room?.singleSaved && !room.singlePadV1) { room.singlePadV1 = true; changed = true; const k = room.singleSaved.key, own = room[`${k}Padding`], set = own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)), pp = k === 'labelIcon' ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : set ? clamp(Number(own), 0, 120) : clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420) * .28; if (!('labelCardPadding' in room.singleSaved.saved)) room.singleSaved.saved.labelCardPadding = room.labelCardPadding; room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) + pp, 0, 150) * 10) / 10; room.singleSaved.merged.labelCardPadding = room.labelCardPadding; }
-  if (room && !room.singleLookV1) { room.singlePadV1 = true; room.singleLookV1 = true; changed = true; if (ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length === 1) mergeSingleLook(room); }
+  if (room && !room.singleLookV1) { room.singlePadV1 = true; room.singleLookV1 = true; changed = true; }
+  // beta.627: one-part labels merged into one layer get their two layers back (a margin changed meanwhile stays with the part).
+  if (room?.singleSaved) { restoreSingleLook(room); changed = true; }
   if (!room || !['labelLayout','labelScale','labelX','labelY','labelColor','labelBg','labelBgOpacity'].some(key => key in room)) return changed;
   const k = clamp(Number(room.labelScale) || 1, .4, 4), dx = Number(room.labelX) || 0, dy = Number(room.labelY) || 0, row = room.labelLayout === 'row';
   const at = row ? { icon:[-46, 0], name:[30, -10], state:[30, 12] } : { icon:[0, -30], name:[0, 6], state:[0, 30] };
@@ -1310,8 +1314,8 @@ function roomTextStyle(r, key, on = false) {
 // Ungrouped, the name and state get their own background and frame (like the icon) when they had none;
 // grouping again keeps the look they have.
 function togglePartFrames(room, grouping) {
-  if (grouping || room.soloPartLook || room.singleSaved || ROOM_LABEL_PARTS.filter(([, k]) => room[k]).length <= 1) return; // one part shown: its look is the label's own (one background, one frame)
-  ['labelName','labelState'].filter(key => !room[`${key}Bg`] && !room[`${key}Border`]).forEach(key => { room[`${key}Bg`] = true; room[`${key}Border`] = true; });
+  if (grouping || room.soloPartLook) return;
+  ['labelName','labelState'].filter(key => room[key] && !room[`${key}Bg`] && !room[`${key}Border`]).forEach(key => { room[`${key}Bg`] = true; room[`${key}Border`] = true; });
 }
 // Switching grouping on / off keeps everything where it is on the plan: ungrouped parts take the places they had
 // inside the group; a new group is centred where the separate parts were.
@@ -1496,7 +1500,7 @@ function fitFreeCard(room, group) {
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
 // A label showing only its icon is the icon: its frame takes the icon's shape (circle / square / own corners).
-const iconOnlyLabel = r => !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState && !dashSpan(r); // (on tiles the tile is its frame)
+const iconOnlyLabel = r => false && !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState && !dashSpan(r); // (on tiles the tile is its frame)
 const iconShapeOf = r => ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
 function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
@@ -3510,7 +3514,7 @@ function roomEditorMarkup(room) {
   const partBar = (part, title, body, toggles) => `<details class="editor-section part-section part-${part}${noData.has(part) ? ' no-data' : ''}"><summary><span>${escapeHtml(translateValue(title))}${noData.has(part) ? noDataTag : ''}</span><span class="section-tools">${toggles.map(([k, t, mdi]) => k === '|' ? '<span class="section-sep" aria-hidden="true"></span>' : `<button type="button" class="section-toggle${r[k] ? ' active' : ''}" data-part-toggle="${k}" aria-pressed="${!!r[k]}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"><i class="mdi ${mdi}"></i></button>`).join('')}${partStyleTools(part)}</span></summary><div class="editor-section-body">${body}</div></details>`;
   // One shown part: its background / frame are the label's (set in the Etykieta section).
   // One shown part is the label: its section holds the label's background / frame (and all its sizes, below).
-  const oneShown = icon && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 ? ROOM_LABEL_PARTS.find(([, k]) => r[k])[1] : '';
+  const oneShown = false && icon && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 ? ROOM_LABEL_PARTS.find(([, k]) => r[k])[1] : '';
   const frameToggles = key => oneShown === key ? [['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']] : [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
   const partSection = ([part, key, title]) => {
     if (isTextRoom(r) && part === 'state') title = 'Podpis';
@@ -3939,7 +3943,7 @@ function onRoomEditorClick(event) {
     const showing = parts.includes(key) && !room[key];
     if (showing && !room.labelLinked && room.labelAutoUngrouped) regroupAutoLabel(room);
     room[key] = !room[key];
-    if (partKeys.includes(key)) { const n = partKeys.filter(k => room[k]).length; if (n > 1) restoreSingleLook(room); else if (n === 1) { restoreSingleLook(room); renderRoomLabels(); mergeSingleLook(room); } }
+    if (partKeys.includes(key)) restoreSingleLook(room);
     if (showing && partKeys.includes(key) && room.labelLinked && room.labelCardFree && !isThermoRoom(room)) { renderRoomLabels(); placeShownPart(room, key); }
     // A label / room (not a thermostat or gauge, whose frame is designed): its group frame always hugs the shown parts -
     // a frame of its own size (resized with the dots, kept from ungrouping) goes back to fitting them, so hiding the name
@@ -4075,7 +4079,7 @@ function pasteRoomStyle() {
   Object.keys(room).filter(key => roomLookKey(key) && !keep(key)).forEach(key => delete room[key]);
   if (exact) Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(roomLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])));
   Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && !keep(key))), { updatedAt:new Date().toISOString() });
-  delete room.labelAutoUngrouped; delete room.singleSaved; renderRooms(); if (mergeSingleLook(room)) renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
+  delete room.labelAutoUngrouped; delete room.singleSaved; renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
 }
 // "Default look" is the look of a freshly added room / icon (label visible, grouped, icon with outline and frame),
 // not the bare defaults of the data model, in which every label part is hidden.
@@ -4091,7 +4095,6 @@ async function resetRoomStyle() {
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
   delete room.singleSaved;
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
-  if (icon && mergeSingleLook(room)) renderRooms();
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
   notify(isGaugeRoom(room) ? 'Przywrócono domyślny wygląd wskaźnika' : isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
