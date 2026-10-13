@@ -1,3 +1,7 @@
+## 0.6.1-beta.694
+
+- Strzałki rozciągania na kaflach pokazują się tylko wtedy, gdy żadna etykieta nie jest zaznaczona (otwarta w edytorze) - wtedy po najechaniu myszką.
+
 ## 0.6.1-beta.693
 
 - Strzałki rozciągania etykiety na kaflu wróciły do rogów - tak blisko krawędzi, jak pozwala zaokrąglenie etykiety (wewnątrz niej), ze strzałką wycentrowaną w kółku; róg rozciąga w obie strony, w które wskazuje. Dalej tylko po najechaniu myszką.

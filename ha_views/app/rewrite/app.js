@@ -1113,10 +1113,10 @@ function renderDashArrows(view, g, busy) {
   if (!editMode || !g.on || !els.scene) { layer?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-arrows'; els.scene.append(layer);
     layer.addEventListener('pointerdown', e => { const a = e.target.closest('[data-dash-arrow]'); if (!a) return; const room = roomsOf()[a.dataset.roomId]; if (!room?.dash) return; a.closest('.dash-arrow-set')?.classList.add('hot', 'busy'); startDashResize(e, { dataset: { corner: a.dataset.dashArrow } }, room); const off = () => { a.closest('.dash-arrow-set')?.classList.remove('busy'); window.removeEventListener('pointerup', off); }; window.addEventListener('pointerup', off); });
-    els.scene.addEventListener('pointermove', e => { const l = $('#dash-arrows'); if (!l || e.buttons || e.pointerType !== 'mouse') return; const [x, y] = scenePercentAt(e);
+    els.scene.addEventListener('pointermove', e => { const l = $('#dash-arrows'); if (!l || e.buttons || e.pointerType !== 'mouse') return; if (selectedRoomId) { $$('.dash-arrow-set.hot:not(.busy)', l).forEach(n => n.classList.remove("hot")); return; } /* (a label open in the editor: none) */ const [x, y] = scenePercentAt(e);
       l.querySelectorAll('.dash-arrow-set').forEach(set => { const b = set.__box; set.classList.toggle('hot', !!b && x >= b.x - 1.5 && x <= b.x + b.w + 1.5 && y >= b.y - 1.5 && y <= b.y + b.h + 1.5); }); });
     els.scene.addEventListener('pointerleave', () => $$('#dash-arrows .dash-arrow-set:not(.busy)').forEach(set => set.classList.remove('hot'))); }
-  layer.hidden = busy;
+  layer.hidden = busy || !!selectedRoomId; // (only while no label is selected)
   const rooms = Object.values(view?.rooms || {}).filter(r => r && isIconRoom(r) && r.dash && dashSpan(r, view));
   const key = rooms.map(r => `${r.id}:${r.dash.c},${r.dash.r},${r.dash.w},${r.dash.h}`).join('|') + '#' + [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
   if (layer.__key === key) return; layer.__key = key;
