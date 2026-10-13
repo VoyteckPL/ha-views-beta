@@ -1,3 +1,8 @@
+## 0.6.1-beta.680
+
+- Etykieta z presetem: rozgrupowanie i zgrupowanie z powrotem bez zmian przywraca dokładnie układ presetu (bez rosnącego marginesu i bez ponownego klikania presetu).
+- Gdy elementy zostały poprzesuwane, etykieta po zgrupowaniu zostaje tej samej wielkości na kaflu (bez dodatkowego marginesu).
+
 ## 0.6.1-beta.679
 
 - Presety: tekst nazwy i stanu wypełnia swoją ramkę z tym samym małym marginesem z każdej strony (we wszystkich presetach).

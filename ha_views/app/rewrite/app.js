@@ -1124,6 +1124,8 @@ function pinToFreeTile(room, view = activeSceneView()) {
 // state on the right one under the other. The name and the state get the same width (their heights follow), the text
 // together as tall as the icon. The tile then scales the whole label to fill it.
 const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCardLayout === 'iconLeft' ? 40 : Math.round(100 / (1 + ['labelName','labelState'].filter(k => room[k]).length))), room.labelCardLayout === 'iconLeft' ? 30 : 10, 70);
+// What a preset's label parts are (sizes, places, shown): unchanged means the preset's layout still stands.
+const presetLook = room => JSON.stringify(['labelIcon','labelName','labelState'].map(k => [!!room[k], ...['W','H','Size','X','Y','Radius'].map(d => Math.round((Number(room[`${k}${d}`]) || 0) * 10) / 10)]).concat([room.labelCardLayout, room.labelPartGap, room.labelCardPadding]));
 const TILE_COL_U = 240;
 const TILE_TEXT_MARGIN = .12; // (a preset's name / state: the text fills its frame, the same small margin left on every side)
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
@@ -1236,7 +1238,7 @@ function fitDashLabels() {
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
     // (a label laid out by a preset is the tile's shape and fills it - its margin is the only room left round its parts)
-    const fill = room.labelLinked && room.tileColV2 && !room.labelCardFree ? 1 : .94;
+    const fill = room.labelLinked && room.tileColV2 ? 1 : .94;
     // (While a part's size / width / height slider is moved, the label's fit stays as it was: refitted each step it would shake.)
     const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * fill / nw, th * fill / nh), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
@@ -1480,6 +1482,8 @@ function keepLabelPlaceOnRegroup(room) {
     // What the group was, to be put back exactly when it is grouped again with no part moved; and its frame, which
     // stays as it was while ungrouped (unless "Dopasuj do części" is chosen).
     room.labelRegroupSnap = { x: room.labelCardX, y: room.labelCardY, free: !!room.labelCardFree, scale: Number(room.labelCardScale) || 1, parts };
+    // (a label laid out by a tile preset: what its parts are now, so grouping again with nothing changed gives the preset back)
+    if (room.tileColV2 && !room.labelCardFree && dashSpan(room)) room.labelRegroupSnap.preset = presetLook(room); else delete room.labelRegroupSnap.preset;
     // Taken from the model, not measured on screen (the label's point is drawn rounded to a whole pixel, so a measured
     // centre was up to half a pixel off and the frame crept on every ungroup / group): the card's centre is its point
     // plus its offset plus the free card's shift (group px × scale); its size is its exact (fractional) width / height.
@@ -1494,6 +1498,8 @@ function keepLabelPlaceOnRegroup(room) {
     const sameParts = snap && shownKeys.length === Object.keys(snap.parts).length && shownKeys.every(key => snap.parts[key]);
     // The size changed while ungrouped: the group's frame takes the size the kept frame has now.
     let kept = room.labelUngroupFrame && Number(room.labelUngroupFrame.w) > 0 ? room.labelUngroupFrame : null; if (kept && fixedFrame(room) && snap && snap.scale !== (Number(room.labelCardScale) || 1)) { room.labelCardW = Math.round(kept.w * 10) / 10; room.labelCardH = Math.round(kept.h * 10) / 10; }
+    // A tile preset's label grouped again with nothing changed: it is the preset's layout again, not a free one.
+    if (snap?.preset && sameParts && snap.preset === presetLook(room)) { room.labelCardFree = false; ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k2 => delete room[k2]); room.labelCardX = snap.x; room.labelCardY = snap.y; return; }
     if (snap?.free && sameParts && snap.scale === (Number(room.labelCardScale) || 1) && shownKeys.every(key => snap.parts[key] && Math.abs((Number(room[`${key}X`]) || 0) - snap.parts[key][0]) < .005 && Math.abs((Number(room[`${key}Y`]) || 0) - snap.parts[key][1]) < .005)) {
       room.labelCardX = snap.x; room.labelCardY = snap.y; room.labelCardFree = true;
       shownKeys.forEach(key => { room[`${key}FX`] = snap.parts[key][2]; room[`${key}FY`] = snap.parts[key][3]; });
