@@ -1,3 +1,7 @@
+## 0.6.1-beta.681
+
+- Preset 2 i 3: nazwa i stan mają każdy swoją wielkość czcionki - tak dużą, jak pozwala ich ramka, z mniejszym marginesem (stan wyraźnie większy); rośnie i maleje proporcjonalnie z ramką (np. przy zmianie wielkości ikony lub podziału).
+
 ## 0.6.1-beta.680
 
 - Etykieta z presetem: rozgrupowanie i zgrupowanie z powrotem bez zmian przywraca dokładnie układ presetu (bez rosnącego marginesu i bez ponownego klikania presetu).
