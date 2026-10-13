@@ -1,3 +1,7 @@
+## 0.6.1-beta.719
+
+- Termostat / wskaźnik: kamera na całym termostacie z marginesem 5% (wcześniej 20%) - zgrupowany i rozgrupowany, telefon i komputer.
+
 ## 0.6.1-beta.718
 
 - Rozgrupowany termostat / wskaźnik: kliknięcie tarczy (albo innego dużego elementu) przybliża na nią - wypełnia większość widoku; wcześniej kamera zostawała na całym termostacie.

@@ -5526,7 +5526,7 @@ function focusLabelBox(room) {
   const l = (L - sc.left) / viewZoom, t = (T - sc.top) / viewZoom, w = Math.max(1, (R - L) / viewZoom), h = Math.max(1, (B - T) / viewZoom);
   // (a part: a small one a third of the view - some of the thermostat round it -, a big one (the dial) most of it)
   const fw = frame.length ? Math.max(...frame.map(r => r.right)) - Math.min(...frame.map(r => r.left)) : 0, fh = frame.length ? Math.max(...frame.map(r => r.bottom)) - Math.min(...frame.map(r => r.top)) : 0;
-  const frac = part && fw && fh ? Math.max((R - L) / fw, (B - T) / fh) : 0, area = labelFocusArea(), vp = area.vp, fill = part ? clamp(.3 + .6 * frac, .3, .85) : .6;
+  const frac = part && fw && fh ? Math.max((R - L) / fw, (B - T) / fh) : 0, area = labelFocusArea(), vp = area.vp, fill = part ? clamp(.3 + .6 * frac, .3, .85) : isThermoRoom(room) ? .9 : .6; // (a whole thermostat / gauge: 5% margin on every side)
   const zoom = clamp(Math.min((area.right - area.left) * fill / w, (area.bottom - area.top) * fill / h), zoomFloor(), part ? Math.max(4, viewZoom) : 20); // (a part: never past what a pinch / the wheel reaches, so the next pinch does not jump)
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
   return true;
