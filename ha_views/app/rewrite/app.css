@@ -1927,3 +1927,13 @@ body.editing .dash-quick.on{display:flex}
 #dash-arrows .dash-arrow-set.hot .dash-arrow{opacity:.75;pointer-events:auto}
 #dash-arrows .dash-arrow:hover{opacity:1!important;background:rgba(32,185,231,.35);border-color:#20b9e7}
 #dash-arrows .dash-arrow.e,#dash-arrows .dash-arrow.w{cursor:ew-resize}#dash-arrows .dash-arrow.n,#dash-arrows .dash-arrow.s{cursor:ns-resize}
+/* (small, in the corners, only with a mouse over the label) */
+#dash-arrows .dash-arrow{width:15px;height:15px;font-size:11px;border-width:1px;background:rgba(7,25,36,.65);border-color:rgba(143,223,255,.3)}
+#dash-arrows .dash-arrow.se{transform:translate(-100%,-100%) translate(-3px,-3px)}#dash-arrows .dash-arrow.sw{transform:translate(0,-100%) translate(3px,-3px) rotate(90deg)}
+#dash-arrows .dash-arrow.ne{transform:translate(-100%,0) translate(-3px,3px) rotate(-90deg)}#dash-arrows .dash-arrow.nw{transform:translate(3px,3px) rotate(180deg)}
+#dash-arrows .dash-arrow.se,#dash-arrows .dash-arrow.nw{cursor:nwse-resize}#dash-arrows .dash-arrow.ne,#dash-arrows .dash-arrow.sw{cursor:nesw-resize}
+#dash-arrows .dash-arrow-set.hot .dash-arrow{opacity:.6}
+@media (hover:none){#dash-arrows{display:none}}
+/* (inside the label, clear of its rounded corner) */
+#dash-arrows .dash-arrow.se{transform:translate(-100%,-100%) translate(-15px,-15px)}#dash-arrows .dash-arrow.sw{transform:translate(0,-100%) translate(15px,-15px) rotate(90deg)}
+#dash-arrows .dash-arrow.ne{transform:translate(-100%,0) translate(-15px,15px) rotate(-90deg)}#dash-arrows .dash-arrow.nw{transform:translate(15px,15px) rotate(180deg)}

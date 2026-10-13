@@ -1,3 +1,8 @@
+## 0.6.1-beta.691
+
+- Strzałki rozciągania etykiety na kaflu: dużo mniejsze, w rogach etykiety (wewnątrz niej, nie wystają), widoczne tylko po najechaniu myszką; róg rozciąga w obie strony, w które wskazuje (albo zmniejsza).
+- Etykieta na kaflu nie pokazuje już niebieskich kropek starej ramki - rozmiar zmienia się strzałkami.
+
 ## 0.6.1-beta.690
 
 - Kafelki w edycji: po najechaniu na etykietę (lub gdy jest zaznaczona) na bokach jej kafla pojawiają się subtelne strzałki; przeciągnięcie strzałki rozciąga etykietę na sąsiednie kafle w tę stronę (albo z powrotem) - krawędź przeskakuje na linię kafli najbliższą kursorowi, pozostałe boki stoją. Strzałki są tylko tam, gdzie jest dokąd rozciągnąć/zmniejszyć. Po rozciągnięciu preset etykiety układa się od nowa pod nowy kształt.

@@ -1113,21 +1113,19 @@ function renderDashArrows(view, g, busy) {
   if (!editMode || !g.on || !els.scene) { layer?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-arrows'; els.scene.append(layer);
     layer.addEventListener('pointerdown', e => { const a = e.target.closest('[data-dash-arrow]'); if (!a) return; const room = roomsOf()[a.dataset.roomId]; if (!room?.dash) return; a.closest('.dash-arrow-set')?.classList.add('hot', 'busy'); startDashResize(e, { dataset: { corner: a.dataset.dashArrow } }, room); const off = () => { a.closest('.dash-arrow-set')?.classList.remove('busy'); window.removeEventListener('pointerup', off); }; window.addEventListener('pointerup', off); });
-    els.scene.addEventListener('pointermove', e => { const l = $('#dash-arrows'); if (!l || e.buttons) return; const [x, y] = scenePercentAt(e);
-      l.querySelectorAll('.dash-arrow-set').forEach(set => { const b = set.__box; set.classList.toggle('hot', set.classList.contains('sel') || !!b && x >= b.x - 1.5 && x <= b.x + b.w + 1.5 && y >= b.y - 1.5 && y <= b.y + b.h + 1.5); }); });
-    els.scene.addEventListener('pointerleave', () => $$('#dash-arrows .dash-arrow-set:not(.busy):not(.sel)').forEach(set => set.classList.remove('hot'))); }
+    els.scene.addEventListener('pointermove', e => { const l = $('#dash-arrows'); if (!l || e.buttons || e.pointerType !== 'mouse') return; const [x, y] = scenePercentAt(e);
+      l.querySelectorAll('.dash-arrow-set').forEach(set => { const b = set.__box; set.classList.toggle('hot', !!b && x >= b.x - 1.5 && x <= b.x + b.w + 1.5 && y >= b.y - 1.5 && y <= b.y + b.h + 1.5); }); });
+    els.scene.addEventListener('pointerleave', () => $$('#dash-arrows .dash-arrow-set:not(.busy)').forEach(set => set.classList.remove('hot'))); }
   layer.hidden = busy;
   const rooms = Object.values(view?.rooms || {}).filter(r => r && isIconRoom(r) && r.dash && dashSpan(r, view));
-  const key = rooms.map(r => `${r.id}:${r.dash.c},${r.dash.r},${r.dash.w},${r.dash.h}`).join('|') + '#' + [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3), selectedRoomId || ''].join('|');
+  const key = rooms.map(r => `${r.id}:${r.dash.c},${r.dash.r},${r.dash.w},${r.dash.h}`).join('|') + '#' + [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
   if (layer.__key === key) return; layer.__key = key;
   const hot = new Set($$('.dash-arrow-set.hot', layer).map(n => n.dataset.roomId));
   const arrow = (id, side, x, y, mdi) => `<button type="button" class="dash-arrow ${side}" data-dash-arrow="${side}" data-room-id="${escapeHtml(id)}" style="left:${x}%;top:${y}%" aria-label="${escapeHtml(translateValue('Rozciągnij'))}"><i class="mdi ${mdi}"></i></button>`;
-  layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, cx = s.x + s.w / 2, cy = s.y + s.h / 2, out = [];
-    if (d.c + d.w < g.cols || d.w > 1) out.push(arrow(r.id, 'e', s.x + s.w, cy, 'mdi-chevron-right'));
-    if (d.c > 0 || d.w > 1) out.push(arrow(r.id, 'w', s.x, cy, 'mdi-chevron-left'));
-    if (d.r + d.h < g.rows || d.h > 1) out.push(arrow(r.id, 's', cx, s.y + s.h, 'mdi-chevron-down'));
-    if (d.r > 0 || d.h > 1) out.push(arrow(r.id, 'n', cx, s.y, 'mdi-chevron-up'));
-    return `<div class="dash-arrow-set${hot.has(r.id) || r.id === selectedRoomId ? ' hot' : ''}${r.id === selectedRoomId ? ' sel' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
+  // (in the tile's corners: each takes the label over the next tiles both ways it points - or back)
+  layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1;
+    [['se', s.x + s.w, s.y + s.h, canE || canS], ['sw', s.x, s.y + s.h, canW || canS], ['ne', s.x + s.w, s.y, canE || canN], ['nw', s.x, s.y, canW || canN]].forEach(([k, x, y, ok]) => { if (ok) out.push(arrow(r.id, k, x, y, 'mdi-arrow-bottom-right')); });
+    return `<div class="dash-arrow-set${hot.has(r.id) ? ' hot' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
   rooms.forEach(r => { const set = layer.querySelector(`.dash-arrow-set[data-room-id="${CSS.escape(r.id)}"]`); if (set) set.__box = dashSpan(r, view); });
 }
 function renderDashGrid(target = null) {
@@ -2290,7 +2288,7 @@ function fitCardHandles() {
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner; proxy.classList.toggle('part', !!owner?.classList.contains('room-label-part')); // (a part's dots: smaller, their own colour)
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;
     // A side's dot is always there; on a small part (on screen) it is drawn smaller, so the dots stay apart.
-    proxy.hidden = !r.width || getComputedStyle(h).display === 'none';
+    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || !!owner?.classList.contains('dash-pinned'); // (a label on its tile: the arrows in its corners size it)
     proxy.classList.toggle('mini', !!(side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 60) || (/[ew]/.test(h.dataset.corner) && ob.height < 52))));
     proxy.style.left = `${((r.left + r.width / 2 - base.left) / kx).toFixed(1)}px`; proxy.style.top = `${((r.top + r.height / 2 - base.top) / ky).toFixed(1)}px`;
   });
@@ -2313,8 +2311,8 @@ function startDashResize(event, handle, room) {
     if (e.pointerId !== event.pointerId) return; moved = true;
     const [x, y] = scenePercentAt(e);
     // (a side's arrow: its edge goes to the tile line nearest the pointer - half a tile on, the label takes the next tile)
-    const col = clamp(c === 'e' ? Math.round((x - g.gx / 2) / stepX) - 1 : c === 'w' ? Math.round((x - g.gx / 2) / stepX) : Math.floor((x - g.gx / 2) / stepX), 0, g.cols - 1);
-    const row = clamp(c === 's' ? Math.round((y - g.gy / 2) / stepY) - 1 : c === 'n' ? Math.round((y - g.gy / 2) / stepY) : Math.floor((y - g.gy / 2) / stepY), 0, g.rows - 1);
+    const col = clamp(c.includes('e') ? Math.round((x - g.gx / 2) / stepX) - 1 : c.includes('w') ? Math.round((x - g.gx / 2) / stepX) : Math.floor((x - g.gx / 2) / stepX), 0, g.cols - 1);
+    const row = clamp(c.includes('s') ? Math.round((y - g.gy / 2) / stepY) - 1 : c.includes('n') ? Math.round((y - g.gy / 2) / stepY) : Math.floor((y - g.gy / 2) / stepY), 0, g.rows - 1);
     let c0 = Math.min(fixC, col), c1 = Math.max(fixC, col), r0 = Math.min(fixR, row), r1 = Math.max(fixR, row);
     // (a side's arrow: that way only - the other two sides stay where they are)
     if (c === 'e' || c === 'w') { r0 = d0.r; r1 = d0.r + d0.h - 1; } else if (c === 'n' || c === 's') { c0 = d0.c; c1 = d0.c + d0.w - 1; }
