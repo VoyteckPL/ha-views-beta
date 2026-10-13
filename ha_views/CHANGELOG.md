@@ -1,3 +1,7 @@
+## 0.6.1-beta.666
+
+- Szerokość/wysokość elementu ma limit: element nie wychodzi poza etykietę o stałym rozmiarze (na kafelku, swobodną albo zablokowaną) - suwak kończy się tam, gdzie kończy się miejsce w etykiecie.
+
 ## 0.6.1-beta.665
 
 - Koniec drżenia przy suwakach szerokości/wysokości/rozmiaru elementu: na kafelku dopasowanie etykiety do kafla czeka do puszczenia suwaka, a cele przyciągania są brane raz na ruch (nie przeliczane w każdym kroku).
