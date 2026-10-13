@@ -1172,7 +1172,8 @@ function fitDashLabels() {
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
-    const s = clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
+    // (While a part's size / width / height slider is moved, the label's fit stays as it was: refitted each step it would shake.)
+    const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
@@ -3896,10 +3897,15 @@ function partBoxNode(room, k) { const p = k === 'labelIcon' ? 'icon' : k === 'la
 // a line means a size of twice its distance from the centre.
 function partSizeSnap(room, k, axis, want) {
   const o = groupSnapOpts(), node = partBoxNode(room, k); if (!o.on || !node) return { v: want };
-  const sc = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), z = (axis === 'x' ? r.width / Math.max(1, node.offsetWidth) : r.height / Math.max(1, node.offsetHeight)) || 1;
+  // What it snaps to is taken once per slider move: the label (and its fit on a tile) changes as the part does, and
+  // targets taken anew each time would make it flick between two values.
+  const key = `${room.id}|${k}|${axis}`; let g = partSizeSnap.frozen; if (!g || g.key !== key) {
+    const r = node.getBoundingClientRect(), id = CSS.escape(room.id);
+    g = partSizeSnap.frozen = { key, sc: els.scene.getBoundingClientRect(), r, z: (axis === 'x' ? r.width / Math.max(1, node.offsetWidth) : r.height / Math.max(1, node.offsetHeight)) || 1,
+      card: room.labelLinked ? $(`.room-label-card[data-room-id="${id}"]`)?.getBoundingClientRect() : null,
+      others: ['labelIcon','labelName','labelState'].filter(kk => kk !== k && room[kk]).map(kk => partBoxNode(room, kk)?.getBoundingClientRect()).filter(b => b?.width) }; }
+  const { sc, r, z, card, others } = g;
   const lo = axis === 'x' ? 'left' : 'top', hi = axis === 'x' ? 'right' : 'bottom', c = (r[lo] + r[hi]) / 2, w = want * z, reach = snapReach();
-  const id = CSS.escape(room.id), card = room.labelLinked ? $(`.room-label-card[data-room-id="${id}"]`)?.getBoundingClientRect() : null;
-  const others = ['labelIcon','labelName','labelState'].filter(kk => kk !== k && room[kk]).map(kk => partBoxNode(room, kk)?.getBoundingClientRect()).filter(b => b?.width);
   const cands = [];
   if (o.grid !== 'off') { const box = card || r; let step = GROUP_GRID * z; while (step < 12) step *= 2; const origin = (box[lo] + box[hi]) / 2; for (let n = -60; n <= 60; n++) cands.push({ edge: origin + n * step, kind: 'ggrid' }); }
   if (o.parts) others.forEach(b => { cands.push({ edge: b[lo], kind: 'label' }, { edge: b[hi], kind: 'label' }, { size: b[hi] - b[lo], kind: 'label', box: b }); });
@@ -3964,7 +3970,8 @@ function onRoomEditorInput(event) {
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
-  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; }, 300); } }
+  if (/^label(Icon|Name|State)(W|H|Size)$/.test(path)) { fitDashLabels.hold = room.id; clearTimeout(fitDashLabels.holdOff); if (event.type === 'change') fitDashLabels.holdOff = setTimeout(() => { fitDashLabels.hold = null; renderRooms(); }, 300); }
+  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; }, 300); } }
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);

@@ -1,3 +1,7 @@
+## 0.6.1-beta.665
+
+- Koniec drżenia przy suwakach szerokości/wysokości/rozmiaru elementu: na kafelku dopasowanie etykiety do kafla czeka do puszczenia suwaka, a cele przyciągania są brane raz na ruch (nie przeliczane w każdym kroku).
+
 ## 0.6.1-beta.664
 
 - Zmniejszenie szerokości/wysokości ramki elementu poniżej rozmiaru ikony/tekstu zmniejsza ikonę/tekst (i suwak rozmiaru) zamiast go obcinać; przy powrocie w tym samym ruchu suwaka wraca do poprzedniego rozmiaru.
