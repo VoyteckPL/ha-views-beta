@@ -1,3 +1,9 @@
+## 0.6.1-beta.707
+
+- Efekty: zostały tylko Liquid glass i Gradient (usunięte pozostałe efekty, także efekty ikon).
+- Gradient: 8 presetów + Kolor 1, Kolor 2, Kąt, Animacja (obrót), Grubość ramki, Wnętrze, Poświata.
+- Liquid glass: 6 presetów + Rozmycie, Biel, Odcień, Połysk.
+
 ## 0.6.1-beta.706
 
 - Cofnięte zmiany z 0.6.1-beta.705 (szybkie suwaki „Ramka ikony” / „Ikona” w presecie 3) - preset 3 działa jak w 0.6.1-beta.704.

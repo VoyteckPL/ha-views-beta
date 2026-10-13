@@ -1957,3 +1957,16 @@ body.editing .dash-quick.on{display:flex}
 #dash-arrows .dash-arrow.e{transform:translate(-100%,-50%) translate(-3px,0)}#dash-arrows .dash-arrow.w{transform:translate(0,-50%) translate(3px,0)}
 #dash-arrows .dash-arrow.s{transform:translate(-50%,-100%) translate(0,-3px)}#dash-arrows .dash-arrow.n{transform:translate(-50%,0) translate(0,3px)}
 #dash-arrows .dash-arrow i{font-size:14px}
+/* "Efekty": liquid glass and the gradient frame, set with variables (--g*, --l*) on the label's wrapper */
+@property --ga{syntax:'<angle>';inherits:true;initial-value:135deg}
+.lst-gradient :is(.room-label-card:not(.solo),.room-label-backdrop),.lst-gradient .room-label-card.solo>.room-card-part{border:var(--gw,2px) solid transparent!important;background:linear-gradient(rgba(8,24,34,var(--gbg,.72)),rgba(8,24,34,var(--gbg,.72))) padding-box,linear-gradient(var(--ga,135deg),var(--g1,#20b9e7),var(--g2,#b66dff)) border-box!important;box-shadow:0 8px 22px rgba(0,0,0,.35),0 0 var(--gglow,0px) color-mix(in srgb,var(--g1,#20b9e7) 70%,transparent),0 0 calc(var(--gglow,0px) * 1.6) color-mix(in srgb,var(--g2,#b66dff) 45%,transparent)!important}
+.lst-ganim{animation:hav-gspin 6s linear infinite}
+@keyframes hav-gspin{from{--ga:0deg}to{--ga:360deg}}
+.lst-liquid :is(.room-label-card:not(.solo),.room-label-backdrop),.lst-liquid .room-label-card.solo>.room-card-part{background:linear-gradient(180deg,rgba(var(--lc,255,255,255),var(--lt,.24)),rgba(var(--lc,255,255,255),calc(var(--lt,.24) * .2)) 60%,rgba(var(--lc,255,255,255),calc(var(--lt,.24) * .45)))!important;-webkit-backdrop-filter:blur(var(--lb,22px)) saturate(185%) brightness(1.08);backdrop-filter:blur(var(--lb,22px)) saturate(185%) brightness(1.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,calc(var(--lh,.6) * .55)),inset 0 1.5px 1px rgba(255,255,255,calc(var(--lh,.6) * 1.25)),inset 0 -10px 18px rgba(255,255,255,calc(var(--lh,.6) * .12)),0 14px 34px rgba(0,0,0,.38)!important}
+.fx-styles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:4px 0 8px}
+.fx-looks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.fx-look{display:grid;justify-items:center;gap:3px;padding:5px 2px;border:1px solid rgba(99,181,216,.25);border-radius:9px;background:#0b2533;color:#9fbfcf;cursor:pointer;height:auto;min-height:0;line-height:1.1;align-content:start}
+.fx-look.active{border-color:#20b9e7;box-shadow:inset 0 0 0 1px #20b9e7}
+.fx-look span{width:34px;height:22px;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.fx-look span.liquid{background:linear-gradient(180deg,rgba(var(--c),.55),rgba(var(--c),.12) 60%,rgba(var(--c),.3)),#123040;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),inset 0 1.5px 1px rgba(255,255,255,.7)}
+.fx-look small{font-size:9.5px}
