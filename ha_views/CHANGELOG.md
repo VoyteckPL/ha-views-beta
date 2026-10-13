@@ -1,3 +1,7 @@
+## 0.6.1-beta.673
+
+- Rozgrupowana okrągła/kwadratowa ikona: przy ciągnięciu kreski na boku przeciwległa krawędź stoi w miejscu (np. dolna kreska w dół - góra stoi), ikona rośnie w stronę ciągnięcia, a dwa pozostałe boki równo na boki.
+
 ## 0.6.1-beta.672
 
 - Rozgrupowana etykieta: ikona w kształcie koła/kwadratu ma tylko kreski na bokach (bez kropek w rogach); przeciągnięcie kreski skaluje ikonę proporcjonalnie wokół środka - zostaje kołem 1:1, a sama ikona w ramce rośnie i maleje razem z nią. Na kaflu nie wychodzi poza kafel.

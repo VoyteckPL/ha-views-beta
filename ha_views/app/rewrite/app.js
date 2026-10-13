@@ -2238,15 +2238,20 @@ function startLockedResize(event, handle, room) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
-// An ungrouped round / square icon's side dot: the icon scales as a whole round its centre (frame 1:1, the icon in it
-// keeping its share of it), within its tile when it is on one.
+// An ungrouped round / square icon's side dot: the icon scales as a whole (frame 1:1, the icon in it keeping its share of
+// it); the opposite side stays where it is, the two sides across grow equally. Within its tile when it is on one.
 function startRoundIconResize(event, handle, node, room) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, X = c === 'e' || c === 'w', sign = c === 'e' || c === 's' ? 1 : -1, r0 = node.getBoundingClientRect(), k = r0.width / Math.max(1, node.offsetWidth) || 1;
   const pad = parseFloat(getComputedStyle(node).paddingTop) || 0, f0 = iconFrameNow(room, node), s0 = Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize, p0 = X ? event.clientX : event.clientY;
-  const lim = [partWHMax(room, 'labelIcon', 'x'), partWHMax(room, 'labelIcon', 'y')].filter(v => v > 0), max = lim.length ? Math.max(f0, Math.min(...lim)) : 2000;
-  const move = e => { const d = ((X ? e.clientX : e.clientY) - p0) * sign / k, f = Math.round(clamp(f0 + 2 * d, 10, max) * 10) / 10;
+  const sc = els.scene.getBoundingClientRect(), planToScreen = sc.width / (els.scene.offsetWidth || 1) * (sceneScale || 1), pk = X ? 'labelIconX' : 'labelIconY', o0 = Number(room[pk]) || 0;
+  // How far it may grow: the held side to the bounds' far side along, twice the room from its centre across.
+  const B = partBounds(room), cx = (r0.left + r0.right) / 2, cy = (r0.top + r0.bottom) / 2, sz0 = X ? r0.width : r0.height;
+  const anchor = X ? (sign > 0 ? r0.left : r0.right) : (sign > 0 ? r0.top : r0.bottom);
+  const max = B ? Math.max(f0, Math.min((sign > 0 ? (X ? B.r : B.b) - anchor : anchor - (X ? B.l : B.t)) / k, 2 * (X ? Math.min(cy - B.t, B.b - cy) : Math.min(cx - B.l, B.r - cx)) / k) * f0 / Math.max(1, sz0 / k)) : 2000;
+  const move = e => { const d = ((X ? e.clientX : e.clientY) - p0) * sign / k, f = Math.round(clamp(f0 + d, 10, max) * 10) / 10;
     room.labelIconW = room.labelIconH = f; room.labelIconSize = Math.round(clamp(s0 * Math.max(1, f - 2 * pad) / Math.max(1, f0 - 2 * pad), 6, 420) * 10) / 10; delete room.labelIconLock;
+    room[pk] = Math.round((o0 + sign * (f - f0) * (sz0 / Math.max(1, f0)) / 2 / planToScreen) * 100) / 100; // (its centre moves half the growth: the held side stays)
     renderRooms(); syncEditorValues(room); };
   const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); room.updatedAt = new Date().toISOString(); scheduleSave(true); syncEditorValues(room);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250); };
