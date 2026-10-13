@@ -1,3 +1,7 @@
+## 0.6.1-beta.699
+
+- Usunięte przyciski przy suwaku rozmiaru tekstu / ikony („Dopasuj do tekstu” i kłódka „Stała ramka”) - ramkę ustawiają szerokość / wysokość (lub preset), a tekst dopasowuje się do niej z marginesem wewnętrznym.
+
 ## 0.6.1-beta.698
 
 - Wielkość tekstu nazwy i stanu w presetach wynika z wysokości ramki: wielkie litery zajmują połowę jej wysokości, niezależnie od treści - przy takich samych ramkach (np. podział 50/50) „7 °C” i „44.7 °C” mają tę samą wielkość. Szerokość ogranicza tekst tylko, gdy się nie mieści. Gdy ramka rośnie (np. suwak „Podział”), tekst rośnie razem z nią.
