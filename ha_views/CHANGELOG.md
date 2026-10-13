@@ -1,3 +1,7 @@
+## 0.6.1-beta.715
+
+- Tryb Tło: „Wyrównaj do tła” (do krawędzi / środka) przesuwa etykietę i przycisk z własnym rozmiarem - wcześniej stały w miejscu.
+
 ## 0.6.1-beta.714
 
 - Kafelki: Pomieszczenia nie da się już dodać (ani z listy, ani z szablonu) - zostaje tylko w trybie Tło.

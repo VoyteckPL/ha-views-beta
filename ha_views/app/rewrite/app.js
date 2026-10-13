@@ -5052,7 +5052,8 @@ function alignSelectedToBackground(where) {
     // An icon moves its point by the distance its label box has to travel.
     const room = roomsOf()[selectedRoomId], rects = $$(`#room-labels [data-room-id="${CSS.escape(room.id)}"]`).map(node => node.getBoundingClientRect()).filter(r => r.width); if (!rects.length) return;
     const d = shift({ left: Math.min(...rects.map(r => r.left)), right: Math.max(...rects.map(r => r.right)), top: Math.min(...rects.map(r => r.top)), bottom: Math.max(...rects.map(r => r.bottom)) });
-    room.x = Math.round(clamp((Number(room.x) || 50) + d.x / s.width * 100, 0, 100) * 1000) / 1000; room.y = Math.round(clamp((Number(room.y) || 50) + d.y / s.height * 100, 0, 100) * 1000) / 1000;
+    if (room.fbox && dashSpan(room)) setFreeBox(room, { ...room.fbox, x: room.fbox.x + d.x / s.width * 100, y: room.fbox.y + d.y / s.height * 100 }); // (a label on its own box: the box goes)
+    else { room.x = Math.round(clamp((Number(room.x) || 50) + d.x / s.width * 100, 0, 100) * 1000) / 1000; room.y = Math.round(clamp((Number(room.y) || 50) + d.y / s.height * 100, 0, 100) * 1000) / 1000; }
     room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); return;
   }
   if (selectedRoomId && roomsOf()[selectedRoomId] && !isIconRoom(roomsOf()[selectedRoomId])) {
