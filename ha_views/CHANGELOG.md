@@ -1,3 +1,9 @@
+## 0.6.1-beta.695
+
+- Nazwa i stan: nowy suwak „Margines wewnętrzny” (w sekcji rozmiaru) - odstęp tekstu od ramki; ramka zostaje, tekst dopasowuje się do reszty. Reset przywraca automatyczny margines presetu.
+- Naprawione obcinanie liter z ogonkiem (np. „y” w „Wylot”): wielkość tekstu liczona względem środka linii, tak jak tekst jest wyśrodkowany.
+- Stany liczbowe z jednostką (np. „7 °C” i „44.7 °C”) mają tę samą wielkość tekstu - mierzone jak typowa wartość „88.8 °C”.
+
 ## 0.6.1-beta.694
 
 - Strzałki rozciągania na kaflach pokazują się tylko wtedy, gdy żadna etykieta nie jest zaznaczona (otwarta w edytorze) - wtedy po najechaniu myszką.
