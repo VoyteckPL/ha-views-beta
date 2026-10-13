@@ -4195,7 +4195,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
       panelPart = { roomId: room.id, part }; selectedLabelPart = part; renderRoomLabels(); markPartSection(part);
       requestAnimationFrame(() => { if (isIconRoom(room) && focusLabelBox(room)) return; const box = partFocusBox(room, part); if (box) focusSceneBoxOnMobile(box); });
     } else {
-      panelPart = null; renderRoomLabels();
+      panelPart = null; if (isThermoRoom(room) && !room.labelLinked) selectedLabelPart = ''; renderRoomLabels();
       requestAnimationFrame(() => { if (isIconRoom(room) && focusLabelBox(room)) return; focusSceneBoxOnMobile(isIconRoom(room) ? iconFocusBox(room) : room.points || []); });
     }
   }));
@@ -5501,20 +5501,31 @@ function fitLabelFrameOnDesktop(room) {
 }
 // A label tapped in edit mode is centred and zoomed to fill the visible plan with a 20% margin on every side (on a phone:
 // the band above the editor panel). The label's frame (ungrouped: its parts and frame) is what is fitted.
-function refocusLabel(room) { if (room && isIconRoom(room) && editMode) requestAnimationFrame(() => requestAnimationFrame(() => focusLabelBox(room))); }
+// An ungrouped thermostat / gauge with one of its parts picked: the camera is on that part (the whole thermostat is too
+// big for its small parts to be seen). While its sliders are moved the camera stays where it is as long as the part is in view.
+function focusedThermoPart(room) {
+  if (!room || !isThermoRoom(room) || room.labelLinked || selectedRoomId !== room.id || !selectedLabelPart || selectedLabelPart === 'card') return null;
+  const n = $(`#room-labels .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${CSS.escape(selectedLabelPart)}"]`), r = n?.getBoundingClientRect(); return r?.width ? r : null;
+}
+function labelFocusArea() {
+  const vp = els.viewport.getBoundingClientRect();
+  // (On a phone: the band above the panel, at most the screen's upper half - the same view whichever section is open.)
+  if (mobileView()) { const band = editorFreeBand(); return { vp, left: vp.left, right: vp.right, top: vp.top + band.top, bottom: Math.min(vp.top + band.top + band.height, innerHeight * .5 - 14) }; }
+  const D = deskZoomRegion(); return { vp, left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) };
+}
+function refocusLabel(room) { if (room && isIconRoom(room) && editMode) requestAnimationFrame(() => requestAnimationFrame(() => {
+  const p = focusedThermoPart(room), a = p && labelFocusArea(); if (p && p.left >= a.left && p.right <= a.right && p.top >= a.top && p.bottom <= a.bottom) return; // (its part still in view: the camera stays)
+  focusLabelBox(room); })); }
 function focusLabelBox(room) {
   if (!editMode || !room) return false;
   // The label's frame (grouped: its card; ungrouped: the frame drawn round its parts), so grouped and ungrouped give one view.
   const id = CSS.escape(room.id), frame = [`#room-labels .room-label-card[data-room-id="${id}"]`, `#room-labels .room-label-backdrop[data-room-id="${id}"]`].map(sel => $(sel)?.getBoundingClientRect()).filter(r => r?.width);
-  const rects = frame.length ? frame : $$(`#room-labels .room-label-part[data-room-id="${id}"]`).map(n => n.getBoundingClientRect()).filter(r => r.width);
+  const part = focusedThermoPart(room), rects = part ? [part] : frame.length ? frame : $$(`#room-labels .room-label-part[data-room-id="${id}"]`).map(n => n.getBoundingClientRect()).filter(r => r.width);
   const sc = els.scene.getBoundingClientRect(); if (!rects.length || !sc.width) return false;
   const L = Math.min(...rects.map(r => r.left)), R = Math.max(...rects.map(r => r.right)), T = Math.min(...rects.map(r => r.top)), B = Math.max(...rects.map(r => r.bottom));
   const l = (L - sc.left) / viewZoom, t = (T - sc.top) / viewZoom, w = Math.max(1, (R - L) / viewZoom), h = Math.max(1, (B - T) / viewZoom);
-  const vp = els.viewport.getBoundingClientRect(); let area;
-  // (On a phone: the band above the panel, at most the screen's upper half - the same view whichever section is open.)
-  if (mobileView()) { const band = editorFreeBand(); area = { left: vp.left, right: vp.right, top: vp.top + band.top, bottom: Math.min(vp.top + band.top + band.height, innerHeight * .5 - 14) }; }
-  else { const D = deskZoomRegion(); area = { left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) }; }
-  const zoom = clamp(Math.min((area.right - area.left) * .6 / w, (area.bottom - area.top) * .6 / h), zoomFloor(), 20);
+  const area = labelFocusArea(), vp = area.vp, fill = part ? .3 : .6; // (a part: a third of the view, some of the thermostat round it)
+  const zoom = clamp(Math.min((area.right - area.left) * fill / w, (area.bottom - area.top) * fill / h), zoomFloor(), part ? Math.max(4, viewZoom) : 20); // (a part: never past what a pinch / the wheel reaches, so the next pinch does not jump)
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
   return true;
 }

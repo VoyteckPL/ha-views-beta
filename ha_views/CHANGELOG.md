@@ -1,3 +1,9 @@
+## 0.6.1-beta.717
+
+- Rozgrupowany termostat / wskaźnik: kliknięty element (albo otwarta jego sekcja) - kamera przybliża na ten element, a nie na cały termostat.
+- Suwaki elementu nie ruszają już kamery, dopóki element jest widoczny (wcześniej każde puszczenie suwaka oddalało na cały termostat, także po ręcznym przybliżeniu).
+- Zamknięcie sekcji elementu wraca do całego termostatu.
+
 ## 0.6.1-beta.716
 
 - Kafelki: termostat / wskaźnik nie maleje już przy każdym odświeżeniu (zmniejszał się o 6% za każdym razem) - wypełnia swoje kafle, więc kamera po kliknięciu pokazuje go dużego.
