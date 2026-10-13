@@ -1,3 +1,7 @@
+## 0.6.1-beta.712
+
+- Przycisk w trybie Tło też na silniku kafelków: presety, własny rozmiar (kropki w rogach, strzałki, suwaki), motywy i efekty. Nowy od razu, stary po kliknięciu presetu.
+
 ## 0.6.1-beta.711
 
 - Kafelki na telefonie (ekran dotykowy): zaznaczona etykieta ma kropki w rogach - przeciągnięte palcem rozciągają ją na kolejne kafle (strzałki działają tylko z myszką).
