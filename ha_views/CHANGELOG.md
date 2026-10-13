@@ -1,3 +1,7 @@
+## 0.6.1-beta.674
+
+- Rozgrupowana okrągła/kwadratowa ikona: ciągnięta kreska boku snapuje się do siatki etykiety, krawędzi innych elementów i planu oraz do szerokości/wysokości innych elementów (wg menu przyciągania, Alt wyłącza); siatka i złapana linia są widoczne w trakcie.
+
 ## 0.6.1-beta.673
 
 - Rozgrupowana okrągła/kwadratowa ikona: przy ciągnięciu kreski na boku przeciwległa krawędź stoi w miejscu (np. dolna kreska w dół - góra stoi), ikona rośnie w stronę ciągnięcia, a dwa pozostałe boki równo na boki.

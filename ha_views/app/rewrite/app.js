@@ -2249,11 +2249,23 @@ function startRoundIconResize(event, handle, node, room) {
   const B = partBounds(room), cx = (r0.left + r0.right) / 2, cy = (r0.top + r0.bottom) / 2, sz0 = X ? r0.width : r0.height;
   const anchor = X ? (sign > 0 ? r0.left : r0.right) : (sign > 0 ? r0.top : r0.bottom);
   const max = B ? Math.max(f0, Math.min((sign > 0 ? (X ? B.r : B.b) - anchor : anchor - (X ? B.l : B.t)) / k, 2 * (X ? Math.min(cy - B.t, B.b - cy) : Math.min(cx - B.l, B.r - cx)) / k) * f0 / Math.max(1, sz0 / k)) : 2000;
-  const move = e => { const d = ((X ? e.clientX : e.clientY) - p0) * sign / k, f = Math.round(clamp(f0 + d, 10, max) * 10) / 10;
+  // Snapping as for the other parts' sides: the moving side to the lines of the label's grid, its parts and the plan, or the
+  // icon to another part's width / height (as set in the snap menu; Alt disables); the line caught is shown.
+  const gopts = groupSnapOpts(), useSnap = !room.labelLinked && gopts.on, gctx = useSnap ? groupSnap(room, [node]) : null, px1 = sz0 / Math.max(1, f0);
+  const lines = useSnap && gctx ? [...(X ? gctx.xs : gctx.ys)] : [];
+  if (useSnap && gopts.plan) { const p = groupPlanTargets(room, sc); lines.push(...(X ? p.xs : p.ys)); }
+  const others = useSnap && gopts.parts ? $$(`.room-label-part[data-room-id="${CSS.escape(room.id)}"]`).filter(n => n !== node && n.offsetWidth).map(n => n.getBoundingClientRect()) : [];
+  if (useSnap && gctx) showGroupGrid(gctx);
+  const move = e => { const d = ((X ? e.clientX : e.clientY) - p0) * sign / k; let f = Math.round(clamp(f0 + d, 10, max) * 10) / 10;
+    if (useSnap && !e.altKey) { const reach = snapReach(), edge = anchor + sign * f * px1, base = X ? sc.left : sc.top; let best = null;
+      lines.forEach(t => { const v = base + (t.v ?? t), dd = Math.abs(edge - v); if (sign * (v - anchor) > 4 && dd <= reach && (!best || dd < best.d)) best = { d: dd, edge: v, kind: t.kind || 'label' }; });
+      others.forEach(r => { const size = X ? r.width : r.height, v = anchor + sign * size, dd = Math.abs(edge - v); if (dd <= reach && (!best || dd < best.d)) best = { d: dd, edge: v, kind: 'label' }; });
+      if (best) { f = Math.round(clamp(Math.abs(best.edge - anchor) / px1, 10, max) * 10) / 10; const at = (best.edge - base) / (X ? sc.width : sc.height) * 100; showAlignGuides(X ? [{ at, kind: best.kind }] : [], X ? [] : [{ at, kind: best.kind }]); } else showAlignGuides([], []); }
+    else showAlignGuides([], []);
     room.labelIconW = room.labelIconH = f; room.labelIconSize = Math.round(clamp(s0 * Math.max(1, f - 2 * pad) / Math.max(1, f0 - 2 * pad), 6, 420) * 10) / 10; delete room.labelIconLock;
     room[pk] = Math.round((o0 + sign * (f - f0) * (sz0 / Math.max(1, f0)) / 2 / planToScreen) * 100) / 100; // (its centre moves half the growth: the held side stays)
     renderRooms(); syncEditorValues(room); };
-  const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); room.updatedAt = new Date().toISOString(); scheduleSave(true); syncEditorValues(room);
+  const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid(); room.updatedAt = new Date().toISOString(); scheduleSave(true); syncEditorValues(room);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
