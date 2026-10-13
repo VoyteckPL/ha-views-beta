@@ -3332,7 +3332,7 @@ function pointInPolygon([x, y], points) {
 function roomAt(point) { return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); }
 // ---- Drawing a new room
 function startRoomDrawing() {
-  if (!editMode) return;
+  if (!editMode || dashGrid().on) return;
   closeCompactMenus(); closeEditor(); closeFlowEditor(); closeRoomEditor();
   roomDraft = { points: [], cursor: null }; els.body.classList.add('room-drawing'); $('#room-draw-bar')?.classList.add('visible'); placeRoomDrawBar(false);
   updateRoomDrawBar(); renderRoomEditLayer();
@@ -7668,6 +7668,7 @@ function addRecent() { try { return JSON.parse(localStorage.getItem(RECENT_ADD_K
 function rememberAdded(entityId) { if (!entityId) return; try { localStorage.setItem(RECENT_ADD_KEY, JSON.stringify([entityId, ...addRecent().filter(id => id !== entityId)].slice(0, 12))); } catch {} }
 function addEntityNumeric(entity) { const raw = entity?.state; if (raw === null || raw === undefined || raw === '') return false; return Number.isFinite(Number(String(raw).replace(',', '.'))); }
 function addTypeAllowed(type, entity) {
+  if (type?.key === 'room' && dashGrid().on) return false; // (tiles: no rooms - they are drawn on a background image)
   if (!entity) return true;
   if (type.entity === 'none') return true;
   if (type.domains) return type.domains.includes(String(entity.domain || entity.entity_id?.split('.')[0]));
@@ -7774,7 +7775,7 @@ function renderAddDialog(part = 'all') {
     $('#add-sub', els.addDialog).textContent = translateValue(state.step === 'type' ? 'Wybierz, co chcesz dodać' : 'Wybierz encję dla tego elementu');
     $('#add-step-type', els.addDialog).innerHTML = chosen ? `<button type="button" class="add-back" data-add-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button><span class="add-step-chip"><span class="add-thumb" data-thumb="${chosen.key}"></span><b>${escapeHtml(translateValue(chosen.label))}</b></span>` : '';
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
-    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.map(type => {
+    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !(type.key === 'room' && dashGrid().on)).map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
       return `<button type="button" class="add-card${state.type === type.key ? ' sel' : ''}${allowed ? '' : ' off'}" data-add-type="${type.key}" ${allowed ? '' : 'disabled'}>${entity && recommended === type.key ? `<span class="add-tag">★ ${escapeHtml(translateValue('Polecane'))}</span>` : ''}<span class="add-thumb" data-thumb="${type.key}"></span><b>${escapeHtml(translateValue(type.label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`;
     }).join('');

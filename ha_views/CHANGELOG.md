@@ -1,3 +1,7 @@
+## 0.6.1-beta.714
+
+- Kafelki: Pomieszczenia nie da się już dodać (ani z listy, ani z szablonu) - zostaje tylko w trybie Tło.
+
 ## 0.6.1-beta.713
 
 - Pomieszczenie: etykieta na silniku kafelków - presety, własny rozmiar (kropki w rogach, strzałki, suwaki), motywy i efekty.
