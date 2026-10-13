@@ -1,3 +1,8 @@
+## 0.6.1-beta.679
+
+- Presety: tekst nazwy i stanu wypełnia swoją ramkę z tym samym małym marginesem z każdej strony (we wszystkich presetach).
+- Poprawione liczenie, ile tekstu mieści się w ramce, gdy tekst był już samoczynnie zmniejszony (wcześniej mógł dotykać krawędzi).
+
 ## 0.6.1-beta.678
 
 - Margines etykiety: jeden suwak (dookoła); 0 daje elementy na całą szerokość etykiety (etykieta z presetem wypełnia kafel w 100%).

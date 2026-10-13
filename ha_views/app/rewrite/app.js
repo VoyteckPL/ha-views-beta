@@ -1125,6 +1125,7 @@ function pinToFreeTile(room, view = activeSceneView()) {
 // together as tall as the icon. The tile then scales the whole label to fill it.
 const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCardLayout === 'iconLeft' ? 40 : Math.round(100 / (1 + ['labelName','labelState'].filter(k => room[k]).length))), room.labelCardLayout === 'iconLeft' ? 30 : 10, 70);
 const TILE_COL_U = 240;
+const TILE_TEXT_MARGIN = .12; // (a preset's name / state: the text fills its frame, the same small margin left on every side)
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
 function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
 const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && ['column','iconLeft','iconName'].includes(room.labelCardLayout) && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
@@ -1162,7 +1163,7 @@ function tileColumnLayout(room, reset = false) {
     room.labelNameW = r1(Math.max(20, U - ih - g)); room.labelNameH = r1(top); room.labelStateW = U; room.labelStateH = r1(bot);
     texts.forEach(k => { if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
     room.tileColV2Done = true; renderRoomLabels();
-    const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); texts.forEach(k => { room[`${k}Size`] = sz; }); }
+    const fit = texts.map(k => partSizeMax(room, k, undefined, true, TILE_TEXT_MARGIN)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit), 6, 420)); texts.forEach(k => { room[`${k}Size`] = sz; }); }
     renderRoomLabels(); return;
   }
   delete room.tileDuoDone;
@@ -1179,7 +1180,7 @@ function tileColumnLayout(room, reset = false) {
   texts.forEach(k => { room[`${k}W`] = r1(tw); room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
   renderRoomLabels();
   // One text size for both: as big as fits the one that has the least room.
-  if (texts.length) { const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); /* (some room left inside its frame) */ texts.forEach(k => { room[`${k}Size`] = sz; }); } }
+  if (texts.length) { const fit = texts.map(k => partSizeMax(room, k, undefined, true, TILE_TEXT_MARGIN)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit), 6, 420)); /* (some room left inside its frame) */ texts.forEach(k => { room[`${k}Size`] = sz; }); } }
   renderRoomLabels();
 }
 function applyTilePreset(room, preset = room.tilePreset || 'v', master = '', reset = false) {
@@ -4068,17 +4069,20 @@ function partWHMax(room, k, axis) {
   return Math.max(10, Math.floor(max));
 }
 // How big a part's icon / text can get and still fit in its frame (its slider runs only up to there).
-function partSizeMax(room, k, n = partBoxNode(room, k), exact = false) {
+function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 0) {
   const path = `${k}Size`, s0 = Number(room[path]) || ROOM_DEFAULTS[path]; if (!n) return 420;
   const cs = getComputedStyle(n), bw = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : n.offsetWidth, bh = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : n.offsetHeight;
-  const cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0));
+  let cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0));
+  // (a margin asked for: the same room left on every side - a share of the frame's smaller side, its border on top)
+  const mg = margin > 0 ? margin * Math.min(cw, ch) + (parseFloat(cs.borderTopWidth) || 0) : 0; if (mg) { cw = Math.max(1, (cw - 2 * mg) * .93); ch = Math.max(1, ch - 2 * mg); }
   let max = 420;
   if (k === 'labelIcon') max = Math.min(cw, ch);
   else { /* the letters themselves are measured (not the line they sit in, which has room above and below them) */
     const t = n.querySelector('b, small') || n, tc = getComputedStyle(t), cx = (partSizeMax.cx ||= document.createElement('canvas').getContext('2d')), fs = parseFloat(tc.fontSize) || s0;
     cx.font = `${tc.fontStyle} ${tc.fontWeight} ${fs}px ${tc.fontFamily}`; const txt = (t.textContent || '').trim(), mt = cx.measureText(txt || 'M');
-    const iw = Math.max(mt.width, (mt.actualBoundingBoxLeft || 0) + (mt.actualBoundingBoxRight || 0)), ih = (mt.actualBoundingBoxAscent || 0) + (mt.actualBoundingBoxDescent || 0);
-    if (iw > 0 && ih > 0) max = s0 * Math.min(cw * .97 / iw, ch * .96 / ih); }
+    const rg = document.createRange(); rg.selectNodeContents(t); const zz = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1, dw = rg.getBoundingClientRect().width / zz; /* (as drawn: the canvas may measure a fallback font) */
+    const iw = Math.max(mt.width, (mt.actualBoundingBoxLeft || 0) + (mt.actualBoundingBoxRight || 0), dw || 0), ih = (mt.actualBoundingBoxAscent || 0) + (mt.actualBoundingBoxDescent || 0);
+    if (iw > 0 && ih > 0) max = fs * Math.min(cw * (mg ? 1 : .97) / iw, ch * (mg ? 1 : .96) / ih); } /* (from the text as drawn now - it may be fitted down from its size) */
   return Math.max(6, exact ? 0 : s0, Math.floor(max * 10) / 10);
 }
 // The size sliders' range follows what fits in the part's frame now.
