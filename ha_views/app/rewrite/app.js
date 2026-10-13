@@ -4199,8 +4199,7 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 
   else { /* the letters themselves are measured (not the line they sit in, which has room above and below them) */
     const t = n.querySelector('b, small') || n, tc = getComputedStyle(t), cx = (partSizeMax.cx ||= document.createElement('canvas').getContext('2d')), fs = parseFloat(tc.fontSize) || s0;
     cx.font = `${tc.fontStyle} ${tc.fontWeight} ${fs}px ${tc.fontFamily}`; const txt = (t.textContent || '').trim(), mt = cx.measureText(txt || 'M');
-    // (a number with its unit, "7 °C", is measured as a typical one, "88.8 °C": states of one kind come out the same size)
-    const typ = k === 'labelState' && /^[-−+]?\d+([.,]\d+)?(\s*\S+)?$/.test(txt) ? txt.replace(/^[-−+]?\d+([.,]\d+)?/, '88.8') : '', mtT = typ ? cx.measureText(typ) : null;
+    const mtT = null; // (the text as it is fills its frame - a short value grows bigger)
     const rg = document.createRange(); rg.selectNodeContents(t); const zz = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1, dw = rg.getBoundingClientRect().width / zz; /* (as drawn: the canvas may measure a fallback font) */
     // (the text sits centred by its line, not by its letters: what counts is how far the letters reach above and below the
     // line's middle - a "y" hangs below it - so the height is twice the further of the two)

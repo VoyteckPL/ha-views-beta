@@ -1,3 +1,7 @@
+## 0.6.1-beta.697
+
+- Stan znowu wypełnia swoją ramkę: krótka wartość (np. „7 °C”) rośnie do wielkości ramki zamiast być mierzona jak typowa „88.8 °C” (która przy dużej ramce zostawiała ogromny margines).
+
 ## 0.6.1-beta.696
 
 - Strzałki zmiany rozmiaru etykiety na kaflu w samym rogu etykiety.
