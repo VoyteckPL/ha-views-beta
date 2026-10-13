@@ -1,3 +1,7 @@
+## 0.6.1-beta.664
+
+- Zmniejszenie szerokości/wysokości ramki elementu poniżej rozmiaru ikony/tekstu zmniejsza ikonę/tekst (i suwak rozmiaru) zamiast go obcinać; przy powrocie w tym samym ruchu suwaka wraca do poprzedniego rozmiaru.
+
 ## 0.6.1-beta.663
 
 - Suwak rozmiaru ikony/nazwy/stanu pokazuje tylko możliwy zakres: max = to, co mieści się w ramce, i zmienia się na żywo (np. po zmianie szerokości/wysokości).

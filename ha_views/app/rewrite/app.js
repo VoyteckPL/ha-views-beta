@@ -3913,7 +3913,7 @@ function partSizeSnap(room, k, axis, want) {
 // The panel's sliders show what the label has now - after a layout, a share or a size that changed other values too.
 const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$/;
 // How big a part's icon / text can get and still fit in its frame (its slider runs only up to there).
-function partSizeMax(room, k, n = partBoxNode(room, k)) {
+function partSizeMax(room, k, n = partBoxNode(room, k), exact = false) {
   const path = `${k}Size`, s0 = Number(room[path]) || ROOM_DEFAULTS[path]; if (!n) return 420;
   const cs = getComputedStyle(n), bw = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : n.offsetWidth, bh = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : n.offsetHeight;
   const cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0));
@@ -3924,7 +3924,7 @@ function partSizeMax(room, k, n = partBoxNode(room, k)) {
     cx.font = `${tc.fontStyle} ${tc.fontWeight} ${fs}px ${tc.fontFamily}`; const txt = (t.textContent || '').trim(), mt = cx.measureText(txt || 'M');
     const iw = Math.max(mt.width, (mt.actualBoundingBoxLeft || 0) + (mt.actualBoundingBoxRight || 0)), ih = (mt.actualBoundingBoxAscent || 0) + (mt.actualBoundingBoxDescent || 0);
     if (iw > 0 && ih > 0) max = s0 * Math.min(cw * .97 / iw, ch * .96 / ih); }
-  return Math.max(6, s0, Math.floor(max * 10) / 10);
+  return Math.max(6, exact ? 0 : s0, Math.floor(max * 10) / 10);
 }
 // The size sliders' range follows what fits in the part's frame now.
 function syncSizeRanges(room) {
@@ -3948,6 +3948,9 @@ function syncEditorValues(room) {
 }
 // On a tile with a layout chosen, a change that moves the others works the layout out again (a text sized by hand leads).
 function tileAfterEdit(room, path) {
+  // A part's frame made smaller than what is in it: the icon / text gets smaller with it (and back up to its size when the slider was taken).
+  { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path), b = tileAfterEdit.base; if (wm && b && b.k === wm[1]) { const sp = `${b.k}Size`, fit = partSizeMax(room, b.k, undefined, true), want = Math.round(Math.min(b.size, fit) * 10) / 10;
+    if (want !== Number(room[sp] || ROOM_DEFAULTS[sp])) { room[sp] = want; renderRooms(); scheduleSave(); } } }
   if (!room || isThermoRoom(room) || !isIconRoom(room) || !dashSpan(room) || !room.labelLinked || room.labelCardFree) return syncEditorValues(room);
   const m = /^(label(?:Name|State))Size$/.exec(path);
   if (false && m) applyTilePreset(room, undefined, m[1]);
@@ -3961,6 +3964,7 @@ function onRoomEditorInput(event) {
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
+  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; }, 300); } }
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
