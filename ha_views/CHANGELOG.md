@@ -1,3 +1,9 @@
+## 0.6.1-beta.709
+
+- Widok z obrazem w tle: etykieta na silniku kafelków - presety, dopasowanie tekstu, marginesy, motywy i efekty jak na kafelku, ale z własnym rozmiarem.
+- Rozmiar: strzałki na środkach krawędzi (po najechaniu), rogi ramki i suwaki Szerokość / Wysokość w sekcji Etykieta; krawędzie i przesuwanie przyciągają się do siatki.
+- Nowa etykieta na tle dostaje od razu rozmiar kafla 4×10 telefonu; stara przechodzi na nowy silnik po kliknięciu presetu (zostaje w swoim obecnym rozmiarze).
+
 ## 0.6.1-beta.708
 
 - Efekty: nowe Motywy (Zorza, Neon, Zachód, Złoto, Kryształ, Szron, Północ, Mięta) - jednym kliknięciem efekt ramki razem z kolorami ikony, nazwy i stanu (ON/OFF).

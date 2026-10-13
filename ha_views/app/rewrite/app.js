@@ -1027,9 +1027,49 @@ function dashGeom(view = activeSceneView()) {
 }
 // The scene-% box of a pinned label (null when the grid is off or the label is not pinned).
 function dashSpan(room, view = activeSceneView()) {
+  if (room?.fbox && freeBoxRoom(room) && !dashGrid(view).on) { const b = room.fbox, w = clamp(Number(b.w) || 20, 1, 100), h = clamp(Number(b.h) || 10, 1, 100); return { x: clamp(Number(b.x) || 0, 0, 100 - w), y: clamp(Number(b.y) || 0, 0, 100 - h), w, h, c: 0, r: 0, cw: 1, ch: 1, free: true }; }
   const d = room?.dash; if (!d) return null; /* ungrouped too: its parts stay on its tiles */ const g = dashGeom(view); if (!g.on) return null;
   const c = clamp(Math.round(d.c) || 0, 0, g.cols - 1), r = clamp(Math.round(d.r) || 0, 0, g.rows - 1), w = clamp(Math.round(d.w) || 1, 1, g.cols - c), h = clamp(Math.round(d.h) || 1, 1, g.rows - r);
   return { x: g.gx + c * (g.cw + g.gx), y: g.gy + r * (g.ch + g.gy), w: w * g.cw + (w - 1) * g.gx, h: h * g.ch + (h - 1) * g.gy, c, r, cw: w, ch: h };
+}
+// Labels on an image background (no tiles): the same engine as on a tile, the label's own box (room.fbox = {x, y, w, h},
+// scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
+const freeBoxRoom = room => !!room && isIconRoom(room) && !isThermoRoom(room);
+const FREE_BOX_PX = [395, 280]; // (a new one: a tile of a phone's 4 × 10 grid, in plan px)
+function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
+function setFreeBox(room, box) {
+  const w = clamp(box.w, 1, 100), h = clamp(box.h, 1, 100), r3 = v => Math.round(v * 1000) / 1000;
+  room.fbox = { x: r3(clamp(box.x, 0, 100 - w)), y: r3(clamp(box.y, 0, 100 - h)), w: r3(w), h: r3(h) };
+  room.x = Math.round((room.fbox.x + w / 2) * 100) / 100; room.y = Math.round((room.fbox.y + h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0;
+}
+function freeBoxFromPx(room, wpx, hpx, cx = Number(room.x) || 50, cy = Number(room.y) || 50) {
+  const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1, w = clamp(wpx * k / W * 100, 1, 100), h = clamp(hpx * k / H * 100, 1, 100);
+  setFreeBox(room, { x: snapPercent(cx - w / 2), y: snapPercent(cy - h / 2), w, h });
+}
+// An old label (sized by its contents) goes onto its own box the first time a preset is picked: the box it takes now.
+function makeFreeBox(room) {
+  if (!freeBoxRoom(room) || dashGrid().on || room.fbox) return false;
+  const b = cardBoxPct(room); if (b && b.w > .5 && b.h > .5) setFreeBox(room, b); else freeBoxFromPx(room, ...FREE_BOX_PX);
+  room.labelLinked = true; delete room.labelCardFree; return true;
+}
+function startBoxResize(event, handle, room) {
+  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
+  const c = handle.dataset.corner, b0 = { ...dashSpan(room) }, min = 2; let moved = false, raf = 0;
+  const lay = () => { raf = 0; if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); renderRoomLabels(); renderDashGrid(); };
+  const move = e => {
+    if (e.pointerId !== event.pointerId) return; moved = true;
+    const [px, py] = scenePercentAt(e), x = snapPercent(px), y = snapPercent(py); let x0 = b0.x, x1 = b0.x + b0.w, y0 = b0.y, y1 = b0.y + b0.h;
+    if (c.includes('e')) x1 = Math.max(x0 + min, x); if (c.includes('w')) x0 = Math.min(x1 - min, x); if (c.includes('s')) y1 = Math.max(y0 + min, y); if (c.includes('n')) y0 = Math.min(y1 - min, y);
+    setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
+  };
+  const up = e => {
+    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0;
+    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
+    if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room);
+    renderRooms(); renderDashGrid();
+    if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 // Cells a box (scene %) lands on: its size in whole cells (kept when already pinned) and the nearest start cell.
 function dashTarget(box, keep, view = activeSceneView()) {
@@ -1110,19 +1150,19 @@ function syncDashQuick() {
 // the label over the next tiles that way (or back). Only where there is a tile to go to (or it spans more than one).
 function renderDashArrows(view, g, busy) {
   let layer = $('#dash-arrows');
-  if (!editMode || !g.on || !els.scene) { layer?.remove(); return; }
+  if (!editMode || !els.scene || (!g.on && !Object.values(view?.rooms || {}).some(r => r?.fbox && dashSpan(r, view)))) { layer?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-arrows'; els.scene.append(layer);
-    layer.addEventListener('pointerdown', e => { const a = e.target.closest('[data-dash-arrow]'); if (!a) return; const room = roomsOf()[a.dataset.roomId]; if (!room?.dash) return; a.closest('.dash-arrow-set')?.classList.add('hot', 'busy'); startDashResize(e, { dataset: { corner: a.dataset.dashArrow } }, room); const off = () => { a.closest('.dash-arrow-set')?.classList.remove('busy'); window.removeEventListener('pointerup', off); }; window.addEventListener('pointerup', off); });
+    layer.addEventListener('pointerdown', e => { const a = e.target.closest('[data-dash-arrow]'); if (!a) return; const room = roomsOf()[a.dataset.roomId]; if (!room?.dash && !room?.fbox) return; a.closest('.dash-arrow-set')?.classList.add('hot', 'busy'); startDashResize(e, { dataset: { corner: a.dataset.dashArrow } }, room); const off = () => { a.closest('.dash-arrow-set')?.classList.remove('busy'); window.removeEventListener('pointerup', off); }; window.addEventListener('pointerup', off); });
     els.scene.addEventListener('pointermove', e => { const l = $('#dash-arrows'); if (!l || e.buttons || e.pointerType !== 'mouse') return; if (selectedRoomId) { $$('.dash-arrow-set.hot:not(.busy)', l).forEach(n => n.classList.remove("hot")); return; } /* (a label open in the editor: none) */ const [x, y] = scenePercentAt(e);
       l.querySelectorAll('.dash-arrow-set').forEach(set => { const b = set.__box; set.classList.toggle('hot', !!b && x >= b.x - 1.5 && x <= b.x + b.w + 1.5 && y >= b.y - 1.5 && y <= b.y + b.h + 1.5); }); });
     els.scene.addEventListener('pointerleave', () => $$('#dash-arrows .dash-arrow-set:not(.busy)').forEach(set => set.classList.remove('hot'))); }
   layer.hidden = busy || !!selectedRoomId; // (only while no label is selected)
-  const rooms = Object.values(view?.rooms || {}).filter(r => r && isIconRoom(r) && r.dash && dashSpan(r, view));
-  const key = rooms.map(r => `${r.id}:${r.dash.c},${r.dash.r},${r.dash.w},${r.dash.h}`).join('|') + '#' + [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
+  const rooms = Object.values(view?.rooms || {}).filter(r => r && isIconRoom(r) && (g.on ? r.dash : r.fbox) && dashSpan(r, view));
+  const key = rooms.map(r => { const s = dashSpan(r, view); return `${r.id}:${[s.x, s.y, s.w, s.h].map(v => v.toFixed(2))}`; }).join('|') + '#' + [g.on, g.cols, g.rows, (g.gx || 0).toFixed(3), (g.gy || 0).toFixed(3)].join('|');
   if (layer.__key === key) return; layer.__key = key;
   const hot = new Set($$('.dash-arrow-set.hot', layer).map(n => n.dataset.roomId));
   const arrow = (id, side, x, y, mdi) => `<button type="button" class="dash-arrow ${side}" data-dash-arrow="${side}" data-room-id="${escapeHtml(id)}" style="left:${x}%;top:${y}%" aria-label="${escapeHtml(translateValue('Rozciągnij'))}"><i class="mdi ${mdi}"></i></button>`;
-  layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1;
+  layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = g.on ? r.dash : { c: 1, r: 1, w: 2, h: 2 }, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1; /* (a free box: every side) */
     // (at the middle of each side, just inside the label's edge, pointing out: that way only)
     [['e', s.x + s.w, s.y + s.h / 2, canE, 'mdi-chevron-right'], ['w', s.x, s.y + s.h / 2, canW, 'mdi-chevron-left'], ['s', s.x + s.w / 2, s.y + s.h, canS, 'mdi-chevron-down'], ['n', s.x + s.w / 2, s.y, canN, 'mdi-chevron-up']].forEach(([k2, x, y, ok, mdi]) => { if (ok) out.push(arrow(r.id, k2, x, y, mdi)); });
     return `<div class="dash-arrow-set${hot.has(r.id) ? ' hot' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
@@ -1132,7 +1172,7 @@ function renderDashGrid(target = null) {
   applyDashUi(); $('#dash-quick')?.remove(); // (the grid is set in the view menu's "Kafelki")
   const view = activeSceneView(), g = dashGeom(view); let layer = $('#dash-grid');
   els.scene?.classList.toggle('dash-on', !!(editMode && g.on));
-  if (!editMode || !g.on || !els.scene) { layer?.remove(); $('#dash-arrows')?.remove(); return; }
+  if (!editMode || !g.on || !els.scene) { layer?.remove(); if (editMode && els.scene && !g.on) renderDashArrows(view, g, !!target); else $('#dash-arrows')?.remove(); return; }
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-grid'; layer.setAttribute('aria-hidden', 'true'); els.scene.insertBefore(layer, $('#rooms') || null); }
   const key = [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
   if (layer.__key !== key) {
@@ -1155,7 +1195,8 @@ function dashUsedCells(view = activeSceneView(), except = null) {
 }
 let pendingDashCell = null; // (a tile's "+" tapped: what is added next goes there)
 function pinToFreeTile(room, view = activeSceneView()) {
-  const g = dashGrid(view); if (!g.on || !room) return false;
+  const g = dashGrid(view); if (!room) return false;
+  if (!g.on) { if (!freeBoxRoom(room) || !view?.background) return false; freeBoxFromPx(room, ...FREE_BOX_PX); if (!room.tilePreset) room.tileNeedsLayout = true; return true; }
   const used = dashUsedCells(view, room);
   if (pendingDashCell && Date.now() - pendingDashCell.at < 600000 && pendingDashCell.view === model.activeViewId && !used.has(`${pendingDashCell.c},${pendingDashCell.r}`) && pendingDashCell.c < g.cols && pendingDashCell.r < g.rows) {
     const { c, r: rr } = pendingDashCell; pendingDashCell = null; room.dash = { c, r: rr, w: 1, h: 1 }; const span = dashSpan(room, view); if (!room.tilePreset) room.tileNeedsLayout = true;
@@ -2336,6 +2377,7 @@ function fitCardHandles() {
 // label or part; with nothing else in reach the frame snaps to width = height (1:1).
 // A label on tiles: its corner dot spans it over whole tiles (the corner held still stays on its tile).
 function startDashResize(event, handle, room) {
+  if (room.fbox && !dashGrid().on) return startBoxResize(event, handle, room);
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, d0 = { ...room.dash }, g = dashGeom(), stepX = g.cw + g.gx, stepY = g.ch + g.gy;
   const fixC = c.includes('w') ? d0.c + d0.w - 1 : d0.c, fixR = c.includes('n') ? d0.r + d0.h - 1 : d0.r; let moved = false;
@@ -3110,6 +3152,10 @@ function startRoomLabelDrag(event) {
       if (span) { room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
       renderRoomLabels(); renderDashGrid(t); return;
     }
+    // A free box (image background): moved whole, its corner on the grid.
+    if (isIconRoom(room) && key === 'labelCard' && room.fbox && !dashGrid().on && dashSpan(room)) {
+      const s = dashSpan(room); setFreeBox(room, { x: snapPercent(snapped.xPercent - s.w / 2), y: snapPercent(snapped.yPercent - s.h / 2), w: s.w, h: s.h }); renderRoomLabels(); renderDashGrid(); return;
+    }
     renderRoomLabels();
     if (zoneMove) {
       // Its top-left corner goes to the nearest crossing (a group sized in zones then covers whole zones again).
@@ -3152,6 +3198,7 @@ function startRoomLabelDrag(event) {
       // On the dashboard grid the group snaps to whole cells (keeping its size in cells once pinned).
       const box = dashGrid().on && room.labelLinked ? cardBoxPct(room) : null;
       if (box) { const keep = room.dash; room.dash = dashTarget(box, keep && dashSpan(room) ? keep : { w: 1, h: 1 }); const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; resolveDashOverlaps(activeSceneView(), room.id); }
+      else if (room.fbox && dashSpan(room)) { /* (a free box: already where it was moved) */ }
       else { room.x = Math.round(clamp(fx, 0, 100) * 100) / 100; room.y = Math.round(clamp(fy, 0, 100) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; }
       [fx, fy] = [room.x, room.y]; renderDashGrid(); renderRoomLabels();
     }
@@ -3989,11 +4036,14 @@ function roomEditorMarkup(room) {
     const body = v === 'h' ? (ks[0] === 'labelIcon' ? el(ks[0], 2, 6, 11, 11) + el(ks[1], 14.5, 7, 7.5, 9) : el(ks[0], 2, 7, 9.5, 9) + el(ks[1], 12.5, 7, 9.5, 9)) : v === 's' ? el(ks[0], ks[0] === 'labelIcon' ? 8.5 : 6, 2.5, ks[0] === 'labelIcon' ? 7 : 12, 6) + el(ks[1], 2.5, 10.5, 19, 11) : el(ks[0], ks[0] === 'labelIcon' ? 7 : 2.5, 2.5, ks[0] === 'labelIcon' ? 10 : 19, 8.5) + el(ks[1], 2.5, 13, 19, 8.5);
     return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${body}</svg>`; };
   const pairBtn = (v, title) => `<button type="button" class="room-card-preset${(r.tilePreset || defaultTilePreset(r)) === v ? ' active' : ''}" data-tile-preset="${v}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${pairPic(v)}</button>`;
+  const freeCan = icon && !onTile && freeBoxRoom(r) && !dashGrid().on && !isTextRoom(r); // (an old label on an image background: a preset puts it on its own box)
   const pairPresets = onTile && shownCount === 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') + '</div></div>' : '';
   // (the presets sit on the label section's bar - at hand with the section shut; the bar's click does not open / shut it)
-  const presetBar = !onTile || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
+  const presetBar = !(onTile || freeCan) || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
   const tilePresets = '';
-  const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
+  const freeSize = !(onTile && r.fbox && !dashGrid().on) ? '' : (() => { const [w, h] = freeBoxPx(r), W = Math.round((els.scene?.offsetWidth || 1) / (sceneScale || 1)), H = Math.round((els.scene?.offsetHeight || 1) / (sceneScale || 1));
+    return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
+  const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
     + (arrangeable ? gridSnap(range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px'), 'labelPartGap', onTile ? 30 : 80) : '')
     // (on a tile, "Ikona z lewej": the gap to the icon of its own; "Ikona i nazwa w rzędzie": how the two rows split the height)
@@ -4391,6 +4441,11 @@ function onRoomEditorInput(event) {
   const showMode = /^thermoModeShow_(.+)$/.exec(path); if (showMode && room.thermoModeParts && MODE_PART_LIST.includes(showMode[1])) room[`labelMode_${showMode[1]}`] = input.type === 'checkbox' ? input.checked : !!value;
   // Editing one mode's "Stan" look shows that mode, so the change is seen whatever mode the device is in now.
   const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
+  if ((path === 'fboxW' || path === 'fboxH') && room.fbox && dashSpan(room)) {
+    const [w0, h0] = freeBoxPx(room), s = dashSpan(room); freeBoxFromPx(room, path === 'fboxW' ? Number(value) : w0, path === 'fboxH' ? Number(value) : h0, s.x + s.w / 2, s.y + s.h / 2);
+    if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); room.updatedAt = new Date().toISOString();
+    const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = `${input.value}px`;
+    renderRooms(); if (event.type === 'change') scheduleSave(true); return; }
   if (path === 'dashW' || path === 'dashH') {
     const span = dashSpan(room), g = dashGrid(); if (!span) return;
     const d = room.dash, w = clamp(Math.round(path === 'dashW' ? value : d.w), 1, g.cols), h = clamp(Math.round(path === 'dashH' ? value : d.h), 1, g.rows);
@@ -4534,7 +4589,7 @@ function onRoomEditorClick(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const tilePresetButton = event.target.closest('[data-tile-preset]');
-  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; if (!room.labelLinked) { room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; renderRooms(); } applyTilePreset(room, tilePresetButton.dataset.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; makeFreeBox(room); if (!room.labelLinked) { room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; renderRooms(); } applyTilePreset(room, tilePresetButton.dataset.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
   const partToggle = event.target.closest('[data-part-toggle]');
   if (partToggle) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;
