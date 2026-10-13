@@ -1,3 +1,9 @@
+## 0.6.1-beta.716
+
+- Kafelki: termostat / wskaźnik nie maleje już przy każdym odświeżeniu (zmniejszał się o 6% za każdym razem) - wypełnia swoje kafle, więc kamera po kliknięciu pokazuje go dużego.
+- Kafelki: nowy termostat / wskaźnik zajmuje od razu 2×3 kafle (jeśli są wolne).
+- Tryb Tło: termostat / wskaźnik na nowym silniku - po otwarciu dostaje własne pole (w obecnym rozmiarze, bez skoku), zmieniane kropkami w rogach, strzałkami i suwakami Szerokość / Wysokość; zawartość skaluje się do pola.
+
 ## 0.6.1-beta.715
 
 - Tryb Tło: „Wyrównaj do tła” (do krawędzi / środka) przesuwa etykietę i przycisk z własnym rozmiarem - wcześniej stały w miejscu.

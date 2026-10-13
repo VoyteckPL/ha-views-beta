@@ -1034,7 +1034,7 @@ function dashSpan(room, view = activeSceneView()) {
 }
 // Labels on an image background (no tiles): the same engine as on a tile, the label's own box (room.fbox = {x, y, w, h},
 // scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
-const freeBoxRoom = room => !!room && !isThermoRoom(room) && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a room's label)
+const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
 const FREE_BOX_PX = [395, 280]; // (a new one: a tile of a phone's 4 × 10 grid, in plan px)
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
 function setFreeBox(room, box) {
@@ -1050,7 +1050,7 @@ function freeBoxFromPx(room, wpx, hpx, cx = Number(room.x) || 50, cy = Number(ro
 function makeFreeBox(room) {
   if (!freeBoxRoom(room) || dashGrid().on || room.fbox) return false;
   const b = cardBoxPct(room); if (b && b.w > .5 && b.h > .5) setFreeBox(room, b); else freeBoxFromPx(room, ...FREE_BOX_PX);
-  room.labelLinked = true; delete room.labelCardFree; return true;
+  if (!isThermoRoom(room)) { room.labelLinked = true; delete room.labelCardFree; } return true; // (a thermostat keeps its own free layout - its box scales it)
 }
 function startBoxResize(event, handle, room) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
@@ -1196,12 +1196,15 @@ function dashUsedCells(view = activeSceneView(), except = null) {
 let pendingDashCell = null; // (a tile's "+" tapped: what is added next goes there)
 function pinToFreeTile(room, view = activeSceneView()) {
   const g = dashGrid(view); if (!room) return false;
-  if (!g.on) { if (!freeBoxRoom(room) || !view?.background) return false; freeBoxFromPx(room, ...FREE_BOX_PX); if (!room.tilePreset) room.tileNeedsLayout = true; return true; }
+  if (!g.on) { if (!freeBoxRoom(room) || isThermoRoom(room) || !view?.background) return false; /* (a thermostat: its box once it is there, its own size) */ freeBoxFromPx(room, ...FREE_BOX_PX); if (!room.tilePreset) room.tileNeedsLayout = true; return true; }
   const used = dashUsedCells(view, room);
   if (pendingDashCell && Date.now() - pendingDashCell.at < 600000 && pendingDashCell.view === model.activeViewId && !used.has(`${pendingDashCell.c},${pendingDashCell.r}`) && pendingDashCell.c < g.cols && pendingDashCell.r < g.rows) {
     const { c, r: rr } = pendingDashCell; pendingDashCell = null; room.dash = { c, r: rr, w: 1, h: 1 }; const span = dashSpan(room, view); if (!room.tilePreset) room.tileNeedsLayout = true;
     if (span) { room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; } }
   pendingDashCell = null;
+  // A thermostat / gauge gets 2 × 3 tiles where they are free (on one tile it would be too small to use).
+  if (isThermoRoom(room)) { const w = Math.min(2, g.cols), h = Math.min(3, g.rows), free = (c, r) => { for (let y = r; y < r + h; y++) for (let x = c; x < c + w; x++) if (used.has(`${x},${y}`)) return false; return true; };
+    for (let y = 0; y <= g.rows - h; y++) for (let x = 0; x <= g.cols - w; x++) if (free(x, y)) { room.dash = { c: x, r: y, w, h }; const span = dashSpan(room, view); if (!span) return false; room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; } }
   for (let y = 0; y < g.rows; y++) for (let x = 0; x < g.cols; x++) if (!used.has(`${x},${y}`)) {
     room.dash = { c: x, r: y, w: 1, h: 1 }; const span = dashSpan(room, view); if (!span) return false; if (!room.tilePreset) room.tileNeedsLayout = true;
     room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; }
@@ -1375,11 +1378,11 @@ function fitDashLabels() {
       (fitDashLabels.auto ||= new Set()).add(room.id); requestAnimationFrame(() => { fitDashLabels.auto.delete(room.id); delete room.tileNeedsLayout; if (dashSpan(room)) { applyTilePreset(room, defaultTilePreset(room), '', true); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } }); }
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
-    const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
+    const nat = card.classList.contains('free') && Number(card.dataset.natW) > 0 && Number(card.dataset.natH) > 0, nw = nat ? Number(card.dataset.natW) : Math.max(1, card.offsetWidth), nh = nat ? Number(card.dataset.natH) : Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
     // (a label laid out by a preset is the tile's shape and fills it - its margin is the only room left round its parts)
-    const fill = room.labelLinked && room.tileColV2 ? 1 : .94;
+    const fill = (room.labelLinked && room.tileColV2) || pin.free ? 1 : .94; // (a box of its own on a background: the box is its frame, as it was when it got it)
     // (While a part's size / width / height slider is moved, the label's fit stays as it was: refitted each step it would shake.)
-    const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * fill / nw, th * fill / nh), .1, 8);
+    const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * fill / nw, th * fill / nh), .02, 8); // (a big thermostat on one small tile: as small as it must be, never past the tile)
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
@@ -1782,13 +1785,13 @@ function fitFreeCard(room, group) {
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
   // A group centred on its frame (grouped again with the frame it kept): the frame's size, its centre on the group's point.
   if (room.labelCardCentred && Number(room.labelCardW) > 0) {
-    card.style.width = `${Number(room.labelCardW)}px`; card.style.height = `${Number(room.labelCardH) || Math.round(maxY - minY + pad * 2)}px`;
+    card.style.width = `${Number(room.labelCardW)}px`; card.style.height = `${Number(room.labelCardH) || Math.round(maxY - minY + pad * 2)}px`; card.dataset.natW = parseFloat(card.style.width); card.dataset.natH = parseFloat(card.style.height);
     card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px');
     parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${Number(room[`${key}FX`]) || 0}px,${Number(room[`${key}FY`]) || 0}px)`; });
     return;
   }
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  card.style.width = `${Math.round(maxX - minX + 2 * cardPadX(room))}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`;
+  card.style.width = `${Math.round(maxX - minX + 2 * cardPadX(room))}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`; card.dataset.natW = parseFloat(card.style.width); card.dataset.natH = parseFloat(card.style.height);
   card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`);
   parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${(Number(room[`${key}FX`]) || 0) - cx}px,${(Number(room[`${key}FY`]) || 0) - cy}px)`; });
 }
@@ -4038,12 +4041,12 @@ function roomEditorMarkup(room) {
     const body = v === 'h' ? (ks[0] === 'labelIcon' ? el(ks[0], 2, 6, 11, 11) + el(ks[1], 14.5, 7, 7.5, 9) : el(ks[0], 2, 7, 9.5, 9) + el(ks[1], 12.5, 7, 9.5, 9)) : v === 's' ? el(ks[0], ks[0] === 'labelIcon' ? 8.5 : 6, 2.5, ks[0] === 'labelIcon' ? 7 : 12, 6) + el(ks[1], 2.5, 10.5, 19, 11) : el(ks[0], ks[0] === 'labelIcon' ? 7 : 2.5, 2.5, ks[0] === 'labelIcon' ? 10 : 19, 8.5) + el(ks[1], 2.5, 13, 19, 8.5);
     return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${body}</svg>`; };
   const pairBtn = (v, title) => `<button type="button" class="room-card-preset${(r.tilePreset || defaultTilePreset(r)) === v ? ' active' : ''}" data-tile-preset="${v}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${pairPic(v)}</button>`;
-  const freeCan = !onTile && freeBoxRoom(r) && !dashGrid().on; // (an old label on an image background: a preset puts it on its own box)
+  const freeCan = !onTile && freeBoxRoom(r) && !isThermoRoom(r) && !dashGrid().on; // (an old label on an image background: a preset puts it on its own box)
   const pairPresets = onTile && shownCount === 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') + '</div></div>' : '';
   // (the presets sit on the label section's bar - at hand with the section shut; the bar's click does not open / shut it)
   const presetBar = !(onTile || freeCan) || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
   const tilePresets = '';
-  const freeSize = !(onTile && r.fbox && !dashGrid().on) ? '' : (() => { const [w, h] = freeBoxPx(r), W = Math.round((els.scene?.offsetWidth || 1) / (sceneScale || 1)), H = Math.round((els.scene?.offsetHeight || 1) / (sceneScale || 1));
+  const freeSize = !(r.fbox && dashSpan(r) && !dashGrid().on) ? '' : (() => { const [w, h] = freeBoxPx(r), W = Math.round((els.scene?.offsetWidth || 1) / (sceneScale || 1)), H = Math.round((els.scene?.offsetHeight || 1) / (sceneScale || 1));
     return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
   const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
@@ -4060,7 +4063,7 @@ function roomEditorMarkup(room) {
           : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
   const group = (h => presetBar ? h.replace('<span class="section-tools">', presetBar + '<span class="section-tools">') : h)(partBar('group', isTextRoom(r) ? 'Przycisk' : !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
-    + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
+    + (ownSize ? (soloLabel(r) ? '' : groupSize) : freeSize ? freeSize : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
     // (resized with the dots, a thermostat) is sized by hand, the margin would change nothing there.
     + (fixedFrame(r) && r.labelCardFree && r.labelCardCentred && Number(r.labelCardW) > 0 ? '' : marginRows()))
@@ -4142,6 +4145,8 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
   const newlySelected = selectedRoomId !== id;
   if (isIconRoom(room) && room.labelLinked && dashGrid().on && !dashSpan(room) && pinToDash(room)) { room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } // (tiles on: a label is always on a tile)
+  // A thermostat / gauge on a background gets its own box (the one it takes now) when it is opened: sized then with the dots, arrows and sliders.
+  if (isThermoRoom(room) && !dashGrid().on && activeSceneView()?.background && !room.fbox && makeFreeBox(room)) { room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); }
   if (newlySelected) { actPickOpen = false; preserveSection = roomEditorOpenSectionIndex = -1; roomPreviewOn = ''; if (regroupOnLeave(roomsOf()[selectedRoomId])) renderRoomLabels(); }
   if (newlySelected && migrateModeParts(room)) { room.updatedAt = new Date().toISOString(); renderRoomLabels(); scheduleSave(true); }
   // A group left with a single visible part (made before parts ungrouped themselves) is ungrouped in place.
