@@ -1,3 +1,7 @@
+## 0.6.1-beta.690
+
+- Kafelki w edycji: po najechaniu na etykietę (lub gdy jest zaznaczona) na bokach jej kafla pojawiają się subtelne strzałki; przeciągnięcie strzałki rozciąga etykietę na sąsiednie kafle w tę stronę (albo z powrotem) - krawędź przeskakuje na linię kafli najbliższą kursorowi, pozostałe boki stoją. Strzałki są tylko tam, gdzie jest dokąd rozciągnąć/zmniejszyć. Po rozciągnięciu preset etykiety układa się od nowa pod nowy kształt.
+
 ## 0.6.1-beta.689
 
 - Typu widoku (Obraz z siatką / Kafelki) nie da się zmienić po utworzeniu - wybiera się go tylko w kreatorze; menu pokazuje rodzaj widoku (bez przełącznika i bez „Bez tła” w widoku z obrazem).
