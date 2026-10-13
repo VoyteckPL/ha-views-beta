@@ -1175,7 +1175,7 @@ const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCar
 // What a preset's label parts are (sizes, places, shown): unchanged means the preset's layout still stands.
 const presetLook = room => JSON.stringify(['labelIcon','labelName','labelState'].map(k => [!!room[k], ...['W','H','Size','X','Y','Radius'].map(d => Math.round((Number(room[`${k}${d}`]) || 0) * 10) / 10)]).concat([room.labelCardLayout, room.labelPartGap, room.labelCardPadding]));
 const TILE_COL_U = 240;
-const TILE_TEXT_MARGIN = .12, TILE_TEXT_MARGIN_ROW = .1; // (a preset's name / state: the text fills its frame, the same small margin left on every side)
+const TILE_TEXT_MARGIN = .12, TILE_TEXT_MARGIN_ROW = .1, TEXT_CAP_FILL = .5; // (a preset's text: its capitals half its frame's height) // (a preset's name / state: the text fills its frame, the same small margin left on every side)
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
 function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
 const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && ['column','iconLeft','iconName','row'].includes(room.labelCardLayout) && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
@@ -4189,7 +4189,7 @@ function partWHMax(room, k, axis) {
 function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 0) {
   const path = `${k}Size`, s0 = Number(room[path]) || ROOM_DEFAULTS[path]; if (!n) return 420;
   const cs = getComputedStyle(n), bw = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : n.offsetWidth, bh = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : n.offsetHeight;
-  let cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0));
+  let cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0)); const chFull = ch;
   // (a margin asked for: the same room left on every side - a share of the frame's smaller side, its border on top)
   // (a name's / state's own inner margin, when set, is the room left on every side - in place of the share asked for)
   const own = k !== 'labelIcon' && margin > 0 && Number.isFinite(Number(room[`${k}Inset`])) && room[`${k}Inset`] !== '' && room[`${k}Inset`] !== null ? clamp(Number(room[`${k}Inset`]), 0, 200) : null;
@@ -4205,7 +4205,11 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 
     // line's middle - a "y" hangs below it - so the height is twice the further of the two)
     const fa = mt.fontBoundingBoxAscent || fs * .97, fd = mt.fontBoundingBoxDescent || fs * .24, mid = (fa - fd) / 2;
     const iw = Math.max(mt.width, (mt.actualBoundingBoxLeft || 0) + (mt.actualBoundingBoxRight || 0), dw || 0, mtT ? mtT.width : 0), ih = 2 * Math.max((mt.actualBoundingBoxAscent || 0) - mid, (mt.actualBoundingBoxDescent || 0) + mid, mtT ? (mtT.actualBoundingBoxAscent || 0) - mid : 0);
-    if (iw > 0 && ih > 0) max = fs * Math.min(cw * (mg ? 1 : .97) / iw, ch * (mg ? 1 : .96) / ih); } /* (from the text as drawn now - it may be fitted down from its size) */
+    if (iw > 0 && ih > 0) max = fs * Math.min(cw * (mg ? 1 : .97) / iw, ch * (mg ? 1 : .96) / ih);
+    // A preset's text: its size follows its frame's HEIGHT - the capitals a set share of it, whatever the text (so equal
+    // frames give equal texts: "7 °C" as big as "44.7 °C") - and its width only holds it back where the text is too long.
+    if (margin > 0 && own === null) { const ref = cx.measureText('Hy'), cap = cx.measureText('H').actualBoundingBoxAscent || fs * .72, ihRef = 2 * Math.max((ref.actualBoundingBoxAscent || 0) - mid, (ref.actualBoundingBoxDescent || 0) + mid) || fs;
+      max = Math.min(fs * TEXT_CAP_FILL * chFull / cap, fs * chFull * .92 / ihRef, fs * cw / iw); } } /* (from the text as drawn now - it may be fitted down from its size) */
   return Math.max(6, exact ? 0 : s0, Math.floor(max * 10) / 10);
 }
 // The size sliders' range follows what fits in the part's frame now.
