@@ -1,3 +1,7 @@
+## 0.6.1-beta.675
+
+- Rozgrupowana etykieta: suwaki marginesów (góra/dół, lewo/prawo) znikają z panelu - nie ma wtedy wspólnej ramki; po zgrupowaniu wracają z poprzednimi wartościami.
+
 ## 0.6.1-beta.674
 
 - Rozgrupowana okrągła/kwadratowa ikona: ciągnięta kreska boku snapuje się do siatki etykiety, krawędzi innych elementów i planu oraz do szerokości/wysokości innych elementów (wg menu przyciągania, Alt wyłącza); siatka i złapana linia są widoczne w trakcie.

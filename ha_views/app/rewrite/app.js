@@ -3658,7 +3658,7 @@ function roomEditorMarkup(room) {
   // Background and frame of any part (icon, name, state): the same options, each can follow ON / OFF.
   const range = (label, path, value, min, max, step, suffix) => control(label, path, 'range', value, { min, max, step, suffix, integer: step >= 1 });
   // The label's margin: top / bottom and left / right, each its own slider.
-  const marginRows = () => control('Margines góra / dół','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }) + control('Margines lewo / prawo','labelCardPadX','range',Math.round(cardPadX(r)),{ min:0, max:150, step:1, suffix:'px', integer:true });
+  const marginRows = () => !r.labelLinked ? '' /* (ungrouped: no frame round the parts, no margin) */ : control('Margines góra / dół','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }) + control('Margines lewo / prawo','labelCardPadX','range',Math.round(cardPadX(r)),{ min:0, max:150, step:1, suffix:'px', integer:true });
   const stateColours = (key, base, field, fallbackColor, fallbackOpacity, width) => r[`${key}${base}State`]
     ? control('Kolor ON',`${key}${base}OnColor`,'color',r[`${key}${base}OnColor`]) + control('Kolor OFF',`${key}${base}OffColor`,'color',r[`${key}${base}OffColor`])
       + range('Przezrocz. ON',`${key}${base}OnOpacity`,pct(r[`${key}${base}OnOpacity`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}${base}OffOpacity`,pct(r[`${key}${base}OffOpacity`]),0,100,1,'%')
