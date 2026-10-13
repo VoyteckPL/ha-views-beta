@@ -3859,7 +3859,7 @@ function roomEditorMarkup(room) {
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
     // (on a tile, "Ikona z lewej": the gap to the icon of its own; "Ikona i nazwa w rzędzie": how the two rows split the height)
     + (onTile && r.labelLinked && r.tileColV2 && r.labelCardLayout === 'iconLeft' ? range('Odstęp od ikony','tileIconGap',clamp(Number(r.tileIconGap ?? r.labelPartGap ?? 4), 0, 30),0,30,1,'px') : '')
-    + (onTile && r.labelLinked && r.tileColV2 && r.labelCardLayout === 'iconName' ? range('Podział','tileRowSplit',Math.round(clamp(Number(r.tileRowSplit) || .5, .2, .8) * 100),20,80,1,'%') : '')
+    + (onTile && r.labelLinked && r.tileColV2 && r.labelCardLayout === 'iconName' ? snapSlider(range('Podział','tileRowSplit',Math.round(clamp(Number(r.tileRowSplit) || .5, .2, .8) * 100),20,80,1,'%'), 'tileRowSplit', [25, 50, 75], 3) : '')
     + tilePresets
     );
   // (On tiles a label is always on its tile, sized with its dots: no tile rows.)
@@ -4037,7 +4037,7 @@ function partSizeSnap(room, k, axis, want) {
   return { v: Math.round(best.size / z * 10) / 10, guides };
 }
 // The panel's sliders show what the label has now - after a layout, a share or a size that changed other values too.
-const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$/;
+const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$|^tileRowSplit$|^tileIconGap$/;
 // Where a label's parts must stay (screen box): its tile (less the label's margin when grouped), else a free or locked
 // label's own frame; a label that grows with its parts and is on no tile has no such bounds (null).
 function partBounds(room) {
@@ -4111,6 +4111,7 @@ function syncEditorValues(room) {
     const p = i.dataset.path; if (!SYNCED_PATHS.test(p) || i === document.activeElement) return;
     let v = room[p]; const m = /^(label(?:Icon|Name|State))(W|H|Padding|PadX)$/.exec(p), n = m ? node(m[1]) : null;
     if (p === 'tileIconShare') v = tileIconShare(room);
+    else if (p === 'tileRowSplit') v = clamp(Number(room.tileRowSplit) || .5, .2, .8) * 100;
     else if (p === 'labelCardPadX') v = cardPadX(room);
     else if (m && !(set(v) && (m[2] === 'Padding' || m[2] === 'PadX' || Number(v) > 0)) && n) { const cs = getComputedStyle(n); v = m[2] === 'W' ? n.offsetWidth : m[2] === 'H' ? n.offsetHeight : m[2] === 'Padding' ? parseFloat(cs.paddingTop) : parseFloat(cs.paddingLeft); }
     if (!set(v)) return; v = Math.round(Number(v) * 10) / 10; if (Number(i.value) === v) return;
@@ -4264,7 +4265,7 @@ function onRoomEditorInput(event) {
   // The parts' spacing in a label's group (a free group: its parts restacked along their row / column).
   // On a tile with a ready layout the gap is just the space between the parts (icon - text, name - state): the layout is
   // worked out again with it, nothing is moved apart one by one.
-  if ((path === 'tileIconGap' || path === 'tileRowSplit') && typeof value === 'number') { room[path] = path === 'tileRowSplit' ? clamp(value / 100, .2, .8) : clamp(value, 0, 30); applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
+  if ((path === 'tileIconGap' || path === 'tileRowSplit') && typeof value === 'number') { room[path] = path === 'tileRowSplit' ? clamp(value / 100, .2, .8) : clamp(value, 0, 30); { const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
   if (path === 'tileIconShare') { room.tileIconShare = clamp(Number(value) || 50, 30, 70); applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(); return; }
   if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked && isIconRoom(room) && dashSpan(room) && !room.labelCardFree) { room.labelPartGap = value; applyTilePreset(room); }
   else if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked) { room.labelPartGap = value; arrangeLabelParts(room, 'gap'); }

@@ -1,3 +1,7 @@
+## 0.6.1-beta.682
+
+- Preset 3: suwak „Podział” pokazuje aktualną wartość (także po zmianie „Wielkości” ikony) i ma kropki 25 / 50 / 75%, do których łatwo wskakuje.
+
 ## 0.6.1-beta.681
 
 - Preset 2 i 3: nazwa i stan mają każdy swoją wielkość czcionki - tak dużą, jak pozwala ich ramka, z mniejszym marginesem (stan wyraźnie większy); rośnie i maleje proporcjonalnie z ramką (np. przy zmianie wielkości ikony lub podziału).
