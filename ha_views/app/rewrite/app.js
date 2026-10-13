@@ -4017,7 +4017,7 @@ function roomEditorMarkup(room) {
         + (r.thermoModeAccent === false ? control('Kolor aktywnego','thermoModeActiveColor','color',r.thermoModeActiveColor || '#FF7A2F') : '')
         + control('Ramki przycisków','thermoModeFrame','checkbox',r.thermoModeFrame !== false)
         + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
-    const boxText = !isThermoRoom(r) && BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
+    const boxText = BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
     const framed = oneShown !== key && (r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key);
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
@@ -4028,17 +4028,19 @@ function roomEditorMarkup(room) {
         + weightRow)
       : sub('Rozmiar', size + weightRow);
     const accentable = ['labelTarget','labelCurrent','labelAction'].includes(key);
-    if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
+    // (a thermostat: what is its own - texts of the modes / work states, format, modes' icons - at the end of the section, the label's controls first)
+    const head = isThermoRoom(r) ? '' : contentSub + modesSub, tail = isThermoRoom(r) ? contentSub + modesSub : '';
+    if (accentable && r[`${key}Accent`]) return partBar(part, title, sizeSub + head + sub('Kolor', control('Kolor wg trybu',`${key}Accent`,'checkbox',true,refresh))
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
-        + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')), frameToggles(key));
+        + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')) + tail, frameToggles(key));
     // A label's state: its most used controls on top, always at hand (text size, margin, colour, fit, bold).
-    return partBar(part, title, sizeSub + contentSub + modesSub + sub('Kolor', (accentable ? control('Kolor wg trybu',`${key}Accent`,'checkbox',false,refresh) : '') + control('Zależne ON/OFF',`${key}ColorState`,'checkbox',!!r[`${key}ColorState`],refresh)
+    return partBar(part, title, sizeSub + head + sub('Kolor', (accentable ? control('Kolor wg trybu',`${key}Accent`,'checkbox',false,refresh) : '') + control('Zależne ON/OFF',`${key}ColorState`,'checkbox',!!r[`${key}ColorState`],refresh)
         + (r[`${key}ColorState`]
           ? control('Kolor ON',`${key}ColorOn`,'color',r[`${key}ColorOn`]) + control('Kolor OFF',`${key}ColorOff`,'color',r[`${key}ColorOff`])
             + range('Przezrocz. ON',`${key}OpacityOn`,pct(r[`${key}OpacityOn`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}OpacityOff`,pct(r[`${key}OpacityOff`]),0,100,1,'%')
           : control('Kolor',`${key}Color`,'color',r[`${key}Color`]) + range('Przezroczystość',`${key}Opacity`,pct(r[`${key}Opacity`]),0,100,1,'%')))
       + frameSubs(key, boxText ? textRadius : range('Zaokrąglenie',`${key}Radius`,has(r[`${key}Radius`]) ? clamp(Number(r[`${key}Radius`]), 0, 200) : Math.round(fontPx * .7),0,200,1,'px')
-        + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')), frameToggles(key));
+        + range('Margines',`${key}Padding`,has(r[`${key}Padding`]) ? clamp(Number(r[`${key}Padding`]), 0, 120) : Math.round(fontPx * .28),0,120,1,'px')) + tail, frameToggles(key));
   };
   const presetRow = (attr, items, active) => `<div class="room-card-presets">${items.map(([value, title, icon]) => `<button type="button" class="room-card-preset${active === value ? ' active' : ''}" ${attr}="${value}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${icon ? `<i class="mdi ${icon}"></i>` : `<span class="room-card-swatch ${value}"></span>`}</button>`).join('')}</div>`;
   // Group section. With only one part shown there is nothing to group: the group's background / frame are not drawn
@@ -4147,7 +4149,7 @@ function roomEditorMarkup(room) {
   const partNode = k => { const p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', id = CSS.escape(r.id); return document.querySelector(`.room-label-card[data-room-id="${id}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${id}"][data-label-part="${p}"]`); };
   const boxNow = k => { const n = partNode(k); return n ? [n.offsetWidth, n.offsetHeight] : [0, 0]; };
   const boxRows = key => {
-    if (isThermoRoom(r) || !['labelIcon','labelName','labelState'].includes(key) || !r[key]) return '';
+    if (!['labelIcon','labelName','labelState'].includes(key) || !r[key]) return ''; // (a thermostat's icon / name / state too - the same as a label's)
     const [w0, h0] = boxNow(key), w = Number(r[`${key}W`]) > 0 ? Number(r[`${key}W`]) : Math.round(w0), h = Number(r[`${key}H`]) > 0 ? Number(r[`${key}H`]) : Math.round(h0);
     const others = ['labelIcon','labelName','labelState'].filter(k => k !== key && r[k]).map(boxNow).flat().filter(v => v > 0).map(Math.round);
     const snaps = [...new Set([...others, Math.round(w0), Math.round(h0)])].filter(v => v > 0).sort((a, b) => a - b);
@@ -4299,7 +4301,7 @@ function partNodes(room) { const id = CSS.escape(room.id); return $$(`.room-labe
 // How wide / high a part can get without going past those bounds (null: no limit). In a grouped label the parts beside
 // it along that line give way: they can get smaller (all in proportion) down to a fifth of their size.
 function partWHMax(room, k, axis) {
-  partWHMax.stack = null; const n = partBoxNode(room, k), B = n && partBounds(room); if (!B) return null;
+  partWHMax.stack = null; if (isThermoRoom(room)) return null; /* (a thermostat's frame grows round its parts - its box then scales them all to fit) */ const n = partBoxNode(room, k), B = n && partBounds(room); if (!B) return null;
   const X = axis === 'x', r = n.getBoundingClientRect(), z = (X ? r.width / Math.max(1, n.offsetWidth) : r.height / Math.max(1, n.offsetHeight)) || 1;
   const lo = X ? 'left' : 'top', hi = X ? 'right' : 'bottom', clo = X ? 'top' : 'left', chi = X ? 'bottom' : 'right', inLo = X ? B.l : B.t, inHi = X ? B.r : B.b, cur = (r[hi] - r[lo]) / z;
   const card = room.labelLinked ? n.closest('.room-label-card') : null;

@@ -1,3 +1,8 @@
+## 0.6.1-beta.726
+
+- Termostat: sekcje Ikona, Nazwa i Stan jak w etykiecie - Rozmiar tekstu, Szerokość, Wysokość, Margines wewnętrzny, Grubość czcionki; ikona: Wielkość ramki. Ustawienia typowo termostatowe (np. Teksty trybów, format, ikony trybów) na końcu sekcji.
+- Termostat: szerokość / wysokość elementu nie jest już ograniczana do ramki - ramka rośnie, a pole skaluje całość.
+
 ## 0.6.1-beta.725
 
 - Termostat: sekcja „Grupa” nazywa się „Termostat” (wskaźnik: „Wskaźnik”). Bez suwaka Rozmiar (rozmiar daje pole / kafle).
