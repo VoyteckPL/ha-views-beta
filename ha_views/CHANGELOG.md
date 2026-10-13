@@ -1,3 +1,7 @@
+## 0.6.1-beta.657
+
+- Elementy (ikona, nazwa, stan): w podsekcji „Rozmiar” suwaki „Szerokość” i „Wysokość” ramki elementu. Podczas przesuwania przyciągają się do szerokości / wysokości pozostałych elementów i do naturalnego rozmiaru elementu.
+
 ## 0.6.1-beta.656
 
 - Kafelki: na środku każdego pustego kafla (w trybie edycji) mały „+” – otwiera okno dodawania jak przycisk „+” na górze, a dodany element trafia do tego kafla.
