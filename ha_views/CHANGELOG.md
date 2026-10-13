@@ -1,3 +1,9 @@
+## 0.6.1-beta.708
+
+- Efekty: nowe Motywy (Zorza, Neon, Zachód, Złoto, Kryształ, Szron, Północ, Mięta) - jednym kliknięciem efekt ramki razem z kolorami ikony, nazwy i stanu (ON/OFF).
+- Części (ikona, nazwa, stan) w stylu efektu: gradientowe ramki albo szkło; przełącznik w sekcji Części.
+- Poświata ikony i stanu, gdy encja jest włączona.
+
 ## 0.6.1-beta.707
 
 - Efekty: zostały tylko Liquid glass i Gradient (usunięte pozostałe efekty, także efekty ikon).
