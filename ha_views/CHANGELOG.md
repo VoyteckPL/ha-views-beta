@@ -1,3 +1,7 @@
+## 0.6.1-beta.711
+
+- Kafelki na telefonie (ekran dotykowy): zaznaczona etykieta ma kropki w rogach - przeciągnięte palcem rozciągają ją na kolejne kafle (strzałki działają tylko z myszką).
+
 ## 0.6.1-beta.710
 
 - Tryb Tło: zaznaczona etykieta znów ma kropki w każdym rogu do zmiany rozmiaru (ze snapem do siatki); strzałki na krawędziach zostają.

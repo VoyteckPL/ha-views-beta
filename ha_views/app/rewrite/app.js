@@ -2361,7 +2361,7 @@ function fitCardHandles() {
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner; proxy.classList.toggle('part', !!owner?.classList.contains('room-label-part')); // (a part's dots: smaller, their own colour)
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;
     // A side's dot is always there; on a small part (on screen) it is drawn smaller, so the dots stay apart.
-    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || (!!owner?.classList.contains('dash-pinned') && dashGrid().on); // (a label on its tile: the arrows size it; on a background its corner dots do)
+    proxy.hidden = !r.width || getComputedStyle(h).display === 'none' || (!!owner?.classList.contains('dash-pinned') && dashGrid().on && !matchMedia('(pointer: coarse)').matches); // (a label on its tile: with a mouse its arrows size it; on a touch screen (no hover, no arrows) and on a background its corner dots do)
     proxy.classList.toggle('mini', !!(side && ob && ((/[ns]/.test(h.dataset.corner) && ob.width < 60) || (/[ew]/.test(h.dataset.corner) && ob.height < 52))));
     proxy.style.left = `${((r.left + r.width / 2 - base.left) / kx).toFixed(1)}px`; proxy.style.top = `${((r.top + r.height / 2 - base.top) / ky).toFixed(1)}px`;
   });
