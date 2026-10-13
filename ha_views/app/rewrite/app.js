@@ -1123,8 +1123,10 @@ function renderDashArrows(view, g, busy) {
   const hot = new Set($$('.dash-arrow-set.hot', layer).map(n => n.dataset.roomId));
   const arrow = (id, side, x, y, mdi) => `<button type="button" class="dash-arrow ${side}" data-dash-arrow="${side}" data-room-id="${escapeHtml(id)}" style="left:${x}%;top:${y}%" aria-label="${escapeHtml(translateValue('Rozciągnij'))}"><i class="mdi ${mdi}"></i></button>`;
   layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1;
-    // (at the middle of each side, just inside the label's edge, pointing out: that way only)
-    [['e', s.x + s.w, s.y + s.h / 2, canE, 'mdi-chevron-right'], ['w', s.x, s.y + s.h / 2, canW, 'mdi-chevron-left'], ['s', s.x + s.w / 2, s.y + s.h, canS, 'mdi-chevron-down'], ['n', s.x + s.w / 2, s.y, canN, 'mdi-chevron-up']].forEach(([k, x, y, ok, mdi]) => { if (ok) out.push(arrow(r.id, k, x, y, mdi)); });
+    // (in the corners, as close to the edge as the label's rounded corner lets them be - inside it; each takes the label
+    // over the next tiles both ways it points, or back)
+    const card = $(`.room-label-card[data-room-id="${CSS.escape(r.id)}"]`), k = card ? card.getBoundingClientRect().width / Math.max(1, card.offsetWidth) : 1, R = card ? (parseFloat(getComputedStyle(card).borderTopLeftRadius) || 0) * k : 0, inset = Math.round(Math.max(12, R - (R - 9) / Math.SQRT2 + 4));
+    [['se', s.x + s.w, s.y + s.h, canE || canS, -1, -1], ['sw', s.x, s.y + s.h, canW || canS, 1, -1], ['ne', s.x + s.w, s.y, canE || canN, -1, 1], ['nw', s.x, s.y, canW || canN, 1, 1]].forEach(([k2, x, y, ok, dx, dy]) => { if (ok) out.push(arrow(r.id, k2, x, y, 'mdi-arrow-bottom-right').replace('style="', `style="--ix:${dx * inset}px;--iy:${dy * inset}px;`)); });
     return `<div class="dash-arrow-set${hot.has(r.id) ? ' hot' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
   rooms.forEach(r => { const set = layer.querySelector(`.dash-arrow-set[data-room-id="${CSS.escape(r.id)}"]`); if (set) set.__box = dashSpan(r, view); });
 }

@@ -1942,3 +1942,11 @@ body.editing .dash-quick.on{display:flex}
 #dash-arrows .dash-arrow.e{transform:translate(-100%,-50%) translate(-3px,0)}#dash-arrows .dash-arrow.w{transform:translate(0,-50%) translate(3px,0)}
 #dash-arrows .dash-arrow.s{transform:translate(-50%,-100%) translate(0,-3px)}#dash-arrows .dash-arrow.n{transform:translate(-50%,0) translate(0,3px)}
 #dash-arrows .dash-arrow.e,#dash-arrows .dash-arrow.w{cursor:ew-resize}#dash-arrows .dash-arrow.n,#dash-arrows .dash-arrow.s{cursor:ns-resize}
+/* (corners: centred --ix / --iy in from the corner, inside the label's rounded corner) */
+#dash-arrows .dash-arrow.se,#dash-arrows .dash-arrow.sw,#dash-arrows .dash-arrow.ne,#dash-arrows .dash-arrow.nw{width:16px;height:16px;font-size:12px;border:0;background:rgba(7,25,36,.6)}
+#dash-arrows .dash-arrow.se{transform:translate(-50%,-50%) translate(var(--ix),var(--iy))}#dash-arrows .dash-arrow.sw{transform:translate(-50%,-50%) translate(var(--ix),var(--iy)) rotate(90deg)}
+#dash-arrows .dash-arrow.ne{transform:translate(-50%,-50%) translate(var(--ix),var(--iy)) rotate(-90deg)}#dash-arrows .dash-arrow.nw{transform:translate(-50%,-50%) translate(var(--ix),var(--iy)) rotate(180deg)}
+/* (the arrow centred in its circle) */
+#dash-arrows .dash-arrow{padding:0!important;line-height:0}
+#dash-arrows .dash-arrow i{display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;font-size:12px;margin:0}
+#dash-arrows .dash-arrow i::before{display:block;line-height:1}
