@@ -1341,6 +1341,7 @@ function migrateRoomLabel(room) {
   if (room?.labelSizeLock && !isThermoRoom(room)) { ['labelSizeLock','labelLockBase','labelCardW','labelCardH','labelCardCentred','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]); changed = true; }
   if (room && room.labelIconSource === undefined && (room.labelIconName || room.labelIconNameOn || room.labelIconNameOff)) { room.labelIconSource = 'mdi'; changed = true; }
   // beta.261: new rooms get bigger label defaults; labels shown before keep their old size and place.
+  if (room && iconShapeOf(room) !== 'custom' && Number(room.labelIconW) > 0 && Number(room.labelIconH) > 0 && room.labelIconW !== room.labelIconH) { room.labelIconW = room.labelIconH = Math.min(room.labelIconW, room.labelIconH); changed = true; }
   if (room && (room.labelIcon || room.labelName || room.labelState)) [['labelIconSize',38],['labelNameSize',19],['labelStateSize',15],['labelIconY',-30],['labelNameY',6],['labelStateY',30]].forEach(([key, value]) => { if (!(key in room)) { room[key] = value; changed = true; } });
   if (room?.singleSaved && !room.singlePadV1) { room.singlePadV1 = true; changed = true; const k = room.singleSaved.key, own = room[`${k}Padding`], set = own !== undefined && own !== null && own !== '' && Number.isFinite(Number(own)), pp = k === 'labelIcon' ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : set ? clamp(Number(own), 0, 120) : clamp(Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], 6, 420) * .28; if (!('labelCardPadding' in room.singleSaved.saved)) room.singleSaved.saved.labelCardPadding = room.labelCardPadding; room.labelCardPadding = Math.round(clamp((Number(room.labelCardPadding) || 0) + pp, 0, 150) * 10) / 10; room.singleSaved.merged.labelCardPadding = room.labelCardPadding; }
   // beta.632: a button has no caption.
@@ -1555,7 +1556,8 @@ function partBoxSize(r, key) {
   if (key === 'labelDial') return ''; // the dial's box is its drawing (no extra width / height = no margin)
   const lock = textLock(r, key);
   if (lock) { const w = lock.w ? `${lock.w}px` : lock.v ? `${lock.v[0]}em` : '', h = lock.h ? `${lock.h}px` : lock.v ? `${lock.v[1]}em` : ''; return `${w ? `;width:${w}` : ''}${h ? `;height:${h}` : ''};box-sizing:border-box;overflow:hidden`; }
-  const w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0;
+  let w = Number(r[`${key}W`]) || 0, h = Number(r[`${key}H`]) || 0;
+  if (key === 'labelIcon' && iconShapeOf(r) !== 'custom' && (w || h)) w = h = w && h ? Math.min(w, h) : w || h; // (a round / square icon's frame is 1:1)
   return (w ? `;min-width:${w}px` : '') + (h ? `;min-height:${h}px` : '') + (w || h ? ';box-sizing:border-box' : '');
 }
 function partKey(node) { return ROOM_LABEL_PARTS.find(([part]) => part === node.dataset.labelPart)?.[1]; }
@@ -1584,6 +1586,7 @@ function fitFreeCard(room, group) {
 // A label showing only its icon is the icon: its frame takes the icon's shape (circle / square / own corners).
 const iconOnlyLabel = r => false && !!r && isIconRoom(r) && !isThermoRoom(r) && !isTextRoom(r) && !!r.labelIcon && !r.labelName && !r.labelState && !dashSpan(r); // (on tiles the tile is its frame)
 const iconShapeOf = r => ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
+function keepSquare() {} // (holds what a round / square icon's frame may grow to while its slider is moved)
 function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const iconOnly = iconOnlyLabel(r), shape = iconOnly ? iconShapeOf(r) : '';
@@ -2021,7 +2024,10 @@ function renderRoomLabels(view = activeSceneView()) {
     const key = html.replace(/left:[-\d.]+%;top:[-\d.]+%/g, '').replace(/--l[xy]:[-\d.]+px/g, '').replace(/min-(width|height):[\d.]+px/g, '');
     if (group.__key === key && group.children.length) {
       const fresh = document.createElement('template'); fresh.innerHTML = html;
-      [...fresh.content.children].forEach((node, index) => { const live = group.children[index]; if (live && live.getAttribute('style') !== node.getAttribute('style')) live.setAttribute('style', node.getAttribute('style')); });
+      // (The parts inside the label too: a part's own width / height is in its style.)
+      const fa = [...fresh.content.querySelectorAll('*')], la = [...group.querySelectorAll('*')];
+      if (fa.length === la.length) fa.forEach((node, index) => { const live = la[index], st = node.getAttribute('style'); if (st !== null && live.getAttribute('style') !== st) live.setAttribute('style', st); });
+      else group.innerHTML = html;
     } else group.innerHTML = html;
     group.__html = html; group.__key = key;
     equalizeLabelFrames(room, group); fitLabelTexts(room, group);
@@ -4037,7 +4043,7 @@ function onRoomEditorInput(event) {
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
   { const own = /^(label(?:Icon|Name|State))(W|H|Size)$/.exec(path); if (own && room.labelGiveBase?.[own[1]]) { delete room.labelGiveBase[own[1]]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }
   if (/^label(Icon|Name|State)(W|H|Size)$/.test(path)) { fitDashLabels.hold = room.id; clearTimeout(fitDashLabels.holdOff); if (event.type === 'change') fitDashLabels.holdOff = setTimeout(() => { fitDashLabels.hold = null; renderRooms(); }, 300); }
-  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; }, 300); } }
+  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; keepSquare.frozen = null; }, 300); } }
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
   // ... and no further than its label (taken once per slider move).
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number') { const key = `${room.id}|${path}`; let f = partWHMax.frozen; if (!f || f.key !== key) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); f = partWHMax.frozen = { key, max: mx, stack: partWHMax.stack }; }
@@ -4046,6 +4052,12 @@ function onRoomEditorInput(event) {
     const st = f.stack; if (st) { const q = clamp((st.avail - (value - st.dataCur)) / st.sum, .2, 1);
       st.sibs.forEach(x => { room[`${x.k}W`] = Math.max(6, Math.round(x.B.W * q * 10) / 10); room[`${x.k}H`] = Math.max(6, Math.round(x.B.H * q * 10) / 10); room[`${x.k}Size`] = Math.max(6, Math.round(x.B.S * q * 10) / 10); delete room[`${x.k}Lock`];
         if (q < 1) (room.labelGiveBase ||= {})[x.k] = x.B; else if (room.labelGiveBase) { delete room.labelGiveBase[x.k]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }); } } }
+  // A round / square icon keeps its frame 1:1 - its width and height move together (as far as both have room).
+  if (/^labelIcon(W|H)$/.test(path) && typeof value === 'number' && iconShapeOf(room) !== 'custom') { const other = path === 'labelIconW' ? 'labelIconH' : 'labelIconW', key = `${room.id}|${other}`;
+    let f = keepSquare.frozen; if (!f || f.key !== key) f = keepSquare.frozen = { key, max: partWHMax(room, 'labelIcon', other === 'labelIconW' ? 'x' : 'y') };
+    if (f.max && value > f.max) { value = f.max; input.value = String(value); }
+    room[other] = value; const oi = input.closest('#room-editor-content')?.querySelector(`input[data-path="${other}"]`); if (oi) { oi.value = String(Math.round(value)); const o = oi.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; }
+    const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; }
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
     if (n) { if (!(Number(room[`${k}W`]) > 0)) room[`${k}W`] = n.offsetWidth; if (!(Number(room[`${k}H`]) > 0)) room[`${k}H`] = n.offsetHeight; delete room[`${k}Lock`];
@@ -4162,7 +4174,7 @@ function onRoomEditorClick(event) {
     renderRooms(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const arrangeBtn = event.target.closest?.('[data-arrange], [data-icon-shape]');
   if (arrangeBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
-    if (arrangeBtn.dataset.iconShape) quickSet('labelIconShape', arrangeBtn.dataset.iconShape); else { arrangeLabelParts(room, arrangeBtn.dataset.arrange); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); }
+    if (arrangeBtn.dataset.iconShape) { if (arrangeBtn.dataset.iconShape !== 'custom' && Number(room.labelIconW) > 0 && Number(room.labelIconH) > 0) room.labelIconW = room.labelIconH = Math.min(room.labelIconW, room.labelIconH); quickSet('labelIconShape', arrangeBtn.dataset.iconShape); } else { arrangeLabelParts(room, arrangeBtn.dataset.arrange); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); }
     openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }
   const quickBtn = event.target.closest?.('[data-quick-fit], [data-quick-bold], [data-quick-lock]');
   if (quickBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const qk = [...BOX_TEXT_KEYS, 'labelIcon'].includes(quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) ? (quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) : 'labelState'; if (quickBtn.hasAttribute('data-quick-fit')) quickFit(room, qk); else if (quickBtn.hasAttribute('data-quick-lock')) { room[`${qk}FixedBox`] = !room[`${qk}FixedBox`]; if (qk === 'labelIcon' && !room.labelIconFixedBox) { delete room.labelIconW; delete room.labelIconH; } room.updatedAt = new Date().toISOString(); scheduleSave(true); } else quickSet('labelStateWeight', room.labelStateWeight === 'bold' ? 'normal' : 'bold'); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }

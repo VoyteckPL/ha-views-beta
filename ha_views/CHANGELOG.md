@@ -1,3 +1,8 @@
+## 0.6.1-beta.669
+
+- Ikona w kształcie koła/kwadratu ma ramkę zawsze 1:1: suwaki szerokości i wysokości ruszają się razem (owal tylko przy kształcie „Dowolny”); istniejące owalne ramki takich ikon stają się 1:1 (mniejszy z wymiarów).
+- Naprawione odświeżanie: zmiana samej szerokości/wysokości elementu w zgrupowanej etykiecie nie zawsze była od razu widoczna (aktualizowała się tylko ramka etykiety).
+
 ## 0.6.1-beta.668
 
 - Elementy etykiety nie wypadają poza nią przy manipulowaniu rozmiarami: po każdej zmianie, jeśli coś wystaje, elementy proporcjonalnie się zmniejszają (najpierw pozostałe, potem przesuwany).
