@@ -1987,3 +1987,4 @@ body.editing .dash-quick.on{display:flex}
 .thermo-mode-btn,.thermo-mode-solo{position:relative}
 .thermo-mode-btn .mdi,.thermo-mode-solo .mdi{display:block;width:1em;height:1em;line-height:1;position:absolute;left:50%;top:50%;margin:0;transform:translate(-50%,-50%)} /* (the icon is bigger than its button: centred exactly, whatever a browser does with an overflowing grid item) */
 .room-label-card.drag-armed{filter:drop-shadow(0 10px 22px rgba(0,0,0,.55)) brightness(1.08);outline:2px solid rgba(32,185,231,.8);outline-offset:2px}
+.card-handle-proxy.armed{transform:scale(1.6);background:#20b9e7;border-color:#fff;transition:transform .12s}

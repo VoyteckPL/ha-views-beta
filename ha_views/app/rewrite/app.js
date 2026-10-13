@@ -2359,7 +2359,16 @@ function fitCardHandles() {
     let proxy = [...layer.children].find(n => n.dataset.key === key);
     if (!proxy) {
       proxy = document.createElement('i'); proxy.className = 'card-handle-proxy'; proxy.dataset.key = key; layer.append(proxy);
-      proxy.addEventListener('pointerdown', event => { if (secondFingerToZoom(event)) return; const real = proxy.__real; if (real?.isConnected && editMode) startFreeResize(event, real); });
+      // A finger on a dot: it sizes only after being held a moment (a short buzz, the dot grows) - until then the finger moves
+      // the plan, so a dot touched by the way changes nothing. A mouse sizes at once.
+      proxy.addEventListener('pointerdown', event => { if (secondFingerToZoom(event)) return; const real = proxy.__real; if (!real?.isConnected || !editMode) return;
+        if (event.pointerType !== 'touch') return startFreeResize(event, real);
+        event.preventDefault(); event.stopPropagation(); viewportPointerDown(event);
+        const id = event.pointerId, x0 = event.clientX, y0 = event.clientY; let done = false;
+        const off = () => { done = true; clearTimeout(timer); window.removeEventListener('pointermove', mv, true); window.removeEventListener('pointerup', off, true); window.removeEventListener('pointercancel', off, true); };
+        const mv = e => { if (e.pointerId === id && Math.hypot(e.clientX - x0, e.clientY - y0) > 10) off(); };
+        const timer = setTimeout(() => { if (done || !real.isConnected) return; off(); panGesture = null; try { navigator.vibrate?.(15); } catch {} proxy.classList.add('armed'); const clear = () => { proxy.classList.remove('armed'); window.removeEventListener('pointerup', clear, true); window.removeEventListener('pointercancel', clear, true); }; window.addEventListener('pointerup', clear, true); window.addEventListener('pointercancel', clear, true); startFreeResize(event, real); }, 420);
+        window.addEventListener('pointermove', mv, true); window.addEventListener('pointerup', off, true); window.addEventListener('pointercancel', off, true); });
     }
     proxy.__real = h; proxy.dataset.corner = h.dataset.corner; proxy.classList.toggle('part', !!owner?.classList.contains('room-label-part')); // (a part's dots: smaller, their own colour)
     proxy.classList.toggle('square', !!owner?.classList.contains('square')); const ob = owner?.getBoundingClientRect(), side = h.dataset.corner.length === 1;

@@ -1,3 +1,7 @@
+## 0.6.1-beta.724
+
+- Telefon: kropki narożników (rozmiar etykiety / termostatu, także części rozgrupowanej) zmieniają rozmiar dopiero po przytrzymaniu (~0,4 s, wibracja, kropka się powiększa). Szybki ruch od kropki przesuwa widok, tapnięcie nic nie zmienia. Myszka bez zmian.
+
 ## 0.6.1-beta.723
 
 - Telefon, edycja (panel otwarty): kamera może wyjechać poza krawędź planu przy każdym przybliżeniu i w każdym formacie (także widok szerszy niż ekran) - element w rogu centruje się nad panelem z marginesem 5%, a palcem można przesunąć widok poza siatkę.
