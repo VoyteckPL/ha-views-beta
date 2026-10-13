@@ -1984,4 +1984,6 @@ body.editing .dash-quick.on{display:flex}
 .ft-prev i{font-size:15px;line-height:1;color:var(--ti);filter:drop-shadow(0 0 4px var(--ti))}.ft-prev b{color:var(--tn);font-weight:800}.ft-prev em{font-style:normal;font-weight:800;color:var(--ts);text-shadow:0 0 5px color-mix(in srgb,var(--ts) 70%,transparent)}
 
 .thermo-mode-btn .mdi::before,.thermo-mode-solo .mdi::before{display:block;width:1em;height:1em;line-height:1;text-align:left;transform:translate(var(--gx,0),var(--gy,0))}
-.thermo-mode-btn .mdi,.thermo-mode-solo .mdi{display:block;width:1em;height:1em;line-height:1}
+.thermo-mode-btn,.thermo-mode-solo{position:relative}
+.thermo-mode-btn .mdi,.thermo-mode-solo .mdi{display:block;width:1em;height:1em;line-height:1;position:absolute;left:50%;top:50%;margin:0;transform:translate(-50%,-50%)} /* (the icon is bigger than its button: centred exactly, whatever a browser does with an overflowing grid item) */
+.room-label-card.drag-armed{filter:drop-shadow(0 10px 22px rgba(0,0,0,.55)) brightness(1.08);outline:2px solid rgba(32,185,231,.8);outline-offset:2px}

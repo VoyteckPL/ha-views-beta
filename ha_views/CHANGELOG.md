@@ -1,3 +1,9 @@
+## 0.6.1-beta.720
+
+- Kafelki na telefonie: całą etykietę / termostat przesuwa się dopiero po przytrzymaniu palca (~0,4 s, krótka wibracja, etykieta się podświetla). Szybki ruch palcem po niej nic nie przesuwa.
+- Telefon: kamera centruje na prawdziwym wolnym pasie nad panelem edycji (wcześniej najwyżej górna połowa ekranu, więc gdy panel zaczynał się niżej, element lądował za wysoko).
+- Ikony trybów: dokładnie na środku swojego tła w każdej przeglądarce (ikona jest większa niż jej przycisk i część przeglądarek przyklejała ją do lewego górnego rogu).
+
 ## 0.6.1-beta.719
 
 - Termostat / wskaźnik: kamera na całym termostacie z marginesem 5% (wcześniej 20%) - zgrupowany i rozgrupowany, telefon i komputer.

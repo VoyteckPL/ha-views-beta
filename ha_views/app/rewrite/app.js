@@ -3182,9 +3182,15 @@ function startRoomLabelDrag(event) {
       if (fix) { moving.forEach(kk => { room[`${kk}X`] = Math.round(((Number(room[`${kk}X`]) || 0) + fix.x / 100 * w / k) * 100) / 100; room[`${kk}Y`] = Math.round(((Number(room[`${kk}Y`]) || 0) + fix.y / 100 * h / k) * 100) / 100; }); renderRoomLabels(); }
     }
   };
-  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return; moved = true; place(e); camera.track(e); };
+  // Tiles, a finger on a whole label (thermostat…): it moves only after being held a moment (a short buzz, it lifts) - a swipe
+  // over it never shuffles the tiles laid out by hand.
+  const needHold = event.pointerType === 'touch' && key === 'labelCard' && dashGrid().on; let armed = !needHold, dropped = false;
+  const holdTimer = needHold ? setTimeout(() => { if (dropped) return; armed = true; try { navigator.vibrate?.(15); } catch {} node.classList.add('drag-armed'); }, 420) : 0;
+  const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return;
+    if (!armed) { if (Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) > 10) { dropped = true; clearTimeout(holdTimer); } return; } // (moved before the hold: not a drag)
+    moved = true; place(e); camera.track(e); };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; alive = false;  camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
+    if (e.pointerId !== event.pointerId) return; alive = false; clearTimeout(holdTimer); node.classList.remove('drag-armed'); camera.stop(); clearTimeout(guides?.motion?.timer); if (guides) guides.onSettle = null; showAlignGuides([], []); hideGroupGrid();
     window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
@@ -5509,8 +5515,8 @@ function focusedThermoPart(room) {
 }
 function labelFocusArea() {
   const vp = els.viewport.getBoundingClientRect();
-  // (On a phone: the band above the panel, at most the screen's upper half - the same view whichever section is open.)
-  if (mobileView()) { const band = editorFreeBand(); return { vp, left: vp.left, right: vp.right, top: vp.top + band.top, bottom: Math.min(vp.top + band.top + band.height, innerHeight * .5 - 14) }; }
+  // (On a phone: the free band above the panel - centred in what is really seen.)
+  if (mobileView()) { const band = editorFreeBand(); return { vp, left: vp.left, right: vp.right, top: vp.top + band.top, bottom: vp.top + band.top + band.height }; }
   const D = deskZoomRegion(); return { vp, left: Math.max(vp.left, D.left), right: Math.min(vp.right, D.right), top: Math.max(vp.top, D.top), bottom: Math.min(vp.bottom, D.bottom) };
 }
 function refocusLabel(room) { if (room && isIconRoom(room) && editMode) requestAnimationFrame(() => requestAnimationFrame(() => {
