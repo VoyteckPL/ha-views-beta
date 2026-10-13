@@ -1,3 +1,8 @@
+## 0.6.1-beta.687
+
+- Kreator nowego widoku w 2 krokach: najpierw wybór „Obraz z siatką” albo „Kafelki”; potem dla obrazu - wgranie / wybór obrazu, dla kafelków - kolor i format Telefon (9:16) albo Desktop (16:9). Kafelki od razu otwierają pustą siatkę w trybie edycji: 4×10 na telefon, 8×6 na desktop (kafle podobnego kształtu).
+- W trybie edycji widoku z kafelkami w rogu planu są zawsze dwa małe suwaki do zmiany siatki (kolumny / wiersze).
+
 ## 0.6.1-beta.686
 
 - Pasek górny: Opcje i Integracje to jeden przycisk z zębatką (bez osobnego przycisku Biblioteki).
