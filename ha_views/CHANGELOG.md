@@ -1,3 +1,7 @@
+## 0.6.1-beta.723
+
+- Telefon, edycja (panel otwarty): kamera może wyjechać poza krawędź planu przy każdym przybliżeniu i w każdym formacie (także widok szerszy niż ekran) - element w rogu centruje się nad panelem z marginesem 5%, a palcem można przesunąć widok poza siatkę.
+
 ## 0.6.1-beta.722
 
 - Telefon: przeciągnięcie palcem zaczęte na etykiecie / termostacie (zaznaczonym lub nie) przesuwa widok; samą etykietę przesuwa się po przytrzymaniu - teraz też w trybie Tło.

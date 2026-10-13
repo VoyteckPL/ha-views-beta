@@ -5574,6 +5574,12 @@ function editSheetCover() {
 function clampViewPan() {
   if (!sceneCameraActive()) { viewPanX = 0; viewPanY = 0; return; }
   const panorama = mobileWidePanorama();
+  // Editing on a phone (the panel open): at any zoom - also below the fitted size, where a whole thermostat often is - the
+  // camera may go past the plan's edges, so an element in a corner can be centred above the panel and the finger is free.
+  if (mobileView() && editMode && ['#room-editor', '#editor', '#flow-editor'].some(sel => $(sel)?.classList.contains('visible'))) { // (also a panorama: its viewport ends above the panel)
+    const band = editorFreeBand(), mid = band.top + band.height / 2, halfW = els.viewport.clientWidth / 2, sw = els.scene.offsetWidth * viewZoom, sh = els.scene.offsetHeight * viewZoom;
+    viewPanX = clamp(viewPanX, halfW - sw, halfW); viewPanY = clamp(viewPanY, mid - sh, mid); return; // (an edge of the plan at most in the middle)
+  }
   if (viewZoom < minViewZoom() - .001) {
     // Zoomed out below the fitted size (editing on a phone): the smaller plan may be moved within the viewport.
     const freeX = els.viewport.clientWidth - els.scene.offsetWidth * viewZoom, freeY = els.viewport.clientHeight - els.scene.offsetHeight * viewZoom;
