@@ -1,3 +1,9 @@
+## 0.6.1-beta.671
+
+- Ikona w kształcie koła/kwadratu: jeden suwak „Wielkość” (ramka 1:1) zamiast szerokości i wysokości, plus osobny suwak „Wielkość ikony” (sama ikona w ramce, z zakresem do tego, co się mieści - jak tekst).
+- Na kaflu w układzie „Jedno pod drugim” „Wielkość” ikony przelicza cały układ: nazwa i stan biorą resztę wysokości, zostają równe, na całą szerokość, z dopasowanym tekstem - po powiększeniu do maksimum i powrocie wracają do normalnego wyglądu (bez zniekształceń).
+- Ikona zachowuje swój udział w ramce: przy zmianie wielkości ramki rośnie i maleje razem z nią.
+
 ## 0.6.1-beta.670
 
 - Nowy domyślny układ etykiety na kaflu („Jedno pod drugim”): ikona, nazwa i stan tej samej wysokości, minimalne odstępy (4) i marginesy góra/dół i boki (4), nazwa i stan na prawie całą szerokość z tą samą wielkością i grubością czcionki, ikona 1:1. Etykieta przyjmuje kształt kafla, więc go wypełnia.
