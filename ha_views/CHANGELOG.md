@@ -1,3 +1,9 @@
+## 0.6.1-beta.661
+
+- Elementy (ikona, nazwa, stan): zmiana rozmiaru tekstu / ikony nie zmienia ramki – ramka zostaje, a rozmiar ma dynamiczny limit: tyle, ile mieści się w ramce.
+- Usunięte suwaki marginesów elementów (ramkę ustawia się szerokością / wysokością, zawartość rozmiarem).
+- Szerokość / wysokość elementu przyciągają się (wg menu przyciągania w etykiecie) do siatki etykiety, krawędzi i rozmiarów innych elementów oraz ramki etykiety; złapana linia jest pokazywana (Alt – bez przyciągania).
+
 ## 0.6.1-beta.660
 
 - Marginesy elementów (ikona, nazwa, stan) działają do środka: ramka elementu zachowuje rozmiar, a ikona / tekst w niej robi się mniejszy (większy). Po zmniejszeniu marginesu zawartość wraca do poprzedniego rozmiaru.

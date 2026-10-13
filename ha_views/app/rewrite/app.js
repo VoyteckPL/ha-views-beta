@@ -3791,17 +3791,15 @@ function roomEditorMarkup(room) {
     const [w0, h0] = boxNow(key), w = Number(r[`${key}W`]) > 0 ? Number(r[`${key}W`]) : Math.round(w0), h = Number(r[`${key}H`]) > 0 ? Number(r[`${key}H`]) : Math.round(h0);
     const others = ['labelIcon','labelName','labelState'].filter(k => k !== key && r[k]).map(boxNow).flat().filter(v => v > 0).map(Math.round);
     const snaps = [...new Set([...others, Math.round(w0), Math.round(h0)])].filter(v => v > 0).sort((a, b) => a - b);
-    const one = (label, path, v) => snapSlider(control(label, path, 'range', v, { min: 10, max: Math.max(300, Math.ceil(v * 2.5 / 10) * 10), step: 1, suffix: 'px', integer: true }), path, snaps, 3);
+    const one = (label, path, v) => control(label, path, 'range', v, { min: 10, max: Math.max(300, Math.ceil(v * 2.5 / 10) * 10), step: 1, suffix: 'px', integer: true }); void snaps;
     return one('Szerokość', `${key}W`, Math.max(10, w)) + one('Wysokość', `${key}H`, Math.max(10, h));
   };
   const withBoxRows = (h, key) => { const rows = boxRows(key); if (!rows) return h; const path = h.includes('data-path="tileIconShare"') ? 'tileIconShare' : h.includes(`data-path="${key}Size"`) ? `${key}Size` : ''; if (!path) { const j = h.indexOf('gauge-subsection-body">'); return j < 0 ? h : h.slice(0, j + 23) + rows + h.slice(j + 23); } const i = h.indexOf(`data-path="${path}"`), b = h.indexOf('</output></div>', i); return b < 0 ? h : h.slice(0, b + 15) + rows + h.slice(b + 15); };
   const partHtml = item => { const key = item[1]; let h = partSection(item);
     if (tileSizes && key === 'labelIcon') h = swapControl(h, 'labelIconSize', r.labelName || r.labelState ? control('Udział ikony','tileIconShare','range',tileIconShare(r),{ min:30, max:70, step:1, suffix:'%', integer:true }) : '');
     h = withBoxRows(h, key);
-    // A part's margin: top / bottom and left / right (the latter as it was: twice the top for a text, the same for the icon).
-    if (['labelIcon','labelName','labelState'].includes(key)) { const n = partNode(key), cs = n ? getComputedStyle(n) : null, set = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
-      const py = set(r[`${key}Padding`]) ? Number(r[`${key}Padding`]) : key === 'labelIcon' ? 6 : Math.round(parseFloat(cs?.paddingTop) || 0), px = set(r[`${key}PadX`]) ? Number(r[`${key}PadX`]) : key === 'labelIcon' ? py : (set(r[`${key}Padding`]) ? py * 2 : Math.round(parseFloat(cs?.paddingLeft) || 0));
-      h = swapControl(h, `${key}Padding`, control('Margines góra / dół', `${key}Padding`, 'range', Math.round(py), { min:0, max:120, step:1, suffix:'px', integer:true }) + control('Margines lewo / prawo', `${key}PadX`, 'range', Math.round(px), { min:0, max:240, step:1, suffix:'px', integer:true })); }
+    // (No margin sliders for a part: its frame is set with its width / height, what is in it with its size.)
+    if (['labelIcon','labelName','labelState'].includes(key)) h = swapControl(h, `${key}Padding`, '');
     if (oneShown !== key) return h;
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
@@ -3888,6 +3886,27 @@ function closeRoomEditor() {
   const had = selectedRoomId; regroupOnLeave(roomsOf()[had]); selectedRoomId = null; panelPart = null; roomPreviewOn = ''; delete panel.dataset.dragged;
   panel.classList.remove('visible'); panel.setAttribute('aria-hidden', 'true'); if (had) renderRooms();
 }
+// A part's box on the plan (grouped: inside its label's card; ungrouped: on its own).
+function partBoxNode(room, k) { const p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', id = CSS.escape(room.id); return document.querySelector(`.room-label-card[data-room-id="${id}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${id}"][data-label-part="${p}"]`); }
+// A part's width / height set with its slider snaps (as set in the label's snap menu) to the label's grid, to the other
+// parts' edges / sizes and to the label's frame; the line caught is shown. The box grows from its centre, so an edge on
+// a line means a size of twice its distance from the centre.
+function partSizeSnap(room, k, axis, want) {
+  const o = groupSnapOpts(), node = partBoxNode(room, k); if (!o.on || !node) return { v: want };
+  const sc = els.scene.getBoundingClientRect(), r = node.getBoundingClientRect(), z = (axis === 'x' ? r.width / Math.max(1, node.offsetWidth) : r.height / Math.max(1, node.offsetHeight)) || 1;
+  const lo = axis === 'x' ? 'left' : 'top', hi = axis === 'x' ? 'right' : 'bottom', c = (r[lo] + r[hi]) / 2, w = want * z, reach = snapReach();
+  const id = CSS.escape(room.id), card = room.labelLinked ? $(`.room-label-card[data-room-id="${id}"]`)?.getBoundingClientRect() : null;
+  const others = ['labelIcon','labelName','labelState'].filter(kk => kk !== k && room[kk]).map(kk => partBoxNode(room, kk)?.getBoundingClientRect()).filter(b => b?.width);
+  const cands = [];
+  if (o.grid !== 'off') { const box = card || r; let step = GROUP_GRID * z; while (step < 12) step *= 2; const origin = (box[lo] + box[hi]) / 2; for (let n = -60; n <= 60; n++) cands.push({ edge: origin + n * step, kind: 'ggrid' }); }
+  if (o.parts) others.forEach(b => { cands.push({ edge: b[lo], kind: 'label' }, { edge: b[hi], kind: 'label' }, { size: b[hi] - b[lo], kind: 'label', box: b }); });
+  if (o.frame && card) cands.push({ edge: card[lo], kind: 'frame' }, { edge: card[hi], kind: 'frame' });
+  let best = null;
+  cands.forEach(cd => { const size = cd.size ?? 2 * Math.abs(cd.edge - c); if (size < 4) return; const d = Math.abs(size - w); if (d <= reach && (!best || d < best.d)) best = { d, size, kind: cd.kind }; });
+  if (!best) return { v: want };
+  const toPct = v => (v - sc[lo]) / (axis === 'x' ? sc.width : sc.height) * 100, guides = [{ at: toPct(c - best.size / 2), kind: best.kind }, { at: toPct(c + best.size / 2), kind: best.kind }];
+  return { v: Math.round(best.size / z * 10) / 10, guides };
+}
 // The panel's sliders show what the label has now - after a layout, a share or a size that changed other values too.
 const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$/;
 function syncEditorValues(room) {
@@ -3908,18 +3927,28 @@ function syncEditorValues(room) {
 function tileAfterEdit(room, path) {
   if (!room || isThermoRoom(room) || !isIconRoom(room) || !dashSpan(room) || !room.labelLinked || room.labelCardFree) return syncEditorValues(room);
   const m = /^(label(?:Name|State))Size$/.exec(path);
-  if (m) applyTilePreset(room, undefined, m[1]);
+  if (false && m) applyTilePreset(room, undefined, m[1]);
   else if (/^labelCard(Padding|PadX)$/.test(path)) applyTilePreset(room);
   syncEditorValues(room);
 }
 function onRoomEditorInput(event) {
   const room = roomsOf()[selectedRoomId], input = event.target; if (!room) return;
   const path = input.dataset.path; if (!path) return;
-  // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
-  if (/^label(Icon|Name|State)(W|H)$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }
   if (SYNCED_PATHS.test(path)) { cancelAnimationFrame(onRoomEditorInput.after); onRoomEditorInput.after = requestAnimationFrame(() => tileAfterEdit(room, path)); }
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
+  // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
+  { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
+  // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
+  { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
+    if (n) { if (!(Number(room[`${k}W`]) > 0)) room[`${k}W`] = n.offsetWidth; if (!(Number(room[`${k}H`]) > 0)) room[`${k}H`] = n.offsetHeight; delete room[`${k}Lock`];
+      const cs = getComputedStyle(n), cw = Math.max(1, Number(room[`${k}W`]) - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, Number(room[`${k}H`]) - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0)), s0 = Number(room[path]) || ROOM_DEFAULTS[path];
+      let max = 420;
+      if (k === 'labelIcon') max = Math.min(cw, ch);
+      else { const t = n.querySelector('b, small') || n, rg = document.createRange(); rg.selectNodeContents(t); const g = rg.getBoundingClientRect(), z = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1; if (g.width > 0 && g.height > 0) max = s0 * Math.min(cw / (g.width / z), ch / (g.height / z)); }
+      max = Math.max(6, s0, Math.floor(max * 10) / 10); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
+  // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
+  if (/^label(Icon|Name|State)(W|H)$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }
   // A part's two margins: the first one moved makes the other one its own value too (as it is drawn now).
   { const mm = /^(label(?:Icon|Name|State))(Padding|PadX)$/.exec(path); if (mm) { const other = mm[2] === 'Padding' ? 'PadX' : 'Padding', ov = room[`${mm[1]}${other}`];
     if (ov === undefined || ov === null || ov === '' || !Number.isFinite(Number(ov))) { const p = mm[1] === 'labelIcon' ? 'icon' : mm[1] === 'labelName' ? 'name' : 'state', n = document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${p}"]`);
@@ -3972,7 +4001,7 @@ function onRoomEditorInput(event) {
   if (path === 'labelIconName') value = String(value).trim();
   // A name's / state's size slider scales its box with the text (and its margin and corners, as its dots do): the box
   // is fixed, so a bigger text in the old box would only be fitted back down.
-  { const own = !isThermoRoom(room) && /^(label(?:Name|State|Icon))Size$/.exec(path); if (own) { const fixedBox = !!room[`${own[1]}FixedBox`];
+  { const own = !isThermoRoom(room) && /^(label(?:Name|State|Icon))Size$/.exec(path); if (own) { const fixedBox = true; // (a part's frame stays as it is when its size changes)
     const k = own[1], old = Number(room[path]) || ROOM_DEFAULTS[path], f = Number(value) / Math.max(1, old), num = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     if (f > 0 && Math.abs(f - 1) > .001) {
       // The margin stays (an unset one, growing with the text, is kept at its present px): the box grows by the text only.
