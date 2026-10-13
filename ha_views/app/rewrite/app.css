@@ -1937,3 +1937,8 @@ body.editing .dash-quick.on{display:flex}
 /* (inside the label, clear of its rounded corner) */
 #dash-arrows .dash-arrow.se{transform:translate(-100%,-100%) translate(-15px,-15px)}#dash-arrows .dash-arrow.sw{transform:translate(0,-100%) translate(15px,-15px) rotate(90deg)}
 #dash-arrows .dash-arrow.ne{transform:translate(-100%,0) translate(-15px,15px) rotate(-90deg)}#dash-arrows .dash-arrow.nw{transform:translate(15px,15px) rotate(180deg)}
+/* (on the sides, just inside the label's edge) */
+#dash-arrows .dash-arrow{width:16px;height:16px;font-size:14px;border:0;background:rgba(7,25,36,.55)}
+#dash-arrows .dash-arrow.e{transform:translate(-100%,-50%) translate(-3px,0)}#dash-arrows .dash-arrow.w{transform:translate(0,-50%) translate(3px,0)}
+#dash-arrows .dash-arrow.s{transform:translate(-50%,-100%) translate(0,-3px)}#dash-arrows .dash-arrow.n{transform:translate(-50%,0) translate(0,3px)}
+#dash-arrows .dash-arrow.e,#dash-arrows .dash-arrow.w{cursor:ew-resize}#dash-arrows .dash-arrow.n,#dash-arrows .dash-arrow.s{cursor:ns-resize}

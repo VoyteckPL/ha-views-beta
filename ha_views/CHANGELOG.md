@@ -1,3 +1,7 @@
+## 0.6.1-beta.692
+
+- Strzałki rozciągania etykiety na kaflu przeniesione na środek każdej krawędzi, tuż przy jej brzegu (wewnątrz etykiety), małe i bez obwódki; dalej tylko po najechaniu myszką; każda rozciąga w swoją stronę.
+
 ## 0.6.1-beta.691
 
 - Strzałki rozciągania etykiety na kaflu: dużo mniejsze, w rogach etykiety (wewnątrz niej, nie wystają), widoczne tylko po najechaniu myszką; róg rozciąga w obie strony, w które wskazuje (albo zmniejsza).

@@ -1122,9 +1122,9 @@ function renderDashArrows(view, g, busy) {
   if (layer.__key === key) return; layer.__key = key;
   const hot = new Set($$('.dash-arrow-set.hot', layer).map(n => n.dataset.roomId));
   const arrow = (id, side, x, y, mdi) => `<button type="button" class="dash-arrow ${side}" data-dash-arrow="${side}" data-room-id="${escapeHtml(id)}" style="left:${x}%;top:${y}%" aria-label="${escapeHtml(translateValue('Rozciągnij'))}"><i class="mdi ${mdi}"></i></button>`;
-  // (in the tile's corners: each takes the label over the next tiles both ways it points - or back)
   layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1;
-    [['se', s.x + s.w, s.y + s.h, canE || canS], ['sw', s.x, s.y + s.h, canW || canS], ['ne', s.x + s.w, s.y, canE || canN], ['nw', s.x, s.y, canW || canN]].forEach(([k, x, y, ok]) => { if (ok) out.push(arrow(r.id, k, x, y, 'mdi-arrow-bottom-right')); });
+    // (at the middle of each side, just inside the label's edge, pointing out: that way only)
+    [['e', s.x + s.w, s.y + s.h / 2, canE, 'mdi-chevron-right'], ['w', s.x, s.y + s.h / 2, canW, 'mdi-chevron-left'], ['s', s.x + s.w / 2, s.y + s.h, canS, 'mdi-chevron-down'], ['n', s.x + s.w / 2, s.y, canN, 'mdi-chevron-up']].forEach(([k, x, y, ok, mdi]) => { if (ok) out.push(arrow(r.id, k, x, y, mdi)); });
     return `<div class="dash-arrow-set${hot.has(r.id) ? ' hot' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
   rooms.forEach(r => { const set = layer.querySelector(`.dash-arrow-set[data-room-id="${CSS.escape(r.id)}"]`); if (set) set.__box = dashSpan(r, view); });
 }
