@@ -1,3 +1,9 @@
+## 0.6.1-beta.678
+
+- Margines etykiety: jeden suwak (dookoła); 0 daje elementy na całą szerokość etykiety (etykieta z presetem wypełnia kafel w 100%).
+- Preset 2 („Ikona z lewej”): dwa suwaki odstępu - „Odstęp” (między nazwą a stanem) i „Odstęp od ikony”.
+- Nowy preset 3: ikona i nazwa w jednym rzędzie, stan pod nimi (domyślnie 50/50, wygląd jak w domyślnym). „Odstęp” reguluje odstęp między rzędem ikona+nazwa a stanem, „Podział” (i „Wielkość” ikony) zwiększa wysokość rzędu ikona+nazwa, zmniejszając stan.
+
 ## 0.6.1-beta.677
 
 - Preset 2 („Ikona z lewej”) na nowo: ikona 1:1 po lewej, nazwa i stan jedno pod drugim po prawej, równej wysokości, z tą samą wielkością tekstu, biały tekst, zaokrąglenie 12, minimalne odstępy; zamiast „Udziału ikony” zwykłe suwaki „Wielkość” (ramka ikony - nazwa i stan biorą resztę szerokości) i „Wielkość ikony”.

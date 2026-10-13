@@ -1850,3 +1850,7 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 #dash-grid .dash-pluses{position:absolute;inset:0}
 #dash-grid .dash-plus{position:absolute;display:grid;place-items:center;width:30px;height:30px;padding:0;transform:translate(-50%,-50%);border:1px solid rgba(143,223,255,.45);border-radius:50%;background:rgba(7,25,36,.72);color:#8fdfff;font-size:18px;cursor:pointer;pointer-events:auto;opacity:.75;transition:opacity .15s,background .15s}
 #dash-grid .dash-plus:hover{opacity:1;background:#1e4a5e;color:#fff}
+
+/* "Ikona i nazwa w rzędzie, stan pod nimi": the icon and the name side by side, the state under them across the label */
+.room-label-card.layout-iconName{display:grid;grid-template-columns:auto auto;grid-template-areas:"icon name" "state state";align-items:center;justify-content:center;align-content:center}
+.room-label-card.layout-iconName .room-card-part.icon{grid-area:icon}.room-label-card.layout-iconName .room-card-part.name{grid-area:name}.room-label-card.layout-iconName .room-card-part.state{grid-area:state;justify-self:center}

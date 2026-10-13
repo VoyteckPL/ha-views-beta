@@ -14,7 +14,7 @@ const ACTIVE_VIEW_CACHE_KEY = 'ha-views:last-active-view';
 let uiLanguage = 'en';
 const TRANSLATIONS = {
   en: {
-    'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Wielkość':'Size','Wielkość ikony':'Icon size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
+    'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
     'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Wersja aplikacji HA Views':'HA Views app version',
@@ -1127,7 +1127,7 @@ const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCar
 const TILE_COL_U = 240;
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
 function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
-const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && (room.labelCardLayout === 'column' || room.labelCardLayout === 'iconLeft') && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
+const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && ['column','iconLeft','iconName'].includes(room.labelCardLayout) && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
 // The height the parts of a "Jedno pod drugim" tile label share (gaps and margins taken off): the label is the tile's shape.
 // The label's inner height on its tile (margins off; its width is TILE_COL_U): the label is the tile's shape.
 function tileInnerH(room, aspect) {
@@ -1136,6 +1136,7 @@ function tileInnerH(room, aspect) {
   return Math.max(8, (TILE_COL_U + 2 * px) / A - 2 * py);
 }
 const tileRowIconMax = room => Math.max(10, Math.min(tileInnerH(room), TILE_COL_U * .6));
+const tileDuoTop = room => Math.max(10, tileInnerH(room) - clamp(Number(room.labelPartGap ?? 4), 0, 80));
 function tileColumnHs(room, aspect) {
   const parts = ['labelIcon','labelName','labelState'].filter(k => room[k]).length || 1, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), py = clamp(Number(room.labelCardPadding ?? 4), 0, 150), px = cardPadX(room), span = dashSpan(room), sc = els.scene?.getBoundingClientRect();
   const A = aspect || (span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1);
@@ -1152,11 +1153,23 @@ function tileColumnLayout(room, reset = false) {
     texts.forEach(k => { room[`${k}Radius`] = 12; room[`${k}ColorState`] = false; room[`${k}Color`] = '#FFFFFF'; room[`${k}ColorOn`] = '#FFFFFF'; }); }
   ['labelIcon','labelName','labelState'].forEach(k => { ['Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase','labelGiveBase'].forEach(k => delete room[k]);
-  const U = TILE_COL_U, row = room.labelCardLayout === 'iconLeft' && icon && texts.length > 0, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), inner = tileInnerH(room), hs = row ? inner : tileColumnHs(room), r1 = v => Math.round(v * 10) / 10;
+  const U = TILE_COL_U, row = room.labelCardLayout === 'iconLeft' && icon && texts.length > 0, duo = room.labelCardLayout === 'iconName' && icon && texts.length === 2, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), gi = row ? clamp(Number(room.tileIconGap ?? g), 0, 80) : g, inner = tileInnerH(room), hs = row ? inner : tileColumnHs(room), r1 = v => Math.round(v * 10) / 10;
+  // The icon and the name in one row, the state under them (the rows split as set, half and half by default).
+  if (duo) {
+    const sp = clamp(Number(room.tileRowSplit) || .5, .2, .8), top = (inner - g) * sp, bot = inner - g - top, ih = Math.min(top, U * .6), fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0;
+    const was = Number(room.labelIconW) - 2 * pad, keep = !fresh && room.tileColV2Done && was > 0 && Number(room.labelIconSize) > 0 && room.tileDuoDone, k0 = keep ? clamp(Number(room.labelIconSize) / was, .1, 1) : (fr ? .7 : .9);
+    room.labelIconW = room.labelIconH = r1(ih); room.labelIconSize = r1(clamp((ih - 2 * pad) * k0, 6, Math.max(6, ih - 2 * pad))); room.tileDuoDone = true;
+    room.labelNameW = r1(Math.max(20, U - ih - g)); room.labelNameH = r1(top); room.labelStateW = U; room.labelStateH = r1(bot);
+    texts.forEach(k => { if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
+    room.tileColV2Done = true; renderRoomLabels();
+    const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); texts.forEach(k => { room[`${k}Size`] = sz; }); }
+    renderRoomLabels(); return;
+  }
+  delete room.tileDuoDone;
   // One under the other: the icon's height is its share of it. The icon on the left: its frame as set (by default 40% of
   // the label's width, at most as high as the label), the name / state one under the other next to it.
   let ih = icon ? (row ? clamp(Number(room.tileRowIcon) || Math.min(inner, U * .4), 10, tileRowIconMax(room)) : texts.length ? hs * tileIconShare(room) / 100 : hs) : 0; if (!row) ih = Math.min(ih, U);
-  const th = texts.length ? (row ? (inner - g * (texts.length - 1)) / texts.length : (hs - ih) / texts.length) : 0, tw = row ? Math.max(20, U - ih - g) : U;
+  const th = texts.length ? (row ? (inner - g * (texts.length - 1)) / texts.length : (hs - ih) / texts.length) : 0, tw = row ? Math.max(20, U - ih - gi) : U;
   // (the icon keeps the share of its frame it had - its own slider sets that; by default 70% of it, 90% with no frame)
   if (icon) { const fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, was = Number(room.labelIconW) - 2 * pad, keep = !fresh && room.tileColV2Done && was > 0 && Number(room.labelIconSize) > 0, k0 = keep ? clamp(Number(room.labelIconSize) / was, .1, 1) : 0;
     room.labelIconW = room.labelIconH = r1(ih);
@@ -1173,8 +1186,8 @@ function applyTilePreset(room, preset = room.tilePreset || 'v', master = '', res
   if (!room || isThermoRoom(room)) return;
   room.tilePreset = preset;
   const icon = !!room.labelIcon, texts = ['labelName','labelState'].filter(k => room[k]);
-  room.labelCardFree = false; room.labelCardLayout = preset === 'h' && icon && texts.length === 2 ? 'iconLeft' : 'column'; /* (two parts: always one under the other) */ room.labelCardAlign = 'center';
-  if (room.labelCardLayout === 'column' || (room.labelCardLayout === 'iconLeft' && texts.length === 2)) { if (reset) delete room.tileRowIcon; return tileColumnLayout(room, reset); }
+  room.labelCardFree = false; room.labelCardLayout = preset === 'h' && icon && texts.length === 2 ? 'iconLeft' : preset === 'n' && icon && texts.length === 2 ? 'iconName' : 'column'; /* (two parts: always one under the other) */ room.labelCardAlign = 'center';
+  if (room.labelCardLayout === 'column' || (['iconLeft','iconName'].includes(room.labelCardLayout) && texts.length === 2)) { if (reset) { delete room.tileRowIcon; delete room.tileRowSplit; delete room.tileIconGap; } return tileColumnLayout(room, reset); }
   ['labelIcon','labelName','labelState'].forEach(k => { ['W','H','Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]);
   // (the tile scales the label to fill it, so the icon's own size only sets how big the gaps and frames are next to it: a
@@ -1221,8 +1234,10 @@ function fitDashLabels() {
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
+    // (a label laid out by a preset is the tile's shape and fills it - its margin is the only room left round its parts)
+    const fill = room.labelLinked && room.tileColV2 && !room.labelCardFree ? 1 : .94;
     // (While a part's size / width / height slider is moved, the label's fit stays as it was: refitted each step it would shake.)
-    const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * .94 / nw, th * .94 / nh), .1, 8);
+    const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : clamp(Math.min(tw * fill / nw, th * fill / nh), .1, 8);
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
     card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
@@ -1930,11 +1945,11 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
       return `<div class="room-card-part ${part}${textLock(r, key) ? ' fit' : ''}${interactive && panelPart?.roomId === r.id && panelPart.part === part ? ' panel-part' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}" data-label-part="${part}" style="font-size:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px;${place}${partBoxSize(r, key)}${bg}">${content[part]}</div>`;
     }).join('');
     if (!inner) return '';
-    const solo = soloLabel(r), layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
+    const solo = soloLabel(r), layout = ROOM_CARD_LAYOUTS.some(([v]) => v === r.labelCardLayout) || r.labelCardLayout === 'iconName' ? r.labelCardLayout : 'column', align = ['left','center','right'].includes(r.labelCardAlign) ? r.labelCardAlign : 'center';
     const pin = isIconRoom(r) && dashSpan(r), lscale = clamp(Number(r.labelCardScale) || 1, .3, 6), toLocal = (els.scene?.offsetWidth || 1) / 100 / (lscale * (sceneScale || 1)), toLocalY = (els.scene?.offsetHeight || 1) / 100 / (lscale * (sceneScale || 1));
     const style = [`left:${x.toFixed(3)}%`, `top:${y.toFixed(3)}%`, `--ax:${x.toFixed(3)}%`, `--ay:${y.toFixed(3)}%`, `--lx:${Number(r.labelCardX) || 0}px`, `--ly:${Number(r.labelCardY) || 0}px`, `--lscale:${lscale}`,
       pin ? `min-width:${(pin.w * toLocal).toFixed(2)}px;min-height:${(pin.h * toLocalY).toFixed(2)}px` : solo ? 'box-sizing:border-box' : `${Number(r.labelCardW) > 0 ? `min-width:${Number(r.labelCardW)}px;` : ''}${Number(r.labelCardH) > 0 ? `min-height:${Number(r.labelCardH)}px;` : ''}box-sizing:border-box`,
-      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 150)}px ${Math.round(cardPadX(r) * 10) / 10}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
+      free || solo ? 'padding:0' : `padding:${clamp(Number(r.labelCardPadding) || 0, 0, 150)}px ${Math.round(cardPadX(r) * 10) / 10}px`, `gap:${free || isThermoRoom(r) ? 0 : clamp(Number(room.labelPartGap) || 0, 0, 80)}px ${free || isThermoRoom(r) ? 0 : clamp(Number(r.labelCardLayout === 'iconLeft' && r.tileColV2 ? room.tileIconGap ?? room.labelPartGap : room.labelPartGap) || 0, 0, 80)}px`, solo ? 'background:none;box-shadow:none;border:0' : cardLook(r, on)].join(';') + accentVar;
     // Selected: a dot on each corner changes the label's width and height (Shift: scales the whole label).
     // A label's group also has a dot in the middle of each side: that side only (the frame's width or height; the parts,
     // texts and margin stay as they are, centred in it).
@@ -3674,7 +3689,7 @@ function roomEditorMarkup(room) {
   // Background and frame of any part (icon, name, state): the same options, each can follow ON / OFF.
   const range = (label, path, value, min, max, step, suffix) => control(label, path, 'range', value, { min, max, step, suffix, integer: step >= 1 });
   // The label's margin: top / bottom and left / right, each its own slider.
-  const marginRows = () => !r.labelLinked ? '' /* (ungrouped: no frame round the parts, no margin) */ : control('Margines góra / dół','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }) + control('Margines lewo / prawo','labelCardPadX','range',Math.round(cardPadX(r)),{ min:0, max:150, step:1, suffix:'px', integer:true });
+  const marginRows = () => !r.labelLinked ? '' /* (ungrouped: no frame round the parts, no margin) */ : control('Margines','labelCardPadding','range',clamp(Number(r.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150),{ min:0, max:150, step:1, suffix:'px', integer:true }); // (one margin, all round)
   const stateColours = (key, base, field, fallbackColor, fallbackOpacity, width) => r[`${key}${base}State`]
     ? control('Kolor ON',`${key}${base}OnColor`,'color',r[`${key}${base}OnColor`]) + control('Kolor OFF',`${key}${base}OffColor`,'color',r[`${key}${base}OffColor`])
       + range('Przezrocz. ON',`${key}${base}OnOpacity`,pct(r[`${key}${base}OnOpacity`]),0,100,1,'%') + range('Przezrocz. OFF',`${key}${base}OffOpacity`,pct(r[`${key}${base}OffOpacity`]),0,100,1,'%')
@@ -3826,12 +3841,15 @@ function roomEditorMarkup(room) {
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
   const onTile = icon && !isThermoRoom(r) && !!dashSpan(r), tp = r.tilePreset || 'v';
   // (each preset's button is a small picture of the label it makes: the icon a circle, the name / state bars)
-  const presetPic = v => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${v === 'v' ? '<circle cx="12" cy="5.5" r="3.5"/><rect x="3.5" y="11" width="17" height="4.5" rx="1.6"/><rect x="3.5" y="17.5" width="17" height="4.5" rx="1.6"/>' : '<circle cx="6.5" cy="12" r="4.5"/><rect x="13" y="6.5" width="9" height="4.5" rx="1.6"/><rect x="13" y="13" width="9" height="4.5" rx="1.6"/>'}</svg>`;
+  const presetPic = v => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${v === 'v' ? '<circle cx="12" cy="5.5" r="3.5"/><rect x="3.5" y="11" width="17" height="4.5" rx="1.6"/><rect x="3.5" y="17.5" width="17" height="4.5" rx="1.6"/>' : v === 'n' ? '<circle cx="6.5" cy="7.5" r="4"/><rect x="12.5" y="5" width="9" height="5" rx="1.6"/><rect x="2.5" y="14" width="19" height="6" rx="1.6"/>' : '<circle cx="6.5" cy="12" r="4.5"/><rect x="13" y="6.5" width="9" height="4.5" rx="1.6"/><rect x="13" y="13" width="9" height="4.5" rx="1.6"/>'}</svg>`;
   const presetBtn = (v, title) => `<button type="button" class="room-card-preset${tp === v ? ' active' : ''}" data-tile-preset="${v}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${presetPic(v)}</button>`;
-  const tilePresets = onTile && shownCount > 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + '</div></div>' : '';
+  const tilePresets = onTile && shownCount > 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi') + '</div></div>' : '';
   const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
+    // (on a tile, "Ikona z lewej": the gap to the icon of its own; "Ikona i nazwa w rzędzie": how the two rows split the height)
+    + (onTile && r.labelLinked && r.tileColV2 && r.labelCardLayout === 'iconLeft' ? range('Odstęp od ikony','tileIconGap',clamp(Number(r.tileIconGap ?? r.labelPartGap ?? 4), 0, 30),0,30,1,'px') : '')
+    + (onTile && r.labelLinked && r.tileColV2 && r.labelCardLayout === 'iconName' ? range('Podział','tileRowSplit',Math.round(clamp(Number(r.tileRowSplit) || .5, .2, .8) * 100),20,80,1,'%') : '')
     + tilePresets
     );
   // (On tiles a label is always on its tile, sized with its dots: no tile rows.)
@@ -4066,7 +4084,7 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false) {
 // The size sliders' range follows what fits in the part's frame now.
 function syncSizeRanges(room) {
   $$('#room-editor-content input[type=range][data-path]').forEach(i => { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(i.dataset.path);
-    if (wm && wm[1] === 'labelIcon' && isTileColumn(room)) { if (i !== document.activeElement) { const row = room.labelCardLayout === 'iconLeft', hs = tileColumnHs(room); i.min = String(row ? 10 : Math.ceil(hs * .1)); i.max = String(Math.floor(row ? tileRowIconMax(room) : hs * .7)); } return; }
+    if (wm && wm[1] === 'labelIcon' && isTileColumn(room)) { if (i !== document.activeElement) { const row = room.labelCardLayout === 'iconLeft', duo = room.labelCardLayout === 'iconName', hs = tileColumnHs(room), dt = tileDuoTop(room); i.min = String(duo ? Math.ceil(dt * .2) : row ? 10 : Math.ceil(hs * .1)); i.max = String(Math.floor(duo ? Math.min(dt * .8, TILE_COL_U * .6) : row ? tileRowIconMax(room) : hs * .7)); } return; }
     if (wm && !(partWHMax.frozen && i === document.activeElement)) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); if (mx) { const v = Math.max(mx, Number(i.value) || 0); if (Number(i.max) !== v) i.max = String(v); } return; }
     const m = /^(label(?:Icon|Name|State))Size$/.exec(i.dataset.path); if (!m || i === document.activeElement && syncSizeRanges.dragging) return;
     const mx = partSizeMax(room, m[1]); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
@@ -4135,10 +4153,10 @@ function onRoomEditorInput(event) {
   // On a "Jedno pod drugim" tile the icon's size is its share of the label's height: the name / state take the rest
   // (laid out again, as high as each other, with their text fitted) - so it can go up and back down leaving them as they were.
   if (/^labelIcon(W|H)$/.test(path) && typeof value === 'number' && isTileColumn(room)) {
-    const row = room.labelCardLayout === 'iconLeft', hs = tileColumnHs(room);
-    if (row) room.tileRowIcon = Math.round(clamp(value, 10, tileRowIconMax(room)) * 10) / 10; else room.tileIconShare = Math.round(clamp(value / hs * 100, 10, 70) * 10) / 10;
+    const row = room.labelCardLayout === 'iconLeft', duo = room.labelCardLayout === 'iconName', hs = tileColumnHs(room), dt = tileDuoTop(room);
+    if (duo) room.tileRowSplit = Math.round(clamp(value / dt, .2, .8) * 1000) / 1000; else if (row) room.tileRowIcon = Math.round(clamp(value, 10, tileRowIconMax(room)) * 10) / 10; else room.tileIconShare = Math.round(clamp(value / hs * 100, 10, 70) * 10) / 10;
     tileColumnLayout(room);
-    input.min = String(row ? 10 : Math.ceil(hs * .1)); input.max = String(Math.floor(row ? tileRowIconMax(room) : hs * .7)); input.value = String(Math.round(room.labelIconW)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room.labelIconW)}${o.dataset.suffix || ''}`;
+    input.min = String(duo ? Math.ceil(dt * .2) : row ? 10 : Math.ceil(hs * .1)); input.max = String(Math.floor(duo ? Math.min(dt * .8, TILE_COL_U * .6) : row ? tileRowIconMax(room) : hs * .7)); input.value = String(Math.round(room.labelIconW)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room.labelIconW)}${o.dataset.suffix || ''}`;
     room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
   { const own = /^(label(?:Icon|Name|State))(W|H|Size)$/.exec(path); if (own && room.labelGiveBase?.[own[1]]) { delete room.labelGiveBase[own[1]]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }
@@ -4233,6 +4251,7 @@ function onRoomEditorInput(event) {
   // The parts' spacing in a label's group (a free group: its parts restacked along their row / column).
   // On a tile with a ready layout the gap is just the space between the parts (icon - text, name - state): the layout is
   // worked out again with it, nothing is moved apart one by one.
+  if ((path === 'tileIconGap' || path === 'tileRowSplit') && typeof value === 'number') { room[path] = path === 'tileRowSplit' ? clamp(value / 100, .2, .8) : clamp(value, 0, 30); applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
   if (path === 'tileIconShare') { room.tileIconShare = clamp(Number(value) || 50, 30, 70); applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(); return; }
   if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked && isIconRoom(room) && dashSpan(room) && !room.labelCardFree) { room.labelPartGap = value; applyTilePreset(room); }
   else if (path === 'labelPartGap' && !isThermoRoom(room) && room.labelLinked) { room.labelPartGap = value; arrangeLabelParts(room, 'gap'); }
@@ -4248,7 +4267,7 @@ function onRoomEditorInput(event) {
     // (The base is kept with the label: taken again only when its size / margins were changed some other way since.)
     const py0 = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150), px0 = cardPadX(room), s0 = clamp(Number(room.labelCardScale) || 1, .3, 6), pb = room.labelPadBase;
     if (!input._padBase) { input._padBase = pb && Math.abs(pb.s - s0) < 1e-3 && Math.abs((pb.py ?? pb.p) - py0) < .01 && Math.abs((pb.px ?? px0) - px0) < .01 ? pb.base : null; if (!input._padBase && card) { const [w, h] = cssBox(card); input._padBase = { W: w * s0, H: h * s0, cw: Math.max(1, w - 2 * px0), ch: Math.max(1, h - 2 * py0) }; } input.addEventListener('change', () => { delete input._padBase; }, { once: true }); }
-    const b = input._padBase; if (b) { const v = clamp(Number(value) || 0, 0, 150), py = path === 'labelCardPadding' ? v : py0, px = path === 'labelCardPadX' ? v : px0; room.labelCardScale = Math.round(clamp(Math.min(b.W / (b.cw + 2 * px), b.H / (b.ch + 2 * py)), .3, 6) * 1e4) / 1e4; room.labelPadBase = { base: b, py, px, s: room.labelCardScale }; }
+    const b = input._padBase; if (b) { const v = clamp(Number(value) || 0, 0, 150), py = path === 'labelCardPadding' ? v : py0, px = path === 'labelCardPadX' || path === 'labelCardPadding' ? v : px0; room.labelCardScale = Math.round(clamp(Math.min(b.W / (b.cw + 2 * px), b.H / (b.ch + 2 * py)), .3, 6) * 1e4) / 1e4; room.labelPadBase = { base: b, py, px, s: room.labelCardScale }; }
   }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text. (Not the font
   // weight: a bolder / lighter text keeps its frame.)
@@ -4257,6 +4276,7 @@ function onRoomEditorInput(event) {
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }
   room[path] = value; room.updatedAt = new Date().toISOString();
+  if (path === 'labelCardPadding') room.labelCardPadX = value; // (one margin all round)
   const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
   renderRooms();
   // A size changed (slider let go): the camera keeps the label in view with 20% round it.
