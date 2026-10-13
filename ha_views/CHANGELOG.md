@@ -1,3 +1,7 @@
+## 0.6.1-beta.658
+
+- Etykieta: zamiast jednego „Margines” dwa suwaki – „Margines góra / dół” i „Margines lewo / prawo”. Etykiety zapisane wcześniej zachowują wygląd (lewo / prawo jak dotąd 1,35× góra / dół).
+
 ## 0.6.1-beta.657
 
 - Elementy (ikona, nazwa, stan): w podsekcji „Rozmiar” suwaki „Szerokość” i „Wysokość” ramki elementu. Podczas przesuwania przyciągają się do szerokości / wysokości pozostałych elementów i do naturalnego rozmiaru elementu.
