@@ -1,3 +1,9 @@
+## 0.6.1-beta.684
+
+- Presety dla dwóch widocznych elementów na kaflu (nazwa + stan, ikona + nazwa, ikona + stan): „Jedno pod drugim” (50/50), „Obok siebie” (przy ikonie: ikona 1:1 po lewej) i „Małe nad dużym” (30/70). Każdy tekst tak duży, jak pozwala jego ramka; suwaki „Odstęp”, „Margines”, „Podział” (kropki 25/50/75) i „Wielkość” ikony.
+- Obrazki przycisków presetów pokazują widoczne elementy (kółko = ikona, belka = tekst).
+- Nowa etykieta z samą nazwą i stanem dostaje domyślnie „Małe nad dużym”.
+
 ## 0.6.1-beta.683
 
 - Reset suwaków w presetach działa: „Odstęp od ikony” wraca do 4, „Podział” do 50%; na kaflu z presetem „Odstęp” i „Margines” wracają do 4 (wartości presetu, nie dawne 12/0).
