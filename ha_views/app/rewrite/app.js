@@ -1175,6 +1175,7 @@ const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCar
 // What a preset's label parts are (sizes, places, shown): unchanged means the preset's layout still stands.
 const presetLook = room => JSON.stringify(['labelIcon','labelName','labelState'].map(k => [!!room[k], ...['W','H','Size','X','Y','Radius'].map(d => Math.round((Number(room[`${k}${d}`]) || 0) * 10) / 10)]).concat([room.labelCardLayout, room.labelPartGap, room.labelCardPadding]));
 const TILE_COL_U = 240;
+const TILE_FIT_V = 2; // (how a preset's texts are fitted: a label laid out with an older way is laid out again)
 const TILE_TEXT_MARGIN = .12, TILE_TEXT_MARGIN_ROW = .1, TEXT_CAP_FILL = .5; // (a preset's text: its capitals half its frame's height) // (a preset's name / state: the text fills its frame, the same small margin left on every side)
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
 function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
@@ -1214,7 +1215,7 @@ function tileColumnLayout(room, reset = false) {
     room.labelIconW = room.labelIconH = r1(ih); room.labelIconSize = r1(clamp((ih - 2 * pad) * k0, 6, Math.max(6, ih - 2 * pad))); room.tileDuoDone = true;
     room.labelNameW = r1(Math.max(20, U - ih - g)); room.labelNameH = r1(top); room.labelStateW = U; room.labelStateH = r1(bot);
     texts.forEach(k => { if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
-    room.tileColV2Done = true; renderRoomLabels();
+    room.tileColV2Done = true; room.tileFitV = TILE_FIT_V; renderRoomLabels();
     // (each text as big as its own frame lets it: the state's short value fills its wide frame)
     texts.forEach(k => { const v = partSizeMax(room, k, undefined, true, TILE_TEXT_MARGIN_ROW); if (v > 0) room[`${k}Size`] = r1(clamp(v, 6, 420)); });
     renderRoomLabels(); return;
@@ -1229,7 +1230,7 @@ function tileColumnLayout(room, reset = false) {
     room.labelIconW = room.labelIconH = r1(ih);
     // (by default the icon is 40 on a tile of a 4 x 10 grid - on other tiles in proportion - as far as its frame lets it)
     room.labelIconSize = r1(clamp(keep ? (ih - 2 * pad) * k0 : row ? (ih - 2 * pad) * (fr ? .7 : .9) : 40 * hs / Math.max(1, tileColumnHs(room, tileAspectOf(4, 10))), 6, Math.max(6, ih - 2 * pad))); }
-  room.tileColV2Done = true;
+  room.tileColV2Done = true; room.tileFitV = TILE_FIT_V;
   texts.forEach(k => { room[`${k}W`] = r1(tw); room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
   renderRoomLabels();
   // "Ikona z lewej": each text as big as its own frame lets it (a smaller margin) - the state's short value fills its frame too.
@@ -1265,7 +1266,7 @@ function tilePairLayout(room, preset, reset = false) {
   if (preset !== 'h') { const top = (inner - g) * sp; box(a, U, top); box(b, U, inner - g - top); }
   else if (icon) { const ih = clamp(Number(room.tileRowIcon) || Math.min(inner, U * .45), 10, Math.min(inner, U * .6)); box(a, ih, ih); box(b, U - ih - g, inner); }
   else { const aw = (U - g) * sp; box(a, aw, inner); box(b, U - g - aw, inner); }
-  room.tilePairDone = true; room.tileColV2Done = true; renderRoomLabels();
+  room.tilePairDone = true; room.tileColV2Done = true; room.tileFitV = TILE_FIT_V; renderRoomLabels();
   texts.forEach(k => { const v = partSizeMax(room, k, undefined, true, TILE_TEXT_MARGIN_ROW); if (v > 0) room[`${k}Size`] = r1(clamp(v, 6, 420)); });
   renderRoomLabels();
 }
@@ -1326,6 +1327,11 @@ function fitDashLabels() {
     if (!pin) { if (editMode && Number(room?.preTileScale) > 0) { room.labelCardScale = Number(room.preTileScale); delete room.preTileScale; scheduleSave(); requestAnimationFrame(() => renderRoomLabels()); } return; }
     if (!(Number(room.preTileScale) > 0)) room.preTileScale = Number(room.labelCardScale) || ICON_LABEL_SCALE;
     // A label that comes onto a tile with no layout of its own yet gets the default one ("Jedno pod drugim").
+    // A preset's label laid out before its texts were fitted the way they are now (a "y" could be cut off): laid out again, once.
+    if (room.tileColV2 && room.tileFitV !== TILE_FIT_V && !room.tileNeedsLayout && room.labelLinked && !isThermoRoom(room) && !room.labelCardFree && !fitDashLabels.auto?.has(room.id)) {
+      // (once its texts are there to be measured - the states come a moment after the page)
+      (fitDashLabels.auto ||= new Set()).add(room.id); setTimeout(() => { fitDashLabels.auto.delete(room.id); const c = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`);
+        if (!dashSpan(room) || !c?.offsetWidth || [...c.querySelectorAll('[data-label-part="name"], [data-label-part="state"]')].some(n => !(n.textContent || '').trim()) || (document.fonts && document.fonts.status !== 'loaded')) return; room.tileFitV = TILE_FIT_V; applyTilePreset(room); renderRooms(); if (!isViewer()) scheduleSave(); }, 600); }
     if (room.tileNeedsLayout && editMode && room.labelLinked && !isThermoRoom(room) && !room.labelCardFree && !fitDashLabels.auto?.has(room.id)) {
       (fitDashLabels.auto ||= new Set()).add(room.id); requestAnimationFrame(() => { fitDashLabels.auto.delete(room.id); delete room.tileNeedsLayout; if (dashSpan(room)) { applyTilePreset(room, defaultTilePreset(room), '', true); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } }); }
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });

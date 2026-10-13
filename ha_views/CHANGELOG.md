@@ -1,3 +1,7 @@
+## 0.6.1-beta.700
+
+- Etykiety z presetem ułożone starszymi wersjami (z tekstem liczonym po staremu, np. obciętym „y”) przeliczają się raz same po wczytaniu - z zachowaniem ustawień presetu (podział, odstępy, margines).
+
 ## 0.6.1-beta.699
 
 - Usunięte przyciski przy suwaku rozmiaru tekstu / ikony („Dopasuj do tekstu” i kłódka „Stała ramka”) - ramkę ustawiają szerokość / wysokość (lub preset), a tekst dopasowuje się do niej z marginesem wewnętrznym.
