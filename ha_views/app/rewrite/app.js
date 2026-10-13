@@ -1937,7 +1937,8 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const style = `left:${x.toFixed(3)}%;top:${y.toFixed(3)}%;--ax:${x.toFixed(3)}%;--ay:${y.toFixed(3)}%;--lx:${Number(r[`${key}X`]) || 0}px;--ly:${Number(r[`${key}Y`]) || 0}px;--lscale:${clamp(Number(r.labelCardScale) || 1, .3, 6)};--lsize:${clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420)}px${partBoxSize(r, key)}${bg}${accentVar}`;
     // Selected and ungrouped: a dot on each corner scales the part; a dot in the middle of each side stretches its box
     // that way only (the icon / text inside keeps its size).
-    const handles = interactive && r.id === selectedRoomId ? ['nw','ne','sw','se','n','s','e','w'].map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
+    // (A round / square icon: its side dots only - each scales it as a whole, so it stays 1:1.)
+    const handles = interactive && r.id === selectedRoomId ? (part === 'icon' && iconShapeOf(r) !== 'custom' ? ['n','s','e','w'] : ['nw','ne','sw','se','n','s','e','w']).map(c => `<i class="card-handle ${c}" data-corner="${c}"></i>`).join('') : '';
     return `<div class="room-label-part ${part}${textLock(r, key) ? ' fit' : ''}${(r[`${key}Bg`] || r[`${key}Border`]) && part !== 'icon' ? ' bg' : ''}${part === 'icon' && (r.labelIconBg || r.labelIconBorder) ? ' ifr' : ''}${interactive ? ' editable' : ''}${r.labelLinked ? ' linked' : ''}${tap}${part === activePart ? ' active-part' : ''}" data-room-id="${escapeHtml(r.id)}" data-label-part="${part}" style="${style}">${content[part]}${handles}</div>`;
   }).join('');
 }
@@ -2237,7 +2238,22 @@ function startLockedResize(event, handle, room) {
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
+// An ungrouped round / square icon's side dot: the icon scales as a whole round its centre (frame 1:1, the icon in it
+// keeping its share of it), within its tile when it is on one.
+function startRoundIconResize(event, handle, node, room) {
+  event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
+  const c = handle.dataset.corner, X = c === 'e' || c === 'w', sign = c === 'e' || c === 's' ? 1 : -1, r0 = node.getBoundingClientRect(), k = r0.width / Math.max(1, node.offsetWidth) || 1;
+  const pad = parseFloat(getComputedStyle(node).paddingTop) || 0, f0 = iconFrameNow(room, node), s0 = Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize, p0 = X ? event.clientX : event.clientY;
+  const lim = [partWHMax(room, 'labelIcon', 'x'), partWHMax(room, 'labelIcon', 'y')].filter(v => v > 0), max = lim.length ? Math.max(f0, Math.min(...lim)) : 2000;
+  const move = e => { const d = ((X ? e.clientX : e.clientY) - p0) * sign / k, f = Math.round(clamp(f0 + 2 * d, 10, max) * 10) / 10;
+    room.labelIconW = room.labelIconH = f; room.labelIconSize = Math.round(clamp(s0 * Math.max(1, f - 2 * pad) / Math.max(1, f0 - 2 * pad), 6, 420) * 10) / 10; delete room.labelIconLock;
+    renderRooms(); syncEditorValues(room); };
+  const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); room.updatedAt = new Date().toISOString(); scheduleSave(true); syncEditorValues(room);
+    const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250); };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
 function startFreeResize(event, handle) {
+  { const part = handle.closest('.room-label-part'), r0 = roomsOf()[part?.dataset.roomId]; if (part && r0 && part.dataset.labelPart === 'icon' && iconShapeOf(r0) !== 'custom' && handle.dataset.corner.length === 1) return startRoundIconResize(event, handle, part, r0); }
   { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; /* (the size lock was removed: the label's margin slider sets the room round its parts) */ }
   { const cardNode = handle.closest('.room-label-card'), r0 = roomsOf()[cardNode?.dataset.roomId]; if (cardNode && r0 && isIconRoom(r0) && dashSpan(r0)) return startDashResize(event, handle, r0); }
   // The dial keeps its shape: its dots always scale it (a free width / height would only add empty margin).

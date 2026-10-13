@@ -1,3 +1,7 @@
+## 0.6.1-beta.672
+
+- Rozgrupowana etykieta: ikona w kształcie koła/kwadratu ma tylko kreski na bokach (bez kropek w rogach); przeciągnięcie kreski skaluje ikonę proporcjonalnie wokół środka - zostaje kołem 1:1, a sama ikona w ramce rośnie i maleje razem z nią. Na kaflu nie wychodzi poza kafel.
+
 ## 0.6.1-beta.671
 
 - Ikona w kształcie koła/kwadratu: jeden suwak „Wielkość” (ramka 1:1) zamiast szerokości i wysokości, plus osobny suwak „Wielkość ikony” (sama ikona w ramce, z zakresem do tego, co się mieści - jak tekst).
