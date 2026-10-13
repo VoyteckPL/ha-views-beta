@@ -1,3 +1,7 @@
+## 0.6.1-beta.701
+
+- Naprawione obcinanie ogonków liter („y”, „g”, „ą”) w nazwie i stanie: tekst był przycinany do własnej linii (wysokość 1,1 litery), a w części czcionek (np. Segoe UI na Windows) ogonek wystaje poza nią - obszar przycinania sięga teraz trochę wyżej i niżej.
+
 ## 0.6.1-beta.700
 
 - Etykiety z presetem ułożone starszymi wersjami (z tekstem liczonym po staremu, np. obciętym „y”) przeliczają się raz same po wczytaniu - z zachowaniem ustawień presetu (podział, odstępy, margines).
