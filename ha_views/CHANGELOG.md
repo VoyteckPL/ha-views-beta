@@ -1,3 +1,8 @@
+## 0.6.1-beta.703
+
+- Margines etykiety znowu osobno: „Margines ↕” (góra/dół) i „Margines ↔” (lewo/prawo).
+- Suwaki marginesów i „Odstęp” przyciągają się do linii siatki etykiety (co 5 px, z kropkami na suwaku); pomiędzy można ustawić dowolną wartość.
+
 ## 0.6.1-beta.702
 
 - Strzałki zmiany rozmiaru etykiety na kaflu na środkach krawędzi (tuż przy brzegu, wewnątrz etykiety); każda rozciąga w swoją stronę. Dalej tylko po najechaniu myszką, gdy żadna etykieta nie jest zaznaczona.
