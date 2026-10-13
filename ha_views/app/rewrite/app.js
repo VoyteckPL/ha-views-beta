@@ -1379,7 +1379,10 @@ function roomTextPartStyle(r, key, on = false) {
   // Corners and inner margin (px); unset = the default, which grows with the text size.
   const shape = (r[`${key}Bg`] || r[`${key}Border`]) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
     + (Number.isFinite(Number(r[`${key}Padding`])) && r[`${key}Padding`] !== '' && r[`${key}Padding`] != null ? `;padding:${clamp(Number(r[`${key}Padding`]), 0, 120)}px ${Number.isFinite(Number(r[`${key}PadX`])) && r[`${key}PadX`] !== '' && r[`${key}PadX`] != null ? clamp(Number(r[`${key}PadX`]), 0, 240) : Math.round(clamp(Number(r[`${key}Padding`]), 0, 120) * 2)}px` : '') : '';
-  return bg + border + shape;
+  // A label's name / state has no inner margin of its own any more (no slider for it): its frame is its width / height,
+  // the text in it its size (which can grow only as far as the frame lets it).
+  const noPad = !isThermoRoom(r) && (key === 'labelName' || key === 'labelState') && (r[`${key}Bg`] || r[`${key}Border`]) ? ';padding:0' : '';
+  return bg + border + shape + noPad;
 }
 const TEXT_WEIGHTS = { normal:400, medium:600, bold:700 };
 // A text's weight: a named one (older labels, the bold button) or any number 100-900 (the slider).
@@ -3945,7 +3948,7 @@ function onRoomEditorInput(event) {
       const cs = getComputedStyle(n), cw = Math.max(1, Number(room[`${k}W`]) - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, Number(room[`${k}H`]) - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0)), s0 = Number(room[path]) || ROOM_DEFAULTS[path];
       let max = 420;
       if (k === 'labelIcon') max = Math.min(cw, ch);
-      else { const t = n.querySelector('b, small') || n, rg = document.createRange(); rg.selectNodeContents(t); const g = rg.getBoundingClientRect(), z = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1; if (g.width > 0 && g.height > 0) max = s0 * Math.min(cw / (g.width / z), ch / (g.height / z)); }
+      else { const t = n.querySelector('b, small') || n, rg = document.createRange(); rg.selectNodeContents(t); const g = rg.getBoundingClientRect(), z = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1; if (g.width > 0 && g.height > 0) max = s0 * Math.min(cw * .92 / (g.width / z), ch / (g.height / z)); } // (a little room left at its sides)
       max = Math.max(6, s0, Math.floor(max * 10) / 10); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
   // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
   if (/^label(Icon|Name|State)(W|H)$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }

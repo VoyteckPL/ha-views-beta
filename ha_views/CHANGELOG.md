@@ -1,3 +1,7 @@
+## 0.6.1-beta.662
+
+- Nazwa i stan: ramka nie ma już ukrytego marginesu wewnętrznego (wcześniej rósł z wielkością tekstu – np. przy tekście 101 ok. 28 px z góry i z dołu i 55 px z boków), więc tekst można powiększyć aż do wysokości / szerokości ramki (z małym zapasem po bokach).
+
 ## 0.6.1-beta.661
 
 - Elementy (ikona, nazwa, stan): zmiana rozmiaru tekstu / ikony nie zmienia ramki – ramka zostaje, a rozmiar ma dynamiczny limit: tyle, ile mieści się w ramce.
