@@ -1,3 +1,8 @@
+## 0.6.1-beta.676
+
+- Domyślny wygląd etykiety na kaflu (po dodaniu i po „Przywróć domyślny wygląd”) = preset „Jedno pod drugim” z: wielkością ikony 40 px przy siatce 4×10 (przy innych proporcjonalnie), zaokrągleniem nazwy i stanu 12 px, białym kolorem nazwy i stanu.
+- Wiersz presetów: zamiast ikonki po lewej napis „Preset”, wyrównany do opisów suwaków.
+
 ## 0.6.1-beta.675
 
 - Rozgrupowana etykieta: suwaki marginesów (góra/dół, lewo/prawo) znikają z panelu - nie ma wtedy wspólnej ramki; po zgrupowaniu wracają z poprzednimi wartościami.

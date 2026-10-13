@@ -1125,11 +1125,13 @@ function pinToFreeTile(room, view = activeSceneView()) {
 // together as tall as the icon. The tile then scales the whole label to fill it.
 const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCardLayout === 'iconLeft' ? 40 : Math.round(100 / (1 + ['labelName','labelState'].filter(k => room[k]).length))), room.labelCardLayout === 'iconLeft' ? 30 : 10, 70);
 const TILE_COL_U = 240;
+// The shape (width / height) of one tile of a cols x rows grid on this plan.
+function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
 const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && room.labelCardLayout === 'column' && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
 // The height the parts of a "Jedno pod drugim" tile label share (gaps and margins taken off): the label is the tile's shape.
-function tileColumnHs(room) {
+function tileColumnHs(room, aspect) {
   const parts = ['labelIcon','labelName','labelState'].filter(k => room[k]).length || 1, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), py = clamp(Number(room.labelCardPadding ?? 4), 0, 150), px = cardPadX(room), span = dashSpan(room), sc = els.scene?.getBoundingClientRect();
-  const A = span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1;
+  const A = aspect || (span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1);
   return clamp((TILE_COL_U + 2 * px) / A - g * (parts - 1) - 2 * py, parts * 8, 2000);
 }
 // "Jedno pod drugim" on a tile: the parts one under the other, all as high as each other (the icon's share sets its
@@ -1137,17 +1139,22 @@ function tileColumnHs(room) {
 // the icon's frame 1:1; small gaps and margins. The label is made the tile's shape, so the tile's fit fills it.
 function tileColumnLayout(room, reset = false) {
   const icon = !!room.labelIcon, texts = ['labelName','labelState'].filter(k => room[k]), parts = [...(icon ? ['labelIcon'] : []), ...texts]; if (!parts.length) return;
-  if (reset || !room.tileColV2) { room.tileColV2 = true; room.labelPartGap = 4; room.labelCardPadding = 4; room.labelCardPadX = 4; delete room.tileIconShare; if (texts.length === 2) room.labelStateWeight = room.labelNameWeight || ROOM_DEFAULTS.labelNameWeight; }
+  const fresh = reset || !room.tileColV2;
+  if (fresh) { room.tileColV2 = true; room.labelPartGap = 4; room.labelCardPadding = 4; room.labelCardPadX = 4; delete room.tileIconShare; if (texts.length === 2) room.labelStateWeight = room.labelNameWeight || ROOM_DEFAULTS.labelNameWeight;
+    // (the name and the state white, their corners 12)
+    texts.forEach(k => { room[`${k}Radius`] = 12; room[`${k}ColorState`] = false; room[`${k}Color`] = '#FFFFFF'; room[`${k}ColorOn`] = '#FFFFFF'; }); }
   ['labelIcon','labelName','labelState'].forEach(k => { ['Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase','labelGiveBase'].forEach(k => delete room[k]);
   const U = TILE_COL_U, hs = tileColumnHs(room);
   let ih = icon ? (texts.length ? hs * tileIconShare(room) / 100 : hs) : 0; ih = Math.min(ih, U);
   const th = texts.length ? (hs - ih) / texts.length : 0, r1 = v => Math.round(v * 10) / 10;
   // (the icon keeps the share of its frame it had - its own slider sets that; by default 70% of it, 90% with no frame)
-  if (icon) { const fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, was = Number(room.labelIconW) - 2 * pad, k0 = !reset && room.tileColV2Done && was > 0 && Number(room.labelIconSize) > 0 ? clamp(Number(room.labelIconSize) / was, .1, 1) : (fr ? .7 : .9);
-    room.labelIconW = room.labelIconH = r1(ih); room.labelIconSize = r1(Math.max(6, (ih - 2 * pad) * k0)); }
+  if (icon) { const fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, was = Number(room.labelIconW) - 2 * pad, keep = !fresh && room.tileColV2Done && was > 0 && Number(room.labelIconSize) > 0, k0 = keep ? clamp(Number(room.labelIconSize) / was, .1, 1) : 0;
+    room.labelIconW = room.labelIconH = r1(ih);
+    // (by default the icon is 40 on a tile of a 4 x 10 grid - on other tiles in proportion - as far as its frame lets it)
+    room.labelIconSize = r1(clamp(keep ? (ih - 2 * pad) * k0 : 40 * hs / Math.max(1, tileColumnHs(room, tileAspectOf(4, 10))), 6, Math.max(6, ih - 2 * pad))); }
   room.tileColV2Done = true;
-  texts.forEach(k => { room[`${k}W`] = U; room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 20; });
+  texts.forEach(k => { room[`${k}W`] = U; room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
   renderRoomLabels();
   // One text size for both: as big as fits the one that has the least room.
   if (texts.length) { const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); /* (some room left inside its frame) */ texts.forEach(k => { room[`${k}Size`] = sz; }); } }
@@ -3809,7 +3816,7 @@ function roomEditorMarkup(room) {
   // arranging the parts (aligned left / centre / right, top / middle / bottom) and giving name and state one width.
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
   const onTile = icon && !isThermoRoom(r) && !!dashSpan(r), tp = r.tilePreset || 'v';
-  const tilePresets = onTile && shownCount > 2 && r.labelLinked ? icRow('mdi-view-dashboard-outline', 'Układ', icBtn('data-tile-preset="v"', 'mdi-view-agenda-outline', 'Jedno pod drugim', tp === 'v') + icBtn('data-tile-preset="h"', 'mdi-page-layout-sidebar-left', 'Ikona z lewej', tp === 'h')) : '';
+  const tilePresets = onTile && shownCount > 2 && r.labelLinked ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + (icBtn('data-tile-preset="v"', 'mdi-view-agenda-outline', 'Jedno pod drugim', tp === 'v') + icBtn('data-tile-preset="h"', 'mdi-page-layout-sidebar-left', 'Ikona z lewej', tp === 'h')) + '</div></div>' : '';
   const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
@@ -4482,6 +4489,7 @@ async function resetRoomStyle() {
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
   delete room.singleSaved; if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
+  if (icon && !isThermoRoom(room) && dashSpan(room) && room.labelLinked) { delete room.tilePreset; delete room.tileColV2; delete room.tileColV2Done; renderRooms(); applyTilePreset(room, 'v', '', true); } // (on a tile: its default layout)
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
