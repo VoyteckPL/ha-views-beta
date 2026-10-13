@@ -1,3 +1,10 @@
+## 0.6.1-beta.689
+
+- Typu widoku (Obraz z siatką / Kafelki) nie da się zmienić po utworzeniu - wybiera się go tylko w kreatorze; menu pokazuje rodzaj widoku (bez przełącznika i bez „Bez tła” w widoku z obrazem).
+- Menu widoku na jednej stronie: rodzaj widoku, akcje (dodaj, nazwa, duplikuj, startowy) i ustawienia tła w zwijanych sekcjach w stylu menu etykiety (Obraz, Tło nocne / Kolor, Kafelki, Opcje widoku).
+- Suwaki siatki z planu przeniesione do menu widoku (sekcja Kafelki).
+- Siatka kafli nie może mieć mniej kafli niż etykiet na kaflach - przy zmniejszaniu drugi wymiar rośnie; etykiety nie rozciągają się na więcej kafli niż miały, więc żadna nie traci kafla.
+
 ## 0.6.1-beta.688
 
 - Presety etykiety na kaflu są przyklejone na pasku sekcji „Etykieta” (obok tła i ramki) - dostępne od razu, bez otwierania sekcji; kliknięcie presetu nie otwiera/nie zamyka sekcji.

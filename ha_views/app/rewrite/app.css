@@ -1906,3 +1906,18 @@ body.editing .dash-quick.on{display:flex}
 .section-presets .room-card-preset svg{width:18px;height:18px}
 .section-presets .room-card-preset.active{border-color:#20b9e7;background:rgba(32,185,231,.18);color:#5cdbff}
 .section-presets+.section-tools{margin-left:0}
+/* The view menu: one page - the view's kind and actions, then its settings in sections (like the label editor's) */
+#vm-back{visibility:hidden}
+.vm-type{display:flex;align-items:center;gap:7px;margin:0 0 8px;padding:6px 10px;border-radius:9px;background:rgba(32,185,231,.1);color:#bfe9f8;font-size:12px;font-weight:700}.vm-type i{font-size:17px;color:#5cdbff}
+.vm-view-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.vm-sec{margin:0 0 6px;padding:0!important;border:1px solid rgba(99,181,216,.2)!important;border-radius:9px!important;background:rgba(10,33,45,.55)!important;overflow:hidden}
+.vm-sec>summary.vm-zone-title{display:flex;align-items:center;gap:7px;margin:0!important;padding:7px 10px;border-left:3px solid #5cdbff;background:rgba(13,46,62,.75);cursor:pointer;list-style:none;font-size:12px}
+.vm-sec>summary::-webkit-details-marker{display:none}
+.vm-sec>summary.vm-zone-title::after{content:"\F0140";font-family:"Material Design Icons";margin-left:auto;color:#6f8d9c;font-size:16px;transition:transform .15s}
+.vm-sec[open]>summary.vm-zone-title::after{transform:rotate(180deg)}
+.vm-sec>:not(summary){margin-left:10px;margin-right:10px}.vm-sec>:not(summary):first-of-type{margin-top:8px}.vm-sec>:last-child{margin-bottom:10px}
+.vm-sec.night-bg-block>summary{border-left-color:#b66dff}.vm-sec.vm-colour-zone>summary{border-left-color:#22d69b}.vm-sec.vm-tiles-zone>summary{border-left-color:#ffd166}.vm-sec.vm-view-extra>summary{border-left-color:#9fb6c3}
+.vm-sec .vm-icons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.vm-sec .vm-range,.vm-sec select{margin-top:6px}
+.vm-sec.vm-view-extra{margin-top:4px;padding-top:0;border-top:1px solid rgba(99,181,216,.2)}
+.vm-sec>select,.vm-sec>.vm-field,.vm-sec>label.vm-field{width:calc(100% - 20px);box-sizing:border-box}.vm-sec .vm-danger{width:calc(100% - 20px);box-sizing:border-box}
