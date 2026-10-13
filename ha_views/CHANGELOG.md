@@ -1,3 +1,7 @@
+## 0.6.1-beta.710
+
+- Tryb Tło: zaznaczona etykieta znów ma kropki w każdym rogu do zmiany rozmiaru (ze snapem do siatki); strzałki na krawędziach zostają.
+
 ## 0.6.1-beta.709
 
 - Widok z obrazem w tle: etykieta na silniku kafelków - presety, dopasowanie tekstu, marginesy, motywy i efekty jak na kafelku, ale z własnym rozmiarem.
