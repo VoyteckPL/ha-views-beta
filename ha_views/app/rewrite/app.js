@@ -1218,8 +1218,16 @@ function tilePairLayout(room, preset, reset = false) {
   texts.forEach(k => { const v = partSizeMax(room, k, undefined, true, TILE_TEXT_MARGIN_ROW); if (v > 0) room[`${k}Size`] = r1(clamp(v, 6, 420)); });
   renderRoomLabels();
 }
+// A part's size / width / height slider let go: the label's fit on its tile and what was taken at the start of the move are
+// free again (also after a pause in the move, or when a reset or a preset comes first).
+function releaseSliderHolds() {
+  clearTimeout(fitDashLabels.holdOff); clearTimeout(tileAfterEdit.baseOff);
+  const was = fitDashLabels.hold; fitDashLabels.hold = null; tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; keepSquare.frozen = null;
+  if (was) renderRooms();
+}
 function applyTilePreset(room, preset = room.tilePreset || 'v', master = '', reset = false) {
   if (!room || isThermoRoom(room)) return;
+  if (reset && fitDashLabels.hold) { fitDashLabels.hold = null; clearTimeout(fitDashLabels.holdOff); }
   if (tilePartsShown(room).length === 2) return tilePairLayout(room, preset, reset);
   if (!['v','h','n'].includes(preset)) preset = 'v';
   room.tilePreset = preset;
@@ -4216,8 +4224,8 @@ function onRoomEditorInput(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
   { const own = /^(label(?:Icon|Name|State))(W|H|Size)$/.exec(path); if (own && room.labelGiveBase?.[own[1]]) { delete room.labelGiveBase[own[1]]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }
-  if (/^label(Icon|Name|State)(W|H|Size)$/.test(path)) { fitDashLabels.hold = room.id; clearTimeout(fitDashLabels.holdOff); if (event.type === 'change') fitDashLabels.holdOff = setTimeout(() => { fitDashLabels.hold = null; renderRooms(); }, 300); }
-  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) { const n0 = partBoxNode(room, bm[1]); tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`], frame: bm[1] === 'labelIcon' ? iconFrameNow(room, n0) : 0 }; } clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; keepSquare.frozen = null; }, 300); } }
+  if (/^label(Icon|Name|State)(W|H|Size)$/.test(path)) { fitDashLabels.hold = room.id; clearTimeout(fitDashLabels.holdOff); fitDashLabels.holdOff = setTimeout(releaseSliderHolds, event.type === 'change' ? 300 : 1500); } // (let go even when no "change" comes - a touch, a panel drawn again)
+  { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) { const n0 = partBoxNode(room, bm[1]); tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`], frame: bm[1] === 'labelIcon' ? iconFrameNow(room, n0) : 0 }; } clearTimeout(tileAfterEdit.baseOff); tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; keepSquare.frozen = null; }, event.type === 'change' ? 300 : 1500); } }
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
   // ... and no further than its label (taken once per slider move).
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number') { const key = `${room.id}|${path}`; let f = partWHMax.frozen; if (!f || f.key !== key) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); f = partWHMax.frozen = { key, max: mx, stack: partWHMax.stack }; }
@@ -4581,6 +4589,7 @@ async function resetRoomStyle() {
   // A thermostat gets its whole look back: every part's colours, frames, sizes and places, the mode colours and the dial.
   if (isThermoRoom(room)) { const extras = Object.fromEntries(Object.keys(room).filter(k => /^labelX\d(Entity)?$/.test(k)).map(k => [k, room[k]])); Object.keys(room).filter(k => /^(label|thermo[A-Z_])/.test(k)).forEach(k => delete room[k]); Object.assign(room, extras); Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(k => /^(label|thermo[A-Z_])/.test(k)).map(k => [k, clone(ROOM_DEFAULTS[k])])), isGaugeRoom(room) ? gaugeLook((room.entityIds || [])[0] || '') : thermoLook()); }
   delete room.singleSaved; if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
+  fitDashLabels.hold = null; clearTimeout(fitDashLabels.holdOff); // (a slider's hold on the label's fit never outlives a reset)
   if (icon && !isThermoRoom(room) && dashSpan(room) && room.labelLinked) { delete room.tilePreset; delete room.tileColV2; delete room.tileColV2Done; renderRooms(); applyTilePreset(room, defaultTilePreset(room), '', true); } // (on a tile: its default layout)
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }

@@ -1,3 +1,7 @@
+## 0.6.1-beta.685
+
+- Naprawione: po „Przywróć domyślny wygląd” etykieta na kaflu mogła zostać mała (zablokowana skala z wcześniejszego ruchu suwaka rozmiaru, gdy puszczenie suwaka nie zostało zarejestrowane, np. na dotyku). Blokada skali w trakcie ruchu suwaka sama wygasa po chwili, a reset i preset zawsze ją kasują.
+
 ## 0.6.1-beta.684
 
 - Presety dla dwóch widocznych elementów na kaflu (nazwa + stan, ikona + nazwa, ikona + stan): „Jedno pod drugim” (50/50), „Obok siebie” (przy ikonie: ikona 1:1 po lewej) i „Małe nad dużym” (30/70). Każdy tekst tak duży, jak pozwala jego ramka; suwaki „Odstęp”, „Margines”, „Podział” (kropki 25/50/75) i „Wielkość” ikony.
