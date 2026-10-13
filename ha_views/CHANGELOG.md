@@ -1,3 +1,7 @@
+## 0.6.1-beta.667
+
+- Gdy element (np. stan) rośnie w etykiecie o stałym rozmiarze, elementy obok niego (w tej samej kolumnie/wierszu) proporcjonalnie się zmniejszają (ramka i ikona/tekst, do 20%) zamiast blokować rozmiar; gdy element znów maleje, wracają do swojego poprzedniego rozmiaru.
+
 ## 0.6.1-beta.666
 
 - Szerokość/wysokość elementu ma limit: element nie wychodzi poza etykietę o stałym rozmiarze (na kafelku, swobodną albo zablokowaną) - suwak kończy się tam, gdzie kończy się miejsce w etykiecie.

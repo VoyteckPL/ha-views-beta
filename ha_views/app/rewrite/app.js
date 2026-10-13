@@ -3922,7 +3922,7 @@ const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard
 // free or locked label); a label that grows with its parts has no such limit (null).
 function partWHMax(room, k, axis) {
   const n = partBoxNode(room, k), card = room.labelLinked ? n?.closest('.room-label-card') : null; if (!n || !card) return null;
-  const free = card.classList.contains('free'), pinned = card.classList.contains('dash-pinned'); if (!free && !pinned && !room.labelSizeLock) return null;
+  partWHMax.stack = null; const free = card.classList.contains('free'), pinned = card.classList.contains('dash-pinned'); if (!free && !pinned && !room.labelSizeLock) return null;
   const X = axis === 'x', cs = getComputedStyle(card), cr = card.getBoundingClientRect(), z = (X ? cr.width / Math.max(1, card.offsetWidth) : cr.height / Math.max(1, card.offsetHeight)) || 1;
   const lo = X ? 'left' : 'top', hi = X ? 'right' : 'bottom', clo = X ? 'top' : 'left', chi = X ? 'bottom' : 'right';
   const size = Math.max(X ? card.offsetWidth : card.offsetHeight, parseFloat(X ? card.style.minWidth : card.style.minHeight) || 0);
@@ -3935,6 +3935,13 @@ function partWHMax(room, k, axis) {
     const side = [...card.children].filter(c => c !== n && c.dataset.labelPart && c.offsetWidth).map(c => c.getBoundingClientRect()).some(o => o[hi] - o[lo] > 0 && !(o[chi] <= r[clo] || o[clo] >= r[chi]) && (o[lo] >= r[hi] - 1 || o[hi] <= r[lo] + 1));
     const uLo = Math.min(...parts.map(o => o[lo])) / z, uHi = Math.max(...parts.map(o => o[hi])) / z;
     max = side ? cur + (inHi - inLo) - (uHi - uLo) : inHi - inLo;
+    // The parts next to it along that line give way: they can get smaller (all in proportion) down to a fifth of their size.
+    if (side) { const keyOf = c => c.dataset.labelPart === 'icon' ? 'labelIcon' : c.dataset.labelPart === 'name' ? 'labelName' : 'labelState';
+      const sibs = [...card.children].filter(c => c !== n && c.dataset.labelPart && c.offsetWidth).filter(c => { const o = c.getBoundingClientRect(); return !(o[chi] <= r[clo] || o[clo] >= r[chi]); })
+        .map(c => { const kk = keyOf(c), o = c.getBoundingClientRect(), W = Number(room[`${kk}W`]) > 0 ? Number(room[`${kk}W`]) : c.offsetWidth, H = Number(room[`${kk}H`]) > 0 ? Number(room[`${kk}H`]) : c.offsetHeight, S = Number(room[`${kk}Size`]) || ROOM_DEFAULTS[`${kk}Size`];
+          // (Their size before they gave way is kept: the room given back brings them back up to it, not past it.)
+          const B = room.labelGiveBase?.[kk] || { W, H, S }, r0 = clamp((X ? W / B.W : H / B.H) || 1, .05, 1); return { k: kk, B, ext: (o[hi] - o[lo]) / z / r0 }; });
+      const sum = sibs.reduce((t, x) => t + x.ext, 0); if (sibs.length && sum > 0) { const used = sibs.reduce((t, x) => t + x.ext * clamp((X ? (Number(room[`${x.k}W`]) || x.B.W) / x.B.W : (Number(room[`${x.k}H`]) || x.B.H) / x.B.H), .05, 1), 0), room4 = (inHi - inLo) - (uHi - uLo) + used; partWHMax.stack = { sibs, sum, avail: room4, dataCur: Number(room[`${k}${X ? 'W' : 'H'}`]) > 0 ? Number(room[`${k}${X ? 'W' : 'H'}`]) : (X ? n.offsetWidth : n.offsetHeight) }; max = cur + room4 - sum * .2; } }
   }
   return Math.max(10, Math.floor(max));
 }
@@ -3992,12 +3999,17 @@ function onRoomEditorInput(event) {
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
+  { const own = /^(label(?:Icon|Name|State))(W|H|Size)$/.exec(path); if (own && room.labelGiveBase?.[own[1]]) { delete room.labelGiveBase[own[1]]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }
   if (/^label(Icon|Name|State)(W|H|Size)$/.test(path)) { fitDashLabels.hold = room.id; clearTimeout(fitDashLabels.holdOff); if (event.type === 'change') fitDashLabels.holdOff = setTimeout(() => { fitDashLabels.hold = null; renderRooms(); }, 300); }
   { const bm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) tileAfterEdit.base = { k: bm[1], size: Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`] }; clearTimeout(tileAfterEdit.baseOff); if (event.type === 'change') tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; }, 300); } }
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number' && !event.altKey) { const sn = partSizeSnap(room, wm[1], wm[2] === 'W' ? 'x' : 'y', value); if (sn.v !== value) { value = sn.v; input.value = String(Math.round(value)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } if (sn.guides && snapTargets().guides !== false) showAlignGuides(wm[2] === 'W' ? sn.guides : [], wm[2] === 'H' ? sn.guides : []); else showAlignGuides([], []); if (event.type === 'change') setTimeout(() => showAlignGuides([], []), 700); } }
   // ... and no further than its label (taken once per slider move).
-  { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number') { const key = `${room.id}|${path}`; let f = partWHMax.frozen; if (!f || f.key !== key) f = partWHMax.frozen = { key, max: partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y') };
-    if (f.max && value > f.max) { value = f.max; input.value = String(value); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; } } }
+  { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path); if (wm && typeof value === 'number') { const key = `${room.id}|${path}`; let f = partWHMax.frozen; if (!f || f.key !== key) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); f = partWHMax.frozen = { key, max: mx, stack: partWHMax.stack }; }
+    if (f.max && value > f.max) { value = f.max; input.value = String(value); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; }
+    // What it takes beyond the free room comes from the parts beside it, in proportion (they get it back as it gives it back).
+    const st = f.stack; if (st) { const q = clamp((st.avail - (value - st.dataCur)) / st.sum, .2, 1);
+      st.sibs.forEach(x => { room[`${x.k}W`] = Math.round(x.B.W * q * 10) / 10; room[`${x.k}H`] = Math.round(x.B.H * q * 10) / 10; room[`${x.k}Size`] = Math.round(x.B.S * q * 10) / 10; delete room[`${x.k}Lock`];
+        if (q < 1) (room.labelGiveBase ||= {})[x.k] = x.B; else if (room.labelGiveBase) { delete room.labelGiveBase[x.k]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }); } } }
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
     if (n) { if (!(Number(room[`${k}W`]) > 0)) room[`${k}W`] = n.offsetWidth; if (!(Number(room[`${k}H`]) > 0)) room[`${k}H`] = n.offsetHeight; delete room[`${k}Lock`];
