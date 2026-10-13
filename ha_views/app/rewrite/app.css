@@ -1953,3 +1953,7 @@ body.editing .dash-quick.on{display:flex}
 /* A name's / state's text clips at its own line (line-height 1.1): its clip box reaches a little above and below the line,
    so a "y" / "g" hanging under it - or a tall accent - is never cut (the layout stays as it was) */
 .room-card-part>b,.room-card-part>small,.room-label-part>b,.room-label-part>small{padding-block:.24em;margin-block:-.24em}
+/* (sides: centred on each edge's middle, just inside it) */
+#dash-arrows .dash-arrow.e{transform:translate(-100%,-50%) translate(-3px,0)}#dash-arrows .dash-arrow.w{transform:translate(0,-50%) translate(3px,0)}
+#dash-arrows .dash-arrow.s{transform:translate(-50%,-100%) translate(0,-3px)}#dash-arrows .dash-arrow.n{transform:translate(-50%,0) translate(0,3px)}
+#dash-arrows .dash-arrow i{font-size:14px}

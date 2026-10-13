@@ -1,3 +1,7 @@
+## 0.6.1-beta.702
+
+- Strzałki zmiany rozmiaru etykiety na kaflu na środkach krawędzi (tuż przy brzegu, wewnątrz etykiety); każda rozciąga w swoją stronę. Dalej tylko po najechaniu myszką, gdy żadna etykieta nie jest zaznaczona.
+
 ## 0.6.1-beta.701
 
 - Naprawione obcinanie ogonków liter („y”, „g”, „ą”) w nazwie i stanie: tekst był przycinany do własnej linii (wysokość 1,1 litery), a w części czcionek (np. Segoe UI na Windows) ogonek wystaje poza nią - obszar przycinania sięga teraz trochę wyżej i niżej.
