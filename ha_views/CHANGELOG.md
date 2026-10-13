@@ -1,3 +1,9 @@
+## 0.6.1-beta.725
+
+- Termostat: sekcja „Grupa” nazywa się „Termostat” (wskaźnik: „Wskaźnik”). Bez suwaka Rozmiar (rozmiar daje pole / kafle).
+- Termostat: „Margines ↕” i „Margines ↔” (ze snapem jak w etykiecie) - odstęp między ramką a wszystkimi elementami w px pola; elementy skalują się, żeby się zmieścić. Działa też w rozgrupowanym, a ponowne zgrupowanie zostawia ten sam układ.
+- Termostat w polu / na kafelkach: elementy dokładnie na środku pola (wcześniej mogły być przesunięte o kilka px).
+
 ## 0.6.1-beta.724
 
 - Telefon: kropki narożników (rozmiar etykiety / termostatu, także części rozgrupowanej) zmieniają rozmiar dopiero po przytrzymaniu (~0,4 s, wibracja, kropka się powiększa). Szybki ruch od kropki przesuwa widok, tapnięcie nic nie zmienia. Myszka bez zmian.
