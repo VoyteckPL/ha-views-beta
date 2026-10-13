@@ -1,3 +1,9 @@
+## 0.6.1-beta.713
+
+- Pomieszczenie: etykieta na silniku kafelków - presety, własny rozmiar (kropki w rogach, strzałki, suwaki), motywy i efekty.
+- Nowe pomieszczenie od razu (rozmiar kafla telefonu, najwyżej 70% obszaru, na jego środku); stare po kliknięciu presetu.
+- Przesunięcie obszaru lub jego duplikat przesuwa też etykietę.
+
 ## 0.6.1-beta.712
 
 - Przycisk w trybie Tło też na silniku kafelków: presety, własny rozmiar (kropki w rogach, strzałki, suwaki), motywy i efekty. Nowy od razu, stary po kliknięciu presetu.
