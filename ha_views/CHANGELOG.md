@@ -1,3 +1,9 @@
+## 0.6.1-beta.659
+
+- Elementy (ikona, nazwa, stan): zamiast jednego „Margines” dwa suwaki – „Margines góra / dół” i „Margines lewo / prawo”.
+- Kafelki: suwaki rozmiaru tekstu nazwy i stanu znów widoczne. Wszystko jest powiązane: zmiana rozmiaru tekstu dopasowuje drugi tekst do tej samej szerokości i przelicza „Udział ikony”; zmiana udziału, odstępu lub marginesów przelicza układ.
+- Suwaki w panelu pokazują na żywo aktualne wartości po każdej zmianie (preset, udział, rozmiar, marginesy, szerokość / wysokość).
+
 ## 0.6.1-beta.658
 
 - Etykieta: zamiast jednego „Margines” dwa suwaki – „Margines góra / dół” i „Margines lewo / prawo”. Etykiety zapisane wcześniej zachowują wygląd (lewo / prawo jak dotąd 1,35× góra / dół).
