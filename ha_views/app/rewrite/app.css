@@ -1854,3 +1854,31 @@ body.editing .scene-card.desk-zoom-expanded::before,body.editing .scene-card.des
 /* "Ikona i nazwa w rzędzie, stan pod nimi": the icon and the name side by side, the state under them across the label */
 .room-label-card.layout-iconName{display:grid;grid-template-columns:auto auto;grid-template-areas:"icon name" "state state";align-items:center;justify-content:center;align-content:center}
 .room-label-card.layout-iconName .room-card-part.icon{grid-area:icon}.room-label-card.layout-iconName .room-card-part.name{grid-area:name}.room-label-card.layout-iconName .room-card-part.state{grid-area:state;justify-self:center}
+
+/* "Tło": two kinds, one at a time - an image with the grid, or a colour with the tiles */
+.bg-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.bg-mode-btn{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 10px;border:1px solid rgba(99,181,216,.3);border-radius:10px;background:#0d2e3e;color:#9fbfcf;text-align:left;cursor:pointer}
+.bg-mode-btn i{font-size:20px;color:#6f8d9c}.bg-mode-btn span{display:grid;line-height:1.15}.bg-mode-btn b{font-size:12px;color:#dff6ff}.bg-mode-btn small{font-size:10px;color:#8fa9b7}
+.bg-mode-btn.active{border-color:#20b9e7;background:rgba(32,185,231,.18);box-shadow:inset 0 0 0 1px #20b9e7}.bg-mode-btn.active i{color:#5cdbff}
+#vm-background[data-bg-mode="image"] .bg-colour-only,#vm-background[data-bg-mode="colour"] .bg-image-only{display:none!important}
+.dash-steps{display:grid;gap:6px}
+.dash-step{display:grid;grid-template-columns:minmax(0,1fr) 32px 52px 32px;align-items:center;gap:6px}.dash-step>span{color:#9fbfcf;font-size:11px}
+.dash-step button{height:30px;border:1px solid rgba(99,181,216,.3);border-radius:8px;background:#0d2e3e;color:#b8eafa;font-size:16px;display:grid;place-items:center;cursor:pointer}
+.dash-step input{text-align:center}
+.vm-view-extra{display:grid;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(99,181,216,.18)}
+.vm-view-extra .vm-field{display:flex;align-items:center;justify-content:space-between;gap:10px}
+/* The options / integrations screen: options (and the library) | added to the view | Home Assistant integrations */
+.integrations-layout{grid-template-columns:minmax(250px,.75fr) minmax(300px,.95fr) minmax(400px,1.3fr)}
+.options-list{display:grid;gap:8px}
+.options-list .vm-field{display:flex;align-items:center;justify-content:space-between;gap:10px}.options-list .vm-field>span{display:flex;align-items:center;gap:6px;color:#9fbfcf;font-size:12px}.options-list .vm-field>span i{font-size:16px;color:#5cdbff}
+.options-list select{flex:0 0 150px;width:150px;height:32px;padding:0 8px;border:1px solid rgba(99,181,216,.3);border-radius:8px;background:#0d2e3e;color:#dff6ff;font-size:12px}
+.options-list .vm-tile{width:100%;cursor:pointer;color:#cfe9f5}
+.lib-panel-head{margin-top:14px}
+.library-panel.inline{position:static;display:block;width:auto;max-height:none;overflow:visible;padding:0;border:0;background:none;box-shadow:none;z-index:auto}
+.library-panel.inline .lib-head{display:none}
+body.integrations-open .edit-dock,body.integrations-open #edit-dock{display:none!important}
+@media(max-width:1050px){.integrations-layout{grid-template-columns:1fr}}
+.vm-size-row[hidden],.dash-toggle[hidden]{display:none!important}
+.vm-colour-zone .vm-formats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vm-colour-zone .vm-formats button{display:flex;align-items:center;justify-content:center;gap:6px;height:34px;font-size:12px;white-space:nowrap}.vm-colour-zone .vm-formats button i{font-size:16px}
+.options-list{padding:10px 14px 4px}.library-panel.inline{padding:6px 14px 12px}

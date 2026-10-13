@@ -14,7 +14,7 @@ const ACTIVE_VIEW_CACHE_KEY = 'ha-views:last-active-view';
 let uiLanguage = 'en';
 const TRANSLATIONS = {
   en: {
-    'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
+    'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
     'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Wersja aplikacji HA Views':'HA Views app version',
@@ -314,6 +314,7 @@ function setBackgroundColour(colour) {
   const imageRatio = !els.image.hidden && els.image.naturalWidth > 0 && els.image.naturalHeight > 0 ? els.image.naturalWidth / els.image.naturalHeight : 0;
   if (imageRatio) view.solidCanvasRatio = imageRatio;
   view.solidCanvasRatio ||= mobileView() ? 9 / 16 : 16 / 9;
+  if (view.background) view.lastBackground = view.background; // (to come back to with "Obraz")
   view.background = ''; currentBackground = '';
   view.backgroundColor = colour.toUpperCase(); view.onboardingDone = true;
   els.image.hidden = true; els.image.removeAttribute('src'); delete els.image.dataset.backgroundName;
@@ -419,7 +420,8 @@ function ensureMultiViewModel() {
 }
 function showMainView(name) {
   $$('.view').forEach(view => view.classList.toggle('active', view.id === `view-${name}`));
-  const integrationsOpen = name === 'integrations';
+  const integrationsOpen = name === 'integrations'; document.body.classList.toggle('integrations-open', integrationsOpen);
+  if (integrationsOpen) renderLibraryPanel();
   els.integrationsButton?.classList.toggle('active', integrationsOpen);
   els.viewManage.disabled = integrationsOpen; els.editToggle.disabled = integrationsOpen;
   if (integrationsOpen) { closeCompactMenus(); closeEditor(); closeMoreInfo(); }
@@ -1014,7 +1016,8 @@ function roomAnchor(room) { const pin = isIconRoom(room) && dashSpan(room); retu
 // ---- Dashboard grid ("Siatka dashboardu"): a per-view grid of cols × rows cells (gap in plan px), shown in edit
 // mode; a grouped label dropped on it snaps to whole cells and its group fills them (room.dash = {c, r, w, h}).
 const DASH_GRID_ENABLED = true; // "Kafelki" (Tło): the plan split into cols × rows tiles
-function dashGrid(view = activeSceneView()) { const g = view?.dashGrid || {}; return { on: DASH_GRID_ENABLED && !!g.on, cols: clamp(Math.round(Number(g.cols) || 3), 1, 24), rows: clamp(Math.round(Number(g.rows) || 3), 1, 24), gap: clamp(Number(g.gap ?? 4), 0, 80) }; }
+// (The tiles go with the background: a colour background always has them, an image one never - it has the grid.)
+function dashGrid(view = activeSceneView()) { const g = view?.dashGrid || {}; return { on: DASH_GRID_ENABLED && !!view && !view.background && !!view.onboardingDone, cols: clamp(Math.round(Number(g.cols) || 4), 1, 24), rows: clamp(Math.round(Number(g.rows) || 10), 1, 24), gap: clamp(Number(g.gap ?? 4), 0, 80) }; }
 function dashGeom(view = activeSceneView()) {
   const g = dashGrid(view), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   const gx = g.gap * k / W * 100, gy = g.gap * k / H * 100;
@@ -1076,7 +1079,7 @@ function applyDashUi() {
 function setDashGrid(change) {
   const view = activeSceneView(); if (!view) return; const old = dashGrid(view); view.dashGrid = { ...old, ...change };
   // Another split: every pinned label keeps its place in proportion (its tile and size in tiles counted anew).
-  const now = { ...old, ...change, cols: clamp(Math.round(Number(view.dashGrid.cols) || 3), 1, 24), rows: clamp(Math.round(Number(view.dashGrid.rows) || 3), 1, 24) };
+  const now = { ...old, ...change, cols: clamp(Math.round(Number(view.dashGrid.cols) || 4), 1, 24), rows: clamp(Math.round(Number(view.dashGrid.rows) || 10), 1, 24) };
   if (now.cols !== old.cols || now.rows !== old.rows) Object.values(view.rooms || {}).forEach(room => { const d = room?.dash; if (!d) return;
     const w = clamp(Math.floor((d.w || 1) * now.cols / old.cols) || 1, 1, now.cols), h = clamp(Math.floor((d.h || 1) * now.rows / old.rows) || 1, 1, now.rows);
     room.dash = { c: clamp(Math.floor((d.c + (d.w || 1) / 2) * now.cols / old.cols - w / 2 + .5), 0, now.cols - w), r: clamp(Math.floor((d.r + (d.h || 1) / 2) * now.rows / old.rows - h / 2 + .5), 0, now.rows - h), w, h }; });
@@ -7748,10 +7751,12 @@ function selectedTemplateTarget() {
   return flow ? { item: flow, flow: true, kind: 'flow' } : room ? { item: room, flow: false, kind: elementKind(room) } : null;
 }
 function openLibraryPanel() {
+  // (the library lives in the options / integrations screen)
+  if ($('#library-panel.inline')) { if (!$('#view-integrations')?.classList.contains('active')) els.integrationsButton?.click(); renderLibraryPanel(); return; }
   let panel = $('#library-panel'); if (!panel) { panel = document.createElement('div'); panel.id = 'library-panel'; panel.className = 'library-panel'; document.body.append(panel); panel.addEventListener('click', onLibraryPanelClick); }
   panel.classList.add('visible'); $('#library-button')?.classList.add('active'); renderLibraryPanel();
 }
-function closeLibraryPanel() { $('#library-panel')?.classList.remove('visible'); $('#library-button')?.classList.remove('active'); }
+function closeLibraryPanel() { if ($('#library-panel.inline')) return; $('#library-panel')?.classList.remove('visible'); $('#library-button')?.classList.remove('active'); }
 function renderLibraryPanel() {
   const panel = $('#library-panel'); if (!panel?.classList.contains('visible')) return;
   const esc = v => escapeHtml(translateValue(v)), list = libraryTemplates(), target = selectedTemplateTarget();
@@ -7768,7 +7773,7 @@ async function onLibraryPanelClick(event) {
   const b = event.target.closest('button'); if (!b) return;
   if (b.hasAttribute('data-lib-close')) return closeLibraryPanel();
   const id = b.dataset.libAdd || b.dataset.libApply || b.dataset.libRename || b.dataset.libDelete, t = libraryTemplates().find(x => x.id === id); if (!t) return;
-  if (b.dataset.libAdd) { closeLibraryPanel(); if (!editMode) els.editToggle.click(); return addFromTemplate(id); }
+  if (b.dataset.libAdd) { closeLibraryPanel(); if ($('#view-integrations')?.classList.contains('active')) showMainView('overview'); if (!editMode) els.editToggle.click(); return addFromTemplate(id); }
   if (b.dataset.libApply) {
     const target = selectedTemplateTarget(); if (!target || target.kind !== templateKind(t)) return;
     applyTemplate(target.item, t, target.flow);
@@ -8231,8 +8236,23 @@ function canvasSizeOf(view = activeSceneView()) {
   if (size && Number(size.w) > 0 && Number(size.h) > 0 && Math.abs(size.w / size.h - ratio) < .01) return { w: Math.round(size.w), h: Math.round(size.h) };
   return ratio >= 1 ? { w: Math.round(1080 * ratio), h: 1080 } : { w: 1080, h: Math.round(1080 / ratio) };
 }
-function syncCanvasControls() {
+// "Tło": two kinds, one at a time - an image (with the grid) or a colour (with the tiles). Only the chosen one's settings show.
+function syncBgMode() {
+  const view = activeSceneView(), image = !!(view?.background || currentBackground), page = $('#vm-background'); if (!page) return;
+  page.dataset.bgMode = image ? 'image' : 'colour';
+  $$('[data-bg-mode]', page).forEach(b => { const on = b.dataset.bgMode === (image ? 'image' : 'colour'); b.classList.toggle('active', on); b.setAttribute('aria-checked', String(on)); });
+}
+async function chooseBgMode(mode) {
   const view = activeSceneView(); if (!view) return;
+  if (mode === 'colour') { if (view.background || currentBackground || !view.backgroundColor) setBackgroundColour(view.backgroundColor || '#0D2838'); syncBgMode(); applyDashUi(); renderRooms(); return; }
+  if (view.background) return;
+  const names = [...(els.bgSelect?.options || [])].map(o => o.value).filter(Boolean), name = names.includes(view.lastBackground) ? view.lastBackground : names[0];
+  if (!name) { $('#background-upload')?.click(); return; } // (no image yet: one is picked to upload)
+  try { view.background = name; view.backgroundColor = ''; view.onboardingDone = true; await loadBackgrounds(true); renderRooms(); scheduleSave(true); } catch (error) { notify(error.message, true); }
+  syncBgMode(); applyDashUi();
+}
+function syncCanvasControls() {
+  const view = activeSceneView(); if (!view) return; syncBgMode();
   const { w, h } = canvasSizeOf(view), image = Boolean(currentBackground), zone = $('.vm-colour-zone');
   zone?.classList.toggle('image-active', image);
   const note = $('.vm-colour-note'); if (note) note.textContent = translateValue(image ? 'Wybór koloru zastąpi obraz' : 'Tło w kolorze');
@@ -8765,6 +8785,8 @@ function bindEvents() {
   $('#dash-gap')?.addEventListener('input', event => { const out = $('#dash-gap-out'); if (out) out.textContent = `${event.target.value} px`; });
   $$('[data-dash-preset]').forEach(b => b.addEventListener('click', () => { const [cols, rows] = b.dataset.dashPreset.split('x').map(Number); setDashGrid({ on: true, cols, rows }); }));
   $('#dash-arrange')?.addEventListener('click', arrangeDashLabels);
+  $$('[data-dash-step]').forEach(b => b.addEventListener('click', () => { const [k, d] = b.dataset.dashStep.split(':'), g = dashGrid(); setDashGrid({ [k]: clamp(g[k] + Number(d), 1, k === 'cols' ? 12 : 24) }); }));
+  $$('[data-bg-mode]').forEach(b => b.addEventListener('click', () => chooseBgMode(b.dataset.bgMode)));
   $('#bounds-toggle')?.addEventListener('click', () => { model.settings ||= {}; model.settings.keepInBounds = !keepInBounds(); applyBoundsUi(); scheduleSave(true); notify(keepInBounds() ? 'Elementy nie wyjdą poza tło' : 'Elementy mogą wychodzić poza tło'); });
   applyBoundsUi();
   els.snapToggle.addEventListener('click', () => { model.settings.snapEnabled = !model.settings.snapEnabled; applySnapUi(); scheduleSave(true); notify(model.settings.snapEnabled ? 'Przyciąganie do siatki włączone' : 'Przyciąganie do siatki wyłączone'); });

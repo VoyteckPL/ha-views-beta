@@ -1,3 +1,10 @@
+## 0.6.1-beta.686
+
+- Pasek górny: Opcje i Integracje to jeden przycisk z zębatką (bez osobnego przycisku Biblioteki).
+- Ekran zębatki podzielony na 3: po lewej Opcje (z Biblioteką szablonów pod spodem), w środku „Dodane do widoku”, po prawej „Integracje Home Assistant”; nie ma tam panelu „Kliknij element, aby go edytować”.
+- Menu Tło uporządkowane: dwa rodzaje tła do wyboru - „Obraz z siatką” albo „Kolor z kafelkami” (wyraźnie zaznaczony aktywny). Przy obrazie nie ma kafli, przy kolorze kafle są zawsze. Formaty tylko Telefon (9:16) i Desktop (16:9). Siatka kafli: Kolumny / Wiersze z przyciskami − / +, domyślnie 4×10. Bez przycisku „Rozłóż etykiety” i włącznika kafli.
+- „Zoom poza edycją” i „Usuń widok” przeniesione do menu Tło; strona Opcje w menu widoku usunięta.
+
 ## 0.6.1-beta.685
 
 - Naprawione: po „Przywróć domyślny wygląd” etykieta na kaflu mogła zostać mała (zablokowana skala z wcześniejszego ruchu suwaka rozmiaru, gdy puszczenie suwaka nie zostało zarejestrowane, np. na dotyku). Blokada skali w trakcie ruchu suwaka sama wygasa po chwili, a reset i preset zawsze ją kasują.
