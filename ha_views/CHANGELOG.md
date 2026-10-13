@@ -1,3 +1,7 @@
+## 0.6.1-beta.706
+
+- Cofnięte zmiany z 0.6.1-beta.705 (szybkie suwaki „Ramka ikony” / „Ikona” w presecie 3) - preset 3 działa jak w 0.6.1-beta.704.
+
 ## 0.6.1-beta.705
 
 - Preset 3 (ikona i nazwa w rzędzie): w sekcji Etykieta szybkie suwaki „Ramka ikony” i „Ikona” (sama ikona w ramce). Ramka ikony jest niezależna od podziału (domyślnie wysoka jak rząd, nie wyższa); nazwa bierze resztę szerokości. Suwak „Wielkość” w sekcji Ikona robi to samo.
