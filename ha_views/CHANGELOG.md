@@ -1,3 +1,7 @@
+## 0.6.1-beta.721
+
+- Rozgrupowany termostat / wskaźnik: kliknięcie w jego ramkę (między elementami) wraca do całego termostatu - odznacza element i ustawia kamerę na całości, na środku, z marginesem 5%.
+
 ## 0.6.1-beta.720
 
 - Kafelki na telefonie: całą etykietę / termostat przesuwa się dopiero po przytrzymaniu palca (~0,4 s, krótka wibracja, etykieta się podświetla). Szybki ruch palcem po niej nic nie przesuwa.

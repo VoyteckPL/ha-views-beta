@@ -9080,6 +9080,11 @@ function bindEvents() {
     if (!editMode && performance.now() - lastLabelTap < 700) return;
     const room = roomAt(scenePercentAt(event));
     if (!editMode) { const start = els.scene.__tapStart; if (room && start && Math.hypot(event.clientX - start.x, event.clientY - start.y) < 12 && performance.now() - start.t < 1200) onRoomTap(room); return; }
+    // A tap inside an ungrouped thermostat's frame, between its parts: the whole thermostat again (no part picked, the camera on all of it).
+    { const sel = roomsOf()[selectedRoomId], b = sel && isThermoRoom(sel) && !sel.labelLinked ? $(`#room-labels .room-label-backdrop[data-room-id="${CSS.escape(sel.id)}"]`)?.getBoundingClientRect() : null;
+      if (b?.width && event.clientX >= b.left && event.clientX <= b.right && event.clientY >= b.top && event.clientY <= b.bottom) {
+        selectedLabelPart = ''; panelPart = null; $$(`.room-label-part[data-room-id="${CSS.escape(sel.id)}"]`).forEach(n => n.classList.remove('active-part')); markPartSection('');
+        $$('#room-editor-content details.part-section[open]').forEach(d => { d.open = false; }); renderRoomLabels(); requestAnimationFrame(() => requestAnimationFrame(() => focusLabelBox(sel))); return; } }
     closeEditor(); closeFlowEditor(); closeMoreInfo();
     if (room && room.id === selectedRoomId) focusSceneBoxOnMobile(room.points || []); // a tap on the selected room brings it back into view
     else if (room) openRoomEditor(room.id); else closeRoomEditor();
