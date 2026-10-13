@@ -1,3 +1,7 @@
+## 0.6.1-beta.683
+
+- Reset suwaków w presetach działa: „Odstęp od ikony” wraca do 4, „Podział” do 50%; na kaflu z presetem „Odstęp” i „Margines” wracają do 4 (wartości presetu, nie dawne 12/0).
+
 ## 0.6.1-beta.682
 
 - Preset 3: suwak „Podział” pokazuje aktualną wartość (także po zmianie „Wielkości” ikony) i ma kropki 25 / 50 / 75%, do których łatwo wskakuje.
