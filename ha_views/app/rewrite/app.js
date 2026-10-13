@@ -3915,7 +3915,9 @@ function roomEditorMarkup(room) {
     return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${body}</svg>`; };
   const pairBtn = (v, title) => `<button type="button" class="room-card-preset${(r.tilePreset || defaultTilePreset(r)) === v ? ' active' : ''}" data-tile-preset="${v}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${pairPic(v)}</button>`;
   const pairPresets = onTile && shownCount === 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') + '</div></div>' : '';
-  const tilePresets = onTile && shownCount === 2 ? pairPresets : onTile && shownCount > 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi') + '</div></div>' : '';
+  // (the presets sit on the label section's bar - at hand with the section shut; the bar's click does not open / shut it)
+  const presetBar = !onTile || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
+  const tilePresets = '';
   const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
@@ -3929,7 +3931,7 @@ function roomEditorMarkup(room) {
           ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
             + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
           : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
-  const group = partBar('group', isTextRoom(r) ? 'Przycisk' : !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
+  const group = (h => presetBar ? h.replace('<span class="section-tools">', presetBar + '<span class="section-tools">') : h)(partBar('group', isTextRoom(r) ? 'Przycisk' : !isThermoRoom(r) ? 'Etykieta' : 'Grupa', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })
     // Margin between the group's frame and its parts - only while the frame hugs the parts. A frame with its own size
@@ -3945,7 +3947,7 @@ function roomEditorMarkup(room) {
       // On the group's bar: grouping and which parts are shown, then (apart, so they do not blend) background and frame.
       // (A label's parts are switched on / off from the editor's head.)
       // A lone part is the label: the group has no background / frame of its own then.
-      ...(isThermoRoom(r) ? [['|']] : []), ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]);
+      ...(isThermoRoom(r) ? [['|']] : []), ['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']]));
   // Sections in the order of "Pokaż": icon, name, mode text, the thermostat's parts, each mode button, extra entities.
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };

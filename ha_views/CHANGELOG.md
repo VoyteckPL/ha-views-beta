@@ -1,3 +1,7 @@
+## 0.6.1-beta.688
+
+- Presety etykiety na kaflu są przyklejone na pasku sekcji „Etykieta” (obok tła i ramki) - dostępne od razu, bez otwierania sekcji; kliknięcie presetu nie otwiera/nie zamyka sekcji.
+
 ## 0.6.1-beta.687
 
 - Kreator nowego widoku w 2 krokach: najpierw wybór „Obraz z siatką” albo „Kafelki”; potem dla obrazu - wgranie / wybór obrazu, dla kafelków - kolor i format Telefon (9:16) albo Desktop (16:9). Kafelki od razu otwierają pustą siatkę w trybie edycji: 4×10 na telefon, 8×6 na desktop (kafle podobnego kształtu).
