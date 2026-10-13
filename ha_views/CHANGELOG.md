@@ -1,3 +1,9 @@
+## 0.6.1-beta.677
+
+- Preset 2 („Ikona z lewej”) na nowo: ikona 1:1 po lewej, nazwa i stan jedno pod drugim po prawej, równej wysokości, z tą samą wielkością tekstu, biały tekst, zaokrąglenie 12, minimalne odstępy; zamiast „Udziału ikony” zwykłe suwaki „Wielkość” (ramka ikony - nazwa i stan biorą resztę szerokości) i „Wielkość ikony”.
+- Przyciski presetów to obrazki układu (kółko = ikona, belki = nazwa i stan).
+- Presety nie znikają po rozgrupowaniu/poprzesuwaniu elementów - kliknięcie presetu grupuje etykietę z powrotem i układa ją od nowa.
+
 ## 0.6.1-beta.676
 
 - Domyślny wygląd etykiety na kaflu (po dodaniu i po „Przywróć domyślny wygląd”) = preset „Jedno pod drugim” z: wielkością ikony 40 px przy siatce 4×10 (przy innych proporcjonalnie), zaokrągleniem nazwy i stanu 12 px, białym kolorem nazwy i stanu.

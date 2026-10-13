@@ -1127,8 +1127,15 @@ const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCar
 const TILE_COL_U = 240;
 // The shape (width / height) of one tile of a cols x rows grid on this plan.
 function tileAspectOf(cols, rows) { const g = dashGeom(), sc = els.scene?.getBoundingClientRect(); if (!sc?.width) return 1; const cw = (100 - g.gx * (cols + 1)) / cols, ch = (100 - g.gy * (rows + 1)) / rows; return clamp((cw * sc.width) / Math.max(1, ch * sc.height), .2, 6); }
-const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && room.labelCardLayout === 'column' && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
+const isTileColumn = room => !!room && room.labelLinked && !room.labelCardFree && (room.labelCardLayout === 'column' || room.labelCardLayout === 'iconLeft') && !!room.tileColV2 && !!room.labelIcon && !!(room.labelName || room.labelState) && !isThermoRoom(room) && !!dashSpan(room);
 // The height the parts of a "Jedno pod drugim" tile label share (gaps and margins taken off): the label is the tile's shape.
+// The label's inner height on its tile (margins off; its width is TILE_COL_U): the label is the tile's shape.
+function tileInnerH(room, aspect) {
+  const py = clamp(Number(room.labelCardPadding ?? 4), 0, 150), px = cardPadX(room), span = dashSpan(room), sc = els.scene?.getBoundingClientRect();
+  const A = aspect || (span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1);
+  return Math.max(8, (TILE_COL_U + 2 * px) / A - 2 * py);
+}
+const tileRowIconMax = room => Math.max(10, Math.min(tileInnerH(room), TILE_COL_U * .6));
 function tileColumnHs(room, aspect) {
   const parts = ['labelIcon','labelName','labelState'].filter(k => room[k]).length || 1, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), py = clamp(Number(room.labelCardPadding ?? 4), 0, 150), px = cardPadX(room), span = dashSpan(room), sc = els.scene?.getBoundingClientRect();
   const A = aspect || (span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1);
@@ -1145,16 +1152,18 @@ function tileColumnLayout(room, reset = false) {
     texts.forEach(k => { room[`${k}Radius`] = 12; room[`${k}ColorState`] = false; room[`${k}Color`] = '#FFFFFF'; room[`${k}ColorOn`] = '#FFFFFF'; }); }
   ['labelIcon','labelName','labelState'].forEach(k => { ['Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase','labelGiveBase'].forEach(k => delete room[k]);
-  const U = TILE_COL_U, hs = tileColumnHs(room);
-  let ih = icon ? (texts.length ? hs * tileIconShare(room) / 100 : hs) : 0; ih = Math.min(ih, U);
-  const th = texts.length ? (hs - ih) / texts.length : 0, r1 = v => Math.round(v * 10) / 10;
+  const U = TILE_COL_U, row = room.labelCardLayout === 'iconLeft' && icon && texts.length > 0, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), inner = tileInnerH(room), hs = row ? inner : tileColumnHs(room), r1 = v => Math.round(v * 10) / 10;
+  // One under the other: the icon's height is its share of it. The icon on the left: its frame as set (by default 40% of
+  // the label's width, at most as high as the label), the name / state one under the other next to it.
+  let ih = icon ? (row ? clamp(Number(room.tileRowIcon) || Math.min(inner, U * .4), 10, tileRowIconMax(room)) : texts.length ? hs * tileIconShare(room) / 100 : hs) : 0; if (!row) ih = Math.min(ih, U);
+  const th = texts.length ? (row ? (inner - g * (texts.length - 1)) / texts.length : (hs - ih) / texts.length) : 0, tw = row ? Math.max(20, U - ih - g) : U;
   // (the icon keeps the share of its frame it had - its own slider sets that; by default 70% of it, 90% with no frame)
   if (icon) { const fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, was = Number(room.labelIconW) - 2 * pad, keep = !fresh && room.tileColV2Done && was > 0 && Number(room.labelIconSize) > 0, k0 = keep ? clamp(Number(room.labelIconSize) / was, .1, 1) : 0;
     room.labelIconW = room.labelIconH = r1(ih);
     // (by default the icon is 40 on a tile of a 4 x 10 grid - on other tiles in proportion - as far as its frame lets it)
-    room.labelIconSize = r1(clamp(keep ? (ih - 2 * pad) * k0 : 40 * hs / Math.max(1, tileColumnHs(room, tileAspectOf(4, 10))), 6, Math.max(6, ih - 2 * pad))); }
+    room.labelIconSize = r1(clamp(keep ? (ih - 2 * pad) * k0 : row ? (ih - 2 * pad) * (fr ? .7 : .9) : 40 * hs / Math.max(1, tileColumnHs(room, tileAspectOf(4, 10))), 6, Math.max(6, ih - 2 * pad))); }
   room.tileColV2Done = true;
-  texts.forEach(k => { room[`${k}W`] = U; room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
+  texts.forEach(k => { room[`${k}W`] = r1(tw); room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 12; });
   renderRoomLabels();
   // One text size for both: as big as fits the one that has the least room.
   if (texts.length) { const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); /* (some room left inside its frame) */ texts.forEach(k => { room[`${k}Size`] = sz; }); } }
@@ -1165,7 +1174,7 @@ function applyTilePreset(room, preset = room.tilePreset || 'v', master = '', res
   room.tilePreset = preset;
   const icon = !!room.labelIcon, texts = ['labelName','labelState'].filter(k => room[k]);
   room.labelCardFree = false; room.labelCardLayout = preset === 'h' && icon && texts.length === 2 ? 'iconLeft' : 'column'; /* (two parts: always one under the other) */ room.labelCardAlign = 'center';
-  if (room.labelCardLayout === 'column') return tileColumnLayout(room, reset);
+  if (room.labelCardLayout === 'column' || (room.labelCardLayout === 'iconLeft' && texts.length === 2)) { if (reset) delete room.tileRowIcon; return tileColumnLayout(room, reset); }
   ['labelIcon','labelName','labelState'].forEach(k => { ['W','H','Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]);
   // (the tile scales the label to fill it, so the icon's own size only sets how big the gaps and frames are next to it: a
@@ -3816,7 +3825,10 @@ function roomEditorMarkup(room) {
   // arranging the parts (aligned left / centre / right, top / middle / bottom) and giving name and state one width.
   const shownCount = ['labelIcon','labelName','labelState'].filter(k => r[k]).length, arrangeable = ownSize && r.labelLinked && shownCount > 1;
   const onTile = icon && !isThermoRoom(r) && !!dashSpan(r), tp = r.tilePreset || 'v';
-  const tilePresets = onTile && shownCount > 2 && r.labelLinked ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + (icBtn('data-tile-preset="v"', 'mdi-view-agenda-outline', 'Jedno pod drugim', tp === 'v') + icBtn('data-tile-preset="h"', 'mdi-page-layout-sidebar-left', 'Ikona z lewej', tp === 'h')) + '</div></div>' : '';
+  // (each preset's button is a small picture of the label it makes: the icon a circle, the name / state bars)
+  const presetPic = v => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">${v === 'v' ? '<circle cx="12" cy="5.5" r="3.5"/><rect x="3.5" y="11" width="17" height="4.5" rx="1.6"/><rect x="3.5" y="17.5" width="17" height="4.5" rx="1.6"/>' : '<circle cx="6.5" cy="12" r="4.5"/><rect x="13" y="6.5" width="9" height="4.5" rx="1.6"/><rect x="13" y="13" width="9" height="4.5" rx="1.6"/>'}</svg>`;
+  const presetBtn = (v, title) => `<button type="button" class="room-card-preset${tp === v ? ' active' : ''}" data-tile-preset="${v}" title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}">${presetPic(v)}</button>`;
+  const tilePresets = onTile && shownCount > 2 ? `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Preset'))}</label><div class="room-card-presets">` + presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + '</div></div>' : '';
   const groupSize = !ownSize ? '' : sizeOpen((onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
     + (arrangeable ? (range('Odstęp','labelPartGap',clamp(Number(r.labelPartGap ?? 12), 0, onTile ? 30 : 80),0,onTile ? 30 : 80,1,'px')) : '')
@@ -3880,7 +3892,7 @@ function roomEditorMarkup(room) {
   };
   const withBoxRows = (h, key) => { const rows = boxRows(key); if (!rows) return h; const path = h.includes('data-path="tileIconShare"') ? 'tileIconShare' : h.includes(`data-path="${key}Size"`) ? `${key}Size` : ''; if (!path) { const j = h.indexOf('gauge-subsection-body">'); return j < 0 ? h : h.slice(0, j + 23) + rows + h.slice(j + 23); } const i = h.indexOf(`data-path="${path}"`), b = h.indexOf('</output></div>', i); return b < 0 ? h : h.slice(0, b + 15) + rows + h.slice(b + 15); };
   const partHtml = item => { const key = item[1]; let h = partSection(item);
-    if (tileSizes && key === 'labelIcon' && r.labelCardLayout === 'iconLeft') h = swapControl(h, 'labelIconSize', r.labelName || r.labelState ? control('Udział ikony','tileIconShare','range',tileIconShare(r),{ min:30, max:70, step:1, suffix:'%', integer:true }) : '');
+    if (false && tileSizes && key === 'labelIcon') h = swapControl(h, 'labelIconSize', r.labelName || r.labelState ? control('Udział ikony','tileIconShare','range',tileIconShare(r),{ min:30, max:70, step:1, suffix:'%', integer:true }) : '');
     h = withBoxRows(h, key);
     // (No margin sliders for a part: its frame is set with its width / height, what is in it with its size.)
     if (['labelIcon','labelName','labelState'].includes(key)) h = swapControl(h, `${key}Padding`, '');
@@ -4054,7 +4066,7 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false) {
 // The size sliders' range follows what fits in the part's frame now.
 function syncSizeRanges(room) {
   $$('#room-editor-content input[type=range][data-path]').forEach(i => { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(i.dataset.path);
-    if (wm && wm[1] === 'labelIcon' && isTileColumn(room)) { if (i !== document.activeElement) { const hs = tileColumnHs(room); i.min = String(Math.ceil(hs * .1)); i.max = String(Math.floor(hs * .7)); } return; }
+    if (wm && wm[1] === 'labelIcon' && isTileColumn(room)) { if (i !== document.activeElement) { const row = room.labelCardLayout === 'iconLeft', hs = tileColumnHs(room); i.min = String(row ? 10 : Math.ceil(hs * .1)); i.max = String(Math.floor(row ? tileRowIconMax(room) : hs * .7)); } return; }
     if (wm && !(partWHMax.frozen && i === document.activeElement)) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); if (mx) { const v = Math.max(mx, Number(i.value) || 0); if (Number(i.max) !== v) i.max = String(v); } return; }
     const m = /^(label(?:Icon|Name|State))Size$/.exec(i.dataset.path); if (!m || i === document.activeElement && syncSizeRanges.dragging) return;
     const mx = partSizeMax(room, m[1]); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
@@ -4123,8 +4135,10 @@ function onRoomEditorInput(event) {
   // On a "Jedno pod drugim" tile the icon's size is its share of the label's height: the name / state take the rest
   // (laid out again, as high as each other, with their text fitted) - so it can go up and back down leaving them as they were.
   if (/^labelIcon(W|H)$/.test(path) && typeof value === 'number' && isTileColumn(room)) {
-    const hs = tileColumnHs(room), P = clamp(value / hs * 100, 10, 70); room.tileIconShare = Math.round(P * 10) / 10; tileColumnLayout(room);
-    input.min = String(Math.ceil(hs * .1)); input.max = String(Math.floor(hs * .7)); input.value = String(Math.round(room.labelIconW)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room.labelIconW)}${o.dataset.suffix || ''}`;
+    const row = room.labelCardLayout === 'iconLeft', hs = tileColumnHs(room);
+    if (row) room.tileRowIcon = Math.round(clamp(value, 10, tileRowIconMax(room)) * 10) / 10; else room.tileIconShare = Math.round(clamp(value / hs * 100, 10, 70) * 10) / 10;
+    tileColumnLayout(room);
+    input.min = String(row ? 10 : Math.ceil(hs * .1)); input.max = String(Math.floor(row ? tileRowIconMax(room) : hs * .7)); input.value = String(Math.round(room.labelIconW)); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room.labelIconW)}${o.dataset.suffix || ''}`;
     room.updatedAt = new Date().toISOString(); renderRooms(); syncEditorValues(room); scheduleSave(event.type === 'change'); return; }
   // A part's width / height slider: snapped (and its guide lines shown) while it is moved.
   { const own = /^(label(?:Icon|Name|State))(W|H|Size)$/.exec(path); if (own && room.labelGiveBase?.[own[1]]) { delete room.labelGiveBase[own[1]]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }
@@ -4306,7 +4320,7 @@ function onRoomEditorClick(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const tilePresetButton = event.target.closest('[data-tile-preset]');
-  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; applyTilePreset(room, tilePresetButton.dataset.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; if (!room.labelLinked) { room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; renderRooms(); } applyTilePreset(room, tilePresetButton.dataset.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
   const partToggle = event.target.closest('[data-part-toggle]');
   if (partToggle) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;
