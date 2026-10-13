@@ -1,3 +1,8 @@
+## 0.6.1-beta.704
+
+- W trakcie ruszania suwakami „Margines ↕”, „Margines ↔” i „Odstęp” widać tymczasowo siatkę etykiety (znika chwilę po puszczeniu).
+- Kreski pod tymi suwakami rzadziej - co 25 px (przyciąganie dalej co 5 px).
+
 ## 0.6.1-beta.703
 
 - Margines etykiety znowu osobno: „Margines ↕” (góra/dół) i „Margines ↔” (lewo/prawo).
