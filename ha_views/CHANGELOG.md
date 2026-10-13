@@ -1,3 +1,9 @@
+## 0.6.1-beta.668
+
+- Elementy etykiety nie wypadają poza nią przy manipulowaniu rozmiarami: po każdej zmianie, jeśli coś wystaje, elementy proporcjonalnie się zmniejszają (najpierw pozostałe, potem przesuwany).
+- Rozgrupowana etykieta na kaflu: suwaki szerokości/wysokości mają zakres ograniczony do kafla, a elementy nie wychodzą poza kafel.
+- Elementy, które ustępują miejsca, nie schodzą poniżej 6 px.
+
 ## 0.6.1-beta.667
 
 - Gdy element (np. stan) rośnie w etykiecie o stałym rozmiarze, elementy obok niego (w tej samej kolumnie/wierszu) proporcjonalnie się zmniejszają (ramka i ikona/tekst, do 20%) zamiast blokować rozmiar; gdy element znów maleje, wracają do swojego poprzedniego rozmiaru.

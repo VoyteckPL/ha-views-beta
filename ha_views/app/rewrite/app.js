@@ -3918,30 +3918,42 @@ function partSizeSnap(room, k, axis, want) {
 }
 // The panel's sliders show what the label has now - after a layout, a share or a size that changed other values too.
 const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$/;
-// How wide / high a part can get without going past its label - only where the label has a set size (on a tile, a
-// free or locked label); a label that grows with its parts has no such limit (null).
+// Where a label's parts must stay (screen box): its tile (less the label's margin when grouped), else a free or locked
+// label's own frame; a label that grows with its parts and is on no tile has no such bounds (null).
+function partBounds(room) {
+  const id = CSS.escape(room.id), card = room.labelLinked ? $(`.room-label-card[data-room-id="${id}"]`) : null, span = dashSpan(room);
+  if (room.labelLinked && !card) return null;
+  let b = null;
+  if (span && isIconRoom(room)) { const sc = els.scene.getBoundingClientRect(); b = { l: sc.left + span.x / 100 * sc.width, t: sc.top + span.y / 100 * sc.height, r: sc.left + (span.x + span.w) / 100 * sc.width, b: sc.top + (span.y + span.h) / 100 * sc.height };
+    if (card) { const cr = card.getBoundingClientRect(), k = cr.width / Math.max(1, card.offsetWidth) || 1, cx = (b.l + b.r) / 2, cy = (b.t + b.b) / 2, w = (parseFloat(card.style.minWidth) || card.offsetWidth) * k, h = (parseFloat(card.style.minHeight) || card.offsetHeight) * k; b = { l: cx - w / 2, r: cx + w / 2, t: cy - h / 2, b: cy + h / 2 }; } }
+  else if (card && (card.classList.contains('free') || room.labelSizeLock)) { const cr = card.getBoundingClientRect(); b = { l: cr.left, t: cr.top, r: cr.right, b: cr.bottom }; }
+  if (!b) return null;
+  if (card) { const cs = getComputedStyle(card), cr = card.getBoundingClientRect(), k = cr.width / Math.max(1, card.offsetWidth) || 1; b = { l: b.l + (parseFloat(cs.paddingLeft) || 0) * k, r: b.r - (parseFloat(cs.paddingRight) || 0) * k, t: b.t + (parseFloat(cs.paddingTop) || 0) * k, b: b.b - (parseFloat(cs.paddingBottom) || 0) * k }; }
+  else { const m = 2; b = { l: b.l + m, r: b.r - m, t: b.t + m, b: b.b - m }; }
+  return b;
+}
+const PART_KEY = c => c.dataset.labelPart === 'icon' ? 'labelIcon' : c.dataset.labelPart === 'name' ? 'labelName' : 'labelState';
+function partNodes(room) { const id = CSS.escape(room.id); return $$(`.room-label-card[data-room-id="${id}"] > [data-label-part], .room-label-part[data-room-id="${id}"][data-label-part]`).filter(c => ['icon','name','state'].includes(c.dataset.labelPart) && c.offsetWidth); }
+// How wide / high a part can get without going past those bounds (null: no limit). In a grouped label the parts beside
+// it along that line give way: they can get smaller (all in proportion) down to a fifth of their size.
 function partWHMax(room, k, axis) {
-  const n = partBoxNode(room, k), card = room.labelLinked ? n?.closest('.room-label-card') : null; if (!n || !card) return null;
-  partWHMax.stack = null; const free = card.classList.contains('free'), pinned = card.classList.contains('dash-pinned'); if (!free && !pinned && !room.labelSizeLock) return null;
-  const X = axis === 'x', cs = getComputedStyle(card), cr = card.getBoundingClientRect(), z = (X ? cr.width / Math.max(1, card.offsetWidth) : cr.height / Math.max(1, card.offsetHeight)) || 1;
-  const lo = X ? 'left' : 'top', hi = X ? 'right' : 'bottom', clo = X ? 'top' : 'left', chi = X ? 'bottom' : 'right';
-  const size = Math.max(X ? card.offsetWidth : card.offsetHeight, parseFloat(X ? card.style.minWidth : card.style.minHeight) || 0);
-  const p0 = parseFloat(X ? cs.paddingLeft : cs.paddingTop) || 0, p1 = parseFloat(X ? cs.paddingRight : cs.paddingBottom) || 0, inLo = cr[lo] / z + p0, inHi = cr[lo] / z + size - p1;
-  const r = n.getBoundingClientRect(), a = r[lo] / z, b = r[hi] / z, cur = b - a;
+  partWHMax.stack = null; const n = partBoxNode(room, k), B = n && partBounds(room); if (!B) return null;
+  const X = axis === 'x', r = n.getBoundingClientRect(), z = (X ? r.width / Math.max(1, n.offsetWidth) : r.height / Math.max(1, n.offsetHeight)) || 1;
+  const lo = X ? 'left' : 'top', hi = X ? 'right' : 'bottom', clo = X ? 'top' : 'left', chi = X ? 'bottom' : 'right', inLo = X ? B.l : B.t, inHi = X ? B.r : B.b, cur = (r[hi] - r[lo]) / z;
+  const card = room.labelLinked ? n.closest('.room-label-card') : null;
   let max;
-  if (free) max = 2 * Math.min((a + b) / 2 - inLo, inHi - (a + b) / 2);
+  if (!card || card.classList.contains('free')) max = 2 * Math.min((r[lo] + r[hi]) / 2 - inLo, inHi - (r[lo] + r[hi]) / 2) / z;
   else {
-    const parts = [...card.children].filter(c => c.dataset.labelPart && c.offsetWidth).map(c => c.getBoundingClientRect());
-    const side = [...card.children].filter(c => c !== n && c.dataset.labelPart && c.offsetWidth).map(c => c.getBoundingClientRect()).some(o => o[hi] - o[lo] > 0 && !(o[chi] <= r[clo] || o[clo] >= r[chi]) && (o[lo] >= r[hi] - 1 || o[hi] <= r[lo] + 1));
-    const uLo = Math.min(...parts.map(o => o[lo])) / z, uHi = Math.max(...parts.map(o => o[hi])) / z;
-    max = side ? cur + (inHi - inLo) - (uHi - uLo) : inHi - inLo;
-    // The parts next to it along that line give way: they can get smaller (all in proportion) down to a fifth of their size.
-    if (side) { const keyOf = c => c.dataset.labelPart === 'icon' ? 'labelIcon' : c.dataset.labelPart === 'name' ? 'labelName' : 'labelState';
-      const sibs = [...card.children].filter(c => c !== n && c.dataset.labelPart && c.offsetWidth).filter(c => { const o = c.getBoundingClientRect(); return !(o[chi] <= r[clo] || o[clo] >= r[chi]); })
-        .map(c => { const kk = keyOf(c), o = c.getBoundingClientRect(), W = Number(room[`${kk}W`]) > 0 ? Number(room[`${kk}W`]) : c.offsetWidth, H = Number(room[`${kk}H`]) > 0 ? Number(room[`${kk}H`]) : c.offsetHeight, S = Number(room[`${kk}Size`]) || ROOM_DEFAULTS[`${kk}Size`];
-          // (Their size before they gave way is kept: the room given back brings them back up to it, not past it.)
-          const B = room.labelGiveBase?.[kk] || { W, H, S }, r0 = clamp((X ? W / B.W : H / B.H) || 1, .05, 1); return { k: kk, B, ext: (o[hi] - o[lo]) / z / r0 }; });
-      const sum = sibs.reduce((t, x) => t + x.ext, 0); if (sibs.length && sum > 0) { const used = sibs.reduce((t, x) => t + x.ext * clamp((X ? (Number(room[`${x.k}W`]) || x.B.W) / x.B.W : (Number(room[`${x.k}H`]) || x.B.H) / x.B.H), .05, 1), 0), room4 = (inHi - inLo) - (uHi - uLo) + used; partWHMax.stack = { sibs, sum, avail: room4, dataCur: Number(room[`${k}${X ? 'W' : 'H'}`]) > 0 ? Number(room[`${k}${X ? 'W' : 'H'}`]) : (X ? n.offsetWidth : n.offsetHeight) }; max = cur + room4 - sum * .2; } }
+    const parts = partNodes(room), sibEls = parts.filter(c => c !== n).filter(c => { const o = c.getBoundingClientRect(); return !(o[chi] <= r[clo] || o[clo] >= r[chi]); });
+    const rs = parts.map(c => c.getBoundingClientRect()), uLo = Math.min(...rs.map(o => o[lo])), uHi = Math.max(...rs.map(o => o[hi]));
+    max = sibEls.length ? cur + ((inHi - inLo) - (uHi - uLo)) / z : (inHi - inLo) / z;
+    if (sibEls.length) {
+      const sibs = sibEls.map(c => { const kk = PART_KEY(c), o = c.getBoundingClientRect(), W = Number(room[`${kk}W`]) > 0 ? Number(room[`${kk}W`]) : c.offsetWidth, H = Number(room[`${kk}H`]) > 0 ? Number(room[`${kk}H`]) : c.offsetHeight, S = Number(room[`${kk}Size`]) || ROOM_DEFAULTS[`${kk}Size`];
+        // (Their size before they gave way is kept: the room given back brings them back up to it, not past it.)
+        const Bs = room.labelGiveBase?.[kk] || { W, H, S }, r0 = clamp((X ? W / Bs.W : H / Bs.H) || 1, .05, 1), ext = (o[hi] - o[lo]) / z; return { k: kk, B: Bs, ext: ext / r0, now: ext }; });
+      const sum = sibs.reduce((t, x) => t + x.ext, 0), used = sibs.reduce((t, x) => t + x.now, 0);
+      if (sum > 0) { const avail = ((inHi - inLo) - (uHi - uLo)) / z + used; partWHMax.stack = { sibs, sum, avail, dataCur: Number(room[`${k}${X ? 'W' : 'H'}`]) > 0 ? Number(room[`${k}${X ? 'W' : 'H'}`]) : (X ? n.offsetWidth : n.offsetHeight) }; max = cur + avail - sum * .2; }
+    }
   }
   return Math.max(10, Math.floor(max));
 }
@@ -3981,11 +3993,35 @@ function syncEditorValues(room) {
     i.value = String(v); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(v)}${o.dataset.suffix || ''}`;
   });
 }
+// Whatever was done to a label's parts, they never end up past its bounds (above): if they do, they get smaller in
+// proportion (grouped: all of them, the one being moved last; ungrouped: each one that sticks out) until they fit.
+function keepPartsInside(room, active) {
+  let changed = false, last = Infinity, stage = 0;
+  const setSlider = k => $$('#room-editor-content input[type=range][data-path]').forEach(i => { const p = i.dataset.path; if (p.startsWith(k) && /(W|H|Size)$/.test(p) && Number.isFinite(Number(room[p]))) { i.value = String(room[p]); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(room[p])}${o.dataset.suffix || ''}`; } });
+  const shrink = (c, f) => { const k = PART_KEY(c), w = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : c.offsetWidth, h = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : c.offsetHeight, sz = Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`];
+    room[`${k}W`] = Math.max(6, Math.round(w * f * 10) / 10); room[`${k}H`] = Math.max(6, Math.round(h * f * 10) / 10); room[`${k}Size`] = Math.max(6, Math.round(sz * f * 10) / 10); delete room[`${k}Lock`]; if (k === active) setSlider(k); };
+  for (let it = 0; it < 6; it++) {
+    const B = partBounds(room), parts = partNodes(room); if (!B || !parts.length) break;
+    let over = 1;
+    if (room.labelLinked) { const rs = parts.map(c => c.getBoundingClientRect()), uw = Math.max(...rs.map(r => r.right)) - Math.min(...rs.map(r => r.left)), uh = Math.max(...rs.map(r => r.bottom)) - Math.min(...rs.map(r => r.top));
+      over = Math.max(uw / Math.max(1, B.r - B.l), uh / Math.max(1, B.b - B.t)); if (over <= 1.005) break;
+      // (The others first; when they can get no smaller - or it did not help - the one being moved.)
+      const stuck = over > last * .995; if (stuck && stage) break; if (stuck || it >= 2) stage = 1; last = over;
+      const pick = parts.filter(c => PART_KEY(c) !== active), mine = parts.filter(c => PART_KEY(c) === active); (stage || !pick.length ? (mine.length ? mine : parts) : pick).forEach(c => shrink(c, .99 / over)); }
+    else { let any = false; parts.forEach(c => { const r = c.getBoundingClientRect(), cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2; if (cx < B.l || cx > B.r || cy < B.t || cy > B.b) return;
+        const f = Math.min(1, 2 * Math.min(cx - B.l, B.r - cx) / Math.max(1, r.width), 2 * Math.min(cy - B.t, B.b - cy) / Math.max(1, r.height)); if (f < .995) { shrink(c, Math.max(.2, f * .99)); any = true; } });
+      if (!any) break; }
+    changed = true; renderRooms();
+  }
+  if (changed) scheduleSave();
+  return changed;
+}
 // On a tile with a layout chosen, a change that moves the others works the layout out again (a text sized by hand leads).
 function tileAfterEdit(room, path) {
   // A part's frame made smaller than what is in it: the icon / text gets smaller with it (and back up to its size when the slider was taken).
   { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(path), b = tileAfterEdit.base; if (wm && b && b.k === wm[1]) { const sp = `${b.k}Size`, fit = partSizeMax(room, b.k, undefined, true), want = Math.round(Math.min(b.size, fit) * 10) / 10;
     if (want !== Number(room[sp] || ROOM_DEFAULTS[sp])) { room[sp] = want; renderRooms(); scheduleSave(); } } }
+  { const pm = /^(label(?:Icon|Name|State))(W|H|Size|Padding|PadX)$/.exec(path); if (pm || /^labelCard(Padding|PadX)$|^labelPartGap$/.test(path)) keepPartsInside(room, pm?.[1]); }
   if (!room || isThermoRoom(room) || !isIconRoom(room) || !dashSpan(room) || !room.labelLinked || room.labelCardFree) return syncEditorValues(room);
   const m = /^(label(?:Name|State))Size$/.exec(path);
   if (false && m) applyTilePreset(room, undefined, m[1]);
@@ -4008,7 +4044,7 @@ function onRoomEditorInput(event) {
     if (f.max && value > f.max) { value = f.max; input.value = String(value); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(value)}${o.dataset.suffix || ''}`; }
     // What it takes beyond the free room comes from the parts beside it, in proportion (they get it back as it gives it back).
     const st = f.stack; if (st) { const q = clamp((st.avail - (value - st.dataCur)) / st.sum, .2, 1);
-      st.sibs.forEach(x => { room[`${x.k}W`] = Math.round(x.B.W * q * 10) / 10; room[`${x.k}H`] = Math.round(x.B.H * q * 10) / 10; room[`${x.k}Size`] = Math.round(x.B.S * q * 10) / 10; delete room[`${x.k}Lock`];
+      st.sibs.forEach(x => { room[`${x.k}W`] = Math.max(6, Math.round(x.B.W * q * 10) / 10); room[`${x.k}H`] = Math.max(6, Math.round(x.B.H * q * 10) / 10); room[`${x.k}Size`] = Math.max(6, Math.round(x.B.S * q * 10) / 10); delete room[`${x.k}Lock`];
         if (q < 1) (room.labelGiveBase ||= {})[x.k] = x.B; else if (room.labelGiveBase) { delete room.labelGiveBase[x.k]; if (!Object.keys(room.labelGiveBase).length) delete room.labelGiveBase; } }); } } }
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
