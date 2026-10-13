@@ -1,3 +1,7 @@
+## 0.6.1-beta.705
+
+- Preset 3 (ikona i nazwa w rzędzie): w sekcji Etykieta szybkie suwaki „Ramka ikony” i „Ikona” (sama ikona w ramce). Ramka ikony jest niezależna od podziału (domyślnie wysoka jak rząd, nie wyższa); nazwa bierze resztę szerokości. Suwak „Wielkość” w sekcji Ikona robi to samo.
+
 ## 0.6.1-beta.704
 
 - W trakcie ruszania suwakami „Margines ↕”, „Margines ↔” i „Odstęp” widać tymczasowo siatkę etykiety (znika chwilę po puszczeniu).
