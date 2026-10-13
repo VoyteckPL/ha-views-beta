@@ -3084,7 +3084,7 @@ function startRoomLabelDrag(event) {
   const focusBox = () => (!room.labelLinked && node.dataset.labelPart !== 'card' && partFocusBox(room, node.dataset.labelPart)) || (isIconRoom(room) ? iconFocusBox(room) : room.points || []);
   // A label (also one of its parts tapped while ungrouped) is shown whole, the same view every time - tapping its parts does not move it.
   const bringIntoView = () => { if (isIconRoom(room) && focusLabelBox(room)) return; focusSceneBoxOnMobile(focusBox()); };
-  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(bringIntoView)); })) return;
+  if (touchSelectFirst(event, selectedRoomId === room.id, () => { openRoomEditor(room.id); requestAnimationFrame(() => requestAnimationFrame(bringIntoView)); })) { if (event.pointerType === 'touch') viewportPointerDown(event); return; } // (a finger dragged over a label not picked: the plan moves)
   event.preventDefault(); event.stopPropagation();
   // The editor opens on a tap only (release without moving); grabbing and dragging right away just moves the label.
   const newlySelected = selectedRoomId !== room.id;
@@ -3184,8 +3184,9 @@ function startRoomLabelDrag(event) {
   };
   // Tiles, a finger on a whole label (thermostat…): it moves only after being held a moment (a short buzz, it lifts) - a swipe
   // over it never shuffles the tiles laid out by hand.
-  const needHold = event.pointerType === 'touch' && key === 'labelCard' && dashGrid().on; let armed = !needHold, dropped = false;
-  const holdTimer = needHold ? setTimeout(() => { if (dropped) return; armed = true; try { navigator.vibrate?.(15); } catch {} node.classList.add('drag-armed'); }, 420) : 0;
+  // Until then the finger moves the plan (as on an empty spot); held, the plan stops and the label goes with the finger. (Also on a background.)
+  const needHold = event.pointerType === 'touch' && key === 'labelCard'; let armed = !needHold, dropped = false; if (needHold) viewportPointerDown(event);
+  const holdTimer = needHold ? setTimeout(() => { if (dropped) return; armed = true; panGesture = null; try { navigator.vibrate?.(15); } catch {} node.classList.add('drag-armed'); }, 420) : 0;
   const move = e => { if (e.pointerId !== event.pointerId) return; if (!moved && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) < 4) return;
     if (!armed) { if (Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) > 10) { dropped = true; clearTimeout(holdTimer); } return; } // (moved before the hold: not a drag)
     moved = true; place(e); camera.track(e); };
@@ -3195,6 +3196,7 @@ function startRoomLabelDrag(event) {
     // The scene holds the finger, so the following click would land on the scene and select the room under the
     // label (e.g. the room an icon stands in); the label was already selected on press, so the click is dropped.
     const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
+    if (dropped) return; // (the finger moved the plan, not the label: the camera stays where it was moved)
     // A tap (no move) always brings the room / icon into view, also when it was already selected.
     if (!moved) {
       if (newlySelected) { skipRoomFocus = true; try { openRoomEditor(room.id); } finally { skipRoomFocus = false; } }
@@ -8965,8 +8967,9 @@ function bindEvents() {
   $('#snap-menu')?.addEventListener('pointerdown', event => { if (event.target.closest('#rotate-range')) event.stopPropagation(); });
   $('#add-button')?.addEventListener('click', event => { event.stopPropagation(); pendingDashCell = null; openAddDialog(); });
   // A tile's "+": the same panel, the new element then goes to that tile.
-  document.addEventListener('pointerdown', event => { if (event.target.closest?.('.dash-plus')) event.stopPropagation(); }, true);
-  document.addEventListener('click', event => { const b = event.target.closest?.('.dash-plus'); if (!b || !editMode) return; event.preventDefault(); event.stopPropagation(); const [c, r] = b.dataset.dashAdd.split(',').map(Number); pendingDashCell = { c, r, view: model.activeViewId, at: Date.now() }; openAddDialog(); }, true);
+  // A tile's "+": a tap adds there, a finger dragged from it moves the plan (and adds nothing).
+  document.addEventListener('pointerdown', event => { const b = event.target.closest?.('.dash-plus'); if (!b) return; b.__down = { x: event.clientX, y: event.clientY }; if (event.pointerType === 'touch') viewportPointerDown(event); event.stopPropagation(); }, true);
+  document.addEventListener('click', event => { const b = event.target.closest?.('.dash-plus'); if (!b || !editMode) return; event.preventDefault(); event.stopPropagation(); if (b.__down && Math.hypot(event.clientX - b.__down.x, event.clientY - b.__down.y) > 10) return; const [c, r] = b.dataset.dashAdd.split(',').map(Number); pendingDashCell = { c, r, view: model.activeViewId, at: Date.now() }; openAddDialog(); }, true);
   els.addDialog?.addEventListener('click', onAddDialogClick);
   $('#add-search')?.addEventListener('input', event => { if (!addState) return; addState.query = event.target.value; renderAddDialog('list'); });
   $('#add-search')?.addEventListener('keydown', event => { if (event.key === 'Enter' && addState && addGoLabel().ok) { event.preventDefault(); confirmAddDialog(); } });

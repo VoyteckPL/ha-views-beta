@@ -1,3 +1,8 @@
+## 0.6.1-beta.722
+
+- Telefon: przeciągnięcie palcem zaczęte na etykiecie / termostacie (zaznaczonym lub nie) przesuwa widok; samą etykietę przesuwa się po przytrzymaniu - teraz też w trybie Tło.
+- Kafelki: przeciągnięcie palcem zaczęte na „+” pustego kafla przesuwa widok (tapnięcie dalej otwiera dodawanie).
+
 ## 0.6.1-beta.721
 
 - Rozgrupowany termostat / wskaźnik: kliknięcie w jego ramkę (między elementami) wraca do całego termostatu - odznacza element i ustawia kamerę na całości, na środku, z marginesem 5%.
