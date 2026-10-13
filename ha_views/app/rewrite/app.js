@@ -1062,7 +1062,7 @@ function cardBoxPct(room) {
 }
 function pinToDash(room) {
   const box = cardBoxPct(room); if (!box) return false;
-  room.dash = dashTarget(box, { w: 1, h: 1 }); const span = dashSpan(room); if (!span) return false;
+  room.dash = dashTarget(box, { w: 1, h: 1 }); const span = dashSpan(room); if (!span) return false; if (!room.tilePreset) room.tileNeedsLayout = true;
   room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; return true;
 }
 function applyDashUi() {
@@ -1112,23 +1112,44 @@ function pinToFreeTile(room, view = activeSceneView()) {
   const g = dashGrid(view); if (!g.on || !room) return false;
   const used = dashUsedCells(view, room);
   if (pendingDashCell && Date.now() - pendingDashCell.at < 600000 && pendingDashCell.view === model.activeViewId && !used.has(`${pendingDashCell.c},${pendingDashCell.r}`) && pendingDashCell.c < g.cols && pendingDashCell.r < g.rows) {
-    const { c, r: rr } = pendingDashCell; pendingDashCell = null; room.dash = { c, r: rr, w: 1, h: 1 }; const span = dashSpan(room, view);
+    const { c, r: rr } = pendingDashCell; pendingDashCell = null; room.dash = { c, r: rr, w: 1, h: 1 }; const span = dashSpan(room, view); if (!room.tilePreset) room.tileNeedsLayout = true;
     if (span) { room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; } }
   pendingDashCell = null;
   for (let y = 0; y < g.rows; y++) for (let x = 0; x < g.cols; x++) if (!used.has(`${x},${y}`)) {
-    room.dash = { c: x, r: y, w: 1, h: 1 }; const span = dashSpan(room, view); if (!span) return false;
+    room.dash = { c: x, r: y, w: 1, h: 1 }; const span = dashSpan(room, view); if (!span) return false; if (!room.tilePreset) room.tileNeedsLayout = true;
     room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; return true; }
   return false;
 }
 // Tiles: ready layouts of a label's parts. "v": one under another (icon, name, state); "h": the icon on the left, name and
 // state on the right one under the other. The name and the state get the same width (their heights follow), the text
 // together as tall as the icon. The tile then scales the whole label to fill it.
-const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCardLayout === 'iconLeft' ? 40 : 50), 30, 70);
-function applyTilePreset(room, preset = room.tilePreset || 'v', master = '') {
+const tileIconShare = room => clamp(Number(room.tileIconShare) || (room.labelCardLayout === 'iconLeft' ? 40 : Math.round(100 / (1 + ['labelName','labelState'].filter(k => room[k]).length))), 30, 70);
+// "Jedno pod drugim" on a tile: the parts one under the other, all as high as each other (the icon's share sets its
+// height - by default an equal one), the name and the state nearly as wide as the label, with one text size and weight,
+// the icon's frame 1:1; small gaps and margins. The label is made the tile's shape, so the tile's fit fills it.
+function tileColumnLayout(room, reset = false) {
+  const icon = !!room.labelIcon, texts = ['labelName','labelState'].filter(k => room[k]), parts = [...(icon ? ['labelIcon'] : []), ...texts]; if (!parts.length) return;
+  if (reset || !room.tileColV2) { room.tileColV2 = true; room.labelPartGap = 4; room.labelCardPadding = 4; room.labelCardPadX = 4; delete room.tileIconShare; if (texts.length === 2) room.labelStateWeight = room.labelNameWeight || ROOM_DEFAULTS.labelNameWeight; }
+  ['labelIcon','labelName','labelState'].forEach(k => { ['Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
+  ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase','labelGiveBase'].forEach(k => delete room[k]);
+  const U = 240, g = clamp(Number(room.labelPartGap ?? 4), 0, 80), py = clamp(Number(room.labelCardPadding ?? 4), 0, 150), px = cardPadX(room), span = dashSpan(room), sc = els.scene?.getBoundingClientRect();
+  const A = span && sc?.width ? clamp((span.w * sc.width) / Math.max(1, span.h * sc.height), .2, 6) : 1;
+  const hs = clamp((U + 2 * px) / A - g * (parts.length - 1) - 2 * py, parts.length * 8, 2000);
+  let ih = icon ? (texts.length ? hs * tileIconShare(room) / 100 : hs) : 0; ih = Math.min(ih, U);
+  const th = texts.length ? (hs - ih) / texts.length : 0, r1 = v => Math.round(v * 10) / 10;
+  if (icon) { room.labelIconW = room.labelIconH = r1(ih); const fr = room.labelIconBg || room.labelIconBorder, pad = fr ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0; room.labelIconSize = r1(Math.max(6, (ih - 2 * pad) * (fr ? .7 : .9))); }
+  texts.forEach(k => { room[`${k}W`] = U; room[`${k}H`] = r1(th); if (!(Number.isFinite(Number(room[`${k}Radius`])) && room[`${k}Radius`] !== '' && room[`${k}Radius`] !== null)) room[`${k}Radius`] = 20; });
+  renderRoomLabels();
+  // One text size for both: as big as fits the one that has the least room.
+  if (texts.length) { const fit = texts.map(k => partSizeMax(room, k, undefined, true)).filter(v => v > 0); if (fit.length) { const sz = r1(clamp(Math.min(...fit) * .8, 6, 420)); /* (some room left inside its frame) */ texts.forEach(k => { room[`${k}Size`] = sz; }); } }
+  renderRoomLabels();
+}
+function applyTilePreset(room, preset = room.tilePreset || 'v', master = '', reset = false) {
   if (!room || isThermoRoom(room)) return;
   room.tilePreset = preset;
   const icon = !!room.labelIcon, texts = ['labelName','labelState'].filter(k => room[k]);
   room.labelCardFree = false; room.labelCardLayout = preset === 'h' && icon && texts.length === 2 ? 'iconLeft' : 'column'; /* (two parts: always one under the other) */ room.labelCardAlign = 'center';
+  if (room.labelCardLayout === 'column') return tileColumnLayout(room, reset);
   ['labelIcon','labelName','labelState'].forEach(k => { ['W','H','Lock','FX','FY'].forEach(d => delete room[`${k}${d}`]); room[`${k}X`] = 0; room[`${k}Y`] = 0; });
   ['labelCardCentred','labelCardW','labelCardH','labelCardExact','labelUngroupFrame','labelUngroupBase'].forEach(k => delete room[k]);
   // (the tile scales the label to fill it, so the icon's own size only sets how big the gaps and frames are next to it: a
@@ -1169,6 +1190,9 @@ function fitDashLabels() {
     // (Off the tiles - tiles switched off, the label unpinned - it gets back the size it had before them.)
     if (!pin) { if (editMode && Number(room?.preTileScale) > 0) { room.labelCardScale = Number(room.preTileScale); delete room.preTileScale; scheduleSave(); requestAnimationFrame(() => renderRoomLabels()); } return; }
     if (!(Number(room.preTileScale) > 0)) room.preTileScale = Number(room.labelCardScale) || ICON_LABEL_SCALE;
+    // A label that comes onto a tile with no layout of its own yet gets the default one ("Jedno pod drugim").
+    if (room.tileNeedsLayout && editMode && room.labelLinked && !isThermoRoom(room) && !room.labelCardFree && !fitDashLabels.auto?.has(room.id)) {
+      (fitDashLabels.auto ||= new Set()).add(room.id); requestAnimationFrame(() => { fitDashLabels.auto.delete(room.id); delete room.tileNeedsLayout; if (dashSpan(room)) { applyTilePreset(room, 'v', '', true); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } }); }
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nw = Math.max(1, card.offsetWidth), nh = Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
@@ -1185,7 +1209,7 @@ function fitDashLabels() {
 function arrangeDashLabels() {
   const view = activeSceneView(), g = dashGrid(view); if (!view || !g.on) return;
   const list = Object.values(view.rooms || {}).filter(r => isIconRoom(r) && r.labelLinked).map(r => [r, roomAnchor(r)]).sort((a, b) => Math.abs(a[1][1] - b[1][1]) > 4 ? a[1][1] - b[1][1] : a[1][0] - b[1][0]);
-  list.forEach(([room], i) => { if (i >= g.cols * g.rows) { delete room.dash; return; } room.dash = { c: i % g.cols, r: Math.floor(i / g.cols), w: 1, h: 1 }; const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; room.updatedAt = new Date().toISOString(); });
+  list.forEach(([room], i) => { if (i >= g.cols * g.rows) { delete room.dash; return; } room.dash = { c: i % g.cols, r: Math.floor(i / g.cols), w: 1, h: 1 }; if (!room.tilePreset) room.tileNeedsLayout = true; const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; room.updatedAt = new Date().toISOString(); });
   renderRooms(); scheduleSave(true); notify(list.length > g.cols * g.rows ? `${translateValue('Rozłożono')} ${g.cols * g.rows} / ${list.length}` : 'Rozłożono etykiety');
 }
 function roomLabelAnchor(points) {
@@ -4220,7 +4244,7 @@ function onRoomEditorClick(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const tilePresetButton = event.target.closest('[data-tile-preset]');
-  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; applyTilePreset(room, tilePresetButton.dataset.tilePreset); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+  if (tilePresetButton) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; applyTilePreset(room, tilePresetButton.dataset.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
   const partToggle = event.target.closest('[data-part-toggle]');
   if (partToggle) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;

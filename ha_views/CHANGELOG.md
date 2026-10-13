@@ -1,3 +1,9 @@
+## 0.6.1-beta.670
+
+- Nowy domyślny układ etykiety na kaflu („Jedno pod drugim”): ikona, nazwa i stan tej samej wysokości, minimalne odstępy (4) i marginesy góra/dół i boki (4), nazwa i stan na prawie całą szerokość z tą samą wielkością i grubością czcionki, ikona 1:1. Etykieta przyjmuje kształt kafla, więc go wypełnia.
+- Etykieta, która trafia na kafel (nowa, „+”, „Rozłóż etykiety”), dostaje ten układ automatycznie; kliknięcie presetu „Jedno pod drugim” przywraca go (także czyści zapamiętane rozmiary elementów).
+- „Udział ikony” domyślnie = równy podział (33% przy nazwie i stanie).
+
 ## 0.6.1-beta.669
 
 - Ikona w kształcie koła/kwadratu ma ramkę zawsze 1:1: suwaki szerokości i wysokości ruszają się razem (owal tylko przy kształcie „Dowolny”); istniejące owalne ramki takich ikon stają się 1:1 (mniejszy z wymiarów).
