@@ -1,3 +1,8 @@
+## 0.6.1-beta.660
+
+- Marginesy elementów (ikona, nazwa, stan) działają do środka: ramka elementu zachowuje rozmiar, a ikona / tekst w niej robi się mniejszy (większy). Po zmniejszeniu marginesu zawartość wraca do poprzedniego rozmiaru.
+- Przy przesuwaniu suwaków „Szerokość” / „Wysokość” elementu pokazuje się siatka etykiety.
+
 ## 0.6.1-beta.659
 
 - Elementy (ikona, nazwa, stan): zamiast jednego „Margines” dwa suwaki – „Margines góra / dół” i „Margines lewo / prawo”.

@@ -3909,19 +3909,30 @@ function tileAfterEdit(room, path) {
   if (!room || isThermoRoom(room) || !isIconRoom(room) || !dashSpan(room) || !room.labelLinked || room.labelCardFree) return syncEditorValues(room);
   const m = /^(label(?:Name|State))Size$/.exec(path);
   if (m) applyTilePreset(room, undefined, m[1]);
-  else if (/^label(Icon|Name|State)(Padding|PadX)$|^labelCard(Padding|PadX)$/.test(path)) applyTilePreset(room);
+  else if (/^labelCard(Padding|PadX)$/.test(path)) applyTilePreset(room);
   syncEditorValues(room);
 }
 function onRoomEditorInput(event) {
   const room = roomsOf()[selectedRoomId], input = event.target; if (!room) return;
   const path = input.dataset.path; if (!path) return;
+  // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
+  if (/^label(Icon|Name|State)(W|H)$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }
   if (SYNCED_PATHS.test(path)) { cancelAnimationFrame(onRoomEditorInput.after); onRoomEditorInput.after = requestAnimationFrame(() => tileAfterEdit(room, path)); }
+  let value = input.type === 'checkbox' ? input.checked : input.value;
+  if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
   // A part's two margins: the first one moved makes the other one its own value too (as it is drawn now).
   { const mm = /^(label(?:Icon|Name|State))(Padding|PadX)$/.exec(path); if (mm) { const other = mm[2] === 'Padding' ? 'PadX' : 'Padding', ov = room[`${mm[1]}${other}`];
     if (ov === undefined || ov === null || ov === '' || !Number.isFinite(Number(ov))) { const p = mm[1] === 'labelIcon' ? 'icon' : mm[1] === 'labelName' ? 'name' : 'state', n = document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${p}"]`);
-      const cs = n ? getComputedStyle(n) : null; room[`${mm[1]}${other}`] = Math.round((other === 'PadX' ? parseFloat(cs?.paddingLeft) : parseFloat(cs?.paddingTop)) || 0); } } }
-  let value = input.type === 'checkbox' ? input.checked : input.value;
-  if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
+      const cs = n ? getComputedStyle(n) : null; room[`${mm[1]}${other}`] = Math.round((other === 'PadX' ? parseFloat(cs?.paddingLeft) : parseFloat(cs?.paddingTop)) || 0); }
+    // The margin grows inwards: the part's frame keeps its size, the icon / text in it gets smaller (bigger) to make room.
+    // (Its size and margins when the slider was taken are the base, so the content comes back as the margin goes back.)
+    const k = mm[1], p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', n = document.querySelector(`.room-label-card[data-room-id="${CSS.escape(room.id)}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${CSS.escape(room.id)}"][data-label-part="${p}"]`);
+    if (!input._elBase && n) { const cs = getComputedStyle(n), py0 = parseFloat(cs.paddingTop) || 0, px0 = parseFloat(cs.paddingLeft) || 0, W = n.offsetWidth, H = n.offsetHeight, size0 = Number(room[`${k}Size`]) || ROOM_DEFAULTS[`${k}Size`], pb = room[`${k}PadBase`];
+      // (kept with the part, and taken again only when its size / frame / margins were changed some other way since)
+      input._elBase = pb && Math.abs(pb.s - size0) < .06 && Math.abs(pb.py - py0) < .6 && Math.abs(pb.px - px0) < .6 && Math.abs(pb.W - W) < 1.5 && Math.abs(pb.H - H) < 1.5 ? pb.base : { W, H, cw: Math.max(4, W - 2 * px0), ch: Math.max(4, H - 2 * py0), size: size0 }; input.addEventListener('change', () => { delete input._elBase; }, { once: true }); }
+    const b = input._elBase; if (b) { const v = clamp(Number(value) || 0, 0, 240), py = mm[2] === 'Padding' ? v : Number(room[`${k}Padding`]) || 0, px = mm[2] === 'PadX' ? v : Number(room[`${k}PadX`]) || 0;
+      const f = Math.max(.05, Math.min((b.W - 2 * px) / b.cw, (b.H - 2 * py) / b.ch)); room[`${k}Size`] = Math.round(clamp(b.size * f, 6, 420) * 10) / 10; room[`${k}W`] = Math.round(b.W * 10) / 10; room[`${k}H`] = Math.round(b.H * 10) / 10; delete room[`${k}Lock`];
+      room[`${k}PadBase`] = { base: b, s: room[`${k}Size`], py, px, W: b.W, H: b.H }; } } }
   // A slider with values to catch (the same size / margin as elsewhere): near one, it takes it exactly.
   if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
@@ -3997,7 +4008,7 @@ function onRoomEditorInput(event) {
   }
   // What fills the name / state boxes changed by hand: their size is taken again from the new text. (Not the font
   // weight: a bolder / lighter text keeps its frame.)
-  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$|^label(Name|State)(Padding|PadX)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; if (!(/Padding$|PadX$/.test(path) && room[`${k}FixedBox`])) { delete room[`${k}W`]; delete room[`${k}Lock`]; if (/Padding$|PadX$/.test(path)) delete room[`${k}H`]; } }
+  if (!isThermoRoom(room) && (path === 'name' || path === 'textCaption' || /^labelState(OnText|OffText|Unit|Decimals)$/.test(path))) { const k = path === 'name' || path.startsWith('labelName') ? 'labelName' : 'labelState'; if (!(/Padding$|PadX$/.test(path) && room[`${k}FixedBox`])) { delete room[`${k}W`]; delete room[`${k}Lock`]; if (/Padding$|PadX$/.test(path)) delete room[`${k}H`]; } }
   { const own = /^(label(?:Action|Target|Current|Percent))(Unit|Decimals|Padding)$/.exec(path); if (own) delete room[`${own[1]}Lock`]; }
   if (path === 'name') { value = String(value).trim() || translateValue(isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie'); $('#room-editor-title').textContent = value; const icon = model.entities[roomIconId(room.id)]; if (icon) { icon.displayName = value; renderMarkers(); } }
   if (path === 'textCaption' && String(value).trim() && !room.labelState) { room.labelState = true; if (room.labelAutoUngrouped) regroupAutoLabel(room); input.dataset.editorRefresh = 'true'; }
