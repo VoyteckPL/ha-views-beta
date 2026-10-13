@@ -1,3 +1,8 @@
+## 0.6.1-beta.718
+
+- Rozgrupowany termostat / wskaźnik: kliknięcie tarczy (albo innego dużego elementu) przybliża na nią - wypełnia większość widoku; wcześniej kamera zostawała na całym termostacie.
+- Ikony trybów: rysunek ikony optycznie wyśrodkowany na tle (jak w części Ikona).
+
 ## 0.6.1-beta.717
 
 - Rozgrupowany termostat / wskaźnik: kliknięty element (albo otwarta jego sekcja) - kamera przybliża na ten element, a nie na cały termostat.

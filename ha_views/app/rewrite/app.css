@@ -1982,3 +1982,6 @@ body.editing .dash-quick.on{display:flex}
 .ft-prev.gradient{border:2px solid transparent;background:linear-gradient(#0a1f2b,#0a1f2b) padding-box,linear-gradient(135deg,var(--t1),var(--t2)) border-box;box-shadow:0 0 8px color-mix(in srgb,var(--t1) 40%,transparent)}
 .ft-prev.liquid{background:linear-gradient(180deg,color-mix(in srgb,var(--t1) 45%,transparent),color-mix(in srgb,var(--t1) 12%,transparent) 60%,color-mix(in srgb,var(--t1) 28%,transparent)),#173444;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),inset 0 1.5px 1px rgba(255,255,255,.7)}
 .ft-prev i{font-size:15px;line-height:1;color:var(--ti);filter:drop-shadow(0 0 4px var(--ti))}.ft-prev b{color:var(--tn);font-weight:800}.ft-prev em{font-style:normal;font-weight:800;color:var(--ts);text-shadow:0 0 5px color-mix(in srgb,var(--ts) 70%,transparent)}
+
+.thermo-mode-btn .mdi::before,.thermo-mode-solo .mdi::before{display:block;width:1em;height:1em;line-height:1;text-align:left;transform:translate(var(--gx,0),var(--gy,0))}
+.thermo-mode-btn .mdi,.thermo-mode-solo .mdi{display:block;width:1em;height:1em;line-height:1}

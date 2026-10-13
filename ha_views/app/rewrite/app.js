@@ -2030,7 +2030,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
       const c = m === info.mode ? (r[`thermoModeActive_${m}`] || (r.thermoModeAccent === false && r.thermoModeActiveColor ? r.thermoModeActiveColor : modeColor(m))) : modeColor(m);
       const ownColor = r[`thermoModeColor_${m}`] ? `;color:${esc(r[`thermoModeColor_${m}`])}` : ''; // this mode's icon colour (else the part's colour)
       const pend = tp.hvac_mode === m && info.realMode !== m ? ' pending' : '', label = cycle && target !== m ? `${thermoModeText(r, m)} → ${thermoModeText(r, target)}` : thermoModeText(r, m);
-      return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}${pend}${cycle ? ' cycle' : ''}" data-thermo-mode="${esc(target)}" title="${esc(label)}" aria-label="${esc(label)}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}${ownColor}"><i class="mdi ${esc(icon)}"></i></button>`; };
+      return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}${pend}${cycle ? ' cycle' : ''}" data-thermo-mode="${esc(target)}" title="${esc(label)}" aria-label="${esc(label)}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}${ownColor}"><i class="mdi ${esc(icon)}" style="${glyphShiftStyle(icon).replace(/^;/, '')}"></i></button>`; };
     let row = '';
     if (info.modes.length && !(r.thermoModeParts && !cycle)) {
       if (cycle) { const list = shown.length ? shown : info.modes, cur = info.mode, next = list[(list.indexOf(cur) + 1) % list.length] || list[0]; row = modeBtn(cur, next === cur ? (list.find(m => m !== cur) || cur) : next); }
@@ -2046,7 +2046,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
     const key = `labelMode_${m}`; if (!r[key] || !MODE_PART_LIST.includes(m)) return;
     const d = THERMO_MODES[m] || [m, 'mdi-thermostat'], own = String(r[`thermoModeIcon_${m}`] || '').trim().replace(/^mdi:/, 'mdi-'), icon = own ? (own.startsWith('mdi-') ? own : `mdi-${own}`) : d[1];
     const on = m === info.mode, pend = tp.hvac_mode === m && info.realMode !== m ? ' pending' : '', label = thermoModeText(r, m); modeActive[`mode_${m}`] = on;
-    parts[`mode_${m}`] = `<button type="button" class="thermo-mode-solo${on ? ' on' : ''}${pend}" data-thermo-mode="${esc(m)}" title="${esc(label)}" aria-label="${esc(label)}" style="${roomTextStyle(r, key, on)}"><i class="mdi ${esc(icon)}"></i></button>`;
+    parts[`mode_${m}`] = `<button type="button" class="thermo-mode-solo${on ? ' on' : ''}${pend}" data-thermo-mode="${esc(m)}" title="${esc(label)}" aria-label="${esc(label)}" style="${roomTextStyle(r, key, on)}"><i class="mdi ${esc(icon)}" style="${glyphShiftStyle(icon).replace(/^;/, '')}"></i></button>`; // (the glyph's ink centred in its frame, as the icon's)
   });
   return { accent, parts, active: modeActive };
 }
@@ -5524,7 +5524,9 @@ function focusLabelBox(room) {
   const sc = els.scene.getBoundingClientRect(); if (!rects.length || !sc.width) return false;
   const L = Math.min(...rects.map(r => r.left)), R = Math.max(...rects.map(r => r.right)), T = Math.min(...rects.map(r => r.top)), B = Math.max(...rects.map(r => r.bottom));
   const l = (L - sc.left) / viewZoom, t = (T - sc.top) / viewZoom, w = Math.max(1, (R - L) / viewZoom), h = Math.max(1, (B - T) / viewZoom);
-  const area = labelFocusArea(), vp = area.vp, fill = part ? .3 : .6; // (a part: a third of the view, some of the thermostat round it)
+  // (a part: a small one a third of the view - some of the thermostat round it -, a big one (the dial) most of it)
+  const fw = frame.length ? Math.max(...frame.map(r => r.right)) - Math.min(...frame.map(r => r.left)) : 0, fh = frame.length ? Math.max(...frame.map(r => r.bottom)) - Math.min(...frame.map(r => r.top)) : 0;
+  const frac = part && fw && fh ? Math.max((R - L) / fw, (B - T) / fh) : 0, area = labelFocusArea(), vp = area.vp, fill = part ? clamp(.3 + .6 * frac, .3, .85) : .6;
   const zoom = clamp(Math.min((area.right - area.left) * fill / w, (area.bottom - area.top) * fill / h), zoomFloor(), part ? Math.max(4, viewZoom) : 20); // (a part: never past what a pinch / the wheel reaches, so the next pinch does not jump)
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
   return true;
