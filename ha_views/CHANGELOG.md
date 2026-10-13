@@ -1,3 +1,7 @@
+## 0.6.1-beta.696
+
+- Strzałki zmiany rozmiaru etykiety na kaflu w samym rogu etykiety.
+
 ## 0.6.1-beta.695
 
 - Nazwa i stan: nowy suwak „Margines wewnętrzny” (w sekcji rozmiaru) - odstęp tekstu od ramki; ramka zostaje, tekst dopasowuje się do reszty. Reset przywraca automatyczny margines presetu.

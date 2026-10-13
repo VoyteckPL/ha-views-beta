@@ -1125,7 +1125,7 @@ function renderDashArrows(view, g, busy) {
   layer.innerHTML = rooms.map(r => { const s = dashSpan(r, view), d = r.dash, out = [], canE = d.c + d.w < g.cols || d.w > 1, canW = d.c > 0 || d.w > 1, canS = d.r + d.h < g.rows || d.h > 1, canN = d.r > 0 || d.h > 1;
     // (in the corners, as close to the edge as the label's rounded corner lets them be - inside it; each takes the label
     // over the next tiles both ways it points, or back)
-    const card = $(`.room-label-card[data-room-id="${CSS.escape(r.id)}"]`), k = card ? card.getBoundingClientRect().width / Math.max(1, card.offsetWidth) : 1, R = card ? (parseFloat(getComputedStyle(card).borderTopLeftRadius) || 0) * k : 0, inset = Math.round(Math.max(12, R - (R - 9) / Math.SQRT2 + 4));
+    const card = $(`.room-label-card[data-room-id="${CSS.escape(r.id)}"]`), k = card ? card.getBoundingClientRect().width / Math.max(1, card.offsetWidth) : 1, R = card ? (parseFloat(getComputedStyle(card).borderTopLeftRadius) || 0) * k : 0, inset = 9; void R; /* (in the very corner of the label) */
     [['se', s.x + s.w, s.y + s.h, canE || canS, -1, -1], ['sw', s.x, s.y + s.h, canW || canS, 1, -1], ['ne', s.x + s.w, s.y, canE || canN, -1, 1], ['nw', s.x, s.y, canW || canN, 1, 1]].forEach(([k2, x, y, ok, dx, dy]) => { if (ok) out.push(arrow(r.id, k2, x, y, 'mdi-arrow-bottom-right').replace('style="', `style="--ix:${dx * inset}px;--iy:${dy * inset}px;`)); });
     return `<div class="dash-arrow-set${hot.has(r.id) ? ' hot' : ''}" data-room-id="${escapeHtml(r.id)}">${out.join('')}</div>`; }).join('');
   rooms.forEach(r => { const set = layer.querySelector(`.dash-arrow-set[data-room-id="${CSS.escape(r.id)}"]`); if (set) set.__box = dashSpan(r, view); });
