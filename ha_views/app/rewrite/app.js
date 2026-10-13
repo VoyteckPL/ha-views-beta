@@ -3832,7 +3832,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   // open the same-named subsection of another part.
   const subKey = node => `${node.closest('details.editor-section')?.className || ''}|${node.textContent.trim()}`;
   const openSubs = new Set($$('.gauge-subsection[open] > summary', content).map(subKey));
-  content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on);
+  content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on); requestAnimationFrame(() => syncSizeRanges(room));
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
   // A label's parts (icon, name, state) switched on / off from the editor's head - always at hand, under copy / paste.
   const partRow = $('#room-part-toggles');
@@ -3912,8 +3912,28 @@ function partSizeSnap(room, k, axis, want) {
 }
 // The panel's sliders show what the label has now - after a layout, a share or a size that changed other values too.
 const SYNCED_PATHS = /^label(Icon|Name|State)(Size|W|H|Padding|PadX)$|^labelCard(Padding|PadX)$|^labelPartGap$|^tileIconShare$/;
+// How big a part's icon / text can get and still fit in its frame (its slider runs only up to there).
+function partSizeMax(room, k, n = partBoxNode(room, k)) {
+  const path = `${k}Size`, s0 = Number(room[path]) || ROOM_DEFAULTS[path]; if (!n) return 420;
+  const cs = getComputedStyle(n), bw = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : n.offsetWidth, bh = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : n.offsetHeight;
+  const cw = Math.max(1, bw - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, bh - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0));
+  let max = 420;
+  if (k === 'labelIcon') max = Math.min(cw, ch);
+  else { /* the letters themselves are measured (not the line they sit in, which has room above and below them) */
+    const t = n.querySelector('b, small') || n, tc = getComputedStyle(t), cx = (partSizeMax.cx ||= document.createElement('canvas').getContext('2d')), fs = parseFloat(tc.fontSize) || s0;
+    cx.font = `${tc.fontStyle} ${tc.fontWeight} ${fs}px ${tc.fontFamily}`; const txt = (t.textContent || '').trim(), mt = cx.measureText(txt || 'M');
+    const iw = Math.max(mt.width, (mt.actualBoundingBoxLeft || 0) + (mt.actualBoundingBoxRight || 0)), ih = (mt.actualBoundingBoxAscent || 0) + (mt.actualBoundingBoxDescent || 0);
+    if (iw > 0 && ih > 0) max = s0 * Math.min(cw * .97 / iw, ch * .96 / ih); }
+  return Math.max(6, s0, Math.floor(max * 10) / 10);
+}
+// The size sliders' range follows what fits in the part's frame now.
+function syncSizeRanges(room) {
+  $$('#room-editor-content input[type=range][data-path]').forEach(i => { const m = /^(label(?:Icon|Name|State))Size$/.exec(i.dataset.path); if (!m || i === document.activeElement && syncSizeRanges.dragging) return;
+    const mx = partSizeMax(room, m[1]); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
+}
 function syncEditorValues(room) {
   if (!room || selectedRoomId !== room.id) return;
+  syncSizeRanges(room);
   const node = k => { const p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', id = CSS.escape(room.id); return document.querySelector(`.room-label-card[data-room-id="${id}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${id}"][data-label-part="${p}"]`); };
   const set = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
   $$('#room-editor-content input[type=range][data-path]').forEach(i => {
@@ -3945,11 +3965,7 @@ function onRoomEditorInput(event) {
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
     if (n) { if (!(Number(room[`${k}W`]) > 0)) room[`${k}W`] = n.offsetWidth; if (!(Number(room[`${k}H`]) > 0)) room[`${k}H`] = n.offsetHeight; delete room[`${k}Lock`];
-      const cs = getComputedStyle(n), cw = Math.max(1, Number(room[`${k}W`]) - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)), ch = Math.max(1, Number(room[`${k}H`]) - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0)), s0 = Number(room[path]) || ROOM_DEFAULTS[path];
-      let max = 420;
-      if (k === 'labelIcon') max = Math.min(cw, ch);
-      else { const t = n.querySelector('b, small') || n, rg = document.createRange(); rg.selectNodeContents(t); const g = rg.getBoundingClientRect(), z = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1; if (g.width > 0 && g.height > 0) max = s0 * Math.min(cw * .92 / (g.width / z), ch / (g.height / z)); } // (a little room left at its sides)
-      max = Math.max(6, s0, Math.floor(max * 10) / 10); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
+      let max = partSizeMax(room, k, n); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
   // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
   if (/^label(Icon|Name|State)(W|H)$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }
   // A part's two margins: the first one moved makes the other one its own value too (as it is drawn now).
