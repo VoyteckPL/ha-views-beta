@@ -1,3 +1,8 @@
+## 0.6.1-beta.732
+
+- Pomieszczenie z samą ikoną (okrągłą / kwadratową): pole jest kwadratowe i ikona wypełnia je całe, więc przy zmianie rozmiaru przyciągają się krawędzie ikony (1:1 zachowane); jeden suwak „Wielkość”.
+- Przyciąganie do sąsiednich pomieszczeń z samą ikoną bierze krawędzie ich ikony, nie niewidocznego pola.
+
 ## 0.6.1-beta.731
 
 - Pomieszczenie z widoczną tylko ikoną: ikona jest etykietą - bez tła i ramki etykiety wokół niej, bez sekcji Etykieta i bez przycisku rozgrupowania; rozmiar pola (Szerokość / Wysokość) w sekcji Ikona, kropki w rogach i przyciąganie jak wcześniej. Po włączeniu nazwy / stanu wszystko wraca.

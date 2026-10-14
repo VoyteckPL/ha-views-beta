@@ -1037,6 +1037,12 @@ function dashSpan(room, view = activeSceneView()) {
 const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
 const FREE_BOX_PX = [395, 280]; // (a new one: a tile of a phone's 4 × 10 grid, in plan px)
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
+// (a lone round / square icon: its box made square once, about its centre - the smaller side)
+function squareSoloBox(room) {
+  if (!room?.fbox || !soloSquare(room) || dashGrid().on) return false; const W = els.scene?.offsetWidth || 0, H = els.scene?.offsetHeight || 0; if (!W || !H) return false;
+  const b = room.fbox, wp = b.w / 100 * W, hp = b.h / 100 * H; if (Math.abs(wp - hp) <= 1) return false; const sp = Math.min(wp, hp), w = sp / W * 100, h = sp / H * 100;
+  setFreeBox(room, { x: b.x + (b.w - w) / 2, y: b.y + (b.h - h) / 2, w, h }); return true;
+}
 function setFreeBox(room, box) {
   const w = clamp(box.w, 1, 100), h = clamp(box.h, 1, 100), r3 = v => Math.round(v * 1000) / 1000;
   room.fbox = { x: r3(clamp(box.x, 0, 100 - w)), y: r3(clamp(box.y, 0, 100 - h)), w: r3(w), h: r3(h) };
@@ -1058,7 +1064,7 @@ function startBoxResize(event, handle, room) {
   const lay = () => { raf = 0; if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); renderRoomLabels(); renderDashGrid(); };
   // Its moving sides snap as everything else does ("Przyciągaj do" and the grid): to the lines of the other labels, rooms,
   // markers and of its own room, and to the grid's lines (thick ones when "Siatka" is chosen there) - one line per side.
-  const g = model.settings?.snapEnabled === false ? null : guideTargets({ roomId: room.id }), W = g?.scene.width || 1, H = g?.scene.height || 1;
+  const g = model.settings?.snapEnabled === false ? null : guideTargets({ roomId: room.id }), sr = els.scene.getBoundingClientRect(), W = g?.scene.width || sr.width || 1, H = g?.scene.height || sr.height || 1, square = soloSquare(room);
   if (g && (room.points || []).length >= 3 && snapTargets().rooms) { const px = room.points.map(p => p[0] / 100 * W), py = room.points.map(p => p[1] / 100 * H); [Math.min(...px), Math.max(...px), (Math.min(...px) + Math.max(...px)) / 2].forEach(v => g.xs.push({ v, kind: 'room' })); [Math.min(...py), Math.max(...py), (Math.min(...py) + Math.max(...py)) / 2].forEach(v => g.ys.push({ v, kind: 'room' })); }
   const pick = (edge, fixed, sign, list) => { const reach = snapReach(); let best = null; list.forEach(t => { const d = Math.abs(t.v - edge), s = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (sign * (t.v - fixed) > 4 && d <= reach && (!best || s < best.s)) best = { s, v: t.v, kind: t.kind }; }); return best; };
   const move = e => {
@@ -1067,6 +1073,8 @@ function startBoxResize(event, handle, room) {
     const snapX = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * W, fixed / 100 * W, sign, g.xs) : null; if (!b) return v; vg.push({ at: b.v / W * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / W * 100; };
     const snapY = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * H, fixed / 100 * H, sign, g.ys) : null; if (!b) return v; hg.push({ at: b.v / H * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / H * 100; };
     if (c.includes('e')) x1 = Math.max(x0 + min, snapX(px, x0, 1)); if (c.includes('w')) x0 = Math.min(x1 - min, snapX(px, x1, -1)); if (c.includes('s')) y1 = Math.max(y0 + min, snapY(py, y0, 1)); if (c.includes('n')) y0 = Math.min(y1 - min, snapY(py, y1, -1));
+    if (square && c.length === 2) { const wp = (x1 - x0) / 100 * W, hp = (y1 - y0) / 100 * H, sp = vg.length && !hg.length ? wp : hg.length && !vg.length ? hp : Math.max(wp, hp); // (a lone round / square icon: 1:1)
+      if (c.includes('e')) x1 = x0 + sp / W * 100; else x0 = x1 - sp / W * 100; if (c.includes('s')) y1 = y0 + sp / H * 100; else y0 = y1 - sp / H * 100; }
     showAlignGuides(vg, hg); setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
   };
   const up = e => {
@@ -2239,6 +2247,7 @@ function ensureLabelFxDefs() {
 // A lone part is no longer "the label": the label keeps its frame and can be ungrouped like any other (kept for its callers).
 // ...except a drawn room's label showing its icon only: the icon is the label then (no frame of the label round it, no
 // "Etykieta" section, nothing to ungroup) - its own background / frame / size are the label's.
+const soloSquare = r => soloLabel(r) && iconShapeOf(r) !== 'custom';
 function soloLabel(r) { return !!r && !isIconRoom(r) && (r.points || []).length >= 3 && !!r.labelIcon && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1; }
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
@@ -2276,6 +2285,7 @@ function renderRoomLabels(view = activeSceneView()) {
   const kept = new Set();
   Object.values(roomsOf(view)).forEach(room => {
     if (syncSoloLook(room)) scheduleSave(false);
+    if (editMode && squareSoloBox(room)) scheduleSave(false);
     const html = roomLabelMarkup(room, preview(room.id), editMode && !room.geometryLocked && !roomDraft); kept.add(room.id);
     let group = [...layer.children].find(node => node.dataset.labelGroup === room.id);
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
@@ -4101,6 +4111,7 @@ function roomEditorMarkup(room) {
   const presetBar = !(onTile || freeCan) || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
   const tilePresets = '';
   const freeSize = !(r.fbox && dashSpan(r) && !dashGrid().on) ? '' : (() => { const [w, h] = freeBoxPx(r), W = Math.round((els.scene?.offsetWidth || 1) / (sceneScale || 1)), H = Math.round((els.scene?.offsetHeight || 1) / (sceneScale || 1));
+    if (soloSquare(r)) return control('Wielkość','fboxS','range',Math.max(w, h),{ min:20, max:Math.min(W, H), step:1, suffix:'px', integer:true }); // (a lone round / square icon: one size, 1:1)
     return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
   const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
@@ -4509,8 +4520,8 @@ function onRoomEditorInput(event) {
   const showMode = /^thermoModeShow_(.+)$/.exec(path); if (showMode && room.thermoModeParts && MODE_PART_LIST.includes(showMode[1])) room[`labelMode_${showMode[1]}`] = input.type === 'checkbox' ? input.checked : !!value;
   // Editing one mode's "Stan" look shows that mode, so the change is seen whatever mode the device is in now.
   const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
-  if ((path === 'fboxW' || path === 'fboxH') && room.fbox && dashSpan(room)) {
-    const [w0, h0] = freeBoxPx(room), s = dashSpan(room); freeBoxFromPx(room, path === 'fboxW' ? Number(value) : w0, path === 'fboxH' ? Number(value) : h0, s.x + s.w / 2, s.y + s.h / 2);
+  if ((path === 'fboxW' || path === 'fboxH' || path === 'fboxS') && room.fbox && dashSpan(room)) {
+    const [w0, h0] = freeBoxPx(room), s = dashSpan(room); freeBoxFromPx(room, path === 'fboxW' || path === 'fboxS' ? Number(value) : w0, path === 'fboxH' || path === 'fboxS' ? Number(value) : h0, s.x + s.w / 2, s.y + s.h / 2);
     if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); room.updatedAt = new Date().toISOString();
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = `${input.value}px`;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return; }
@@ -5161,7 +5172,7 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   if (t.markers) $$('.marker', els.markers).forEach(other => elements.push([other, 'marker']));
   if (t.flows) $$('.flow-marker', els.markers).forEach(other => elements.push([other, 'flow']));
   // Labels: a group as a whole, or each ungrouped part (not the label of the room / label being moved).
-  if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other, 'label']));
+  if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other.classList.contains('solo') ? other.querySelector(':scope > .room-card-part') || other : other, 'label']));
   const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [shapedRect(other), kind]).filter(([r]) => onScreen(r)).filter(([r]) => r.width);
   // Every guide carries the box it comes from (the snapped-to object is highlighted).
   const boxOf = r => ({ l: r.left - scene.left, r: r.right - scene.left, t: r.top - scene.top, b: r.bottom - scene.top, radius: r.radius });
