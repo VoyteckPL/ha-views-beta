@@ -2292,7 +2292,6 @@ function renderRoomLabels(view = activeSceneView()) {
   const kept = new Set();
   Object.values(roomsOf(view)).forEach(room => {
     if (syncSoloLook(room)) scheduleSave(false);
-    if (editMode && squareSoloBox(room)) scheduleSave(false);
     const html = roomLabelMarkup(room, preview(room.id), editMode && !room.geometryLocked && !roomDraft); kept.add(room.id);
     let group = [...layer.children].find(node => node.dataset.labelGroup === room.id);
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
@@ -3422,7 +3421,7 @@ function finishRoomDrawing() {
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(room => !isIconRoom(room)).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, id, name: roomDraft.name || `${translateValue('Pomieszczenie')} ${count}`, entityIds: [...(roomDraft.entityIds || [])], points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
   if (view.background && freeBoxRoom(view.rooms[id])) { const r = view.rooms[id], xs = r.points.map(p => p[0]), ys = r.points.map(p => p[1]), [cx, cy] = roomLabelAnchor(r.points), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
-    freeBoxFromPx(r, Math.min(FREE_BOX_PX[0], (Math.max(...xs) - Math.min(...xs)) * .7 / 100 * W / k), Math.min(FREE_BOX_PX[1], (Math.max(...ys) - Math.min(...ys)) * .7 / 100 * H / k), cx, cy); r.tileNeedsLayout = true; }
+    void xs; void ys; void W; void H; void k; freeBoxFromPx(r, ...FREE_BOX_PX, cx, cy); r.tileNeedsLayout = true; } // (always the same size, whatever the room's)
   const withEntities = view.rooms[id].entityIds.length > 0; pendingTemplate = roomDraft.template || ''; cancelRoomDrawing(); renderRooms(); if (!view.rooms[id].fbox) fitRoomLabel(id); scheduleSave(true); if (withEntities) refreshStates();
   openRoomWizard(id);
 }
@@ -4707,6 +4706,7 @@ function onRoomEditorClick(event) {
     room[key] = !room[key];
     if (partKeys.includes(key)) restoreSingleLook(room);
     // Left with one part (not on tiles): grouped again, where the parts were.
+    if (partKeys.includes(key)) requestAnimationFrame(() => { if (squareSoloBox(room)) { renderRooms(); scheduleSave(true); } }); // (the icon left alone: its box made square once)
     if (partKeys.includes(key) && !room.labelLinked && singleNoUngroup(room)) { renderRooms(); keepLabelPlaceOnRegroup(room); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
     const onTileLabel = partKeys.includes(key) && room.labelLinked && !isThermoRoom(room) && !!dashSpan(room);
     if (onTileLabel) applyTilePreset(room); // (on a tile: laid out again with the label's preset)

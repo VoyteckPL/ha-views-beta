@@ -1,3 +1,8 @@
+## 0.6.1-beta.736
+
+- Etykieta pomieszczenia z samą ikoną nie maleje już przy przełączaniu podglądu / edycji (pole było „poprawiane” do kwadratu przy każdym rysowaniu, gdy plan miał przez chwilę inne proporcje). Kwadrat ustawia się raz - gdy zostaje sama ikona - i przy zmianie rozmiaru.
+- Nowe pomieszczenie: etykieta ma zawsze ten sam domyślny rozmiar, niezależnie od wielkości obszaru.
+
 ## 0.6.1-beta.735
 
 - Pomieszczenie z widoczną tylko nazwą albo tylko stanem: tak jak z samą ikoną - ten element jest etykietą (bez tła / ramki etykiety, bez sekcji Etykieta i rozgrupowania, Szerokość / Wysokość pola w jego sekcji).
