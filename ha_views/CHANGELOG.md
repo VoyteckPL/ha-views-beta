@@ -1,3 +1,7 @@
+## 0.6.1-beta.730
+
+- Termostat: nazwa i stan z tłem / ramką nie mają już dodatkowego wewnętrznego wypełnienia - jak w etykiecie, „Margines wewnętrzny” 0 to praktycznie zero odstępu, a tekst wypełnia ramkę.
+
 ## 0.6.1-beta.729
 
 - Tryb Tło: zmiana rozmiaru etykiety (kropki w rogach) przyciąga się jak wszystko inne - do krawędzi i środków innych etykiet, pomieszczeń, markerów (wg „Przyciągaj do”), do ścian własnego pomieszczenia i do siatki (grubych linii, gdy wybrana „Siatka”), z liniami pomocniczymi. Przesuwanie etykiety nie zaokrągla już pozycji obok złapanej linii.

@@ -1602,7 +1602,7 @@ function roomTextPartStyle(r, key, on = false) {
     + (Number.isFinite(Number(r[`${key}Padding`])) && r[`${key}Padding`] !== '' && r[`${key}Padding`] != null ? `;padding:${clamp(Number(r[`${key}Padding`]), 0, 120)}px ${Number.isFinite(Number(r[`${key}PadX`])) && r[`${key}PadX`] !== '' && r[`${key}PadX`] != null ? clamp(Number(r[`${key}PadX`]), 0, 240) : Math.round(clamp(Number(r[`${key}Padding`]), 0, 120) * 2)}px` : '') : '';
   // A label's name / state has no inner margin of its own any more (no slider for it): its frame is its width / height,
   // the text in it its size (which can grow only as far as the frame lets it).
-  const noPad = !isThermoRoom(r) && (key === 'labelName' || key === 'labelState') && (r[`${key}Bg`] || r[`${key}Border`]) ? ';padding:0' : '';
+  const noPad = (key === 'labelName' || key === 'labelState') && (r[`${key}Bg`] || r[`${key}Border`]) ? ';padding:0' : ''; // (a thermostat's name / state too: its inner margin is the only room round the text)
   return bg + border + shape + noPad;
 }
 const TEXT_WEIGHTS = { normal:400, medium:600, bold:700 };
