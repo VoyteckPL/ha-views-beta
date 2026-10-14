@@ -1420,7 +1420,7 @@ function fitDashLabels() {
     const s = fitDashLabels.hold === room.id && Number(room.labelCardScale) > 0 ? Number(room.labelCardScale) : padded ? freeBoxScale(tw, th, ncw, nch, mx, my, fill) : clamp(Math.min(tw * fill / nw, th * fill / nh), .02, 8); // (a big thermostat on one small tile: as small as it must be, never past the tile)
     // (Kept as the label's scale: ungrouped on its tiles, its parts keep the size they have here.)
     const sr = Math.round(s * 1e4) / 1e4; if (Number(room.labelCardScale) !== sr) room.labelCardScale = sr;
-    card.style.setProperty('--lscale', String(s)); card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
+    card.style.setProperty('--lscale', String(s)); card.style.setProperty('--rk', room.labelLinked && room.tileColV2 && !isThermoRoom(room) ? String(1 / s) : '1'); /* (a preset label: its corners in plan px, not scaled with it) */ card.style.minWidth = `${(tw / s).toFixed(2)}px`; card.style.minHeight = `${(th / s).toFixed(2)}px`;
     if (card.classList.contains('free')) { card.style.width = `${(tw / s).toFixed(2)}px`; card.style.height = `${(th / s).toFixed(2)}px`; card.style.setProperty('--fsx', '0px'); card.style.setProperty('--fsy', '0px'); }
     void keep;
   });
@@ -1496,11 +1496,11 @@ function roomIconFrameStyle(r, on = false) {
   if (!r.labelIconBg && !r.labelIconBorder) return '';
   const pick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const shape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
-  const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px`;
+  const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `calc(${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px * var(--rk, 1))`; // (--rk: a preset label's corners keep their px however far it is scaled)
   return `;padding:${clamp(Number(r.labelIconPadding ?? 6), 0, 120)}px ${Number.isFinite(Number(r.labelIconPadX)) && r.labelIconPadX !== '' && r.labelIconPadX != null ? clamp(Number(r.labelIconPadX), 0, 240) : clamp(Number(r.labelIconPadding ?? 6), 0, 120)}px;border-radius:${radius}`
     + (r.labelIconBg ? `;background:${rgba(pick('labelIconBgState', 'labelIconBg', 'Color') || '#081822', clamp(Number(pick('labelIconBgState', 'labelIconBg', 'Opacity') ?? .55), 0, 1))}` : '')
     + (r.labelIconBg && r.labelIconBlur ? ';-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)' : '')
-    + (r.labelIconBorder ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Width')) || 1.5, .5, 12)}px ${rgba(pick('labelIconBorderState', 'labelIconBorder', 'Color') || '#FFFFFF', clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Opacity') ?? .6), 0, 1))}` : '');
+    + (r.labelIconBorder ? `;box-shadow:inset 0 0 0 calc(${clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Width')) || 1.5, .5, 12)}px * var(--rk, 1)) ${rgba(pick('labelIconBorderState', 'labelIconBorder', 'Color') || '#FFFFFF', clamp(Number(pick('labelIconBorderState', 'labelIconBorder', 'Opacity') ?? .6), 0, 1))}` : '');
 }
 // beta.256 had one label block (shared colour, size, layout, offset); it becomes three parts placed the same way.
 // One shown part = one layer: its own background / frame are merged into the label's (the label's then is the only one
@@ -1623,9 +1623,9 @@ const ROOM_CARD_STYLES = [
 function roomTextPartStyle(r, key, on = false) {
   const pick = (field, base) => r[`${key}${base}State`] ? sv(r, `${key}${base}On${field}`, `${key}${base}Off${field}`, on) : r[`${key}${base}${field}`];
   const bg = r[`${key}Bg`] ? `;background:${rgba(pick('Color', 'Bg') || '#081822', clamp(Number(pick('Opacity', 'Bg') ?? .55), 0, 1))}` + (r[`${key}Blur`] ? ';-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)' : '') : '';
-  const border = r[`${key}Border`] ? `;box-shadow:inset 0 0 0 ${clamp(Number(pick('Width', 'Border')) || 1.5, .5, 12)}px ${rgba(pick('Color', 'Border') || '#FFFFFF', clamp(Number(pick('Opacity', 'Border') ?? .6), 0, 1))}` : '';
+  const border = r[`${key}Border`] ? `;box-shadow:inset 0 0 0 calc(${clamp(Number(pick('Width', 'Border')) || 1.5, .5, 12)}px * var(--rk, 1)) ${rgba(pick('Color', 'Border') || '#FFFFFF', clamp(Number(pick('Opacity', 'Border') ?? .6), 0, 1))}` : '';
   // Corners and inner margin (px); unset = the default, which grows with the text size.
-  const shape = (r[`${key}Bg`] || r[`${key}Border`]) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:${clamp(Number(r[`${key}Radius`]), 0, 200)}px` : '')
+  const shape = (r[`${key}Bg`] || r[`${key}Border`]) ? (Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? `;border-radius:calc(${clamp(Number(r[`${key}Radius`]), 0, 200)}px * var(--rk, 1))` : '')
     + (Number.isFinite(Number(r[`${key}Padding`])) && r[`${key}Padding`] !== '' && r[`${key}Padding`] != null ? `;padding:${clamp(Number(r[`${key}Padding`]), 0, 120)}px ${Number.isFinite(Number(r[`${key}PadX`])) && r[`${key}PadX`] !== '' && r[`${key}PadX`] != null ? clamp(Number(r[`${key}PadX`]), 0, 240) : Math.round(clamp(Number(r[`${key}Padding`]), 0, 120) * 2)}px` : '') : '';
   // A label's name / state has no inner margin of its own any more (no slider for it): its frame is its width / height,
   // the text in it its size (which can grow only as far as the frame lets it).
@@ -1850,10 +1850,10 @@ function keepSquare() {} // (holds what a round / square icon's frame may grow t
 function cardLook(r, on) {
   const cardPick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const iconOnly = iconOnlyLabel(r), shape = iconOnly ? iconShapeOf(r) : '';
-  return [shape === 'circle' ? 'border-radius:50%' : shape === 'square' ? 'border-radius:0' : `border-radius:${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px`,
+  return [shape === 'circle' ? 'border-radius:50%' : shape === 'square' ? 'border-radius:0' : `border-radius:calc(${clamp(Number(r.labelCardRadius) || 0, 0, 80)}px * var(--rk, 1))`,
     r.labelCardBg ? `background:${rgba(cardPick('labelCardBgState', 'labelCardBg', 'Color') || '#081822', clamp(Number(cardPick('labelCardBgState', 'labelCardBg', 'Opacity') ?? .62), 0, 1))}` : '',
     // The frame is drawn inside the card (inset shadow), so a thicker ON / OFF frame never changes the card's size.
-    `box-shadow:${[r.labelCardBorder ? `inset 0 0 0 ${clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Width')) || 1, .5, 12)}px ${rgba(cardPick('labelCardBorderState', 'labelCardBorder', 'Color') || '#FFFFFF', clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Opacity') ?? .3), 0, 1))}` : '', r.labelCardBg && r.labelCardShadow !== false ? '0 6px 18px rgba(0,0,0,.25)' : ''].filter(Boolean).join(',') || 'none'}`].filter(Boolean).join(';');
+    `box-shadow:${[r.labelCardBorder ? `inset 0 0 0 calc(${clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Width')) || 1, .5, 12)}px * var(--rk, 1)) ${rgba(cardPick('labelCardBorderState', 'labelCardBorder', 'Color') || '#FFFFFF', clamp(Number(cardPick('labelCardBorderState', 'labelCardBorder', 'Opacity') ?? .3), 0, 1))}` : '', r.labelCardBg && r.labelCardShadow !== false ? '0 6px 18px rgba(0,0,0,.25)' : ''].filter(Boolean).join(',') || 'none'}`].filter(Boolean).join(';');
 }
 // Only entities that switch on and off (lights, switches, binary sensors…) have ON / OFF look options;
 // for the others (a temperature sensor…) the label always uses the plain colours.

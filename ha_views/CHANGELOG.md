@@ -1,3 +1,7 @@
+## 0.6.1-beta.748
+
+- Etykieta z presetu (tło i siatka): zaokrąglenia oraz grubość ramek karty, ikony, nazwy i stanu trzymają ustawione px niezależnie od rozmiaru etykiety (wcześniej rosły przy szerokim pudełku, np. promień 14 → 28 px).
+
 ## 0.6.1-beta.747
 
 - Etykieta pomieszczenia (tło): po „Przywróć domyślne” przy Szerokości / Wysokości ikona, nazwa i stan układają się na nowo w przywróconym pudełku (wcześniej zostawały małe, ułożone dla starego rozmiaru).
