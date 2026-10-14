@@ -1,3 +1,10 @@
+## 0.6.1-beta.737
+
+- Etykieta w pomieszczeniu (tło), sama ikona: suwak „Wielkość” przyciąga co 100 px (50 px na małym planie) i do rozmiarów innych samotnych ikon; stopy pokazane małymi strzałkami pod suwakiem (inne ikony na żółto).
+- Jeden suwak „Wielkość” dla samotnej okrągłej/kwadratowej ikony (bez duplikatu).
+- „Przywróć domyślne” dla wielkości ikony i rozmiarów części układa etykietę na nowo z presetu zamiast zgniatać ją do 6–10 px; dla „Wielkość” pudełka wraca do rozmiaru nowej etykiety.
+- Symbol presetów kształtu ikony wyrównany do lewej.
+
 ## 0.6.1-beta.736
 
 - Etykieta pomieszczenia z samą ikoną nie maleje już przy przełączaniu podglądu / edycji (pole było „poprawiane” do kwadratu przy każdym rysowaniu, gdy plan miał przez chwilę inne proporcje). Kwadrat ustawia się raz - gdy zostaje sama ikona - i przy zmianie rozmiaru.
