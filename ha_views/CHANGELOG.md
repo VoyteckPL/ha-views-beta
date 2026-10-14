@@ -1,3 +1,8 @@
+## 0.6.1-beta.727
+
+- Efekty ikon wracają (sekcja Efekty → „Efekt ikony”): Neon, Oddech, Fale, Promienie, Wypukła 3D, Szklana kula, Metal, Gradient, Długi cień, Unoszenie, Wirujący pierścień, Światło od środka, Kontur neon. Kolor efektu z koloru ikony, animacje tylko przy ON, suwak Siła.
+- Motywy i style ramki nie kasują już efektu ikony.
+
 ## 0.6.1-beta.726
 
 - Termostat: sekcje Ikona, Nazwa i Stan jak w etykiecie - Rozmiar tekstu, Szerokość, Wysokość, Margines wewnętrzny, Grubość czcionki; ikona: Wielkość ramki. Ustawienia typowo termostatowe (np. Teksty trybów, format, ikony trybów) na końcu sekcji.
