@@ -1,3 +1,8 @@
+## 0.6.1-beta.733
+
+- Zmiana rozmiaru etykiety kropkami (tryb Tło) przyciąga się do innych elementów także przy wyłączonym magnesie - jak przesuwanie i dawne zmienianie rozmiaru (decyduje „Linie pomocnicze”, magnes tylko o siatce).
+- Ikona pomieszczenia (1:1): jeden rozmiar od wskaźnika i łapie linię, do której pasuje najlepiej - krawędź złapana przyciąganiem nie jest już odrywana przez wyrównanie do kwadratu.
+
 ## 0.6.1-beta.732
 
 - Pomieszczenie z samą ikoną (okrągłą / kwadratową): pole jest kwadratowe i ikona wypełnia je całe, więc przy zmianie rozmiaru przyciągają się krawędzie ikony (1:1 zachowane); jeden suwak „Wielkość”.
