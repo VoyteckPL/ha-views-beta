@@ -1172,7 +1172,7 @@ function renderDashGrid(target = null) {
   applyDashUi(); $('#dash-quick')?.remove(); // (the grid is set in the view menu's "Kafelki")
   const view = activeSceneView(), g = dashGeom(view); let layer = $('#dash-grid');
   els.scene?.classList.toggle('dash-on', !!(editMode && g.on));
-  if (!editMode || !g.on || !els.scene) { layer?.remove(); if (editMode && els.scene && !g.on) renderDashArrows(view, g, !!target); else $('#dash-arrows')?.remove(); return; }
+  if (!editMode || !g.on || !els.scene) { layer?.remove(); $('#dash-arrows')?.remove(); return; } // (a background: no arrows - its labels are sized with their corner dots and sliders)
   if (!layer) { layer = document.createElement('div'); layer.id = 'dash-grid'; layer.setAttribute('aria-hidden', 'true'); els.scene.insertBefore(layer, $('#rooms') || null); }
   const key = [g.cols, g.rows, g.gx.toFixed(3), g.gy.toFixed(3)].join('|');
   if (layer.__key !== key) {

@@ -1,3 +1,7 @@
+## 0.6.1-beta.728
+
+- Tryb Tło: bez strzałek na krawędziach etykiet - rozmiar zmieniają kropki w rogach i suwaki Szerokość / Wysokość. Strzałki zostają tylko w kafelkach.
+
 ## 0.6.1-beta.727
 
 - Efekty ikon wracają (sekcja Efekty → „Efekt ikony”): Neon, Oddech, Fale, Promienie, Wypukła 3D, Szklana kula, Metal, Gradient, Długi cień, Unoszenie, Wirujący pierścień, Światło od środka, Kontur neon. Kolor efektu z koloru ikony, animacje tylko przy ON, suwak Siła.
