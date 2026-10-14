@@ -1,3 +1,7 @@
+## 0.6.1-beta.731
+
+- Pomieszczenie z widoczną tylko ikoną: ikona jest etykietą - bez tła i ramki etykiety wokół niej, bez sekcji Etykieta i bez przycisku rozgrupowania; rozmiar pola (Szerokość / Wysokość) w sekcji Ikona, kropki w rogach i przyciąganie jak wcześniej. Po włączeniu nazwy / stanu wszystko wraca.
+
 ## 0.6.1-beta.730
 
 - Termostat: nazwa i stan z tłem / ramką nie mają już dodatkowego wewnętrznego wypełnienia - jak w etykiecie, „Margines wewnętrzny” 0 to praktycznie zero odstępu, a tekst wypełnia ramkę.

@@ -2237,7 +2237,9 @@ function ensureLabelFxDefs() {
   document.body.append(d);
 }
 // A lone part is no longer "the label": the label keeps its frame and can be ungrouped like any other (kept for its callers).
-function soloLabel() { return false; }
+// ...except a drawn room's label showing its icon only: the icon is the label then (no frame of the label round it, no
+// "Etykieta" section, nothing to ungroup) - its own background / frame / size are the label's.
+function soloLabel(r) { return !!r && !isIconRoom(r) && (r.points || []).length >= 3 && !!r.labelIcon && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1; }
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
   if (room?.soloPartLook) { const saved = room.soloPartLook, k = saved.key; room[`${k}Bg`] = saved.bg; room[`${k}Border`] = saved.border; if (k !== 'labelIcon' && (saved.bg || saved.border)) partMarginBox(room, k, 1); if (!saved.cardBg) room.labelCardBg = false; if (!saved.cardBorder) room.labelCardBorder = false; if (saved.cardPad !== undefined) room.labelCardPadding = saved.cardPad; delete room.soloPartLook; return true; }
@@ -3080,7 +3082,7 @@ function secondFingerToZoom(event) {
 let groupTap = null;
 // One part shown (and not on tiles): nothing to arrange, so it is not ungrouped - the label hugs it, its dots and margin
 // slider do the rest. On tiles the label keeps the tile's size and the part can be placed / sized in it.
-const singleNoUngroup = r => !!r && !isThermoRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 && !dashSpan(r);
+const singleNoUngroup = r => !!r && !isThermoRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 && (!dashSpan(r) || soloLabel(r));
 function toggleLabelGroupFromPlan(room) {
   if (room?.labelLinked && singleNoUngroup(room)) return;
   // The click that ends this tap would land on the plan (the label may have moved away) and deselect - and so group again.
@@ -4189,6 +4191,8 @@ function roomEditorMarkup(room) {
     h = withBoxRows(h, key);
     // (No margin sliders for a part: its frame is set with its width / height, what is in it with its size.)
     if (['labelIcon','labelName','labelState'].includes(key)) h = swapControl(h, `${key}Padding`, '');
+    // (a room's icon that is its label: the label's box size - width / height - in the icon's own Size)
+    if (key === 'labelIcon' && soloLabel(r) && freeSize) h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${freeSize}${b}`);
     if (oneShown !== key) return h;
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
