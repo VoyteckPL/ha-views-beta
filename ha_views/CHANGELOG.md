@@ -1,3 +1,7 @@
+## 0.6.1-beta.747
+
+- Etykieta pomieszczenia (tło): po „Przywróć domyślne” przy Szerokości / Wysokości ikona, nazwa i stan układają się na nowo w przywróconym pudełku (wcześniej zostawały małe, ułożone dla starego rozmiaru).
+
 ## 0.6.1-beta.746
 
 - Etykieta pomieszczenia (tło): „Przywróć domyślne” przy Szerokości przywraca tylko szerokość (160 px), przy Wysokości tylko wysokość; samotna okrągła/kwadratowa ikona – oba boki.
