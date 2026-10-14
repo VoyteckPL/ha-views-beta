@@ -1,3 +1,7 @@
+## 0.6.1-beta.735
+
+- Pomieszczenie z widoczną tylko nazwą albo tylko stanem: tak jak z samą ikoną - ten element jest etykietą (bez tła / ramki etykiety, bez sekcji Etykieta i rozgrupowania, Szerokość / Wysokość pola w jego sekcji).
+
 ## 0.6.1-beta.734
 
 - Zmiana rozmiaru etykiety kropkami (tryb Tło): linie pomocnicze w kolorach jak wcześniej - żółte dla pomieszczeń, fioletowe dla etykiet, markery / flow / siatka w swoich - a element, do którego się przyciągnęło, dostaje delikatną ramkę.
