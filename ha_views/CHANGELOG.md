@@ -1,3 +1,8 @@
+## 0.6.1-beta.740
+
+- Samotna ikona w pomieszczeniu: przy zmianie „Wielkość koła/kwadratu” (suwak lub kropki) symbol rośnie razem z kołem naprawdę, a „Wielkość symbolu” pokazuje jego realny rozmiar w px.
+- Strzałki pod suwakiem tylko co 100 px, bez żółtych strzałek; wyśrodkowane dokładnie pod kciukiem suwaka.
+
 ## 0.6.1-beta.739
 
 - Suwak „Wielkość koła/kwadratu”: przyciąganie do strzałek z większego zasięgu (ok. 3% zakresu, min. 8 px), strzałka, w którą wskoczył suwak, świeci na niebiesko.

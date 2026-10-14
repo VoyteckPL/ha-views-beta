@@ -1044,6 +1044,13 @@ function squareSoloBox(room) {
   const b = room.fbox, wp = b.w / 100 * W, hp = b.h / 100 * H; if (Math.abs(wp - hp) <= 1) return false; const sp = Math.min(wp, hp), w = sp / W * 100, h = sp / H * 100;
   setFreeBox(room, { x: b.x + (b.w - w) / 2, y: b.y + (b.h - h) / 2, w, h }); return true;
 }
+// (a lone round / square icon: its frame is its box, the symbol grown / shrunk with it - so Wielkość symbolu reads the real px, not a scaled one)
+function syncSoloIcon(room) {
+  if (!soloSquare(room) || !room.fbox) return false; const f = Math.round(Math.min(...freeBoxPx(room)) * 10) / 10, W = Number(room.labelIconW) || 0; if (!(f > 0) || Math.abs(W - f) <= .5) return false;
+  const pad = room.labelIconBg || room.labelIconBorder ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, k = W > 0 ? (f - 2 * pad) / Math.max(1, W - 2 * pad) : 1;
+  room.labelIconW = room.labelIconH = f; room.labelIconSize = Math.round(clamp((Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize) * k, 6, Math.max(6, f - 2 * pad)) * 10) / 10; return true;
+}
+const syncSoloIconUi = room => { syncSizeRanges(room); const i = $('#room-editor-content input[data-path="labelIconSize"]'); if (i && i !== document.activeElement) { i.value = String(Math.round(Number(room.labelIconSize))); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${i.value}px`; } };
 function setFreeBox(room, box) {
   const w = clamp(box.w, 1, 100), h = clamp(box.h, 1, 100), r3 = v => Math.round(v * 1000) / 1000;
   room.fbox = { x: r3(clamp(box.x, 0, 100 - w)), y: r3(clamp(box.y, 0, 100 - h)), w: r3(w), h: r3(h) };
@@ -1088,7 +1095,7 @@ function startBoxResize(event, handle, room) {
   const up = e => {
     if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0; showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
-    if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room);
+    if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); if (moved) syncSoloIcon(room);
     renderRooms(); renderDashGrid();
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
   };
@@ -4120,10 +4127,9 @@ function roomEditorMarkup(room) {
   const presetBar = !(onTile || freeCan) || shownCount < 2 ? '' : `<span class="section-presets">${shownCount === 2 ? pairBtn('v', 'Jedno pod drugim') + pairBtn('h', 'Obok siebie') + pairBtn('s', 'Małe nad dużym') : presetBtn('v', 'Jedno pod drugim') + presetBtn('h', 'Ikona z lewej') + presetBtn('n', 'Ikona i nazwa w rzędzie, stan pod nimi')}</span>`;
   const tilePresets = '';
   const freeSize = !(r.fbox && dashSpan(r) && !dashGrid().on) ? '' : (() => { const [w, h] = freeBoxPx(r), W = Math.round((els.scene?.offsetWidth || 1) / (sceneScale || 1)), H = Math.round((els.scene?.offsetHeight || 1) / (sceneScale || 1));
-    if (soloSquare(r)) { // (a lone round / square icon: one size, 1:1 - it stops at the round 50s (100s on a big plan) and, up to 500 px, at the other lone icons' sizes, a small arrow under each stop)
-      const maxS = Math.min(W, H, SOLO_ICON_MAX), others = [...new Set(Object.values(roomsOf()).filter(o => o.id !== r.id && soloSquare(o) && o.fbox).map(o => Math.round(Math.max(...freeBoxPx(o)))).filter(v => v >= 20 && v <= maxS))]; const step = maxS > 600 ? 100 : 50;
-      const stops = [...new Set([...Array.from({ length: Math.floor(maxS / step) }, (_, i) => (i + 1) * step), ...others])].sort((a, b) => a - b);
-      return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu','fboxS','range',Math.max(w, h),{ min:20, max:maxS, step:1, suffix:'px', integer:true }), 'fboxS', stops, Math.max(8, Math.round((maxS - 20) * .03))), stops, 20, maxS, others, Math.max(w, h)); }
+    if (soloSquare(r)) { // (a lone round / square icon: one size, 1:1, up to 500 px - it stops at the round 100s, a small arrow under each)
+      const maxS = Math.min(W, H, SOLO_ICON_MAX), stops = Array.from({ length: Math.floor(maxS / 100) }, (_, i) => (i + 1) * 100);
+      return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu','fboxS','range',Math.max(w, h),{ min:20, max:maxS, step:1, suffix:'px', integer:true }), 'fboxS', stops, Math.max(8, Math.round((maxS - 20) * .03))), stops, 20, maxS, [], Math.max(w, h)); }
     return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
   const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
@@ -4535,7 +4541,7 @@ function onRoomEditorInput(event) {
   const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
   if ((path === 'fboxW' || path === 'fboxH' || path === 'fboxS') && room.fbox && dashSpan(room)) { if (path === 'fboxS') value = Math.min(Number(value), SOLO_ICON_MAX);
     const [w0, h0] = freeBoxPx(room), s = dashSpan(room); freeBoxFromPx(room, path === 'fboxW' || path === 'fboxS' ? Number(value) : w0, path === 'fboxH' || path === 'fboxS' ? Number(value) : h0, s.x + s.w / 2, s.y + s.h / 2);
-    if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); room.updatedAt = new Date().toISOString();
+    if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); if (syncSoloIcon(room)) requestAnimationFrame(() => syncSoloIconUi(room)); room.updatedAt = new Date().toISOString();
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = `${input.value}px`;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return; }
   if (path === 'dashW' || path === 'dashH') {

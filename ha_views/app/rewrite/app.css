@@ -1110,6 +1110,7 @@ body.editing .room-labels{z-index:3}
 .editor .control.range-control>label{grid-column:1;grid-row:1;min-width:0}
 .editor .control.range-control>output{grid-column:2;grid-row:1;justify-self:end;text-align:right;min-width:0;white-space:nowrap}
 .editor .control.range-control>input[type=range]{grid-column:3;grid-row:1;width:100%;min-width:0}
+.editor .control.range-control>.stop-marks+input,.editor .control.range-control>input[type=range]:has(+.stop-marks){margin-left:0;margin-right:0}
 .editor .control.range-control>.stop-marks{grid-column:3;grid-row:1;align-self:stretch;position:relative;pointer-events:none;min-height:22px}
 .editor .control.range-control>.stop-marks>i{position:absolute;top:calc(50% + 5px);left:calc(8px + var(--p) * (100% - 16px));width:0;height:0;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:5px solid rgba(159,198,216,.55)}
 .editor .control.range-control>.stop-marks>i.hot{border-bottom-color:#ffc46b}
