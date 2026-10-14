@@ -1036,6 +1036,7 @@ function dashSpan(room, view = activeSceneView()) {
 // scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
 const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
 const FREE_BOX_PX = [395, 280], ROOM_BOX_PX = [160, 160], SOLO_ICON_MAX = 500; // (a new one: a tile of a phone's 4 × 10 grid, a room's label 160 × 160, in plan px; a lone icon at most 500 px)
+const roomLabelBox = room => (room?.points || []).length >= 3 && !isThermoRoom(room); // (a room's own label - not a button / thermostat)
 const newBoxPx = room => (room?.points || []).length >= 3 && !isThermoRoom(room) ? ROOM_BOX_PX : FREE_BOX_PX;
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
 // (a lone round / square icon: its box made square once, about its centre - the smaller side)
@@ -4130,6 +4131,8 @@ function roomEditorMarkup(room) {
     if (soloSquare(r)) { // (a lone round / square icon: one size, 1:1, up to 500 px - it stops at the round 100s, a small arrow under each)
       const maxS = Math.min(W, H, SOLO_ICON_MAX), stops = Array.from({ length: Math.floor(maxS / 100) }, (_, i) => (i + 1) * 100);
       return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu','fboxS','range',Math.max(w, h),{ min:20, max:maxS, step:1, suffix:'px', integer:true }), 'fboxS', stops, Math.max(8, Math.round((maxS - 20) * .03))), stops, 20, maxS, [], Math.max(w, h)); }
+    if (roomLabelBox(r)) { const mw = Math.min(W, Math.max(SOLO_ICON_MAX, w)), mh = Math.min(H, Math.max(SOLO_ICON_MAX, h)), sw = Array.from({ length: Math.floor(mw / 100) }, (_, i) => (i + 1) * 100), sh = Array.from({ length: Math.floor(mh / 100) }, (_, i) => (i + 1) * 100), reach = m => Math.max(8, Math.round((m - 20) * .03)); // (a room's label: the sliders up to 500 px for precision - a bigger box only by its corners; stops at the round 100s like the lone icon)
+      return stopMarks(snapSlider(control('Szerokość','fboxW','range',w,{ min:20, max:mw, step:1, suffix:'px', integer:true }), 'fboxW', sw, reach(mw)), sw, 20, mw, [], w) + stopMarks(snapSlider(control('Wysokość','fboxH','range',h,{ min:20, max:mh, step:1, suffix:'px', integer:true }), 'fboxH', sh, reach(mh)), sh, 20, mh, [], h); }
     return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
   const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
@@ -4719,7 +4722,7 @@ function onRoomEditorClick(event) {
     room[key] = !room[key];
     if (partKeys.includes(key)) restoreSingleLook(room);
     // Left with one part (not on tiles): grouped again, where the parts were.
-    if (partKeys.includes(key)) requestAnimationFrame(() => { if (squareSoloBox(room)) { renderRooms(); scheduleSave(true); } }); // (the icon left alone: its box made square once)
+    if (partKeys.includes(key)) requestAnimationFrame(() => { const sq = squareSoloBox(room); if (sq | syncSoloIcon(room)) { renderRooms(); syncSoloIconUi(room); scheduleSave(true); } }); // (the icon left alone: its box made square once, its frame its box - the symbol in real px)
     if (partKeys.includes(key) && !room.labelLinked && singleNoUngroup(room)) { renderRooms(); keepLabelPlaceOnRegroup(room); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
     const onTileLabel = partKeys.includes(key) && room.labelLinked && !isThermoRoom(room) && !!dashSpan(room);
     if (onTileLabel) applyTilePreset(room); // (on a tile: laid out again with the label's preset)
@@ -4776,7 +4779,7 @@ function onRoomEditorClick(event) {
     Object.assign(defaults, { labelCardPadX: defaults.labelCardPadding ?? 0, tileIconGap: 4, tileRowSplit: room && tilePartsShown(room).length === 2 ? tilePairSplitDefault(room) * 100 : 50 }); if (room?.tileColV2 && dashSpan(room)) Object.assign(defaults, { labelPartGap: 4, labelCardPadding: 4, labelCardPadX: 4 });
     // (a label on the background / a tile: the icon size and the parts' boxes laid out again by the preset, a lone icon's box back to a new one's size)
     if (room && room.tileColV2 && dashSpan(room) && /^label(IconSize|(Icon|Name|State)[WH])$/.test(path)) { ['Icon','Name','State'].forEach(k => { delete room[`label${k}W`]; delete room[`label${k}H`]; }); delete room.labelIconSize; room.tileColV2Done = room.tileDuoDone = room.tilePairDone = false; applyTilePreset(room, room.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
-    if (room && /^fbox[WHS]$/.test(path) && room.fbox && dashSpan(room)) { const s = dashSpan(room), [w0, h0] = freeBoxPx(room), d = soloSquare(room) ? [Math.min(...newBoxPx(room)), Math.min(...newBoxPx(room))] : newBoxPx(room); freeBoxFromPx(room, path === 'fboxH' ? w0 : d[0], path === 'fboxW' ? h0 : d[1], s.x + s.w / 2, s.y + s.h / 2); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+    if (room && /^fbox[WHS]$/.test(path) && room.fbox && dashSpan(room)) { const s = dashSpan(room), [w0, h0] = freeBoxPx(room), d = soloSquare(room) ? [Math.min(...newBoxPx(room)), Math.min(...newBoxPx(room))] : newBoxPx(room); void w0; void h0; freeBoxFromPx(room, d[0], d[1], s.x + s.w / 2, s.y + s.h / 2); /* (either size back to a new label's whole box - 160 × 160 for a room's label) */ room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     if (input && path in defaults) { input.value = defaults[path]; input.dispatchEvent(new Event('change', { bubbles:true })); return; }
     if (room && path === 'labelSizeUi' && input) { input.value = 1; input.dispatchEvent(new Event('change', { bubbles:true })); return; }
     // Text frame corners / margin have no fixed default (they grow with the text): reset = back to automatic.

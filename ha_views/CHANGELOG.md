@@ -1,3 +1,9 @@
+## 0.6.1-beta.741
+
+- Samotna ikona: po wyłączeniu nazwy i stanu „Wielkość symbolu” od razu pokazuje realny rozmiar (np. 104 px przy kole 160 px), a jej maksimum to wnętrze koła.
+- Etykieta pomieszczenia: suwaki Szerokość / Wysokość do 500 px (precyzyjniej), ze strzałkami co 100 px; większe rozmiary nadal kropkami w rogach.
+- „Przywróć domyślne” przy Szerokości lub Wysokości przywraca całe pudełko 160 × 160 px.
+
 ## 0.6.1-beta.740
 
 - Samotna ikona w pomieszczeniu: przy zmianie „Wielkość koła/kwadratu” (suwak lub kropki) symbol rośnie razem z kołem naprawdę, a „Wielkość symbolu” pokazuje jego realny rozmiar w px.
