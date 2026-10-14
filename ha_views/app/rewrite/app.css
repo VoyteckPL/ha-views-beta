@@ -1436,6 +1436,7 @@ img.room-layer.room-glow.flat{will-change:opacity}
 .snap-target.k-room{--sc:rgba(255,181,71,.9)}.snap-target.k-marker{--sc:rgba(32,185,231,.9)}.snap-target.k-flow{--sc:rgba(45,212,191,.9)}.snap-target.k-spacing{--sc:rgba(163,230,53,.9)}.snap-target.k-grid{--sc:rgba(143,223,255,.8)}
 .room-label-part.editable::after,.room-label-card.editable::after{--ow:max(.5px, calc(.75px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
 .room-label-card.editable.selected::after,.room-label-part.editable.selected::after{--ow:max(.75px, calc(1px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
+.room-label-card.editable:not(.selected)::after{--ow:max(1px, calc(1.5px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))} /* (a label's yellow dashed frame in edit mode: twice as thick, easy to see) */
 .room-label-part.editable.selected:not(.active-part)::after{--ow:max(.5px, calc(.75px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
 .room-label-part.editable.selected.square::after,.room-label-card.editable.selected.square::after{--ow:max(1px, calc(1.5px / calc(var(--lscale,1) * var(--scene-scale,1) * var(--view-zoom,1))))}
 /* Browsers paint a box at whole pixels of its own (scaled) space, so a thin outline moved out by half its width would

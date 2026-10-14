@@ -1,3 +1,8 @@
+## 0.6.1-beta.749
+
+- Żółta przerywana ramka etykiety w trybie edycji dwa razy grubsza.
+- Zwykła etykieta (dodawana przez +) działa jak etykieta pomieszczenia: nowa ma 160 × 160 px i pierwszy preset, suwaki Szerokość / Wysokość do 500 px ze strzałkami, reset osobno dla każdej osi, „Ustaw domyślny” = 160 × 160 + ikona, nazwa, stan; jedna widoczna część staje się samą etykietą (bez tła karty; sama ikona – koło / kwadrat / dowolny z „Wielkością symbolu”). Przyciski i termostaty bez zmian.
+
 ## 0.6.1-beta.748
 
 - Etykieta z presetu (tło i siatka): zaokrąglenia oraz grubość ramek karty, ikony, nazwy i stanu trzymają ustawione px niezależnie od rozmiaru etykiety (wcześniej rosły przy szerokim pudełku, np. promień 14 → 28 px).

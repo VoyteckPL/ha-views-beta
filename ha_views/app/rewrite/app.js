@@ -1036,8 +1036,9 @@ function dashSpan(room, view = activeSceneView()) {
 // scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
 const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
 const FREE_BOX_PX = [395, 280], ROOM_BOX_PX = [160, 160], SOLO_ICON_MAX = 500; // (a new one: a tile of a phone's 4 × 10 grid, a room's label 160 × 160, in plan px; a lone icon at most 500 px)
-const roomLabelBox = room => (room?.points || []).length >= 3 && !isThermoRoom(room); // (a room's own label - not a button / thermostat)
-const newBoxPx = room => (room?.points || []).length >= 3 && !isThermoRoom(room) ? ROOM_BOX_PX : FREE_BOX_PX;
+const plainLabel = room => isIconRoom(room) && !isThermoRoom(room) && !isTextRoom(room); // (a label added with + - not a button / thermostat / gauge)
+const roomLabelBox = room => ((room?.points || []).length >= 3 && !isThermoRoom(room)) || plainLabel(room); // (a room's own label or a plain label: 160 × 160 new, 500 px sliders)
+const newBoxPx = room => roomLabelBox(room) ? ROOM_BOX_PX : FREE_BOX_PX;
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
 // (a lone round / square icon: its box made square once, about its centre - the smaller side)
 function squareSoloBox(room) {
@@ -2268,7 +2269,7 @@ function ensureLabelFxDefs() {
 // "Etykieta" section, nothing to ungroup) - its own background / frame / size are the label's.
 const soloSquare = r => soloLabel(r) && !!r.labelIcon && iconShapeOf(r) !== 'custom';
 const soloIcon = r => soloLabel(r) && !!r.labelIcon; // (a room's lone icon, of any shape - its frame is its box)
-function soloLabel(r) { return !!r && !isIconRoom(r) && (r.points || []).length >= 3 && !!(r.labelIcon || r.labelName || r.labelState) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1; } // (its icon, its name or its state alone)
+function soloLabel(r) { return !!r && ((!isIconRoom(r) && (r.points || []).length >= 3) || plainLabel(r)) && !!(r.labelIcon || r.labelName || r.labelState) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1; } // (its icon, its name or its state alone)
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
   if (room?.soloPartLook) { const saved = room.soloPartLook, k = saved.key; room[`${k}Bg`] = saved.bg; room[`${k}Border`] = saved.border; if (k !== 'labelIcon' && (saved.bg || saved.border)) partMarginBox(room, k, 1); if (!saved.cardBg) room.labelCardBg = false; if (!saved.cardBorder) room.labelCardBorder = false; if (saved.cardPad !== undefined) room.labelCardPadding = saved.cardPad; delete room.soloPartLook; return true; }
@@ -4905,7 +4906,7 @@ async function resetRoomStyle() {
   if (roomLabelBox(room) && room.fbox && !dashGrid().on) { const b = room.fbox, cx = b.x + b.w / 2, cy = b.y + b.h / 2; ['tilePreset','tileColV2','tileColV2Done','tileDuoDone','tilePairDone','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelCardFree'].forEach(k => delete room[k]);
     freeBoxFromPx(room, ...ROOM_BOX_PX, cx, cy); room.tileNeedsLayout = true; renderRooms(); applyTilePreset(room, 'v', '', true); }
   room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon && !(roomLabelBox(room) && room.fbox && !dashGrid().on)) fitRoomLabel(room.id);
-  if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
+  if (before && !(roomLabelBox(room) && room.fbox && !dashGrid().on)) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
   notify(isGaugeRoom(room) ? 'Przywrócono domyślny wygląd wskaźnika' : isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
 }
