@@ -1,3 +1,7 @@
+## 0.6.1-beta.744
+
+- Samotna ikona: „Przywróć domyślne” przy „Wielkości symbolu” ustawia symbol na 70% wnętrza koła (90% bez tła i ramki), np. 104 px przy kole 160 px – zamiast starego rozmiaru z układu trzech części.
+
 ## 0.6.1-beta.743
 
 - „Ustaw domyślny” dla etykiety pomieszczenia w trybie tło: wraca do etykiety jak w nowym pomieszczeniu – pudełko 160 × 160 px w tym samym miejscu, ikona + nazwa + stan, pierwszy preset (jedno pod drugim) aktywny.
