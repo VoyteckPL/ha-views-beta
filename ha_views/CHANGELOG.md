@@ -1,3 +1,8 @@
+## 0.6.1-beta.729
+
+- Tryb Tło: zmiana rozmiaru etykiety (kropki w rogach) przyciąga się jak wszystko inne - do krawędzi i środków innych etykiet, pomieszczeń, markerów (wg „Przyciągaj do”), do ścian własnego pomieszczenia i do siatki (grubych linii, gdy wybrana „Siatka”), z liniami pomocniczymi. Przesuwanie etykiety nie zaokrągla już pozycji obok złapanej linii.
+- Komputer, edycja (panel otwarty): widok można przesuwać myszką przy każdym zoomie (także 100%) i z pustego tła obok planu; krawędź planu może dojechać do środka ekranu, więc element w rogu centruje się. Przesunięcie widoku nie odznacza elementu.
+
 ## 0.6.1-beta.728
 
 - Tryb Tło: bez strzałek na krawędziach etykiet - rozmiar zmieniają kropki w rogach i suwaki Szerokość / Wysokość. Strzałki zostają tylko w kafelkach.

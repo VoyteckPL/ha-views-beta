@@ -1056,14 +1056,21 @@ function startBoxResize(event, handle, room) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, b0 = { ...dashSpan(room) }, min = 2; let moved = false, raf = 0;
   const lay = () => { raf = 0; if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); renderRoomLabels(); renderDashGrid(); };
+  // Its moving sides snap as everything else does ("Przyciągaj do" and the grid): to the lines of the other labels, rooms,
+  // markers and of its own room, and to the grid's lines (thick ones when "Siatka" is chosen there) - one line per side.
+  const g = model.settings?.snapEnabled === false ? null : guideTargets({ roomId: room.id }), W = g?.scene.width || 1, H = g?.scene.height || 1;
+  if (g && (room.points || []).length >= 3 && snapTargets().rooms) { const px = room.points.map(p => p[0] / 100 * W), py = room.points.map(p => p[1] / 100 * H); [Math.min(...px), Math.max(...px), (Math.min(...px) + Math.max(...px)) / 2].forEach(v => g.xs.push({ v, kind: 'room' })); [Math.min(...py), Math.max(...py), (Math.min(...py) + Math.max(...py)) / 2].forEach(v => g.ys.push({ v, kind: 'room' })); }
+  const pick = (edge, fixed, sign, list) => { const reach = snapReach(); let best = null; list.forEach(t => { const d = Math.abs(t.v - edge), s = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (sign * (t.v - fixed) > 4 && d <= reach && (!best || s < best.s)) best = { s, v: t.v, kind: t.kind }; }); return best; };
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
-    const [px, py] = scenePercentAt(e), x = snapPercent(px), y = snapPercent(py); let x0 = b0.x, x1 = b0.x + b0.w, y0 = b0.y, y1 = b0.y + b0.h;
-    if (c.includes('e')) x1 = Math.max(x0 + min, x); if (c.includes('w')) x0 = Math.min(x1 - min, x); if (c.includes('s')) y1 = Math.max(y0 + min, y); if (c.includes('n')) y0 = Math.min(y1 - min, y);
-    setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
+    const [px, py] = scenePercentAt(e); let x0 = b0.x, x1 = b0.x + b0.w, y0 = b0.y, y1 = b0.y + b0.h; const vg = [], hg = [];
+    const snapX = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * W, fixed / 100 * W, sign, g.xs) : null; if (!b) return v; vg.push({ at: b.v / W * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / W * 100; };
+    const snapY = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * H, fixed / 100 * H, sign, g.ys) : null; if (!b) return v; hg.push({ at: b.v / H * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / H * 100; };
+    if (c.includes('e')) x1 = Math.max(x0 + min, snapX(px, x0, 1)); if (c.includes('w')) x0 = Math.min(x1 - min, snapX(px, x1, -1)); if (c.includes('s')) y1 = Math.max(y0 + min, snapY(py, y0, 1)); if (c.includes('n')) y0 = Math.min(y1 - min, snapY(py, y1, -1));
+    showAlignGuides(vg, hg); setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
   };
   const up = e => {
-    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0;
+    if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0; showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room);
     renderRooms(); renderDashGrid();
@@ -3192,7 +3199,7 @@ function startRoomLabelDrag(event) {
     }
     // A free box (image background): moved whole, its corner on the grid.
     if (key === 'labelCard' && room.fbox && !dashGrid().on && dashSpan(room)) {
-      const s = dashSpan(room); setFreeBox(room, { x: snapPercent(snapped.xPercent - s.w / 2), y: snapPercent(snapped.yPercent - s.h / 2), w: s.w, h: s.h }); renderRoomLabels(); renderDashGrid(); return;
+      const s = dashSpan(room); setFreeBox(room, { x: snapped.xPercent - s.w / 2, y: snapped.yPercent - s.h / 2, w: s.w, h: s.h }); renderRoomLabels(); renderDashGrid(); return;
     }
     renderRoomLabels();
     if (zoneMove) {
@@ -5584,7 +5591,9 @@ function focusLabelBox(room) {
   glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
   return true;
 }
-function deskZoomExpanded() { return !mobileView() && viewZoom > 1.001; }
+// (an element open in the edit panel: the plan may be moved at any zoom, so the camera can bring an element at its edge to the middle)
+function editPanelOpen() { return ['#room-editor', '#editor', '#flow-editor'].some(sel => $(sel)?.classList.contains('visible')); }
+function deskZoomExpanded() { return !mobileView() && (viewZoom > 1.001 || (editMode && editPanelOpen())); }
 function deskZoomRegion() {
   const bar = $('.topbar')?.getBoundingClientRect().bottom || 0, dock = $('#edit-dock');
   let left = 0, right = document.documentElement.clientWidth || innerWidth;
@@ -5632,6 +5641,10 @@ function clampViewPan() {
     return;
   }
   if (viewZoom <= minViewZoom() && !panorama) { viewPanX = 0; viewPanY = 0; return; }
+  if (deskZoomExpanded() && editMode && editPanelOpen()) { // (editing: an edge of the plan at most in the middle of the free screen, as on a phone)
+    const R = deskZoomRegion(), vp = els.viewport.getBoundingClientRect(), mx = (Math.max(R.left, vp.left) + Math.min(R.right, vp.right)) / 2 - vp.left, my = (Math.max(R.top, vp.top) + Math.min(R.bottom, vp.bottom)) / 2 - vp.top;
+    viewPanX = clamp(viewPanX, mx - els.scene.offsetWidth * viewZoom, mx); viewPanY = clamp(viewPanY, my - els.scene.offsetHeight * viewZoom, my); return;
+  }
   if (deskZoomExpanded()) {
     // The plan may move anywhere inside the free screen; larger than it, it always covers that area.
     // While editing, it may also go past its edges by half the free screen, so an element at the plan's edge can be
@@ -8955,7 +8968,7 @@ async function completeViewSwipe(target, direction, dx = 0, velocity = 0) {
   pendingSwipe = 0;
 }
 function startDesktopPan(event) {
-  if (mobileView() || event.button !== 0 || viewZoom <= 1.001) return;
+  if (mobileView() || event.button !== 0 || (viewZoom <= 1.001 && !(editMode && editPanelOpen()))) return;
   const marker = event.target.closest('.marker');
   if (editMode && marker) return;
   const start = { x:event.clientX, y:event.clientY, panX:viewPanX, panY:viewPanY, marker, moved:false };
@@ -8975,6 +8988,8 @@ function startDesktopPan(event) {
   const up = () => {
     window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up);
     els.sceneCard?.classList.remove('scene-panning'); desktopPanGesture = null;
+    // (a drag that moved the plan is not a click: the element stays selected)
+    if (start.moved) { const swallow = c => { c.stopPropagation(); c.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250); }
   };
   window.addEventListener('mousemove', move); window.addEventListener('mouseup', up, { once:true });
 }
@@ -9329,6 +9344,7 @@ function bindEvents() {
   // Touch gestures and desktop mouse dragging are deliberately separate.
   els.editorContent?.addEventListener('focusin', resetViewportPointers);
   els.scene?.addEventListener('mousedown', startDesktopPan);
+  els.viewport?.addEventListener('mousedown', event => { if (!els.scene?.contains(event.target)) startDesktopPan(event); }); // (also from the empty screen beside the plan)
   window.addEventListener('pointerdown', trackTouchDown, true); window.addEventListener('pointermove', trackTouchMove, true); window.addEventListener('pointerup', trackTouchUp, true); window.addEventListener('pointercancel', trackTouchUp, true);
   ['touchstart','touchend','touchcancel'].forEach(type => window.addEventListener(type, syncTouches, { capture:true, passive:true }));
   document.addEventListener('visibilitychange', () => { if (document.hidden) resetTouches(); }); window.addEventListener('blur', resetTouches);
