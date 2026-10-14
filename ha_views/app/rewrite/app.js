@@ -1036,7 +1036,7 @@ function dashSpan(room, view = activeSceneView()) {
 // scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
 const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
 const FREE_BOX_PX = [395, 280], ROOM_BOX_PX = [160, 160], SOLO_ICON_MAX = 500; // (a new one: a tile of a phone's 4 × 10 grid, a room's label 160 × 160, in plan px; a lone icon at most 500 px)
-const plainLabel = room => isIconRoom(room) && !isThermoRoom(room) && !isTextRoom(room); // (a label added with + - not a button / thermostat / gauge)
+const plainLabel = room => isIconRoom(room) && !isThermoRoom(room); // (a label or a button added with + - not a thermostat / gauge)
 const roomLabelBox = room => ((room?.points || []).length >= 3 && !isThermoRoom(room)) || plainLabel(room); // (a room's own label or a plain label: 160 × 160 new, 500 px sliders)
 const newBoxPx = room => roomLabelBox(room) ? ROOM_BOX_PX : FREE_BOX_PX;
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }

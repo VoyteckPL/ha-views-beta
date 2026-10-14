@@ -1,3 +1,7 @@
+## 0.6.1-beta.752
+
+- Przycisk działa jak etykieta: nowy ma 160 × 160 px i pierwszy preset, suwaki Szerokość / Wysokość do 500 px ze strzałkami, reset osobno dla każdej osi, „Ustaw domyślny” = 160 × 160 + ikona i tekst, sama ikona / sam tekst bez tła karty (koło / kwadrat / dowolny z „Wielkością symbolu”), zmiana rozmiaru kropkami nie centruje kamery.
+
 ## 0.6.1-beta.751
 
 - Zwykła etykieta: zmiana rozmiaru kropkami nie centruje już kamery na etykiecie – widok zostaje tam, gdzie był.
