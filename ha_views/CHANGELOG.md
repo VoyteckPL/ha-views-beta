@@ -1,3 +1,7 @@
+## 0.6.1-beta.743
+
+- „Ustaw domyślny” dla etykiety pomieszczenia w trybie tło: wraca do etykiety jak w nowym pomieszczeniu – pudełko 160 × 160 px w tym samym miejscu, ikona + nazwa + stan, pierwszy preset (jedno pod drugim) aktywny.
+
 ## 0.6.1-beta.742
 
 - Suwaki wielkości symbolu / ikony, rozmiaru tekstu i marginesów: zamiast kreski z rozmiarem innej etykiety są strzałki w okrągłych wartościach (co 5/10/25/50/100 px zależnie od zakresu), a okrągłe dziesiątki lekko przyciągają.

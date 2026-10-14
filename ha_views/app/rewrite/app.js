@@ -4896,7 +4896,10 @@ async function resetRoomStyle() {
   delete room.singleSaved; if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
   fitDashLabels.hold = null; clearTimeout(fitDashLabels.holdOff); // (a slider's hold on the label's fit never outlives a reset)
   if (icon && !isThermoRoom(room) && dashSpan(room) && room.labelLinked) { delete room.tilePreset; delete room.tileColV2; delete room.tileColV2Done; renderRooms(); applyTilePreset(room, defaultTilePreset(room), '', true); } // (on a tile: its default layout)
-  room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon) fitRoomLabel(room.id);
+  // (a room's label on the background: back to a new one's - icon, name and state, the first preset, a 160 × 160 box about its centre)
+  if (roomLabelBox(room) && room.fbox && !dashGrid().on) { const b = room.fbox, cx = b.x + b.w / 2, cy = b.y + b.h / 2; ['tilePreset','tileColV2','tileColV2Done','tileDuoDone','tilePairDone','labelIconW','labelIconH','labelNameW','labelNameH','labelStateW','labelStateH','labelCardFree'].forEach(k => delete room[k]);
+    freeBoxFromPx(room, ...ROOM_BOX_PX, cx, cy); room.tileNeedsLayout = true; renderRooms(); applyTilePreset(room, 'v', '', true); }
+  room.updatedAt = new Date().toISOString(); renderRooms(); if (!icon && !(roomLabelBox(room) && room.fbox && !dashGrid().on)) fitRoomLabel(room.id);
   if (before) { const after = centre(), sc = els.scene.getBoundingClientRect(), toPlan = sc.width / Math.max(1, els.scene.offsetWidth) * (sceneScale || 1); if (after && toPlan) { room.labelCardX = Math.round(((Number(room.labelCardX) || 0) + (before[0] - after[0]) / toPlan) * 100) / 100; room.labelCardY = Math.round(((Number(room.labelCardY) || 0) + (before[1] - after[1]) / toPlan) * 100) / 100; renderRooms(); } }
   openRoomEditor(room.id); scheduleSave(true); if (icon) refocusLabel(room);
   notify(isGaugeRoom(room) ? 'Przywrócono domyślny wygląd wskaźnika' : isThermoRoom(room) ? 'Przywrócono domyślny wygląd termostatu' : icon ? 'Przywrócono domyślny wygląd etykiety' : 'Przywrócono domyślny wygląd pomieszczenia');
