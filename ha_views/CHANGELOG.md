@@ -1,3 +1,7 @@
+## 0.6.1-beta.751
+
+- Zwykła etykieta: zmiana rozmiaru kropkami nie centruje już kamery na etykiecie – widok zostaje tam, gdzie był.
+
 ## 0.6.1-beta.750
 
 - Pomieszczenie: można wyłączyć ikonę, nazwę i stan naraz – zostaje samo pomieszczenie bez etykiety (sekcje etykiety i efektów znikają z panelu; włączenie dowolnej części przywraca etykietę). Zwykła etykieta nadal wymaga co najmniej jednej części.
