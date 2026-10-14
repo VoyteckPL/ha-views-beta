@@ -4235,7 +4235,8 @@ function roomEditorMarkup(room) {
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
     return h.replace(/<\/div><\/details>$/, `${bgSub}${borderSub}</div></details>`); };
-  const label = (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
+  const noParts = !isIconRoom(r) && !ROOM_LABEL_PARTS.some(([, k]) => r[k]); // (a room with its label hidden: only the room - no label sections)
+  const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
   return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + label;
@@ -4712,14 +4713,14 @@ function onRoomEditorClick(event) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const key = partToggle.dataset.partToggle;
     // The padlock on the label's bar: the label's frame keeps the size it has now (parts still change inside it).
     if (key === 'labelSizeLock') { if (room.labelSizeLock) unlockLabelFrame(room); else lockLabelFrame(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
-    // At least one of icon / name / state stays visible.
+    // At least one of icon / name / state stays visible on a label (a room may have none).
     const partKeys = ROOM_LABEL_PARTS.map(([, k]) => k);
     if (key === 'labelMinus' && isThermoRoom(room) && partToggle.closest('.group-tight')) room.labelPlus = !room.labelMinus;
     // A name's / state's background and frame carry its margin: with both off (or the first one on) the margin goes (or
     // comes), so its box gets smaller (or bigger) by the margin - the text keeps its room and its size.
     { const own = !isThermoRoom(room) && /^(label(?:Name|State))(Bg|Border)$/.exec(key), k = own?.[1];
       if (own && !room[`${k}${own[2] === 'Bg' ? 'Border' : 'Bg'}`]) partMarginBox(room, k, room[key] ? -1 : 1); } // on now = being switched off
-    if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1) return notify('Co najmniej jedna część musi być widoczna');
+    if (partKeys.includes(key) && room[key] && partKeys.filter(k => room[k]).length <= 1 && isIconRoom(room)) return notify('Co najmniej jedna część musi być widoczna'); // (a room may hide them all: only the room is left)
     if (key === 'labelLinked' && room.labelLinked && singleNoUngroup(room)) return;
     if (key === 'labelLinked' && room.labelLinked) { selectedLabelPart = ''; panelPart = null; } // ungrouped: no part picked yet, all only outlined
     if (key === 'labelLinked') { keepLabelPlaceOnRegroup(room); togglePartFrames(room, !room.labelLinked); delete room.labelAutoUngrouped; }

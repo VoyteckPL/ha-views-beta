@@ -1,3 +1,7 @@
+## 0.6.1-beta.750
+
+- Pomieszczenie: można wyłączyć ikonę, nazwę i stan naraz – zostaje samo pomieszczenie bez etykiety (sekcje etykiety i efektów znikają z panelu; włączenie dowolnej części przywraca etykietę). Zwykła etykieta nadal wymaga co najmniej jednej części.
+
 ## 0.6.1-beta.749
 
 - Żółta przerywana ramka etykiety w trybie edycji dwa razy grubsza.
