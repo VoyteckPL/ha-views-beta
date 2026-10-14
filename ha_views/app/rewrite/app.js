@@ -1035,7 +1035,8 @@ function dashSpan(room, view = activeSceneView()) {
 // Labels on an image background (no tiles): the same engine as on a tile, the label's own box (room.fbox = {x, y, w, h},
 // scene %) standing for the tile - sized with the arrows on its sides / its corners and with Szerokość / Wysokość.
 const freeBoxRoom = room => !!room && (isIconRoom(room) || (room.points || []).length >= 3); // (a label, a button, a thermostat / gauge, a room's label)
-const FREE_BOX_PX = [395, 280], SOLO_ICON_MAX = 500; // (a lone icon: at most 500 plan px) // (a new one: a tile of a phone's 4 × 10 grid, in plan px)
+const FREE_BOX_PX = [395, 280], ROOM_BOX_PX = [160, 160], SOLO_ICON_MAX = 500; // (a new one: a tile of a phone's 4 × 10 grid, a room's label 160 × 160, in plan px; a lone icon at most 500 px)
+const newBoxPx = room => (room?.points || []).length >= 3 && !isThermoRoom(room) ? ROOM_BOX_PX : FREE_BOX_PX;
 function freeBoxPx(room) { const s = dashSpan(room), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1; return s ? [Math.round(s.w / 100 * W / k), Math.round(s.h / 100 * H / k)] : [0, 0]; }
 // (a lone round / square icon: its box made square once, about its centre - the smaller side)
 function squareSoloBox(room) {
@@ -1055,7 +1056,7 @@ function freeBoxFromPx(room, wpx, hpx, cx = Number(room.x) || 50, cy = Number(ro
 // An old label (sized by its contents) goes onto its own box the first time a preset is picked: the box it takes now.
 function makeFreeBox(room) {
   if (!freeBoxRoom(room) || dashGrid().on || room.fbox) return false;
-  const b = cardBoxPct(room); if (b && b.w > .5 && b.h > .5) setFreeBox(room, b); else freeBoxFromPx(room, ...FREE_BOX_PX);
+  const b = cardBoxPct(room); if (b && b.w > .5 && b.h > .5) setFreeBox(room, b); else freeBoxFromPx(room, ...newBoxPx(room));
   if (!isThermoRoom(room)) { room.labelLinked = true; delete room.labelCardFree; } return true; // (a thermostat keeps its own free layout - its box scales it)
 }
 function startBoxResize(event, handle, room) {
@@ -1218,7 +1219,7 @@ function dashUsedCells(view = activeSceneView(), except = null) {
 let pendingDashCell = null; // (a tile's "+" tapped: what is added next goes there)
 function pinToFreeTile(room, view = activeSceneView()) {
   const g = dashGrid(view); if (!room) return false;
-  if (!g.on) { if (!freeBoxRoom(room) || isThermoRoom(room) || !view?.background) return false; /* (a thermostat: its box once it is there, its own size) */ freeBoxFromPx(room, ...FREE_BOX_PX); if (!room.tilePreset) room.tileNeedsLayout = true; return true; }
+  if (!g.on) { if (!freeBoxRoom(room) || isThermoRoom(room) || !view?.background) return false; /* (a thermostat: its box once it is there, its own size) */ freeBoxFromPx(room, ...newBoxPx(room)); if (!room.tilePreset) room.tileNeedsLayout = true; return true; }
   const used = dashUsedCells(view, room);
   if (pendingDashCell && Date.now() - pendingDashCell.at < 600000 && pendingDashCell.view === model.activeViewId && !used.has(`${pendingDashCell.c},${pendingDashCell.r}`) && pendingDashCell.c < g.cols && pendingDashCell.r < g.rows) {
     const { c, r: rr } = pendingDashCell; pendingDashCell = null; room.dash = { c, r: rr, w: 1, h: 1 }; const span = dashSpan(room, view); if (!room.tilePreset) room.tileNeedsLayout = true;
@@ -3421,7 +3422,7 @@ function finishRoomDrawing() {
   const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(room => !isIconRoom(room)).length + 1;
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, id, name: roomDraft.name || `${translateValue('Pomieszczenie')} ${count}`, entityIds: [...(roomDraft.entityIds || [])], points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
   if (view.background && freeBoxRoom(view.rooms[id])) { const r = view.rooms[id], xs = r.points.map(p => p[0]), ys = r.points.map(p => p[1]), [cx, cy] = roomLabelAnchor(r.points), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
-    void xs; void ys; void W; void H; void k; freeBoxFromPx(r, ...FREE_BOX_PX, cx, cy); r.tileNeedsLayout = true; } // (always the same size, whatever the room's)
+    void xs; void ys; void W; void H; void k; freeBoxFromPx(r, ...ROOM_BOX_PX, cx, cy); r.tileNeedsLayout = true; } // (always the same size, whatever the room's)
   const withEntities = view.rooms[id].entityIds.length > 0; pendingTemplate = roomDraft.template || ''; cancelRoomDrawing(); renderRooms(); if (!view.rooms[id].fbox) fitRoomLabel(id); scheduleSave(true); if (withEntities) refreshStates();
   openRoomWizard(id);
 }
@@ -3920,7 +3921,7 @@ function roomEditorMarkup(room) {
     Object.values(roomsOf()).forEach(o => { if (o && o.id !== r.id && !isThermoRoom(o) && okNum(o[path]) && o[path.replace(/(Size|Padding)$/, '')]) vals.add(Math.round(Number(o[path]) * 10) / 10); });
     return [...vals].filter(v => v >= 0 && v <= 420).sort((a, b) => a - b).slice(0, 12); };
   // (the stops drawn as small arrows under the track - the other labels' sizes in the accent colour; no native ticks)
-  const stopMarks = (html, vals, min, max, hot = []) => html.replace(/ list="qs-[^"]*"/, '').replace(/<datalist id="qs-[^"]*">.*?<\/datalist>/, '').replace(/(<input type="range"[^>]*>)/, `$1<span class="stop-marks" aria-hidden="true">${vals.map(v => `<i class="${hot.includes(v) ? 'hot' : ''}" style="--p:${((v - min) / Math.max(1, max - min)).toFixed(4)}" title="${v}px"></i>`).join('')}</span>`);
+  const stopMarks = (html, vals, min, max, hot = [], cur = null) => html.replace(/ list="qs-[^"]*"/, '').replace(/<datalist id="qs-[^"]*">.*?<\/datalist>/, '').replace(/(<input type="range"[^>]*>)/, `$1<span class="stop-marks" aria-hidden="true">${vals.map(v => `<i class="${hot.includes(v) ? 'hot' : ''}${v === cur ? ' on' : ''}" style="--p:${((v - min) / Math.max(1, max - min)).toFixed(4)}" title="${v}px"></i>`).join('')}</span>`);
   const snapSlider = (html, path, vals, reach) => vals.length ? html.replace(`data-path="${path}"`, `data-path="${path}" list="qs-${path}" data-snap="${vals.join(',')}" data-snap-reach="${reach}"`) + `<datalist id="qs-${path}">${vals.map(v => `<option value="${v}"></option>`).join('')}</datalist>` : html;
   const lockBtn = key => { const fixed = !!r[`${key}FixedBox`]; return icBtn(`data-quick-lock="${key}" aria-pressed="${fixed}"`, fixed ? 'mdi-lock-outline' : 'mdi-lock-open-variant-outline', fixed ? 'Stała ramka: zawartość zmienia się w ramce' : 'Ramka rośnie z zawartością', fixed); };
   // "Dopasuj" and "Stała ramka" in a size slider's row, between the slider and its reset.
@@ -4122,7 +4123,7 @@ function roomEditorMarkup(room) {
     if (soloSquare(r)) { // (a lone round / square icon: one size, 1:1 - it stops at the round 50s (100s on a big plan) and, up to 500 px, at the other lone icons' sizes, a small arrow under each stop)
       const maxS = Math.min(W, H, SOLO_ICON_MAX), others = [...new Set(Object.values(roomsOf()).filter(o => o.id !== r.id && soloSquare(o) && o.fbox).map(o => Math.round(Math.max(...freeBoxPx(o)))).filter(v => v >= 20 && v <= maxS))]; const step = maxS > 600 ? 100 : 50;
       const stops = [...new Set([...Array.from({ length: Math.floor(maxS / step) }, (_, i) => (i + 1) * step), ...others])].sort((a, b) => a - b);
-      return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu','fboxS','range',Math.max(w, h),{ min:20, max:maxS, step:1, suffix:'px', integer:true }), 'fboxS', stops, 5), stops, 20, maxS, others); }
+      return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu','fboxS','range',Math.max(w, h),{ min:20, max:maxS, step:1, suffix:'px', integer:true }), 'fboxS', stops, Math.max(8, Math.round((maxS - 20) * .03))), stops, 20, maxS, others, Math.max(w, h)); }
     return control('Szerokość','fboxW','range',w,{ min:20, max:W, step:1, suffix:'px', integer:true }) + control('Wysokość','fboxH','range',h,{ min:20, max:H, step:1, suffix:'px', integer:true }); })();
   const groupSize = !ownSize ? '' : sizeOpen(freeSize + (onTile ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' }))
     + (r.labelSizeLock ? '' : marginRows())
@@ -4524,7 +4525,7 @@ function onRoomEditorInput(event) {
       const f = Math.max(.05, Math.min((b.W - 2 * px) / b.cw, (b.H - 2 * py) / b.ch)); room[`${k}Size`] = Math.round(clamp(b.size * f, 6, 420) * 10) / 10; room[`${k}W`] = Math.round(b.W * 10) / 10; room[`${k}H`] = Math.round(b.H * 10) / 10; delete room[`${k}Lock`];
       room[`${k}PadBase`] = { base: b, s: room[`${k}Size`], py, px, W: b.W, H: b.H }; } } }
   // A slider with values to catch (the same size / margin as elsewhere): near one, it takes it exactly.
-  if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } }
+  if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } const marks = input.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(i => i.classList.toggle('on', i.title === `${value}px`)); }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
   if (path === 'labelSizeLock') { if (value) lockLabelFrame(room); else unlockLabelFrame(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
@@ -4769,7 +4770,7 @@ function onRoomEditorClick(event) {
     Object.assign(defaults, { labelCardPadX: defaults.labelCardPadding ?? 0, tileIconGap: 4, tileRowSplit: room && tilePartsShown(room).length === 2 ? tilePairSplitDefault(room) * 100 : 50 }); if (room?.tileColV2 && dashSpan(room)) Object.assign(defaults, { labelPartGap: 4, labelCardPadding: 4, labelCardPadX: 4 });
     // (a label on the background / a tile: the icon size and the parts' boxes laid out again by the preset, a lone icon's box back to a new one's size)
     if (room && room.tileColV2 && dashSpan(room) && /^label(IconSize|(Icon|Name|State)[WH])$/.test(path)) { ['Icon','Name','State'].forEach(k => { delete room[`label${k}W`]; delete room[`label${k}H`]; }); delete room.labelIconSize; room.tileColV2Done = room.tileDuoDone = room.tilePairDone = false; applyTilePreset(room, room.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
-    if (room && /^fbox[WHS]$/.test(path) && room.fbox && dashSpan(room)) { const s = dashSpan(room), [w0, h0] = freeBoxPx(room), d = soloSquare(room) ? [Math.min(...FREE_BOX_PX), Math.min(...FREE_BOX_PX)] : FREE_BOX_PX; freeBoxFromPx(room, path === 'fboxH' ? w0 : d[0], path === 'fboxW' ? h0 : d[1], s.x + s.w / 2, s.y + s.h / 2); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+    if (room && /^fbox[WHS]$/.test(path) && room.fbox && dashSpan(room)) { const s = dashSpan(room), [w0, h0] = freeBoxPx(room), d = soloSquare(room) ? [Math.min(...newBoxPx(room)), Math.min(...newBoxPx(room))] : newBoxPx(room); freeBoxFromPx(room, path === 'fboxH' ? w0 : d[0], path === 'fboxW' ? h0 : d[1], s.x + s.w / 2, s.y + s.h / 2); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     if (input && path in defaults) { input.value = defaults[path]; input.dispatchEvent(new Event('change', { bubbles:true })); return; }
     if (room && path === 'labelSizeUi' && input) { input.value = 1; input.dispatchEvent(new Event('change', { bubbles:true })); return; }
     // Text frame corners / margin have no fixed default (they grow with the text): reset = back to automatic.

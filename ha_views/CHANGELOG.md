@@ -1,3 +1,8 @@
+## 0.6.1-beta.739
+
+- Suwak „Wielkość koła/kwadratu”: przyciąganie do strzałek z większego zasięgu (ok. 3% zakresu, min. 8 px), strzałka, w którą wskoczył suwak, świeci na niebiesko.
+- Nowa etykieta w pomieszczeniu (tło) ma domyślnie 160 × 160 px (też po „Przywróć domyślne”).
+
 ## 0.6.1-beta.738
 
 - Samotna ikona w pomieszczeniu (tło): maksymalny rozmiar 500 px (suwak i kropki narożne).
