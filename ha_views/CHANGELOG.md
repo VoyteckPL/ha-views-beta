@@ -1,3 +1,8 @@
+## 0.6.1-beta.738
+
+- Samotna ikona w pomieszczeniu (tło): maksymalny rozmiar 500 px (suwak i kropki narożne).
+- Czytelniejsze nazwy suwaków: „Wielkość symbolu” (sam znak) oraz „Wielkość koła” / „Wielkość kwadratu” (cała ikona).
+
 ## 0.6.1-beta.737
 
 - Etykieta w pomieszczeniu (tło), sama ikona: suwak „Wielkość” przyciąga co 100 px (50 px na małym planie) i do rozmiarów innych samotnych ikon; stopy pokazane małymi strzałkami pod suwakiem (inne ikony na żółto).
