@@ -1,3 +1,7 @@
+## 0.6.1-beta.746
+
+- Etykieta pomieszczenia (tło): „Przywróć domyślne” przy Szerokości przywraca tylko szerokość (160 px), przy Wysokości tylko wysokość; samotna okrągła/kwadratowa ikona – oba boki.
+
 ## 0.6.1-beta.745
 
 - Samotna ikona (każdy kształt): przy zmianie rozmiaru kropkami w rogach ramka ikony i symbol podążają za pudełkiem na żywo, a nie dopiero po puszczeniu.
