@@ -1,3 +1,8 @@
+## 0.6.1-beta.742
+
+- Suwaki wielkości symbolu / ikony, rozmiaru tekstu i marginesów: zamiast kreski z rozmiarem innej etykiety są strzałki w okrągłych wartościach (co 5/10/25/50/100 px zależnie od zakresu), a okrągłe dziesiątki lekko przyciągają.
+- Samotna ikona z kształtem „Dowolny”: ramka ikony to całe pudełko etykiety (Szerokość × Wysokość), bez blokady na kwadrat i bez zdublowanych suwaków; symbol rośnie proporcjonalnie.
+
 ## 0.6.1-beta.741
 
 - Samotna ikona: po wyłączeniu nazwy i stanu „Wielkość symbolu” od razu pokazuje realny rozmiar (np. 104 px przy kole 160 px), a jej maksimum to wnętrze koła.

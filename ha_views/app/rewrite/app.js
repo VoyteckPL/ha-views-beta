@@ -1047,9 +1047,10 @@ function squareSoloBox(room) {
 }
 // (a lone round / square icon: its frame is its box, the symbol grown / shrunk with it - so Wielkość symbolu reads the real px, not a scaled one)
 function syncSoloIcon(room) {
-  if (!soloSquare(room) || !room.fbox) return false; const f = Math.round(Math.min(...freeBoxPx(room)) * 10) / 10, W = Number(room.labelIconW) || 0; if (!(f > 0) || Math.abs(W - f) <= .5) return false;
-  const pad = room.labelIconBg || room.labelIconBorder ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, k = W > 0 ? (f - 2 * pad) / Math.max(1, W - 2 * pad) : 1;
-  room.labelIconW = room.labelIconH = f; room.labelIconSize = Math.round(clamp((Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize) * k, 6, Math.max(6, f - 2 * pad)) * 10) / 10; return true;
+  if (!soloIcon(room) || !room.fbox) return false; const [bw, bh] = freeBoxPx(room), sq = soloSquare(room), fw = Math.round((sq ? Math.min(bw, bh) : bw) * 10) / 10, fh = Math.round((sq ? Math.min(bw, bh) : bh) * 10) / 10, W = Number(room.labelIconW) || 0, H = Number(room.labelIconH) || 0;
+  if (!(fw > 0 && fh > 0) || Math.abs(W - fw) <= .5 && Math.abs(H - fh) <= .5) return false;
+  const pad = room.labelIconBg || room.labelIconBorder ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, f = Math.min(fw, fh), was = Math.min(W, H || W), k = was > 0 ? (f - 2 * pad) / Math.max(1, was - 2 * pad) : 1;
+  room.labelIconW = fw; room.labelIconH = fh; room.labelIconSize = Math.round(clamp((Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize) * k, 6, Math.max(6, f - 2 * pad)) * 10) / 10; return true;
 }
 const syncSoloIconUi = room => { syncSizeRanges(room); const i = $('#room-editor-content input[data-path="labelIconSize"]'); if (i && i !== document.activeElement) { i.value = String(Math.round(Number(room.labelIconSize))); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${i.value}px`; } };
 function setFreeBox(room, box) {
@@ -1096,7 +1097,7 @@ function startBoxResize(event, handle, room) {
   const up = e => {
     if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0; showAlignGuides([], []);
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
-    if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); if (moved) syncSoloIcon(room);
+    if (moved && room.tileColV2 && room.labelLinked && !room.labelCardFree && !soloIcon(room)) applyTilePreset(room); if (moved) syncSoloIcon(room); /* (a lone icon: its frame is its box, the symbol kept in proportion) */
     renderRooms(); renderDashGrid();
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); }
   };
@@ -2264,6 +2265,7 @@ function ensureLabelFxDefs() {
 // ...except a drawn room's label showing its icon only: the icon is the label then (no frame of the label round it, no
 // "Etykieta" section, nothing to ungroup) - its own background / frame / size are the label's.
 const soloSquare = r => soloLabel(r) && !!r.labelIcon && iconShapeOf(r) !== 'custom';
+const soloIcon = r => soloLabel(r) && !!r.labelIcon; // (a room's lone icon, of any shape - its frame is its box)
 function soloLabel(r) { return !!r && !isIconRoom(r) && (r.points || []).length >= 3 && !!(r.labelIcon || r.labelName || r.labelState) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1; } // (its icon, its name or its state alone)
 function syncSoloLook(room) {
   // (beta.555-565 handed a lone part's background / frame over to the group: given back to the part.)
@@ -3925,12 +3927,12 @@ function roomEditorMarkup(room) {
   const icRow = (mdi, title, body) => `<div class="control room-card-row compact"><label class="ic" title="${escapeHtml(translateValue(title))}"><i class="mdi ${mdi}"></i></label><div class="room-card-presets">${body}</div></div>`;
   const icBtn = (attr, mdi, title, active = false) => `<button type="button" class="room-card-preset${active ? ' active' : ''}" ${attr} title="${escapeHtml(translateValue(title))}" aria-label="${escapeHtml(translateValue(title))}"><i class="mdi ${mdi}"></i></button>`;
   const ownSize = !isThermoRoom(r);
-  const snapValues = (path, fields) => { const vals = new Set(); fields.forEach(f => { if (f && f !== path && okNum(r[f])) vals.add(Math.round(Number(r[f]) * 10) / 10); });
+  const snapValues = () => 'round'; void ((path, fields) => { const vals = new Set(); fields.forEach(f => { if (f && f !== path && okNum(r[f])) vals.add(Math.round(Number(r[f]) * 10) / 10); });
     Object.values(roomsOf()).forEach(o => { if (o && o.id !== r.id && !isThermoRoom(o) && okNum(o[path]) && o[path.replace(/(Size|Padding)$/, '')]) vals.add(Math.round(Number(o[path]) * 10) / 10); });
-    return [...vals].filter(v => v >= 0 && v <= 420).sort((a, b) => a - b).slice(0, 12); };
+    return [...vals].filter(v => v >= 0 && v <= 420).sort((a, b) => a - b).slice(0, 12); }); // (no more the other labels' values: round stops with arrows, from the slider's own range)
   // (the stops drawn as small arrows under the track - the other labels' sizes in the accent colour; no native ticks)
   const stopMarks = (html, vals, min, max, hot = [], cur = null) => html.replace(/ list="qs-[^"]*"/, '').replace(/<datalist id="qs-[^"]*">.*?<\/datalist>/, '').replace(/(<input type="range"[^>]*>)/, `$1<span class="stop-marks" aria-hidden="true">${vals.map(v => `<i class="${hot.includes(v) ? 'hot' : ''}${v === cur ? ' on' : ''}" style="--p:${((v - min) / Math.max(1, max - min)).toFixed(4)}" title="${v}px"></i>`).join('')}</span>`);
-  const snapSlider = (html, path, vals, reach) => vals.length ? html.replace(`data-path="${path}"`, `data-path="${path}" list="qs-${path}" data-snap="${vals.join(',')}" data-snap-reach="${reach}"`) + `<datalist id="qs-${path}">${vals.map(v => `<option value="${v}"></option>`).join('')}</datalist>` : html;
+  const snapSlider = (html, path, vals, reach) => vals === 'round' ? html.replace('<input type="range"', '<input type="range" data-auto-stops="1"').replace(/(<input type="range"[^>]*>)/, '$1<span class="stop-marks" aria-hidden="true"></span>') : vals.length ? html.replace(`data-path="${path}"`, `data-path="${path}" list="qs-${path}" data-snap="${vals.join(',')}" data-snap-reach="${reach}"`) + `<datalist id="qs-${path}">${vals.map(v => `<option value="${v}"></option>`).join('')}</datalist>` : html;
   const lockBtn = key => { const fixed = !!r[`${key}FixedBox`]; return icBtn(`data-quick-lock="${key}" aria-pressed="${fixed}"`, fixed ? 'mdi-lock-outline' : 'mdi-lock-open-variant-outline', fixed ? 'Stała ramka: zawartość zmienia się w ramce' : 'Ramka rośnie z zawartością', fixed); };
   // "Dopasuj" and "Stała ramka" in a size slider's row, between the slider and its reset.
   // (no "fit to the text" / "fixed frame" buttons by a size slider any more: the frame is set with its own width / height, the
@@ -4023,7 +4025,7 @@ function roomEditorMarkup(room) {
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = oneShown !== 'labelIcon' && (r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon');
-    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range(soloSquare(r) ? 'Wielkość symbolu' : 'Wielkość ikony','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, SOLO_ICON_MAX),6,SOLO_ICON_MAX,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
+    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range(soloIcon(r) ? 'Wielkość symbolu' : 'Wielkość ikony','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, SOLO_ICON_MAX),6,SOLO_ICON_MAX,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
         + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
         : oneShown === 'labelIcon' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
@@ -4211,7 +4213,7 @@ function roomEditorMarkup(room) {
     const others = ['labelIcon','labelName','labelState'].filter(k => k !== key && r[k]).map(boxNow).flat().filter(v => v > 0).map(Math.round);
     const snaps = [...new Set([...others, Math.round(w0), Math.round(h0)])].filter(v => v > 0).sort((a, b) => a - b);
     const one = (label, path, v) => control(label, path, 'range', v, { min: 10, max: Math.max(300, Math.ceil(v * 2.5 / 10) * 10), step: 1, suffix: 'px', integer: true }); void snaps;
-    if (key === 'labelIcon' && soloSquare(r)) return ''; // (a room's lone icon: its size is its box's - the one "Wielkość" below)
+    if (key === 'labelIcon' && soloIcon(r)) return ''; // (a room's lone icon: its size is its box's - "Wielkość" / Szerokość / Wysokość below)
     if (key === 'labelIcon' && iconShapeOf(r) !== 'custom') return one('Wielkość', 'labelIconW', Math.max(10, Math.max(w, h))); // (round / square: one size, 1:1)
     // A name's / state's inner margin: the room round its text inside the frame (the frame stays, the text fits in the rest).
     const inset = Number.isFinite(Number(r[`${key}Inset`])) && r[`${key}Inset`] !== '' && r[`${key}Inset`] !== null ? Number(r[`${key}Inset`]) : Math.round(TILE_TEXT_MARGIN * Math.min(w, h));
@@ -4257,7 +4259,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   // open the same-named subsection of another part.
   const subKey = node => `${node.closest('details.editor-section')?.className || ''}|${node.textContent.trim()}`;
   const openSubs = new Set($$('.gauge-subsection[open] > summary', content).map(subKey));
-  content.innerHTML = roomEditorMarkup(room); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on); requestAnimationFrame(() => syncSizeRanges(room));
+  content.innerHTML = roomEditorMarkup(room); applyAutoStops(content); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on); requestAnimationFrame(() => syncSizeRanges(room));
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
   // A label's parts (icon, name, state) switched on / off from the editor's head - always at hand, under copy / paste.
   const partRow = $('#room-part-toggles');
@@ -4409,6 +4411,13 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 
   return Math.max(6, exact ? 0 : s0, Math.floor(max * 10) / 10);
 }
 // The size sliders' range follows what fits in the part's frame now.
+// (a size / margin slider's stops: round values for its range now - a few arrows (5 / 10 / 25 / 50 / 100 apart), the round tens sticky too)
+function applyAutoStops(root = $('#room-editor-content')) {
+  $$('input[type=range][data-auto-stops]', root || document).forEach(i => { const min = Number(i.min) || 0, max = Number(i.max) || 0, span = max - min; if (!(span > 0)) return;
+    const step = [5, 10, 25, 50, 100, 200].find(t => span / t <= 7) || 200, vals = []; for (let v = Math.ceil((min + .01) / step) * step; v < max - step * .15; v += step) vals.push(v);
+    i.dataset.snap = vals.join(','); i.dataset.snapReach = String(Math.max(2, Math.round(span * .03))); i.dataset.snapMinor = step > 10 ? '10' : '';
+    const marks = i.parentElement?.querySelector('.stop-marks'), cur = Math.round(Number(i.value)); if (marks) marks.innerHTML = vals.map(v => `<i class="${v === cur ? 'on' : ''}" style="--p:${((v - min) / span).toFixed(4)}" title="${v}px"></i>`).join(''); });
+}
 function syncSizeRanges(room) {
   $$('#room-editor-content input[type=range][data-path]').forEach(i => { const wm = /^(label(?:Icon|Name|State))(W|H)$/.exec(i.dataset.path);
     if (wm && wm[1] === 'labelIcon' && isTileColumn(room) && tilePartsShown(room).length === 2) { if (i !== document.activeElement) { const pr = tilePairIconRange(room); i.min = String(Math.ceil(pr[0])); i.max = String(Math.floor(pr[1])); } return; }
@@ -4416,6 +4425,7 @@ function syncSizeRanges(room) {
     if (wm && !(partWHMax.frozen && i === document.activeElement)) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); if (mx) { const v = Math.max(mx, Number(i.value) || 0); if (Number(i.max) !== v) i.max = String(v); } return; }
     const m = /^(label(?:Icon|Name|State))Size$/.exec(i.dataset.path); if (!m || i === document.activeElement && syncSizeRanges.dragging) return;
     const mx = partSizeMax(room, m[1]); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
+  applyAutoStops();
 }
 function syncEditorValues(room) {
   if (!room || selectedRoomId !== room.id) return;
@@ -4534,7 +4544,7 @@ function onRoomEditorInput(event) {
       const f = Math.max(.05, Math.min((b.W - 2 * px) / b.cw, (b.H - 2 * py) / b.ch)); room[`${k}Size`] = Math.round(clamp(b.size * f, 6, 420) * 10) / 10; room[`${k}W`] = Math.round(b.W * 10) / 10; room[`${k}H`] = Math.round(b.H * 10) / 10; delete room[`${k}Lock`];
       room[`${k}PadBase`] = { base: b, s: room[`${k}Size`], py, px, W: b.W, H: b.H }; } } }
   // A slider with values to catch (the same size / margin as elsewhere): near one, it takes it exactly.
-  if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } const marks = input.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(i => i.classList.toggle('on', i.title === `${value}px`)); }
+  if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } else if (Number(input.dataset.snapMinor) > 0) { const m = Number(input.dataset.snapMinor), t = Math.round(value / m) * m; if (Math.abs(t - value) <= 1) { value = t; input.value = String(t); } } const marks = input.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(i => i.classList.toggle('on', i.title === `${value}px`)); }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
   if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
   if (path === 'labelSizeLock') { if (value) lockLabelFrame(room); else unlockLabelFrame(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
@@ -4544,7 +4554,7 @@ function onRoomEditorInput(event) {
   const modeEdit = isThermoRoom(room) && /^label(?:State|Modes)\w*_m_([a-z0-9_]+?)(Color|Opacity|Width)?$/.exec(path); if (modeEdit && roomPreviewOn !== `mode:${modeEdit[1]}`) { roomPreviewOn = `mode:${modeEdit[1]}`; const src = $('#room-editor .head-preview-src'); if (src) { src.dataset.value = roomPreviewOn; syncHeadPreview($('#room-editor'), roomLight({ ...ROOM_DEFAULTS, ...room }).on); } }
   if ((path === 'fboxW' || path === 'fboxH' || path === 'fboxS') && room.fbox && dashSpan(room)) { if (path === 'fboxS') value = Math.min(Number(value), SOLO_ICON_MAX);
     const [w0, h0] = freeBoxPx(room), s = dashSpan(room); freeBoxFromPx(room, path === 'fboxW' || path === 'fboxS' ? Number(value) : w0, path === 'fboxH' || path === 'fboxS' ? Number(value) : h0, s.x + s.w / 2, s.y + s.h / 2);
-    if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); if (syncSoloIcon(room)) requestAnimationFrame(() => syncSoloIconUi(room)); room.updatedAt = new Date().toISOString();
+    if (room.tileColV2 && room.labelLinked && !room.labelCardFree && !soloIcon(room)) applyTilePreset(room); if (syncSoloIcon(room)) requestAnimationFrame(() => syncSoloIconUi(room)); room.updatedAt = new Date().toISOString();
     const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = `${input.value}px`;
     renderRooms(); if (event.type === 'change') scheduleSave(true); return; }
   if (path === 'dashW' || path === 'dashH') {
@@ -4647,7 +4657,7 @@ function onRoomEditorClick(event) {
     renderRooms(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const arrangeBtn = event.target.closest?.('[data-arrange], [data-icon-shape]');
   if (arrangeBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
-    if (arrangeBtn.dataset.iconShape) { if (arrangeBtn.dataset.iconShape !== 'custom' && Number(room.labelIconW) > 0 && Number(room.labelIconH) > 0) room.labelIconW = room.labelIconH = Math.min(room.labelIconW, room.labelIconH); quickSet('labelIconShape', arrangeBtn.dataset.iconShape); } else { arrangeLabelParts(room, arrangeBtn.dataset.arrange); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); }
+    if (arrangeBtn.dataset.iconShape) { if (arrangeBtn.dataset.iconShape !== 'custom' && Number(room.labelIconW) > 0 && Number(room.labelIconH) > 0) room.labelIconW = room.labelIconH = Math.min(room.labelIconW, room.labelIconH); quickSet('labelIconShape', arrangeBtn.dataset.iconShape); if (soloIcon(room)) requestAnimationFrame(() => { const sq = squareSoloBox(room); if (sq | syncSoloIcon(room)) { renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); } }); } else { arrangeLabelParts(room, arrangeBtn.dataset.arrange); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); }
     openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }
   const quickBtn = event.target.closest?.('[data-quick-fit], [data-quick-bold], [data-quick-lock]');
   if (quickBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; const qk = [...BOX_TEXT_KEYS, 'labelIcon'].includes(quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) ? (quickBtn.dataset.quickFit || quickBtn.dataset.quickLock) : 'labelState'; if (quickBtn.hasAttribute('data-quick-fit')) quickFit(room, qk); else if (quickBtn.hasAttribute('data-quick-lock')) { room[`${qk}FixedBox`] = !room[`${qk}FixedBox`]; if (qk === 'labelIcon' && !room.labelIconFixedBox) { delete room.labelIconW; delete room.labelIconH; } room.updatedAt = new Date().toISOString(); scheduleSave(true); } else quickSet('labelStateWeight', room.labelStateWeight === 'bold' ? 'normal' : 'bold'); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); refocusLabel(room); return; }
