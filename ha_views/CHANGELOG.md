@@ -1,3 +1,7 @@
+## 0.6.1-beta.745
+
+- Samotna ikona (każdy kształt): przy zmianie rozmiaru kropkami w rogach ramka ikony i symbol podążają za pudełkiem na żywo, a nie dopiero po puszczeniu.
+
 ## 0.6.1-beta.744
 
 - Samotna ikona: „Przywróć domyślne” przy „Wielkości symbolu” ustawia symbol na 70% wnętrza koła (90% bez tła i ramki), np. 104 px przy kole 160 px – zamiast starego rozmiaru z układu trzech części.

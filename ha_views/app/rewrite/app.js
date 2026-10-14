@@ -1071,7 +1071,9 @@ function makeFreeBox(room) {
 function startBoxResize(event, handle, room) {
   event.preventDefault(); event.stopPropagation(); try { els.scene.setPointerCapture(event.pointerId); } catch {}
   const c = handle.dataset.corner, b0 = { ...dashSpan(room) }, min = 2; let moved = false, raf = 0;
-  const lay = () => { raf = 0; if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); renderRoomLabels(); renderDashGrid(); };
+  // (a lone icon: its frame follows the box live - from the frame / symbol it had when the drag began, so nothing drifts)
+  const solo0 = soloIcon(room) ? { labelIconW: room.labelIconW, labelIconH: room.labelIconH, labelIconSize: room.labelIconSize } : null;
+  const lay = () => { raf = 0; if (solo0) { Object.assign(room, solo0); syncSoloIcon(room); } else if (room.tileColV2 && room.labelLinked && !room.labelCardFree) applyTilePreset(room); renderRoomLabels(); renderDashGrid(); };
   // Its moving sides snap as everything else does ("Przyciągaj do" and the grid): to the lines of the other labels, rooms,
   // markers and of its own room, and to the grid's lines (thick ones when "Siatka" is chosen there) - one line per side.
   const g = snapTargets().guides ? guideTargets({ roomId: room.id }) : null, /* (as any other resize: other elements by "Linie pomocnicze", the grid only with the magnet on) */ sr = els.scene.getBoundingClientRect(), W = g?.scene.width || sr.width || 1, H = g?.scene.height || sr.height || 1, square = soloSquare(room);
