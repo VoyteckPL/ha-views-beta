@@ -1,3 +1,7 @@
+## 0.6.1-beta.734
+
+- Zmiana rozmiaru etykiety kropkami (tryb Tło): linie pomocnicze w kolorach jak wcześniej - żółte dla pomieszczeń, fioletowe dla etykiet, markery / flow / siatka w swoich - a element, do którego się przyciągnęło, dostaje delikatną ramkę.
+
 ## 0.6.1-beta.733
 
 - Zmiana rozmiaru etykiety kropkami (tryb Tło) przyciąga się do innych elementów także przy wyłączonym magnesie - jak przesuwanie i dawne zmienianie rozmiaru (decyduje „Linie pomocnicze”, magnes tylko o siatce).

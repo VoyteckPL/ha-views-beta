@@ -1066,21 +1066,23 @@ function startBoxResize(event, handle, room) {
   // markers and of its own room, and to the grid's lines (thick ones when "Siatka" is chosen there) - one line per side.
   const g = snapTargets().guides ? guideTargets({ roomId: room.id }) : null, /* (as any other resize: other elements by "Linie pomocnicze", the grid only with the magnet on) */ sr = els.scene.getBoundingClientRect(), W = g?.scene.width || sr.width || 1, H = g?.scene.height || sr.height || 1, square = soloSquare(room);
   if (g && (room.points || []).length >= 3 && snapTargets().rooms) { const px = room.points.map(p => p[0] / 100 * W), py = room.points.map(p => p[1] / 100 * H); [Math.min(...px), Math.max(...px), (Math.min(...px) + Math.max(...px)) / 2].forEach(v => g.xs.push({ v, kind: 'room' })); [Math.min(...py), Math.max(...py), (Math.min(...py) + Math.max(...py)) / 2].forEach(v => g.ys.push({ v, kind: 'room' })); }
-  const pick = (edge, fixed, sign, list) => { const reach = snapReach(); let best = null; list.forEach(t => { const d = Math.abs(t.v - edge), s = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (sign * (t.v - fixed) > 4 && d <= reach && (!best || s < best.s)) best = { s, v: t.v, kind: t.kind }; }); return best; };
+  const pick = (edge, fixed, sign, list) => { const reach = snapReach(); let best = null; list.forEach(t => { const d = Math.abs(t.v - edge), s = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (sign * (t.v - fixed) > 4 && d <= reach && (!best || s < best.s)) best = { s, v: t.v, kind: t.kind, box: t.box }; }); return best; };
   const move = e => {
     if (e.pointerId !== event.pointerId) return; moved = true;
-    const [px, py] = scenePercentAt(e); let x0 = b0.x, x1 = b0.x + b0.w, y0 = b0.y, y1 = b0.y + b0.h; const vg = [], hg = [];
-    const snapX = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * W, fixed / 100 * W, sign, g.xs) : null; if (!b) return v; vg.push({ at: b.v / W * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / W * 100; };
-    const snapY = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * H, fixed / 100 * H, sign, g.ys) : null; if (!b) return v; hg.push({ at: b.v / H * 100, kind: b.kind === 'grid' ? 'grid' : b.kind === 'major' ? 'major' : 'edge' }); return b.v / H * 100; };
+    const [px, py] = scenePercentAt(e); let x0 = b0.x, x1 = b0.x + b0.w, y0 = b0.y, y1 = b0.y + b0.h; const vg = [], hg = [], hits = [];
+    // (each caught line in its kind's colour - a room yellow, a label violet, ... - and the element caught gets its soft frame)
+    const mark = (list, b, D) => { list.push({ at: b.v / D * 100, kind: b.kind || 'label' }); if (b.box && !hits.some(h => h.l === b.box.l && h.t === b.box.t)) hits.push({ ...b.box, kind: b.kind }); };
+    const snapX = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * W, fixed / 100 * W, sign, g.xs) : null; if (!b) return v; mark(vg, b, W); return b.v / W * 100; };
+    const snapY = (v, fixed, sign) => { const b = g && !e.altKey ? pick(v / 100 * H, fixed / 100 * H, sign, g.ys) : null; if (!b) return v; mark(hg, b, H); return b.v / H * 100; };
     if (c.includes('e')) x1 = Math.max(x0 + min, snapX(px, x0, 1)); if (c.includes('w')) x0 = Math.min(x1 - min, snapX(px, x1, -1)); if (c.includes('s')) y1 = Math.max(y0 + min, snapY(py, y0, 1)); if (c.includes('n')) y0 = Math.min(y1 - min, snapY(py, y1, -1));
     if (square && c.length === 2) { // (a lone round / square icon: 1:1 - one size, from the pointer; the line it fits best, of either side, catches it)
       const sx = c.includes('e') ? 1 : -1, sy = c.includes('s') ? 1 : -1, fxp = (sx > 0 ? b0.x : b0.x + b0.w) / 100 * W, fyp = (sy > 0 ? b0.y : b0.y + b0.h) / 100 * H;
-      let sp = Math.max(sx * (px / 100 * W - fxp), sy * (py / 100 * H - fyp), min / 100 * Math.min(W, H)), best = null; vg.length = 0; hg.length = 0;
+      let sp = Math.max(sx * (px / 100 * W - fxp), sy * (py / 100 * H - fyp), min / 100 * Math.min(W, H)), best = null; vg.length = 0; hg.length = 0; hits.length = 0;
       if (g && !e.altKey) { const reach = snapReach(), cand = (list, fixed, sign, horizontal) => list.forEach(t => { const size = sign * (t.v - fixed); if (size <= 4) return; const d = Math.abs(size - sp), s2 = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (d <= reach && (!best || s2 < best.s)) best = { s: s2, size, t, horizontal }; });
         cand(g.xs, fxp, sx, true); cand(g.ys, fyp, sy, false); }
-      if (best) { sp = best.size; (best.horizontal ? vg : hg).push({ at: best.t.v / (best.horizontal ? W : H) * 100, kind: best.t.kind === 'grid' ? 'grid' : best.t.kind === 'major' ? 'major' : 'edge' }); }
+      if (best) { sp = best.size; mark(best.horizontal ? vg : hg, { v: best.t.v, kind: best.t.kind, box: best.t.box }, best.horizontal ? W : H); }
       x0 = sx > 0 ? fxp / W * 100 : (fxp - sp) / W * 100; x1 = sx > 0 ? (fxp + sp) / W * 100 : fxp / W * 100; y0 = sy > 0 ? fyp / H * 100 : (fyp - sp) / H * 100; y1 = sy > 0 ? (fyp + sp) / H * 100 : fyp / H * 100; }
-    showAlignGuides(vg, hg); setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
+    showAlignGuides(vg, hg, [], hits); setFreeBox(room, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }); if (!raf) raf = requestAnimationFrame(lay);
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (raf) cancelAnimationFrame(raf); raf = 0; showAlignGuides([], []);
