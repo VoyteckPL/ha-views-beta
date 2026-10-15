@@ -1,3 +1,10 @@
+## 0.6.1-beta.753
+
+- Kamery: etykieta / pomieszczenie / przycisk z encją camera.* po dotknięciu otwiera własne okno podglądu na żywo – od razu klatka, potem obraz na żywo (HLS z dźwiękiem, gdy kamera umie streamować; inaczej MJPEG), bez klikania „play”.
+- Okno poziome lub pionowe (opcja „Okno kamery” w ustawieniach etykiety), zoom dwoma palcami i kółkiem myszy, przesuwanie powiększonego obrazu, podwójne stuknięcie = powiększ / wróć; dźwięk domyślnie wyciszony (przycisk głośnika).
+- „Dotknięcie w widoku” dla kamery: Podgląd na żywo (domyślnie) / Więcej informacji / Brak akcji.
+- Obraz idzie przez dodatek (token supervisora), działa też przez ingress i w aplikacji HA. Dołączony hls.js (Apache 2.0).
+
 ## 0.6.1-beta.752
 
 - Przycisk działa jak etykieta: nowy ma 160 × 160 px i pierwszy preset, suwaki Szerokość / Wysokość do 500 px ze strzałkami, reset osobno dla każdej osi, „Ustaw domyślny” = 160 × 160 + ikona i tekst, sama ikona / sam tekst bez tła karty (koło / kwadrat / dowolny z „Wielkością symbolu”), zmiana rozmiaru kropkami nie centruje kamery.

@@ -558,6 +558,109 @@ async def ha_ws_command(command):
                 return msg.get("result")
 
 
+
+# ===== HA Views CAMERA LIVE V1 =====
+# A label on a camera opens its own live window: a still at once, then the live picture - HLS (with sound) when the
+# camera can stream, MJPEG otherwise. All of it goes through the add-on (its Supervisor token), so the browser needs
+# no Home Assistant token and the picture works through ingress.
+
+CAMERA_ENTITY_RE = re.compile(r"^camera\.[a-z0-9_]+$")
+CAMERA_HLS_TAIL_RE = re.compile(r"^[A-Za-z0-9_\-]+/[A-Za-z0-9_\-./]+$")
+
+
+def _camera_entity(request):
+    entity_id = str(request.query.get("entity", ""))
+    return entity_id if CAMERA_ENTITY_RE.match(entity_id) else ""
+
+
+async def api_camera_snapshot(request):
+    entity_id = _camera_entity(request)
+    if not entity_id:
+        return web.json_response({"ok": False, "error": "not a camera"}, status=400)
+    try:
+        timeout = aiohttp.ClientTimeout(total=20)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(f"{HA_API}/camera_proxy/{entity_id}", headers=headers()) as resp:
+                body = await resp.read()
+                return web.Response(
+                    body=body,
+                    status=resp.status,
+                    content_type=(resp.content_type or "image/jpeg"),
+                    headers={"Cache-Control": "no-store"},
+                )
+    except Exception as err:
+        print(f"HA Views camera snapshot {entity_id}: {type(err).__name__}: {err}", flush=True)
+        return web.json_response({"ok": False, "error": str(err)}, status=502)
+
+
+async def api_camera_mjpeg(request):
+    entity_id = _camera_entity(request)
+    if not entity_id:
+        return web.json_response({"ok": False, "error": "not a camera"}, status=400)
+    response = None
+    try:
+        timeout = aiohttp.ClientTimeout(total=None, sock_connect=15, sock_read=60)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(f"{HA_API}/camera_proxy_stream/{entity_id}", headers=headers()) as resp:
+                if resp.status != 200:
+                    return web.Response(status=resp.status, text=await resp.text())
+                response = web.StreamResponse(
+                    status=200,
+                    headers={
+                        "Content-Type": resp.headers.get("Content-Type", "multipart/x-mixed-replace"),
+                        "Cache-Control": "no-store",
+                    },
+                )
+                await response.prepare(request)
+                async for chunk in resp.content.iter_chunked(32768):
+                    await response.write(chunk)
+    except (ConnectionResetError, asyncio.CancelledError):
+        pass
+    except Exception as err:
+        print(f"HA Views camera stream {entity_id}: {type(err).__name__}: {err}", flush=True)
+        if response is None:
+            return web.json_response({"ok": False, "error": str(err)}, status=502)
+    return response or web.Response(status=204)
+
+
+async def api_camera_hls_url(request):
+    entity_id = _camera_entity(request)
+    if not entity_id:
+        return web.json_response({"ok": False, "error": "not a camera"}, status=400)
+    try:
+        result = await asyncio.wait_for(
+            ha_ws_command({"type": "camera/stream", "entity_id": entity_id, "format": "hls"}),
+            timeout=20,
+        )
+        url = str((result or {}).get("url", ""))
+        match = re.match(r"^/api/hls/(.+)$", url)
+        if not match:
+            return web.json_response({"ok": False, "error": "no HLS stream"}, status=502)
+        return web.json_response({"ok": True, "url": "api/camera/hls/" + match.group(1)})
+    except Exception as err:
+        return web.json_response({"ok": False, "error": str(err)}, status=502)
+
+
+async def api_camera_hls(request):
+    tail = request.match_info.get("tail", "")
+    if not CAMERA_HLS_TAIL_RE.match(tail) or ".." in tail:
+        return web.json_response({"ok": False, "error": "bad path"}, status=400)
+    try:
+        timeout = aiohttp.ClientTimeout(total=30)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(f"{HA_API}/hls/{tail}", params=request.query, headers=headers()) as resp:
+                body = await resp.read()
+                return web.Response(
+                    body=body,
+                    status=resp.status,
+                    content_type=(resp.content_type or "application/octet-stream"),
+                    headers={"Cache-Control": "no-store"},
+                )
+    except Exception as err:
+        return web.json_response({"ok": False, "error": str(err)}, status=502)
+
+# ===== END HA Views CAMERA LIVE V1 =====
+
 USER_ACCESS_CACHE = {}
 USER_ACCESS_CACHE_SECONDS = 60
 
@@ -1880,6 +1983,10 @@ app.router.add_static(
 )
 
 app.router.add_get("/api/states", api_states)
+app.router.add_get("/api/camera/snapshot", api_camera_snapshot)
+app.router.add_get("/api/camera/mjpeg", api_camera_mjpeg)
+app.router.add_get("/api/camera/hls_url", api_camera_hls_url)
+app.router.add_get("/api/camera/hls/{tail:.+}", api_camera_hls)
 app.router.add_post("/api/selected_states", api_selected_states)
 app.router.add_get("/api/entity_events", api_entity_events)
 

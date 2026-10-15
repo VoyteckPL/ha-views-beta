@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -656,11 +656,14 @@ function snapPercent(value) {
 // One set of tap actions (same names and order) for markers and rooms; "toggle" only where something can be switched.
 // Copy / paste style also carries the icon choice (source, own MDI icon, ON/OFF icons) and the tap action.
 const MARKER_ICON_KEYS = ['iconMode','iconName','iconOn','iconOff','iconVariantEnabled'];
-const TAP_ACTIONS = [['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF'],['none','Brak akcji']];
-function tapActionControl(value, canToggle) {
-  const items = TAP_ACTIONS.filter(([key]) => key !== 'toggle' || canToggle), current = items.some(([key]) => key === value) ? value : 'more_info';
+const TAP_ACTIONS = [['camera','Podgląd na żywo'],['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF'],['none','Brak akcji']];
+function tapActionControl(value, canToggle, camera = false) {
+  const items = TAP_ACTIONS.filter(([key]) => (key !== 'toggle' || canToggle) && (key !== 'camera' || camera)), current = items.some(([key]) => key === value) ? value : 'more_info';
   return control('Dotknięcie w widoku','tapAction','select',current,{ items });
 }
+// A label / room on a camera: a tap opens its live window (unless another tap action was picked for it).
+const cameraOf = r => (r?.entityIds || []).find(id => /^camera\./.test(id)) || '';
+const cameraTap = r => !!cameraOf(r) && (r.tapAction === 'camera' || (!r.camTapSet && (r.tapAction ?? 'more_info') === 'more_info'));
 // Thermostat modes that can be parts of their own (see MODE_PARTS) and their default colours.
 const MODE_PART_LIST = ['heat','cool','heat_cool','auto','dry','fan_only','off','eco','electric','gas','heat_pump','high_demand','performance'];
 const MODE_DEFAULT_COLOR = { heat:'#FF7A2F', cool:'#38BDF8', heat_cool:'#34D399', auto:'#34D399', dry:'#FBBF24', fan_only:'#A78BFA', off:'#4B5D6B' };
@@ -3888,7 +3891,8 @@ function roomEditorMarkup(room) {
   const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + linkControls(r)) : section('Ogólne', control('Nazwa','name','text',r.name)
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
-    + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
+    + tapActionControl(cameraTap(r) ? 'camera' : canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle, !!cameraOf(r))
+    + (cameraOf(r) ? control('Okno kamery','cameraOrient','select',r.cameraOrient === 'portrait' ? 'portrait' : 'landscape',{ items:[['landscape','Poziome'],['portrait','Pionowe']] }) : '')
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
   const lookSection = () => partBar('room', 'Wygląd', sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
@@ -4493,6 +4497,7 @@ function onRoomEditorInput(event) {
   if (SYNCED_PATHS.test(path)) { cancelAnimationFrame(onRoomEditorInput.after); onRoomEditorInput.after = requestAnimationFrame(() => tileAfterEdit(room, path)); }
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
+  if (path === 'tapAction' && cameraOf(room)) room.camTapSet = true; // (a camera's tap picked by hand: no longer the live window by default)
   // On a "Jedno pod drugim" tile the icon's size is its share of the label's height: the name / state take the rest
   // (laid out again, as high as each other, with their text fitted) - so it can go up and back down leaving them as they were.
   if (/^labelIcon(W|H)$/.test(path) && typeof value === 'number' && isTileColumn(room)) {
@@ -4824,8 +4829,9 @@ async function onRoomTap(room, action = null) {
   const r = { ...ROOM_DEFAULTS, ...room, ...(action ? { tapAction: action } : {}) }, ids = r.entityIds || [];
   if (!ids.length) { if (!isViewer()) notify(isIconRoom(room) ? 'Ta etykieta nie ma jeszcze encji — wybierz ją w trybie edycji' : 'To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji'); return; }
   const toggleable = ids.filter(id => isToggleableMarker({ entityId: id }));
+  if (cameraTap(r)) return openCameraLive(cameraOf(r), r);
   if (r.tapAction === 'none') return;
-  if (r.tapAction === 'more_info' || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
+  if (r.tapAction === 'more_info' || r.tapAction === 'camera' || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
   if (roomTogglesInFlight.has(r.id)) return;
   const anyOn = toggleable.some(id => String(stateCache[id]?.state || '').toLowerCase() === 'on'), expected = anyOn ? 'off' : 'on';
   roomTogglesInFlight.add(r.id);
@@ -6324,6 +6330,61 @@ function applyMarkerStyle(node, marker) {
     $$('.gauge-tick', node).forEach(tick => Object.assign(tick.style, { stroke: rgba(s.tickColor, s.tickOpacity), strokeWidth: s.tickWidth }));
     $$('.gauge-tick-label', node).forEach(text => Object.assign(text.style, { fill: s.tickLabelColor, fontSize: `${s.tickFontSize}px`, fontFamily: s.tickFontFamily }));
   }
+}
+// ===== Camera live window =====
+// Opens at once with the camera's still, then plays it live: HLS (with sound, muted at first) when the camera can stream,
+// MJPEG otherwise. Landscape or portrait as set on the label; pinch / wheel to zoom, drag to look round, double tap resets.
+let camLive = null;
+function loadHlsJs() { return window.Hls ? Promise.resolve(window.Hls) : (loadHlsJs.p ||= new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'rewrite-assets/vendor/hls.light.min.js'; sc.onload = () => window.Hls ? ok(window.Hls) : no(new Error('hls.js')); sc.onerror = () => { loadHlsJs.p = null; no(new Error('hls.js')); }; document.head.appendChild(sc); })); }
+function closeCameraLive() {
+  const c = camLive; camLive = null; if (!c) return; c.alive = false; clearTimeout(c.timer);
+  try { c.hls?.destroy(); } catch {} try { c.video.pause(); c.video.removeAttribute('src'); c.video.load(); } catch {} c.img.removeAttribute('src');
+  document.removeEventListener('keydown', c.onKey); c.root.remove();
+}
+function openCameraLive(entityId, room = null) {
+  closeCameraLive(); if (!entityId) return;
+  const portrait = room?.cameraOrient === 'portrait', name = room?.name || stateCache[entityId]?.attributes?.friendly_name || entityId, q = encodeURIComponent(entityId);
+  const root = document.createElement('div'); root.className = `cam-live ${portrait ? 'portrait' : 'landscape'}`;
+  root.innerHTML = `<div class="cam-live-backdrop"></div><div class="cam-live-win" role="dialog" aria-modal="true" aria-label="${escapeHtml(name)}">
+    <div class="cam-live-head"><span class="cam-live-tag"><i></i>${escapeHtml(translateValue('NA ŻYWO'))}</span><b>${escapeHtml(name)}</b>
+      <button type="button" class="cam-live-btn cam-live-mute" hidden title="${escapeHtml(translateValue('Dźwięk'))}" aria-label="${escapeHtml(translateValue('Dźwięk'))}" aria-pressed="false"><i class="mdi mdi-volume-off"></i></button>
+      <button type="button" class="cam-live-btn cam-live-close" title="${escapeHtml(translateValue('Zamknij'))}" aria-label="${escapeHtml(translateValue('Zamknij'))}"><i class="mdi mdi-close"></i></button></div>
+    <div class="cam-live-view"><div class="cam-live-stage"><img class="cam-live-img" alt=""><video class="cam-live-video" playsinline muted autoplay></video></div><div class="cam-live-msg"></div><span class="cam-live-zoom"></span></div></div>`;
+  document.body.appendChild(root);
+  const $q = sel => root.querySelector(sel), img = $q('.cam-live-img'), video = $q('.cam-live-video'), stage = $q('.cam-live-stage'), view = $q('.cam-live-view'), msg = $q('.cam-live-msg'), mute = $q('.cam-live-mute'), zoomTag = $q('.cam-live-zoom');
+  const c = camLive = { root, img, video, hls: null, alive: true, timer: 0, onKey: e => { if (e.key === 'Escape') closeCameraLive(); } };
+  document.addEventListener('keydown', c.onKey);
+  $q('.cam-live-close').addEventListener('click', closeCameraLive); $q('.cam-live-backdrop').addEventListener('click', closeCameraLive);
+  const setMsg = t => { msg.textContent = t ? translateValue(t) : ''; msg.hidden = !t; };
+  setMsg('Łączenie z kamerą…');
+  img.onload = () => { if (c.alive && !root.classList.contains('playing')) setMsg(''); }; img.src = `api/camera/snapshot?entity=${q}&t=${Date.now()}`;
+  // Live: HLS first (sound), MJPEG when the camera has no stream or it does not start in time.
+  const mjpeg = () => { if (!c.alive || c.mode) return; c.mode = 'mjpeg'; try { c.hls?.destroy(); } catch {} c.hls = null; video.hidden = true; mute.hidden = true;
+    img.onload = () => { if (c.alive) { root.classList.add('playing'); setMsg(''); } }; img.onerror = () => { if (c.alive) setMsg('Brak obrazu z kamery'); }; img.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; };
+  const playing = () => { if (!c.alive || c.mode === 'mjpeg') return; c.mode = 'hls'; clearTimeout(c.timer); root.classList.add('playing', 'video'); mute.hidden = false; setMsg(''); };
+  video.addEventListener('playing', playing); video.addEventListener('error', () => { if (c.mode !== 'hls') mjpeg(); });
+  c.timer = setTimeout(mjpeg, 9000);
+  fetch(`api/camera/hls_url?entity=${q}`).then(r => r.json()).then(async d => {
+    if (!c.alive) return; if (!d?.ok || !d.url) return mjpeg();
+    if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = d.url; video.play().catch(() => {}); return; }
+    const Hls = await loadHlsJs(); if (!c.alive) return; if (!Hls.isSupported()) return mjpeg();
+    const hls = c.hls = new Hls({ lowLatencyMode: true, liveSyncDurationCount: 2, maxLiveSyncPlaybackRate: 1.5, backBufferLength: 10 });
+    hls.on(Hls.Events.ERROR, (_, e) => { if (e?.fatal) mjpeg(); }); hls.loadSource(d.url); hls.attachMedia(video); video.play().catch(() => {});
+  }).catch(() => mjpeg());
+  mute.addEventListener('click', () => { video.muted = !video.muted; if (!video.muted) video.play().catch(() => {}); mute.setAttribute('aria-pressed', String(!video.muted)); mute.querySelector('i').className = `mdi ${video.muted ? 'mdi-volume-off' : 'mdi-volume-high'}`; });
+  // Zoom: two fingers (pinch), the wheel, a double tap; one finger moves round a zoomed picture.
+  let z = 1, tx = 0, ty = 0; const pts = new Map(); let pinch = null, pan = null, lastTap = 0;
+  const apply = () => { const w = view.clientWidth, h = view.clientHeight, mx = (z - 1) * w / 2, my = (z - 1) * h / 2; tx = clamp(tx, -mx, mx); ty = clamp(ty, -my, my); stage.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`; zoomTag.textContent = z > 1.01 ? `${z.toFixed(1)}×` : ''; };
+  const zoomAt = (nz, cx, cy) => { const r = view.getBoundingClientRect(), px = cx - r.left - r.width / 2, py = cy - r.top - r.height / 2; nz = clamp(nz, 1, 8); tx = px - (px - tx) * nz / z; ty = py - (py - ty) * nz / z; z = nz; apply(); };
+  view.addEventListener('wheel', e => { e.preventDefault(); zoomAt(z * Math.exp(-e.deltaY * .001), e.clientX, e.clientY); }, { passive: false });
+  view.addEventListener('pointerdown', e => { view.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, z, cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2 }; pan = null; }
+    else if (pts.size === 1) { pan = { x: e.clientX, y: e.clientY, tx, ty }; const now = Date.now(); if (now - lastTap < 300) { if (z > 1.01) { z = 1; tx = ty = 0; apply(); } else zoomAt(2.5, e.clientX, e.clientY); lastTap = 0; } else lastTap = now; } });
+  view.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pinch && pts.size >= 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); zoomAt(pinch.z * d / pinch.d, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); }
+    else if (pan && z > 1.01) { tx = pan.tx + e.clientX - pan.x; ty = pan.ty + e.clientY - pan.y; apply(); } });
+  const lift = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (pts.size === 1) { const [p] = [...pts.values()]; pan = { x: p[0], y: p[1], tx, ty }; } else if (!pts.size) pan = null; };
+  view.addEventListener('pointerup', lift); view.addEventListener('pointercancel', lift);
 }
 function closeMoreInfo() {
   moreInfoEntityId = ''; moreInfoRequest++;
