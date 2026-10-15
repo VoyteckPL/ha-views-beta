@@ -1,3 +1,7 @@
+## 0.6.1-beta.764
+
+- Obszar (pomieszczenie): nowy wybór „Efekt: Światło / Deszcz” w sekcji Wygląd. Przy „Deszcz” zamiast opcji światła i koloru są opcje deszczu: wariant (Kręgi, Smugi, Kręgi + smugi + mokro, Mżawka), natężenie, wiatr, krycie, miękka krawędź. Pada wewnątrz kształtu obszaru, gdy jego encja jest włączona (np. czujnik deszczu); czujnik w mm/h steruje natężeniem na żywo. Animacja zatrzymuje się, gdy nic nie pada lub karta jest w tle.
+
 ## 0.6.1-beta.763
 
 - Kamera jako ikona: w panelu kamery „Pokaż jako ikonę (etykieta)” zamienia obraz na etykietę z ikoną kamery w tym samym miejscu – z całym wyglądem etykiety do ustawienia; dotknięcie otwiera podgląd na żywo (okno lub pełny ekran). W panelu takiej etykiety „Pokaż jako obraz kamery” wraca do obrazu.

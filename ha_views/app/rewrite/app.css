@@ -2139,3 +2139,5 @@ body.editing .cam-layer{z-index:4}
 .cam-el.rtc .cam-el-play{display:grid}.cam-el.rtc .cam-el-empty i{opacity:.5}
 .cam-el video.cam-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;pointer-events:none;z-index:3}
 .cam-el.rtc-live video.cam-v{opacity:1}.cam-el.rtc-live .cam-el-play{display:none}
+/* Rain over areas: one canvas the size of the plan, above the room lights, under labels and markers. */
+.rain-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
