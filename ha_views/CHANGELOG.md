@@ -1,3 +1,8 @@
+## 0.6.1-beta.756
+
+- Kamera: nowa opcja „Po dotknięciu → Pełny ekran (poziomo)” – obraz na cały ekran w poziomie (pełny ekran przeglądarki i obrót ekranu, gdy telefon pozwala; inaczej obraz obrócony o 90°), zoom i przesuwanie palcami działają też w obróconym widoku.
+- Okno podglądu: koniec szarego ekranu z przyciskiem „play” na Androidzie – na Androidzie zawsze hls.js zamiast systemowego odtwarzacza; obraz wideo pokazuje się dopiero, gdy naprawdę leci; gdy stanie na 8 s lub przeglądarka zablokuje odtwarzanie, przełącza się na MJPEG.
+
 ## 0.6.1-beta.755
 
 - Kamera: po zaznaczeniu w trybie edycji kamera centruje się w widocznej części ekranu (na telefonie nad panelem, na komputerze obok niego), więc panel jej nie zasłania i da się ją przesuwać i skalować kropkami.

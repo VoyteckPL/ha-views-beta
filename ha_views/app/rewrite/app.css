@@ -2084,3 +2084,10 @@ body.editing .cam-layer{z-index:4}
 .cam-el.sel img,.cam-el.sel .cam-el-name{border-radius:inherit}
 .cam-el-dot.nw{left:0;top:0;cursor:nwse-resize}.cam-el-dot.ne{left:100%;top:0;cursor:nesw-resize}.cam-el-dot.sw{left:0;top:100%;cursor:nesw-resize}.cam-el-dot.se{left:100%;top:100%;cursor:nwse-resize}
 .cam-ratios{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+/* Camera full screen (landscape): the picture fills the screen; turned a quarter on a phone held upright. */
+.cam-live.full{padding:0;background:#000}
+.cam-live.full .cam-live-backdrop{background:#000;backdrop-filter:none;-webkit-backdrop-filter:none}
+.cam-live.full .cam-live-win{position:fixed;left:0;top:0;width:100vw;height:100vh;border:0;border-radius:0;box-shadow:none}
+.cam-live.full.rot .cam-live-win{left:50%;top:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg)}
+.cam-live.full .cam-live-view{position:absolute;inset:0;width:auto!important;aspect-ratio:auto!important}
+.cam-live.full .cam-live-head{position:absolute;top:0;left:0;right:0;z-index:2;padding-left:max(12px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right));background:linear-gradient(rgba(0,0,0,.6),transparent);height:52px}
