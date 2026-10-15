@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Rozmiar kropli':'Drop size','Podlewanie':'Irrigation','Zraszacze':'Sprinklers','Zraszacz':'Sprinkler','Dodaj zraszacz':'Add sprinkler','Usuń zraszacz':'Remove sprinkler','Duplikuj zraszacz':'Duplicate sprinkler','Rotacyjny':'Rotor','Udarowy':'Impact','Dyszowy':'Spray','Mgiełka':'Mist','Zasięg':'Range','Kąt':'Angle','Kąt pracy':'Sweep angle','Prędkość':'Speed','Moc':'Power','Przytnij do obszaru':'Clip to area','Głowice gdy wyłączone':'Heads when off','Kolor wody':'Water colour','Sekcja':'Section','Sekcja nawadniania ze zraszaczami':'Irrigation zone with sprinklers','Brak zraszaczy — dodaj pierwszy.':'No sprinklers — add the first one.','Zraszacze pracują, gdy encja sekcji jest włączona (zawór, przełącznik). W edycji przeciągnij niebieską kropkę, żeby przesunąć zraszacz, a białą na końcu, żeby ustawić zasięg i kierunek (przyciąga co 45°).':'Sprinklers run while the zone entity is on (valve, switch). In edit mode drag the blue dot to move a sprinkler and the white one at its end to set range and direction (snaps every 45°).','Mokra poświata':'Wet tint','Fale ulewy':'Downpour waves','Kolor kropli':'Drop colour','Lodowy':'Icy','Błękitny':'Sky blue','Niebieski':'Blue','Lazurowy':'Azure','Kobaltowy':'Cobalt','Turkusowy':'Turquoise','Głęboki':'Deep blue','Klikalny obszar':'Tappable area','Bez „Klikalny obszar” dotknięcie przechodzi do obszarów pod deszczem; etykieta deszczu zostaje klikalna (np. „Więcej informacji” z historią czujnika).':'Without “Tappable area” a tap goes through to the areas under the rain; the rain’s label stays tappable (e.g. “More info” with the sensor’s history).','Deszcz':'Rain','Światło':'Light','Kręgi':'Ripples','Smugi':'Streaks','Kręgi + smugi + mokro':'Ripples + streaks + wet','Mżawka':'Drizzle','Natężenie':'Intensity','Wiatr':'Wind','Miękka krawędź':'Soft edge','Wariant':'Variant','Pada, gdy encja obszaru jest włączona (np. czujnik deszczu). Czujnik w mm/h steruje natężeniem na żywo; czujnik binarny używa natężenia z suwaka. W edycji podgląd ON / OFF w nagłówku pokazuje deszcz od razu.':'It rains while the area’s entity is on (e.g. a rain sensor). A sensor in mm/h sets the intensity live; a binary one uses the slider’s. In edit mode the ON / OFF preview in the header shows the rain at once.','Podgląd kamery':'Camera live view','Kamera – pełny ekran (poziomo)':'Camera – full screen (landscape)','Pokaż jako obraz kamery':'Show as camera picture','Pokaż jako ikonę (etykieta)':'Show as an icon (label)','Kamera pokazana jako ikona':'Camera shown as an icon','Kamera pokazana jako obraz':'Camera shown as a picture','Ta kamera ma tylko WebRTC (np. Mammotion): „Na żywo” trzyma połączenie i pokazuje obraz na planie (na 4G zużywa pakiet danych urządzenia); pozostałe opcje pokazują ostatnią klatkę z podglądu.':'This camera only has WebRTC (e.g. Mammotion): “Live” keeps the connection and shows the picture on the plan (on 4G it uses the device’s data plan); the other options show the last frame from the preview.','Budzenie kamery…':'Waking the camera…','Łączenie z obrazem…':'Connecting to the picture…','Kamera nie odpowiada':'The camera does not answer','Połączenie z kamerą nie powiodło się':'Connecting to the camera failed','Kamera offline':'Camera offline','ostatnia klatka':'last frame','Godzina klatki':'Frame time','Połysk (szkło)':'Gloss (glass)','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Rozmiar kropli':'Drop size','Podlewanie':'Irrigation','Ruch':'Motion','Czujnik ruchu':'Motion sensor','Czujniki ruchu':'Motion sensors','Czujnik':'Sensor','Dodaj czujnik':'Add sensor','Usuń czujnik':'Remove sensor','Duplikuj czujnik':'Duplicate sensor','Obszar z czujnikami ruchu':'Area with motion sensors','Fale':'Ripples','Radar':'Radar','Błysk':'Flash','Kolor ruchu':'Motion colour','Zanikanie':'Fade-out','Zarys gdy brak ruchu':'Outline when no motion','Encja obszaru (dowolna)':'Area entity (any)','Brak czujników — dodaj pierwszy.':'No sensors — add the first one.','Czujnik pokazuje ruch, gdy jego encja jest włączona (wykryto ruch). Każdy czujnik może mieć własną encję z listy encji obszaru. W edycji przeciągnij kropkę czujnika, żeby go przesunąć, a białą na końcu, żeby ustawić zasięg i kierunek (przyciąga co 45°).':'A sensor shows motion while its entity is on (motion detected). Each sensor can have its own entity from the area entities. In edit mode drag the sensor dot to move it and the white one at its end to set range and direction (snaps every 45°).','Zraszacze':'Sprinklers','Zraszacz':'Sprinkler','Dodaj zraszacz':'Add sprinkler','Usuń zraszacz':'Remove sprinkler','Duplikuj zraszacz':'Duplicate sprinkler','Rotacyjny':'Rotor','Udarowy':'Impact','Dyszowy':'Spray','Mgiełka':'Mist','Zasięg':'Range','Kąt':'Angle','Kąt pracy':'Sweep angle','Prędkość':'Speed','Moc':'Power','Przytnij do obszaru':'Clip to area','Głowice gdy wyłączone':'Heads when off','Kolor wody':'Water colour','Sekcja':'Section','Sekcja nawadniania ze zraszaczami':'Irrigation zone with sprinklers','Brak zraszaczy — dodaj pierwszy.':'No sprinklers — add the first one.','Zraszacze pracują, gdy encja sekcji jest włączona (zawór, przełącznik). W edycji przeciągnij niebieską kropkę, żeby przesunąć zraszacz, a białą na końcu, żeby ustawić zasięg i kierunek (przyciąga co 45°).':'Sprinklers run while the zone entity is on (valve, switch). In edit mode drag the blue dot to move a sprinkler and the white one at its end to set range and direction (snaps every 45°).','Mokra poświata':'Wet tint','Fale ulewy':'Downpour waves','Kolor kropli':'Drop colour','Lodowy':'Icy','Błękitny':'Sky blue','Niebieski':'Blue','Lazurowy':'Azure','Kobaltowy':'Cobalt','Turkusowy':'Turquoise','Głęboki':'Deep blue','Klikalny obszar':'Tappable area','Bez „Klikalny obszar” dotknięcie przechodzi do obszarów pod deszczem; etykieta deszczu zostaje klikalna (np. „Więcej informacji” z historią czujnika).':'Without “Tappable area” a tap goes through to the areas under the rain; the rain’s label stays tappable (e.g. “More info” with the sensor’s history).','Deszcz':'Rain','Światło':'Light','Kręgi':'Ripples','Smugi':'Streaks','Kręgi + smugi + mokro':'Ripples + streaks + wet','Mżawka':'Drizzle','Natężenie':'Intensity','Wiatr':'Wind','Miękka krawędź':'Soft edge','Wariant':'Variant','Pada, gdy encja obszaru jest włączona (np. czujnik deszczu). Czujnik w mm/h steruje natężeniem na żywo; czujnik binarny używa natężenia z suwaka. W edycji podgląd ON / OFF w nagłówku pokazuje deszcz od razu.':'It rains while the area’s entity is on (e.g. a rain sensor). A sensor in mm/h sets the intensity live; a binary one uses the slider’s. In edit mode the ON / OFF preview in the header shows the rain at once.','Podgląd kamery':'Camera live view','Kamera – pełny ekran (poziomo)':'Camera – full screen (landscape)','Pokaż jako obraz kamery':'Show as camera picture','Pokaż jako ikonę (etykieta)':'Show as an icon (label)','Kamera pokazana jako ikona':'Camera shown as an icon','Kamera pokazana jako obraz':'Camera shown as a picture','Ta kamera ma tylko WebRTC (np. Mammotion): „Na żywo” trzyma połączenie i pokazuje obraz na planie (na 4G zużywa pakiet danych urządzenia); pozostałe opcje pokazują ostatnią klatkę z podglądu.':'This camera only has WebRTC (e.g. Mammotion): “Live” keeps the connection and shows the picture on the plan (on 4G it uses the device’s data plan); the other options show the last frame from the preview.','Budzenie kamery…':'Waking the camera…','Łączenie z obrazem…':'Connecting to the picture…','Kamera nie odpowiada':'The camera does not answer','Połączenie z kamerą nie powiodło się':'Connecting to the camera failed','Kamera offline':'Camera offline','ostatnia klatka':'last frame','Godzina klatki':'Frame time','Połysk (szkło)':'Gloss (glass)','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -666,7 +666,7 @@ const MODE_PART_LIST = ['heat','cool','heat_cool','auto','dry','fan_only','off',
 const MODE_DEFAULT_COLOR = { heat:'#FF7A2F', cool:'#38BDF8', heat_cool:'#34D399', auto:'#34D399', dry:'#FBBF24', fan_only:'#A78BFA', off:'#4B5D6B' };
 const ROOM_DEFAULTS = Object.freeze(withExtraPartDefaults({ name:'Pomieszczenie', points:[], entityIds:[], tapAction:'toggle', mode:'glow', color:'#FFD27A', useLightColor:true, useBrightness:true, opacity:.45, feather:14, blend:'screen', litImage:'', stateEnabled:false, offColor:'#20B9E7', offOpacity:.2,
   lightEffect:'none', lightX:50, lightY:50, lightDirection:'left', lightWallPos:50, lightSpread:.6, lightFill:.15, labelLinked:false,
-  roomEffect:'light', rainStyle:'ripples', rainRate:4, rainWind:12, rainOpacity:65, rainEdge:14, rainColor:'#9BD7FF', rainSize:1, rainTint:18, rainGusts:true, waterColor:'#9BD7FF', waterOpacity:85, waterTint:16, waterClip:true, waterHeads:true,
+  roomEffect:'light', rainStyle:'ripples', rainRate:4, rainWind:12, rainOpacity:65, rainEdge:14, rainColor:'#9BD7FF', rainSize:1, rainTint:18, rainGusts:true, waterColor:'#9BD7FF', waterOpacity:85, waterTint:16, waterClip:true, waterHeads:true, motionColor:'#FF9F43', motionOpacity:85, motionFade:3, motionIdle:true, motionClip:true,
   labelCardX:0, labelCardY:0, labelCardLayout:'column', labelCardAlign:'center', labelCardBg:true, labelCardBgColor:'#081822', labelCardBgOpacity:.62, labelCardBlur:false, labelCardRadius:14, labelCardPadding:0, labelCardGap:4,
   labelCardBorder:false, labelCardBorderColor:'#FFFFFF', labelCardBorderOpacity:.3, labelCardBorderWidth:1,
   labelCardBgState:false, labelCardBgOnColor:'#3A2A08', labelCardBgOffColor:'#081822', labelCardBgOnOpacity:.62, labelCardBgOffOpacity:.62,
@@ -3307,7 +3307,7 @@ function renderRooms() {
   const layer = $('#rooms'); if (!layer) return;
   // A room being moved shows only its outline and label (no light / state effect), so nothing flickers while it
   // is rebuilt on every step; the effect fades back in when the room is dropped.
-  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId && room.roomEffect !== 'rain' && room.roomEffect !== 'water');
+  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId && room.roomEffect !== 'rain' && room.roomEffect !== 'water' && room.roomEffect !== 'motion');
   const width = els.scene.offsetWidth || 1, height = els.scene.offsetHeight || 1, kept = new Set();
   const backdrop = sceneBackdrop();
   rooms.forEach(room => {
@@ -3334,7 +3334,7 @@ function renderRooms() {
   let outlineBox = layer.querySelector('.room-outlines'); if (!outlineBox) { outlineBox = document.createElement('div'); outlineBox.className = 'room-outlines'; }
   if (outlineBox.__html !== outlines) { outlineBox.innerHTML = outlines; outlineBox.__html = outlines; }
   if (layer.lastElementChild !== outlineBox) layer.append(outlineBox);
-  renderRoomLabels(view); syncRain(view); syncWater(view);
+  renderRoomLabels(view); syncRain(view); syncWater(view); syncMotion(view);
   if (els.addedList && $('#view-integrations')?.classList.contains('active')) renderAdded();
   renderRoomEditLayer();
 }
@@ -3380,7 +3380,7 @@ function renderRoomEditLayer() {
     handles += pts.map(([x, y], index) => `<i class="room-handle${index === picked ? ' picked' : ''}" data-room-point="${index}" style="left:${x}%;top:${y}%"></i>`).join('');
     handles += pts.map(([x, y], index) => { const [nx, ny] = pts[(index + 1) % pts.length]; return `<i class="room-handle mid" data-room-mid="${index}" style="left:${(x + nx) / 2}%;top:${(y + ny) / 2}%"></i>`; }).join('');
   }
-  if (room && !roomDraft && room.roomEffect === 'water') handles += sprinklerHandles(room);
+  if (room && !roomDraft && (room.roomEffect === 'water' || room.roomEffect === 'motion')) handles += sprinklerHandles(room);
   if (roomDraft) handles += roomDraft.points.map(([x, y], index) => `<i class="room-handle draft${index === 0 && roomDraft.points.length >= 3 ? ' closable' : ''}" style="left:${x}%;top:${y}%"></i>`).join('');
   // Right angles and 45° / 135° corners are marked: of the selected room, and of the room being drawn.
   const angleShapes = room && !roomDraft ? roomAngleMarks(room.points || [], true) : roomDraft ? roomAngleMarks(roomDraft.cursor ? [...roomDraft.points, roomDraft.cursor] : roomDraft.points, false) : { svg:'', html:'' };
@@ -3418,7 +3418,7 @@ function pointInPolygon([x, y], points) {
 }
 // tap: a tap in view mode - an area that takes no taps (a rain area without "Klikalny obszar", or one whose tap does nothing) lets it
 // through to the area under it; its label still takes its own taps.
-const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'water' ? !!room.rainAreaTap : room.tapAction !== 'none';
+const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'water' || room.roomEffect === 'motion' ? !!room.rainAreaTap : room.tapAction !== 'none';
 function roomAt(point, tap = false) { return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && (!tap || roomTakesTap(room)) && pointInPolygon(point, room.points)); }
 // ---- Drawing a new room
 function startRoomDrawing() {
@@ -3441,6 +3441,7 @@ function finishRoomDrawing() {
   view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, id, name: roomDraft.name || `${translateValue('Pomieszczenie')} ${count}`, entityIds: [...(roomDraft.entityIds || [])], points: roomDraft.points.map(p => p.map(v => Math.round(v * 1000) / 1000)), createdAt: now, updatedAt: now };
   if (view.background && freeBoxRoom(view.rooms[id])) { const r = view.rooms[id], xs = r.points.map(p => p[0]), ys = r.points.map(p => p[1]), [cx, cy] = roomLabelAnchor(r.points), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
     void xs; void ys; void W; void H; void k; freeBoxFromPx(r, ...ROOM_BOX_PX, cx, cy); r.tileNeedsLayout = true; } // (always the same size, whatever the room's)
+  if (roomDraft.effect === 'motion') { setupMotionZone(view.rooms[id]); if (!roomDraft.name) view.rooms[id].name = `${translateValue('Ruch')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'motion').length}`; }
   if (roomDraft.effect === 'water') setupWaterZone(view.rooms[id], roomDraft.name ? '' : `${translateValue('Sekcja')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'water').length}`);
   const withEntities = view.rooms[id].entityIds.length > 0; pendingTemplate = roomDraft.template || ''; cancelRoomDrawing(); renderRooms(); if (!view.rooms[id].fbox) fitRoomLabel(id); scheduleSave(true); if (withEntities) refreshStates();
   openRoomWizard(id);
@@ -3921,14 +3922,14 @@ function roomEditorMarkup(room) {
     + (labelCamera(r) && isIconRoom(r) && !isThermoRoom(r) ? `<div class="room-icon-actions"><button type="button" data-label-to-cam><i class="mdi mdi-image-outline"></i><span>${escapeHtml(translateValue('Pokaż jako obraz kamery'))}</span></button></div>` : '')
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
-  const lookSection = () => partBar('room', 'Wygląd', (r.roomEffect === 'rain' || r.roomEffect === 'water' ? '' : sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
+  const lookSection = () => partBar('room', 'Wygląd', (r.roomEffect === 'rain' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
     + (r.stateEnabled
       ? control('Kolor ON','color','color',r.color) + control('Kolor OFF','offColor','color',r.offColor)
         + control('Intensywność ON','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true })
         + control('Intensywność OFF','offOpacity','range',Math.round(clamp(Number(r.offOpacity) || 0, 0, 1) * 100),{ min:0, max:100, step:1, suffix:'%', integer:true })
       : control('Kolor','color','color',r.color)
         + control('Intensywność','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true }))))
-    + (r.roomEffect === 'rain' ? sub('Deszcz', control('Efekt','roomEffect','select','rain',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie']], refresh:true })
+    + (r.roomEffect === 'rain' ? sub('Deszcz', control('Efekt','roomEffect','select','rain',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie'],['motion','Ruch']], refresh:true })
         + control('Wariant','rainStyle','select',['ripples','streaks','combo','drizzle'].includes(r.rainStyle) ? r.rainStyle : 'ripples',{ items:[['ripples','Kręgi'],['streaks','Smugi'],['combo','Kręgi + smugi + mokro'],['drizzle','Mżawka']], dropdown:true })
         + `<div class="control rain-color-row"><label>${escapeHtml(translateValue('Kolor kropli'))}</label><div class="rain-swatches">${RAIN_BLUES.map(([c, t]) => `<button type="button" class="rain-swatch${String(r.rainColor || '#9BD7FF').toUpperCase() === c ? ' active' : ''}" data-rain-color="${c}" style="--c:${c}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"></button>`).join('')}<input type="color" class="rain-own" data-path="rainColor" value="${escapeHtml(r.rainColor || '#9BD7FF')}" title="${escapeHtml(translateValue('Własny kolor'))}" aria-label="${escapeHtml(translateValue('Własny kolor'))}"></div></div>`
         + control('Natężenie','rainRate','range',clamp(Number(r.rainRate ?? 4), .5, 20),{ min:.5, max:20, step:.5, suffix:' mm/h' })
@@ -3941,8 +3942,8 @@ function roomEditorMarkup(room) {
         + control('Klikalny obszar','rainAreaTap','checkbox',!!r.rainAreaTap)
         + `<p class="flow-section-note">${escapeHtml(translateValue('Bez „Klikalny obszar” dotknięcie przechodzi do obszarów pod deszczem; etykieta deszczu zostaje klikalna (np. „Więcej informacji” z historią czujnika).'))}</p>`
         + `<p class="flow-section-note">${escapeHtml(translateValue('Pada, gdy encja obszaru jest włączona (np. czujnik deszczu). Czujnik w mm/h steruje natężeniem na żywo; czujnik binarny używa natężenia z suwaka. W edycji podgląd ON / OFF w nagłówku pokazuje deszcz od razu.'))}</p>`) : '')
-    + (r.roomEffect === 'water' ? waterLookSub(r) : '')
-    + (r.roomEffect === 'rain' || r.roomEffect === 'water' ? '' : sub('Światło', control('Efekt','roomEffect','select','light',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie']], refresh:true }) + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
+    + (r.roomEffect === 'water' ? waterLookSub(r) : '') + (r.roomEffect === 'motion' ? motionLookSub(r) : '')
+    + (r.roomEffect === 'rain' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Światło', control('Efekt','roomEffect','select','light',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie'],['motion','Ruch']], refresh:true }) + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
     + control('Efekt światła','lightEffect','select',r.lightEffect || 'none',{ items:[['none','Jednolity'],['center','Centralny'],['corner','Róg'],['wall','Od ściany'],['ambient','Ambient']], refresh:true })
     + (r.lightEffect && r.lightEffect !== 'none' ? (r.lightEffect === 'wall'
         ? control('Kierunek','lightDirection','select',r.lightDirection || 'left',{ items:[['left','Lewa'],['right','Prawa'],['top','Góra'],['bottom','Dół']] }) + control('Pozycja na ścianie','lightWallPos','range',Number(r.lightWallPos ?? 50),{ min:0, max:100, step:1, suffix:'%', integer:true })
@@ -4283,7 +4284,7 @@ function roomEditorMarkup(room) {
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + label;
+  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -4297,7 +4298,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
-  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
+  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : room.roomEffect === 'motion' && !isIconRoom(room) ? 'Ruch' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
   const lbl = isIconRoom(room), btn = isTextRoom(room); [['#room-duplicate', isThermoRoom(room) ? 'Duplikuj termostat' : btn ? 'Duplikuj przycisk' : lbl ? 'Duplikuj etykietę' : 'Duplikuj pomieszczenie'], ['#room-copy-style', btn ? 'Kopiuj styl przycisku' : lbl ? 'Kopiuj styl etykiety' : 'Kopiuj styl pomieszczenia'], ['#room-paste-style', btn ? 'Wklej styl przycisku' : lbl ? 'Wklej styl etykiety' : 'Wklej styl pomieszczenia'], ['#room-remove', btn ? 'Usuń przycisk' : lbl ? 'Usuń etykietę' : 'Usuń pomieszczenie']].forEach(([sel, title]) => { const b = $(sel); if (b) { b.title = translateValue(title); b.setAttribute('aria-label', translateValue(title)); } });
   const kindIcon = $('#room-editor .room-editor-icon .mdi'); if (kindIcon) kindIcon.className = `mdi ${isTextRoom(room) ? 'mdi-gesture-tap-button' : isIconRoom(room) ? 'mdi-lightbulb-group' : 'mdi-floor-plan'}`;
   const entityInfo = $('#room-editor-entities'); if (entityInfo) entityInfo.textContent = (room.entityIds || []).join(', ') || '—';
@@ -4831,7 +4832,7 @@ function onRoomEditorClick(event) {
   }
   const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]'), content = $('#room-editor-content');
   const reset = event.target.closest('[data-reset-path]');
-  if (reset && reset.dataset.resetPath.startsWith('spr.')) { event.preventDefault(); const input = content.querySelector(`input[data-path="${CSS.escape(reset.dataset.resetPath)}"]`), f = reset.dataset.resetPath.split('.')[2]; if (input && f in SPR_DEFAULTS) { input.value = String(SPR_DEFAULTS[f]); input.dispatchEvent(new Event('change', { bubbles:true })); } return; }
+  if (reset && reset.dataset.resetPath.startsWith('spr.')) { event.preventDefault(); const input = content.querySelector(`input[data-path="${CSS.escape(reset.dataset.resetPath)}"]`), f = reset.dataset.resetPath.split('.')[2], dd = sprDefaults(roomsOf()[selectedRoomId]); if (input && f in dd) { input.value = String(dd[f]); input.dispatchEvent(new Event('change', { bubbles:true })); } return; }
   if (reset) { event.preventDefault(); const input = content.querySelector(`input[data-path="${CSS.escape(reset.dataset.resetPath)}"]`), defaults = { opacity: ROOM_DEFAULTS.opacity * 100, offOpacity: ROOM_DEFAULTS.offOpacity * 100, feather: ROOM_DEFAULTS.feather, ...Object.fromEntries(ROOM_LABEL_PARTS.flatMap(([, k]) => [[`${k}Size`, ROOM_DEFAULTS[`${k}Size`]], [`${k}X`, ROOM_DEFAULTS[`${k}X`]], [`${k}Y`, ROOM_DEFAULTS[`${k}Y`]], [`${k}BgOpacity`, ROOM_DEFAULTS[`${k}BgOpacity`] * 100]])), labelIconOpacityOn: 100, labelIconOpacityOff: 100, labelIconOutlineWidth: 1.5, labelCardBgOpacity: 62, labelCardBorderOpacity: 30, labelCardBgOnOpacity: 62, labelCardBgOffOpacity: 62, labelCardBorderOnOpacity: 70, labelCardBorderOffOpacity: 30, labelCardBorderOnWidth: 1.5, labelCardBorderOffWidth: 1, labelIconBorderOpacity: 60, labelIconBorderWidth: 1.5, labelIconOpacity: 100, labelIconBgOnOpacity: 60, labelIconBgOffOpacity: 55, labelIconBorderOnOpacity: 80, labelIconBorderOffOpacity: 50, labelIconBorderOnWidth: 2, labelIconBorderOffWidth: 1.5, labelIconOutlineOnWidth: 1.5, labelIconOutlineOffWidth: 1.5, labelIconOutlineOpacity: 100, labelIconOutlineOnOpacity: 100, labelIconOutlineOffOpacity: 100, labelIconRadius: 10, labelIconPadding: 6, labelCardBorderWidth: 1, labelCardRadius: 14, labelCardPadding: 0, labelCardGap: 4, labelPartGap: 12, labelCardScale: 1, labelCardX: 0, labelCardY: 0, labelIconDX: 0, labelIconDY: 0, labelNameDX: 0, labelNameDY: 0, labelStateDX: 0, labelStateDY: 0, lightX: 50, lightY: 50, lightWallPos: 50, lightSpread: ROOM_DEFAULTS.lightSpread, lightFill: ROOM_DEFAULTS.lightFill }; const path = reset.dataset.resetPath, room = roomsOf()[selectedRoomId];
     // (an inner margin back to automatic: the preset's own, the text fitted again)
     if (room && /^label(Name|State)Inset$/.test(path)) { delete room[path]; if (room.tileColV2 && dashSpan(room) && room.labelLinked) applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
@@ -8002,6 +8003,7 @@ const ADD_TYPES = [
   { key:'icon', label:'Etykieta', hint:'Ikona, nazwa i stan w dowolnym miejscu', entity:'optional' },
   { key:'room', label:'Pomieszczenie', hint:'Obszar ze stanem encji', entity:'optional' },
   { key:'water', label:'Podlewanie', hint:'Sekcja nawadniania ze zraszaczami', entity:'optional' },
+  { key:'motion', label:'Czujnik ruchu', hint:'Obszar z czujnikami ruchu', entity:'optional' },
   // Gauge and horseshoe are one tile; which one is chosen in its panel (Badge is no longer added).
   { key:'gauge', label:'Wskaźnik', hint:'Łuk z wartością — temperatura, moc, poziom', entity:'required', numeric:true },
   { key:'flow', label:'Flow', hint:'Przepływ energii, wody', entity:'optional', numeric:true },
@@ -8084,6 +8086,7 @@ function addThumbStatic(type, entity) {
   if (type === 'icon') return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi ${entity ? addEntityIcon(entity) : 'mdi-lightbulb-on'}"></i></span><b data-no-i18n>${escapeHtml(entity?.name || translateValue('Salon'))}</b><small data-no-i18n>${escapeHtml(entity ? `${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}` : translateValue('Wł.'))}</small></div>`;
   if (type === 'room') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M12 10H62V30H88V52H12Z" fill="#FFD27A" opacity=".6"/><path d="M12 10H62V30H88V52H12Z" fill="none" stroke="#e39a3a" stroke-width=".8" stroke-dasharray="2 1.5"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'flow') return `<div class="add-thumb-flow"><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i></div>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(`${entity.state ?? ''} ${entity.unit || ''}`.trim())}</span>` : ''}`;
+  if (type === 'motion') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M10 8H90V52H10Z" fill="#3a3328" opacity=".5"/><path d="M10 8H90V52H10Z" fill="none" stroke="#ffb46b" stroke-width=".8" stroke-dasharray="2 1.5"/><path d="M12 10L78 26A70 70 0 0 1 28 56Z" fill="#FF9F43" opacity=".22"/><path d="M30 15A20 20 0 0 1 20 34" fill="none" stroke="#FFB46B" stroke-width="1.6"/><path d="M46 19A36 36 0 0 1 24 48" fill="none" stroke="#FFB46B" stroke-width="1.2" opacity=".7"/><path d="M62 23A52 52 0 0 1 27 56" fill="none" stroke="#FFB46B" stroke-width=".9" opacity=".4"/><circle cx="12" cy="10" r="3" fill="#ffe2c2"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'water') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M10 8H90V52H10Z" fill="#2a6f4a" opacity=".45"/><path d="M10 8H90V52H10Z" fill="none" stroke="#5fd08f" stroke-width=".8" stroke-dasharray="2 1.5"/><path d="M32 44L14 22A26 26 0 0 1 50 18Z" fill="#5FB8FF" opacity=".45"/><path d="M68 44L86 26A24 24 0 0 0 52 22Z" fill="#5FB8FF" opacity=".45"/><circle cx="32" cy="44" r="2.6" fill="#dff3ff"/><circle cx="68" cy="44" r="2.6" fill="#dff3ff"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'camera') return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi mdi-cctv"></i></span><b data-no-i18n>${escapeHtml(entity?.name || translateValue('Kamera'))}</b></div>`;
   // Tekst: a label with the tap icon and its text.
@@ -8150,7 +8153,7 @@ function renderAddDialog(part = 'all') {
     $('#add-sub', els.addDialog).textContent = translateValue(state.step === 'type' ? 'Wybierz, co chcesz dodać' : 'Wybierz encję dla tego elementu');
     $('#add-step-type', els.addDialog).innerHTML = chosen ? `<button type="button" class="add-back" data-add-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button><span class="add-step-chip"><span class="add-thumb" data-thumb="${chosen.key}"></span><b>${escapeHtml(translateValue(chosen.label))}</b></span>` : '';
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
-    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water') && dashGrid().on)).map(type => {
+    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water' || type.key === 'motion') && dashGrid().on)).map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
       return `<button type="button" class="add-card${state.type === type.key ? ' sel' : ''}${allowed ? '' : ' off'}" data-add-type="${type.key}" ${allowed ? '' : 'disabled'}>${entity && recommended === type.key ? `<span class="add-tag">★ ${escapeHtml(translateValue('Polecane'))}</span>` : ''}<span class="add-thumb" data-thumb="${type.key}"></span><b>${escapeHtml(translateValue(type.label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`;
     }).join('');
@@ -8193,12 +8196,12 @@ function cancelAddPicking() { if (!addPicking) return; addPicking = null; els.bo
 function confirmAddDialog() {
   if (!addState || !addGoLabel().ok) return;
   const { type, entity } = addState; closeAddDialog();
-  if (type === 'room' || type === 'water') return addRoomFromDialog(entity, type);
+  if (type === 'room' || type === 'water' || type === 'motion') return addRoomFromDialog(entity, type);
   createAddedElement(type, entity, viewCenterPercent());
 }
 function addRoomFromDialog(entity, type = 'room') {
   startRoomDrawing(); if (!roomDraft) { pendingTemplate = ''; return; }
-  if (type === 'water') roomDraft.effect = 'water';
+  if (type === 'water' || type === 'motion') roomDraft.effect = type;
   roomDraft.template = pendingTemplate; pendingTemplate = '';
   if (entity) { roomDraft.entityIds = [entity.entity_id]; roomDraft.name = entity.area || ''; rememberAdded(entity.entity_id); }
 }
@@ -10130,7 +10133,8 @@ const SPR_ANGLES = [45, 90, 135, 180, 225, 270, 315];
 const waterSt = { active: [], all: [], spr: new Map(), raf: 0, last: 0 };
 let selectedSprId = '';
 const sprOf = (room, id) => ({ ...SPR_DEFAULTS, ...(room?.sprinklers?.[id] || {}) });
-const sprList = room => Object.entries(room?.sprinklers || {}).map(([id, o]) => ({ ...SPR_DEFAULTS, ...o, id }));
+const sprDefaults = room => room?.roomEffect === 'motion' ? MOT_DEFAULTS : SPR_DEFAULTS;
+const sprList = room => Object.entries(room?.sprinklers || {}).map(([id, o]) => ({ ...sprDefaults(room), ...o, id }));
 const sprVec = deg => [Math.sin(deg * Math.PI / 180), -Math.cos(deg * Math.PI / 180)];
 function setupWaterZone(room, name) {
   room.roomEffect = 'water'; if (name) room.name = name;
@@ -10140,13 +10144,13 @@ function setupWaterZone(room, name) {
 }
 function addSprinkler(room, from = null) {
   room.sprinklers ||= {}; const id = 'spr_' + uid(), [cx, cy] = roomLabelAnchor(room.points);
-  room.sprinklers[id] = from ? { ...SPR_DEFAULTS, ...from, x: clamp(from.x + 3, 0, 100), y: clamp(from.y + 3, 0, 100) } : { ...SPR_DEFAULTS, x: Math.round(cx * 1000) / 1000, y: Math.round(cy * 1000) / 1000 };
+  const dd = sprDefaults(room); room.sprinklers[id] = from ? { ...dd, ...from, x: clamp(from.x + 3, 0, 100), y: clamp(from.y + 3, 0, 100) } : { ...dd, x: Math.round(cx * 1000) / 1000, y: Math.round(cy * 1000) / 1000 };
   delete room.sprinklers[id].id; return id;
 }
 // The zone's own look (in "Wygląd"): the water colour, how strong it is drawn, the damp sector, clipping and the heads.
 function waterLookSub(r) {
   const sub = (title, body) => gaugeSubsection(escapeHtml(translateValue(title)), body), esc = t => escapeHtml(translateValue(t)), colour = String(r.waterColor || '#9BD7FF');
-  return sub('Podlewanie', control('Efekt','roomEffect','select','water',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie']], refresh:true })
+  return sub('Podlewanie', control('Efekt','roomEffect','select','water',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie'],['motion','Ruch']], refresh:true })
     + `<div class="control rain-color-row"><label>${esc('Kolor wody')}</label><div class="rain-swatches">${RAIN_BLUES.map(([c, t]) => `<button type="button" class="rain-swatch${colour.toUpperCase() === c ? ' active' : ''}" data-rain-color="${c}" style="--c:${c}" title="${esc(t)}" aria-label="${esc(t)}"></button>`).join('')}<input type="color" class="rain-own" data-path="waterColor" value="${escapeHtml(colour)}" title="${esc('Własny kolor')}" aria-label="${esc('Własny kolor')}"></div><span></span></div>`
     + control('Krycie','waterOpacity','range',clamp(Number(r.waterOpacity ?? 85), 10, 100),{ min:10, max:100, step:1, suffix:'%', integer:true })
     + control('Mokra poświata','waterTint','range',clamp(Number(r.waterTint ?? 16), 0, 60),{ min:0, max:60, step:1, suffix:'%', integer:true })
@@ -10174,14 +10178,15 @@ function sprinklerSection(r) {
     + `<div class="room-icon-actions"><button type="button" data-spr-add><i class="mdi mdi-sprinkler-variant"></i><span>${esc('Dodaj zraszacz')}</span></button></div>`, !!selectedSprId || !list.length);
 }
 function sprinklerInput(room, path, value, input, event) {
-  const [, id, f] = path.split('.'), o = room.sprinklers?.[id]; if (!o || !(f in SPR_DEFAULTS)) return;
-  if (f === 'kind') o.kind = SPR_KINDS.some(([v]) => v === value) ? value : 'rotor';
+  const [, id, f] = path.split('.'), o = room.sprinklers?.[id], motion = room.roomEffect === 'motion', kinds = motion ? MOT_KINDS : SPR_KINDS; if (!o || !(f in sprDefaults(room))) return;
+  if (f === 'kind') o.kind = kinds.some(([v]) => v === value) ? value : kinds[0][0];
+  else if (f === 'entity') o.entity = String(value || '');
   else o[f] = Number(value);
   if (f === 'dir' && o.dir >= 360) o.dir = 0;
   selectedSprId = id; room.updatedAt = new Date().toISOString();
   const output = input.closest('.control')?.querySelector('output'); if (output) output.textContent = input.value + (output.dataset.suffix || '');
   if (f === 'arc' || f === 'kind') { const sum = input.closest('details.spr-sub')?.querySelector(':scope > summary'); if (sum && f === 'arc') sum.childNodes.forEach(n => { if (n.nodeType === 3 && /°/.test(n.textContent)) n.textContent = n.textContent.replace(/\d+°/, `${Math.round(o.arc)}°`); }); }
-  renderRoomEditLayer(); syncWater(); if (input.dataset.editorRefresh === 'true') { openRoomEditor(room.id); scheduleSave(true); return; }
+  renderRoomEditLayer(); syncWater(); syncMotion(); if (input.dataset.editorRefresh === 'true') { openRoomEditor(room.id); scheduleSave(true); return; }
   scheduleSave(event.type === 'change');
 }
 document.addEventListener('click', event => {
@@ -10193,7 +10198,7 @@ document.addEventListener('click', event => {
   room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
   requestAnimationFrame(() => $(`#room-editor-content [data-spr-sec="${CSS.escape(selectedSprId)}"]`)?.scrollIntoView({ block:'nearest' }));
 }, true);
-document.addEventListener('toggle', event => { const d = event.target; if (!d?.matches?.('details.spr-sub')) return; if (d.open) { selectedSprId = d.dataset.sprSec; $$('details.spr-sub').forEach(x => { x.classList.toggle('current', x === d); if (x !== d) x.open = false; }); renderRoomEditLayer(); syncWater(); } }, true);
+document.addEventListener('toggle', event => { const d = event.target; if (!d?.matches?.('details.spr-sub')) return; if (d.open) { selectedSprId = d.dataset.sprSec; $$('details.spr-sub').forEach(x => { x.classList.toggle('current', x === d); if (x !== d) x.open = false; }); renderRoomEditLayer(); syncWater(); syncMotion(); } }, true);
 // In edit mode: a blue dot on each head (moves it) and a white one at the end of its direction (range + direction).
 function sprinklerHandles(room) {
   const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, k = sceneScale || 1;
@@ -10214,7 +10219,7 @@ function startSprinklerDrag(event) {
     if (!tip) { const [sx, sy] = sprSnapHead(room, id, clamp(start.x + x - p0[0], 0, 100), clamp(start.y + y - p0[1], 0, 100), e); o.x = Math.round(sx * 1000) / 1000; o.y = Math.round(sy * 1000) / 1000; }
     else { const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, k = sceneScale || 1, [tx, ty] = sprSnapTip(room, o, x, y, e), dx = (tx - o.x) / 100 * W, dy = (ty - o.y) / 100 * H;
       o.dir = Math.round((Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360) % 360; o.range = Math.round(clamp(Math.hypot(dx, dy) / k, 10, 800)); setSlider('dir', o.dir); setSlider('range', o.range); }
-    room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater();
+    room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); syncMotion();
   };
   const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); scheduleSave(true); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
@@ -10344,4 +10349,120 @@ function waterDraw(dt) {
     });
   });
   [...waterSt.spr.keys()].forEach(key => { if (!seen.has(key)) waterSt.spr.delete(key); });
+}
+// ---- Ruch (motion): an area with motion sensors placed in it (the same dots as the sprinklers). Each sensor watches a
+// cone (range, direction, angle); while its entity reports motion the cone lights up - ripples running out from the
+// sensor, a radar sweep or a flash - and fades out over a few seconds after the motion ends. With no motion only a faint
+// outline of the cone stays (optional). A sensor's entity is one of the area's entities, or any of them.
+const MOT_KINDS = [['waves','Fale'],['radar','Radar'],['flash','Błysk']];
+const MOT_DEFAULTS = { kind:'waves', range:220, dir:135, arc:90, speed:5, entity:'' };
+const motionSt = { all: [], s: new Map(), raf: 0, last: 0 };
+function setupMotionZone(room) {
+  room.roomEffect = 'motion';
+  // One sensor in the zone's top-left corner, looking in (like a PIR in a room's corner), reaching most of the way across.
+  const W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1, pts = room.points;
+  const c = pts.reduce((b, p) => p[0] + p[1] < b[0] + b[1] ? p : b, pts[0]), xs = pts.map(p => p[0] / 100 * W), ys = pts.map(p => p[1] / 100 * H);
+  const diag = Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / k;
+  room.sprinklers = { ['mot_' + uid()]: { ...MOT_DEFAULTS, x: Math.round(c[0] * 1000) / 1000, y: Math.round(c[1] * 1000) / 1000, range: Math.round(clamp(diag * .85, 40, 800)) } };
+}
+function motionLookSub(r) {
+  const sub = (title, body) => gaugeSubsection(escapeHtml(translateValue(title)), body), esc = t => escapeHtml(translateValue(t));
+  return sub('Ruch', control('Efekt','roomEffect','select','motion',{ items:[['light','Światło'],['rain','Deszcz'],['water','Podlewanie'],['motion','Ruch']], refresh:true })
+    + control('Kolor ruchu','motionColor','color',r.motionColor || '#FF9F43')
+    + control('Krycie','motionOpacity','range',clamp(Number(r.motionOpacity ?? 85), 10, 100),{ min:10, max:100, step:1, suffix:'%', integer:true })
+    + control('Zanikanie','motionFade','range',clamp(Number(r.motionFade ?? 3), 0, 30),{ min:0, max:30, step:.5, suffix:' s' })
+    + control('Zarys gdy brak ruchu','motionIdle','checkbox',r.motionIdle !== false)
+    + control('Przytnij do obszaru','motionClip','checkbox',r.motionClip !== false)
+    + control('Klikalny obszar','rainAreaTap','checkbox',!!r.rainAreaTap)
+    + `<p class="flow-section-note">${esc('Czujnik pokazuje ruch, gdy jego encja jest włączona (wykryto ruch). Każdy czujnik może mieć własną encję z listy encji obszaru. W edycji przeciągnij kropkę czujnika, żeby go przesunąć, a białą na końcu, żeby ustawić zasięg i kierunek (przyciąga co 45°).')}</p>`);
+}
+function motionSection(r) {
+  const esc = t => escapeHtml(translateValue(t)), list = sprList(r), name = id => stateCache[id]?.attributes?.friendly_name || id;
+  const rows = list.map((o, i) => { const p = f => `spr.${o.id}.${f}`, kind = MOT_KINDS.find(([v]) => v === o.kind) || MOT_KINDS[0], ent = (r.entityIds || []).includes(o.entity) ? o.entity : '';
+    const body = control('Typ', p('kind'), 'select', kind[0], { items: MOT_KINDS, refresh:true })
+      + control('Encja', p('entity'), 'select', ent, { items: [['', translateValue('Encja obszaru (dowolna)')], ...(r.entityIds || []).map(id => [id, escapeHtml(name(id))])], dropdown:true })
+      + control('Zasięg', p('range'), 'range', clamp(Number(o.range) || 220, 10, 800), { min:10, max:800, step:1, suffix:'px', integer:true })
+      + sprAngleSlider(control('Kierunek', p('dir'), 'range', clamp(Number(o.dir) || 0, 0, 360), { min:0, max:360, step:1, suffix:'°', integer:true }), [0, ...SPR_ANGLES, 360], 0, 360, Math.round(Number(o.dir) || 0))
+      + sprAngleSlider(control('Kąt', p('arc'), 'range', clamp(Number(o.arc) || 90, 10, 360), { min:10, max:360, step:1, suffix:'°', integer:true }), [...SPR_ANGLES, 360], 10, 360, Math.round(Number(o.arc) || 90))
+      + control('Prędkość', p('speed'), 'range', clamp(Number(o.speed) || 5, 1, 10), { min:1, max:10, step:.5 });
+    return `<details class="gauge-subsection spr-sub${o.id === selectedSprId ? ' current' : ''}" data-spr-sec="${o.id}"${o.id === selectedSprId ? ' open' : ''}><summary><span class="spr-dot" style="--c:${escapeHtml(r.motionColor || '#FF9F43')}"></span>${esc('Czujnik')} ${i + 1} · ${esc(kind[1])} · ${Math.round(o.arc)}°<span class="spr-tools"><button type="button" data-spr-dup="${o.id}" title="${esc('Duplikuj czujnik')}" aria-label="${esc('Duplikuj czujnik')}"><i class="mdi mdi-content-copy"></i></button><button type="button" data-spr-del="${o.id}" title="${esc('Usuń czujnik')}" aria-label="${esc('Usuń czujnik')}"><i class="mdi mdi-delete-outline"></i></button></span></summary><div class="gauge-subsection-body">${body}</div></details>`; }).join('');
+  return section(esc('Czujniki ruchu') + ` <small class="spr-count">${list.length}</small>`, (rows || `<p class="flow-section-note">${esc('Brak czujników — dodaj pierwszy.')}</p>`)
+    + `<div class="room-icon-actions"><button type="button" data-spr-add><i class="mdi mdi-motion-sensor"></i><span>${esc('Dodaj czujnik')}</span></button></div>`, !!selectedSprId || !list.length);
+}
+// A sensor sees motion while its own entity is on; with "any" while any entity of the area is on. (Edit preview ON / OFF wins.)
+function motionOn(r, o) {
+  const preview = editMode && r.id === selectedRoomId ? roomPreviewOn : ''; if (preview === 'on') return true; if (preview === 'off') return false;
+  const ids = o.entity && (r.entityIds || []).includes(o.entity) ? [o.entity] : (r.entityIds || []);
+  return ids.some(id => ROOM_ON_STATES.has(String(stateCache[id]?.state ?? '').toLowerCase()));
+}
+function motionLayer() { let c = $('#motion-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'motion-layer'; c.className = 'rain-layer motion-layer'; const prev = $('#water-layer') || $('#rain-layer'); if (prev) prev.after(c); else $('#rooms').prepend(c); } return c; }
+function syncMotion(view = activeSceneView()) {
+  motionSt.all = Object.values(roomsOf(view)).filter(r => r.roomEffect === 'motion' && !isIconRoom(r) && (r.points || []).length >= 3 && r.id !== movingRoomId).map(r0 => ({ ...ROOM_DEFAULTS, ...r0 }));
+  const c = motionLayer(); if (!c) return;
+  const live = motionSt.all.some(r => sprList(r).some(o => motionOn(r, o) || (motionSt.s.get(`${r.id}|${o.id}`)?.level || 0) > 0));
+  const visible = live || motionSt.all.some(r => r.motionIdle !== false || editMode);
+  if (!visible) { cancelAnimationFrame(motionSt.raf); motionSt.raf = 0; c.getContext('2d').clearRect(0, 0, c.width, c.height); c.hidden = true; return; }
+  c.hidden = false;
+  if (live) { if (!motionSt.raf && !document.hidden) { motionSt.last = performance.now(); motionSt.raf = requestAnimationFrame(motionFrame); } }
+  else { cancelAnimationFrame(motionSt.raf); motionSt.raf = 0; motionDraw(0); }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(motionSt.raf); motionSt.raf = 0; } else syncMotion(); });
+function motionFrame(now) {
+  motionSt.raf = 0; if (document.hidden) return;
+  const dt = Math.min(.05, (now - motionSt.last) / 1000); if (dt < 1 / 34) { motionSt.raf = requestAnimationFrame(motionFrame); return; } motionSt.last = now;
+  if (motionDraw(dt)) motionSt.raf = requestAnimationFrame(motionFrame); else motionDraw(0); // (all faded out: one still frame, the loop stops)
+}
+// Draws every motion area; returns whether anything is still moving (a sensor on or fading out).
+function motionDraw(dt) {
+  const c = motionLayer(); if (!c) return false;
+  const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, q = Math.min(1.5, devicePixelRatio || 1), k = sceneScale || 1;
+  const z = Math.max(.05, (els.scene.getBoundingClientRect().width || W) / W), e = Math.max(k * z, .9), s = q * e / z;
+  if (c.width !== Math.round(W * q) || c.height !== Math.round(H * q)) { c.width = Math.round(W * q); c.height = Math.round(H * q); }
+  const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, step = reduced ? 0 : dt, TAU = Math.PI * 2, rad = d => (d - 90) * Math.PI / 180, seen = new Set(); let busy = false;
+  const cone = (hx, hy, R, o) => { g.beginPath(); if (o.arc >= 359.5) g.arc(hx, hy, R, 0, TAU); else { g.moveTo(hx, hy); g.arc(hx, hy, R, rad(o.dir - o.arc / 2), rad(o.dir + o.arc / 2)); g.closePath(); } };
+  motionSt.all.forEach(r => {
+    const C = rainRgb(r.motionColor || '#FF9F43').join(','), alpha = clamp(Number(r.motionOpacity ?? 85), 10, 100) / 100, fade = clamp(Number(r.motionFade ?? 3), 0, 30), editing = editMode && r.id === selectedRoomId, list = sprList(r);
+    g.save();
+    if (r.motionClip !== false) { const path = new Path2D(); r.points.forEach((p, i) => { const px = p[0] / 100 * W * q, py = p[1] / 100 * H * q; i ? path.lineTo(px, py) : path.moveTo(px, py); }); path.closePath(); g.clip(path); }
+    list.forEach(o => {
+      const key = `${r.id}|${o.id}`; seen.add(key); let st = motionSt.s.get(key); if (!st) { st = { level: 0, t: 0, waves: [], next: 0, sweep: 0, sgn: 1 }; motionSt.s.set(key, st); }
+      const on = motionOn(r, o), hx = o.x / 100 * W * q, hy = o.y / 100 * H * q, R = Math.max(4, o.range * k * q), arc = clamp(o.arc, 10, 360), speed = clamp(o.speed, 1, 10);
+      // Level: up fast when motion starts, down over "Zanikanie" after it ends.
+      if (on) st.level = Math.min(1, st.level + (dt ? dt * 6 : 1)); else st.level = fade > 0 ? Math.max(0, st.level - dt / fade) : 0;
+      if (!dt && !on) st.level = st.level > 0 && fade > 0 ? st.level : 0;
+      if (on || st.level > 0) busy = true; st.t += step;
+      const L = st.level;
+      // The cone at rest: a faint outline (and in edit mode a dashed one, brighter for the selected sensor).
+      if (r.motionIdle !== false || editing) { g.save(); g.globalAlpha = alpha; cone(hx, hy, R, { ...o, arc }); const gr = g.createRadialGradient(hx, hy, 0, hx, hy, R); gr.addColorStop(0, `rgba(${C},.10)`); gr.addColorStop(1, `rgba(${C},.02)`); g.fillStyle = gr; g.fill();
+        if (editing) { g.setLineDash([5 * q, 4 * q]); g.lineWidth = (o.id === selectedSprId ? 1.8 : 1.1) * q; g.strokeStyle = o.id === selectedSprId ? 'rgba(255,255,255,.9)' : `rgba(${C},.75)`; } else { g.lineWidth = 1 * s; g.strokeStyle = `rgba(${C},.22)`; } g.stroke(); g.restore(); }
+      if (L > 0) {
+        g.save(); g.globalAlpha = alpha * L;
+        // The lit cone: brightest at the sensor.
+        const gr = g.createRadialGradient(hx, hy, 0, hx, hy, R); gr.addColorStop(0, `rgba(${C},.42)`); gr.addColorStop(.6, `rgba(${C},.16)`); gr.addColorStop(1, `rgba(${C},.04)`); g.fillStyle = gr; cone(hx, hy, R, { ...o, arc }); g.fill();
+        g.lineWidth = 1.4 * s; g.strokeStyle = `rgba(${C},.75)`; g.stroke();
+        if (o.kind === 'waves') { // (arcs running out from the sensor across the cone)
+          if (on && step) { st.next -= step; if (st.next <= 0) { st.waves.push({ t: 0 }); st.next = clamp(1.3 - speed * .1, .25, 1.3); } }
+          const T = clamp(2.2 - speed * .15, .6, 2.2); st.waves = st.waves.filter(w => (w.t += step) < T);
+          if (!step && !st.waves.length) st.waves = [{ t: T * .35 }, { t: T * .7 }];
+          st.waves.forEach(w => { const p = w.t / T, rr = Math.max(1, R * p); g.lineWidth = (2.6 - 1.4 * p) * s; g.strokeStyle = `rgba(${C},${((1 - p) * .95).toFixed(3)})`; g.beginPath(); if (arc >= 359.5) g.arc(hx, hy, rr, 0, TAU); else g.arc(hx, hy, rr, rad(o.dir - arc / 2), rad(o.dir + arc / 2)); g.stroke(); });
+        } else if (o.kind === 'radar') { // (a beam sweeping over the cone with a fading tail)
+          const w = speed * 22; if (arc >= 359.5) st.sweep = (st.sweep + w * step) % 360; else { st.sweep += st.sgn * w * step; if (st.sweep > arc) { st.sweep = arc; st.sgn = -1; } if (st.sweep < 0) { st.sweep = 0; st.sgn = 1; } }
+          const a = (arc >= 359.5 ? o.dir : o.dir - arc / 2) + st.sweep, tail = Math.min(40, arc * .45);
+          for (let i = 0; i < 12; i++) { const a0 = a - st.sgn * tail * i / 12, a1 = a - st.sgn * tail * (i + 1) / 12; g.fillStyle = `rgba(${C},${(.32 * (1 - i / 12)).toFixed(3)})`; g.beginPath(); g.moveTo(hx, hy); g.arc(hx, hy, R, rad(Math.min(a0, a1)), rad(Math.max(a0, a1))); g.closePath(); g.fill(); }
+          const [vx, vy] = sprVec(a); g.lineWidth = 2 * s; g.strokeStyle = `rgba(${C},.95)`; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + vx * R, hy + vy * R); g.stroke();
+        } else { // flash: the whole cone pulses
+          const p = .5 + .5 * Math.sin(st.t * (2 + speed * .6) * Math.PI); g.fillStyle = `rgba(${C},${(.08 + .3 * p).toFixed(3)})`; cone(hx, hy, R, { ...o, arc }); g.fill(); }
+        g.restore();
+      }
+    });
+    g.restore();
+    // The sensors (never clipped): a small dark disc with a ring, lit while it sees motion.
+    list.forEach(o => { const hx = o.x / 100 * W * q, hy = o.y / 100 * H * q, L = motionSt.s.get(`${r.id}|${o.id}`)?.level || 0, hr = 3.6 * s;
+      g.globalAlpha = 1; g.fillStyle = '#1d150c'; g.strokeStyle = `rgba(${C},${(.55 + .45 * L).toFixed(3)})`; g.lineWidth = 1.5 * s; g.beginPath(); g.arc(hx, hy, hr, 0, TAU); g.fill(); g.stroke();
+      g.fillStyle = `rgba(${C},${(.35 + .65 * L).toFixed(3)})`; g.beginPath(); g.arc(hx, hy, hr * .45, 0, TAU); g.fill();
+      if (L > 0) { g.globalAlpha = L * .6; g.lineWidth = 1 * s; g.strokeStyle = `rgba(${C},.9)`; g.beginPath(); g.arc(hx, hy, hr * (1.6 + .4 * Math.sin((motionSt.s.get(`${r.id}|${o.id}`)?.t || 0) * 6)), 0, TAU); g.stroke(); g.globalAlpha = 1; } });
+  });
+  [...motionSt.s.keys()].forEach(key => { if (!seen.has(key)) motionSt.s.delete(key); });
+  return busy;
 }

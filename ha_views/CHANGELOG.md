@@ -1,3 +1,10 @@
+## 0.7.0-beta.770
+
+- Nowa numeracja bet: po stabilnej 0.7.0 bety mają numer 0.7.0-beta.N.
+- Nowy element „Czujnik ruchu” (w „+”): rysujesz obszar i stawiasz w nim czujniki ruchu (na start jeden w rogu, patrzący do środka; można dodać kolejne). Każdy ma zasięg, kierunek i kąt (ząbki co 45°) oraz własną encję z listy encji obszaru albo „Encja obszaru (dowolna)”.
+- Przy wykryciu ruchu stożek czujnika się podświetla: Fale (łuki rozchodzące się od czujnika), Radar (wiązka z gasnącym ogonem) albo Błysk (pulsujący stożek); po ustaniu ruchu gaśnie płynnie („Zanikanie”, domyślnie 3 s). Bez ruchu zostaje blady zarys (opcja „Zarys gdy brak ruchu”).
+- Wygląd: kolor ruchu, krycie, przycinanie do obszaru, klikalny obszar. Edycja i przyciąganie czujników jak przy zraszaczach. „Ruch” jest też do wyboru w „Efekt” każdego obszaru.
+
 ## 0.6.1-beta.769
 
 - Podlewanie: zraszacze przyciągają się do obszaru — głowica łapie narożniki, kładzie się na ścianach i wyrównuje (linie pomocnicze) z narożnikami, środkami ścian i innymi zraszaczami. Biała kropka zasięgu łapie narożnik i zatrzymuje zasięg dokładnie na ścianie w swoim kierunku. Alt wyłącza przyciąganie.
