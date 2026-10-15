@@ -2091,3 +2091,17 @@ body.editing .cam-layer{z-index:4}
 .cam-live.full.rot .cam-live-win{left:50%;top:50%;width:100vh;height:100vw;transform:translate(-50%,-50%) rotate(90deg)}
 .cam-live.full .cam-live-view{position:absolute;inset:0;width:auto!important;aspect-ratio:auto!important}
 .cam-live.full .cam-live-head{position:absolute;top:0;left:0;right:0;z-index:2;padding-left:max(12px,env(safe-area-inset-left));padding-right:max(6px,env(safe-area-inset-right));background:linear-gradient(rgba(0,0,0,.6),transparent);height:52px}
+/* Wizard: X cancels the adding (the new element is dropped). */
+.room-wizard-head{display:flex;align-items:center;gap:8px}
+.room-wizard-head>b{flex:1;min-width:0}
+.room-wizard-cancel{display:grid;place-items:center;width:30px;height:30px;margin:-4px -6px -4px 2px;border:0;border-radius:9px;background:transparent;color:#9fc6d8;font-size:19px;cursor:pointer;flex:0 0 auto}
+.room-wizard-cancel:hover,.room-wizard-cancel:focus-visible{background:rgba(143,223,255,.12);color:#fff;outline:none}
+/* Add dialog: smaller type tiles. */
+.add-types{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.add-card{padding:5px 5px 7px;border-radius:11px}
+.add-card>b{font-size:12.5px;margin:5px 3px 1px}
+.add-card>i{font-size:10.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.add-types .add-thumb{height:58px;border-radius:8px}
+@media (max-width:600px){.add-types{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.add-types .add-thumb{height:44px}.add-card>b{font-size:11.5px;margin-top:4px}.add-card>i{display:none}}
+.add-types .add-thumb-label{transform:scale(.82);transform-origin:50% 50%}
+@media (max-width:600px){.add-types .add-thumb{height:50px}.add-types .add-thumb-label{transform:scale(.66)}}

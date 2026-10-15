@@ -1,3 +1,9 @@
+## 0.6.1-beta.757
+
+- Okno „+”: mniejsze kafle typów (Etykieta, Pomieszczenie, …), na telefonie trzy w rzędzie.
+- Kreator dodawania: X w nagłówku (i Esc) w każdej chwili anuluje dodawanie – nowy element znika, nie trzeba go kończyć i usuwać.
+- Kamera dodawana jak etykieta: od razu na planie, potem kreator (nazwa → wybór kamery z listy encji camera), bez starego kroku z obszarami.
+
 ## 0.6.1-beta.756
 
 - Kamera: nowa opcja „Po dotknięciu → Pełny ekran (poziomo)” – obraz na cały ekran w poziomie (pełny ekran przeglądarki i obrót ekranu, gdy telefon pozwala; inaczej obraz obrócony o 90°), zoom i przesuwanie palcami działają też w obróconym widoku.

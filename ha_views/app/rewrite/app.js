@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -3466,11 +3466,13 @@ function gaugeShowRows(r, row, toggleButton) {
 }
 function wizardPartsFor(room) { return isGaugeRoom(room) ? GAUGE_WIZARD_PARTS : isThermoRoom(room) ? THERMO_WIZARD_PARTS : isTextRoom(room) ? WIZARD_PARTS.slice(0, 2) : WIZARD_PARTS; } // (a button has no caption)
 // What the wizard is creating: a room / label, or (flow mode) a Flow of the active view.
-function wizardItem() { return roomWizard?.flow ? activeSceneView()?.flows?.[roomWizard.id] : roomsOf()[roomWizard?.id]; }
-function wizardSteps() { if (roomWizard?.flow) return roomWizard.skipEntities ? ['name','action'] : ['name','entities','action']; const room = roomsOf()[roomWizard?.id]; if (isTextRoom(room)) return ['name','action','parts']; const steps = isIconRoom(room) ? ['name','entities','parts'] : ['name','entities']; return roomWizard?.skipEntities ? steps.filter(step => step !== 'entities') : steps; }
+function wizardItem() { return roomWizard?.flow ? activeSceneView()?.flows?.[roomWizard.id] : roomWizard?.cam ? camsOf()[roomWizard.id] : roomsOf()[roomWizard?.id]; }
+function wizardSteps() { if (roomWizard?.cam) return roomWizard.skipEntities ? ['name'] : ['name','entities']; if (roomWizard?.flow) return roomWizard.skipEntities ? ['name','action'] : ['name','entities','action']; const room = roomsOf()[roomWizard?.id]; if (isTextRoom(room)) return ['name','action','parts']; const steps = isIconRoom(room) ? ['name','entities','parts'] : ['name','entities']; return roomWizard?.skipEntities ? steps.filter(step => step !== 'entities') : steps; }
 
-function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
-  const room = flow ? activeSceneView()?.flows?.[id] : roomsOf()[id], box = $('#room-wizard');
+function openRoomWizard(id, { skipEntities = false, flow = false, cam = false } = {}) {
+  const room = flow ? activeSceneView()?.flows?.[id] : cam ? camsOf()[id] : roomsOf()[id], box = $('#room-wizard');
+  if (cam) { if (!room || !box) return openCamEditor(id); roomWizard = { id, cam:true, step:'name', generated: room.name || translateValue('Kamera'), query:'', picked: new Set(room.entityId ? [room.entityId] : []), parts: new Set(), skipEntities };
+    box.style.top = mobileView() ? `${Math.round(($('.topbar')?.getBoundingClientRect().bottom || 0) + 8)}px` : ''; box.classList.add('visible'); box.setAttribute('aria-hidden', 'false'); renderRoomWizard(); requestAnimationFrame(() => requestAnimationFrame(focusWizardTarget)); loadEntityCatalog().then(() => { if (roomWizard?.step === 'entities') renderRoomWizard('list'); }); return; }
   const tpl = pendingTemplate && libraryTemplates().find(t => t.id === pendingTemplate); pendingTemplate = '';
   if (tpl && room) { applyTemplate(room, tpl, flow); if (flow) renderMarkers(); else renderRooms(); }
   if (!room || !box) return flow ? openFlowEditor(id) : openRoomEditor(id, -1, 0);
@@ -3483,12 +3485,20 @@ function openRoomWizard(id, { skipEntities = false, flow = false } = {}) {
   requestAnimationFrame(() => requestAnimationFrame(focusWizardTarget));
   loadEntityCatalog().then(() => { if (roomWizard?.step === 'entities') renderRoomWizard('list'); });
 }
+// X in the wizard (or Esc): the element being added is dropped - nothing to click through and delete afterwards.
+function cancelRoomWizard() {
+  const w = roomWizard, box = $('#room-wizard'); if (!w || !box) return; roomWizard = null;
+  box.classList.remove('visible'); box.setAttribute('aria-hidden', 'true'); const view = activeSceneView(); if (!view) return;
+  if (w.flow) delete view.flows?.[w.id]; else if (w.cam) delete view.cameras?.[w.id]; else if (view.rooms?.[w.id]) { delete view.rooms[w.id]; removeRoomIcon(view, w.id); }
+  closeEditor(); closeFlowEditor(); closeRoomEditor(); closeCamEditor(); renderRooms(); renderMarkers(); scheduleSave(true); notify('Anulowano dodawanie');
+}
 function closeRoomWizard() {
   const box = $('#room-wizard'); if (!roomWizard || !box) return;
-  const { id, picked, parts, generated: roomWizard_generated, flow: isFlow, fromTemplate, partsSeen } = roomWizard, room = isFlow ? activeSceneView()?.flows?.[id] : roomsOf()[id]; roomWizard = null;
+  const { id, picked, parts, generated: roomWizard_generated, flow: isFlow, cam: isCam, fromTemplate, partsSeen } = roomWizard, room = isFlow ? activeSceneView()?.flows?.[id] : isCam ? camsOf()[id] : roomsOf()[id]; roomWizard = null;
   box.classList.remove('visible'); box.setAttribute('aria-hidden', 'true');
   if (!room) return;
   if (isFlow) return closeFlowWizard(room, [...picked][0] || '', roomWizard_generated);
+  if (isCam) return closeCamWizard(room, [...picked][0] || room.entityId || '', roomWizard_generated);
   const before = (room.entityIds || []).join('|'); room.entityIds = [...picked];
   // An icon left without a typed name takes the name of its first entity.
   // A gauge takes its range, thresholds, icon and unit from the entity picked here.
@@ -3545,15 +3555,16 @@ function setWizardFlow(flow, key, value) {
 }
 function roomWizardName() {
   if (roomWizard?.flow) { const input = $('#room-wizard-name'), flow = wizardItem(); if (!flow || !input) return; flow.displayName = input.value.trim() || roomWizard.generated; flow.updatedAt = new Date().toISOString(); return renderMarkers(); }
+  if (roomWizard?.cam) { const input = $('#room-wizard-name'), c = wizardItem(); if (!c || !input) return; c.name = input.value.trim() || roomWizard.generated; c.typedName = !!input.value.trim(); c.updatedAt = new Date().toISOString(); return renderCameras(); }
   const input = $('#room-wizard-name'), room = roomsOf()[roomWizard?.id]; if (!room || !input) return;
   const name = input.value.trim(); room.name = name || roomWizard.generated; room.updatedAt = new Date().toISOString(); renderRooms();
 }
 function roomWizardMatches() {
   const all = (entityCatalog?.entities || []).filter(entity => entity.entity_id), room = wizardItem(), query = searchText(roomWizard.query);
-  const area = roomWizard.flow ? '' : searchText(room?.name), useful = entity => /^(light|switch|input_boolean|fan|binary_sensor|cover|climate|media_player|lock|vacuum)\./.test(entity.entity_id);
+  const area = roomWizard.flow || roomWizard.cam ? '' : searchText(room?.name), useful = entity => /^(light|switch|input_boolean|fan|binary_sensor|cover|climate|media_player|lock|vacuum)\./.test(entity.entity_id);
   const suggested = () => all.filter(entity => area && searchText(entity.area) === area || useful(entity));
   // A thermostat takes a climate / water heater entity, a gauge a number; their lists hold only those.
-  const fits = isGaugeRoom(room) || roomWizard.flow ? entity => /^(sensor|number|input_number|counter)\./.test(entity.entity_id) && (Number.isFinite(Number(entity.state ?? stateCache[entity.entity_id]?.state)) || !!(entity.unit || stateCache[entity.entity_id]?.attributes?.unit_of_measurement))
+  const fits = roomWizard.cam ? entity => /^camera\./.test(entity.entity_id) : isGaugeRoom(room) || roomWizard.flow ? entity => /^(sensor|number|input_number|counter)\./.test(entity.entity_id) && (Number.isFinite(Number(entity.state ?? stateCache[entity.entity_id]?.state)) || !!(entity.unit || stateCache[entity.entity_id]?.attributes?.unit_of_measurement))
     : isThermoRoom(room) ? entity => /^(climate|water_heater)\./.test(entity.entity_id) : null;
   let list = query.length >= 2 ? all.filter(entity => looseMatch([entity.entity_id, entity.name, entity.area].join(' '), query)) : fits ? all : suggested();
   if (fits) list = list.filter(fits);
@@ -3576,12 +3587,22 @@ function renderRoomWizardButton() {
   const steps = wizardSteps(), last = steps.indexOf(w.step) === steps.length - 1;
   button.disabled = w.step === 'parts' && !w.parts.size;
   button.innerHTML = !last ? `<span>${escapeHtml(translateValue('Dalej'))}</span><i class="mdi mdi-arrow-right"></i>`
-    : `<i class="mdi mdi-check"></i><span>${escapeHtml(translateValue(w.flow ? 'Utwórz Flow' : isGaugeRoom(roomsOf()[w.id]) ? 'Utwórz wskaźnik' : isThermoRoom(roomsOf()[w.id]) ? 'Utwórz termostat' : isTextRoom(roomsOf()[w.id]) ? 'Utwórz tekst' : isIconRoom(roomsOf()[w.id]) ? 'Utwórz etykietę' : 'Gotowe'))}${w.step === 'entities' && w.picked.size ? ` (${w.picked.size})` : ''}</span>`;
+    : `<i class="mdi mdi-check"></i><span>${escapeHtml(translateValue(w.cam ? 'Utwórz kamerę' : w.flow ? 'Utwórz Flow' : isGaugeRoom(roomsOf()[w.id]) ? 'Utwórz wskaźnik' : isThermoRoom(roomsOf()[w.id]) ? 'Utwórz termostat' : isTextRoom(roomsOf()[w.id]) ? 'Utwórz tekst' : isIconRoom(roomsOf()[w.id]) ? 'Utwórz etykietę' : 'Gotowe'))}${w.step === 'entities' && w.picked.size ? ` (${w.picked.size})` : ''}</span>`;
 }
 function renderRoomWizard(part = 'all') {
   const box = $('#room-wizard'); if (!roomWizard || !box) return;
   const w = roomWizard, room = wizardItem(), steps = wizardSteps();
-  if (part === 'all' && w.flow) {
+  if (part === 'all' && w.cam) {
+    box.dataset.step = w.step; box.dataset.kind = 'flow';
+    $('#room-wizard-step', box).textContent = `${steps.indexOf(w.step) + 1} / ${steps.length}`;
+    $('#room-wizard-title', box).textContent = translateValue(w.step === 'name' ? 'Nazwa kamery' : 'Kamera');
+    $('.room-wizard-entity-step > small', box).textContent = translateValue('Wybierz kamerę (encję camera).');
+    const name = $('#room-wizard-name', box); name.placeholder = w.generated;
+    if (w.step === 'name') { name.value = room?.name === w.generated ? '' : room?.name || ''; setTimeout(() => name.focus(), 60); }
+    else if (w.step === 'entities') { const search = $('#room-wizard-search', box); search.value = w.query; if (!mobileView()) setTimeout(() => search.focus(), 60); }
+    if (w.step === 'entities' && document.activeElement?.id === 'room-wizard-name') $('#room-wizard-search', box).focus();
+    renderRoomWizardButton();
+  } else if (part === 'all' && w.flow) {
     box.dataset.step = w.step; box.dataset.kind = 'flow';
     $('#room-wizard-step', box).textContent = `${steps.indexOf(w.step) + 1} / ${steps.length}`;
     $('#room-wizard-title', box).textContent = translateValue(w.step === 'name' ? 'Nazwa Flow' : w.step === 'action' ? 'Wygląd Flow' : 'Encja Flow');
@@ -3670,11 +3691,12 @@ function onRoomWizardClick(event) {
   }
   const partButton = event.target.closest('[data-wizard-part]');
   if (partButton) { const key = partButton.dataset.wizardPart; if (roomWizard.parts.has(key)) roomWizard.parts.delete(key); else roomWizard.parts.add(key); return renderRoomWizard(); }
+  if (event.target.closest('[data-wizard-cancel]')) return cancelRoomWizard();
   if (event.target.closest('#room-wizard-next')) return roomWizardNext();
   if (event.target.closest('[data-wizard-skip]')) {
     if (roomWizard.step === 'name') { const input = $('#room-wizard-name'); if (input) input.value = ''; return roomWizardNext(); }
     // Skipping entities keeps none; skipping the parts keeps all three.
-    if (roomWizard.step === 'entities') roomWizard.picked = roomWizard.flow ? new Set() : new Set(roomsOf()[roomWizard.id]?.entityIds || []);
+    if (roomWizard.step === 'entities') roomWizard.picked = roomWizard.flow || roomWizard.cam ? new Set() : new Set(roomsOf()[roomWizard.id]?.entityIds || []);
     if (roomWizard.step === 'parts') roomWizard.partsSeen = false; // skipped: the parts without data are left out after all
     if (roomWizard.step === 'parts') { const wr = roomsOf()[roomWizard.id]; roomWizard.parts = new Set(isThermoRoom(wr) ? wizardPartsFor(wr).map(([key]) => key).filter(key => wr[key]) : WIZARD_PARTS.map(([key]) => key).filter(key => !(isTextRoom(wr) && key === 'labelState'))); }
     const steps = wizardSteps(), next = steps[steps.indexOf(roomWizard.step) + 1];
@@ -7354,6 +7376,7 @@ document.addEventListener('focusin', e => { const i = e.target.closest?.('input[
 document.addEventListener('input', e => { const i = e.target.closest?.('input[data-mdi-pick]'); if (i) { syncMdiPreview(i); showMdiPicker(i); } });
 document.addEventListener('focusout', e => { if (e.target === mdiPicker?._input) setTimeout(() => { if (document.activeElement !== mdiPicker?._input) closeMdiPicker(); }, 120); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && mdiPicker) closeMdiPicker(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && roomWizard && $('#room-wizard')?.classList.contains('visible')) { e.preventDefault(); cancelRoomWizard(); } }); // (Esc in the wizard: adding cancelled)
 document.addEventListener('scroll', e => { if (mdiPicker && !mdiPicker.contains(e.target)) closeMdiPicker(); }, true);
 document.addEventListener('click', e => { const b = e.target.closest?.('.mdi-picker [data-mdi-name]'); if (!b || !mdiPicker) return; const input = mdiPicker._input; closeMdiPicker(); if (!input?.isConnected) return;
   input.value = `mdi:${b.dataset.mdiName}`; syncMdiPreview(input); input.dispatchEvent(new Event('input', { bubbles: true })); input.dispatchEvent(new Event('change', { bubbles: true })); input.blur(); });
@@ -7991,7 +8014,7 @@ function addRowsMarkup() {
 function addGoLabel() {
   const type = ADD_TYPES.find(t => t.key === addState.type);
   if (!type) return { text: addState.entity ? 'Wybierz, co dodać' : 'Wybierz typ', ok: false };
-  if (type.entity === 'required' && !addState.entity && !['thermostat','gauge'].includes(type.key)) return { text: 'Wybierz encję', ok: false }; // those pick it in their wizard
+  if (type.entity === 'required' && !addState.entity && !['thermostat','gauge','camera'].includes(type.key)) return { text: 'Wybierz encję', ok: false }; // those pick it in their wizard
   return { text: `${translateValue('Dodaj')}: ${translateValue(type.label)}`, ok: true };
 }
 function renderAddDialog(part = 'all') {
@@ -8036,7 +8059,7 @@ function chooseAddType(key) {
   const type = ADD_TYPES.find(t => t.key === key); if (!type || !addState) return;
   addState.type = key; if (!addState.preset || type.entity === 'none') addState.entity = null;
   // A thermostat / gauge is added like a label: in the middle of the screen at once, its entity picked in its wizard.
-  if (type.entity !== 'required' || addState.entity || ['thermostat','gauge'].includes(key)) return confirmAddDialog();
+  if (type.entity !== 'required' || addState.entity || ['thermostat','gauge','camera'].includes(key)) return confirmAddDialog();
   addState.step = 'entity'; addState.query = ''; const search = $('#add-search', els.addDialog); search.value = '';
   renderAddDialog(); $('.add-body', els.addDialog)?.scrollTo({ top: 0 });
   if (!mobileView()) setTimeout(() => search.focus(), 60);
@@ -9648,7 +9671,12 @@ function addCameraElement([x, y], entity) {
   const id = 'cam_' + uid(), now = new Date().toISOString(), [W, H] = camPlan(), w = Math.min(90, CAM_NEW_PX[0] / W * 100), h = Math.min(90, CAM_NEW_PX[1] / H * 100);
   view.cameras[id] = { ...CAM_DEFAULTS, id, entityId: entity?.entity_id || '', name: entity?.name || translateValue('Kamera'), box: { x: clamp(x - w / 2, 0, 100 - w), y: clamp(y - h / 2, 0, 100 - h), w, h }, createdAt: now, updatedAt: now };
   if (entity) rememberAdded(entity.entity_id);
-  renderCameras(); scheduleSave(true); openCamEditor(id); notify(`${translateValue('Dodano')}: ${translateValue('Kamera')}`);
+  renderCameras(); scheduleSave(true); closeEditor(); closeFlowEditor(); closeRoomEditor(); closeCamEditor(); openRoomWizard(id, { cam: true, skipEntities: !!entity });
+}
+function closeCamWizard(c, entityId, generated) {
+  if (entityId !== c.entityId) c.entityId = entityId; if (entityId) rememberAdded(entityId);
+  if (entityId && !c.typedName && c.name === generated) c.name = stateCache[entityId]?.attributes?.friendly_name || (entityCatalog?.entities || []).find(e => e.entity_id === entityId)?.name || c.name;
+  delete c.typedName; c.updatedAt = new Date().toISOString(); renderCameras(); scheduleSave(true); openCamEditor(c.id); notify('Dodano kamerę');
 }
 function renderCameras() {
   const layer = camLayer(); if (!layer) return; const cams = Object.values(camsOf()), keep = new Set();
