@@ -1,3 +1,9 @@
+## 0.7.0-beta.772
+
+- Warstwy (Ruch, Podlewanie, Deszcz): encję wybiera się tak jak w „Ogólne” – wyszukiwarka po nazwie / encji / integracji, wybrana encja jako wiersz ze stanem i × do usunięcia. Po kliknięciu w puste pole od razu podpowiada pasujące encje (czujniki ruchu / obecności, zawory, czujniki deszczu).
+- Ruch „Cały pokój”: nowe suwaki „Poświata pokoju”, „Siła fal”, „Szerokość fal” i „Podświetlenie ścian” – mocniej albo subtelniej podkreślony pokój i rozchodzące się fale.
+- Nowy czujnik w warstwie Ruch stoi trochę w głąb od narożnika, żeby jego kropka nie zasłaniała kropki narożnika pomieszczenia.
+
 ## 0.7.0-beta.771
 
 - Warstwy pomieszczenia: w panelu pomieszczenia (efekt Światło) nowa sekcja „Warstwy” z przyciskami Ruch / Podlewanie / Deszcz. Warstwa działa na kształcie tego samego pomieszczenia, ma własną encję i własne ustawienia, a światło pomieszczenia zostaje bez zmian – bez drugiego obszaru na tym samym miejscu. Wyłączenie warstwy zachowuje jej ustawienia.
