@@ -1,3 +1,8 @@
+## 0.6.1-beta.763
+
+- Kamera jako ikona: w panelu kamery „Pokaż jako ikonę (etykieta)” zamienia obraz na etykietę z ikoną kamery w tym samym miejscu – z całym wyglądem etykiety do ustawienia; dotknięcie otwiera podgląd na żywo (okno lub pełny ekran). W panelu takiej etykiety „Pokaż jako obraz kamery” wraca do obrazu.
+- Etykieta z encją kamery: w „Dotknięcie w widoku” opcje „Podgląd kamery” i „Kamera – pełny ekran (poziomo)” (+ okno poziome / pionowe); nowa etykieta na kamerze ma podgląd domyślnie. Inne etykiety bez zmian.
+
 ## 0.6.1-beta.762
 
 - Kamera na telefonie: podgląd nie zamyka się już zaraz po otwarciu, gdy kafel leży poza obrazem okna (kliknięcie z tego samego stuknięcia trafiało w tło okna).
