@@ -1,3 +1,7 @@
+## 0.7.0-beta.777
+
+- Linie kroplujące: nowe suwaki dla każdej linii – „Grubość węża” (1–24 px), „Poświata linii” (świecenie wzdłuż węża, gdy sekcja pracuje), „Wielkość plam” (20–500%) i „Wielkość kropel” (50–500%). Grubiej ustawiona linia jest dobrze widoczna także z daleka.
+
 ## 0.7.0-beta.776
 
 - Podlewanie: linie kroplujące. W panelu sekcji „Linie kroplujące” → „Rysuj linię kroplującą”: klikasz kolejne punkty na planie (przyciągają się do narożników i ścian sekcji oraz do zraszaczy), Enter / „Gotowe” kończy, Esc / „Anuluj” przerywa. Gdy sekcja pracuje, kroplowniki wzdłuż linii kapią – spada kropla, rozchodzi się mały krąg, a wokół każdego rośnie mokra plama. Ustawienia linii: „Rozstaw kroplowników” i „Wydatek”. Punkty linii przesuwasz kropkami w edycji; linia jedzie razem z sekcją.
