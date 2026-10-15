@@ -1,3 +1,7 @@
+## 0.6.1-beta.769
+
+- Podlewanie: zraszacze przyciągają się do obszaru — głowica łapie narożniki, kładzie się na ścianach i wyrównuje (linie pomocnicze) z narożnikami, środkami ścian i innymi zraszaczami. Biała kropka zasięgu łapie narożnik i zatrzymuje zasięg dokładnie na ścianie w swoim kierunku. Alt wyłącza przyciąganie.
+
 ## 0.6.1-beta.768
 
 - Nowy element „Podlewanie” (w „+”): rysujesz obszar sekcji nawadniania i rozmieszczasz w nim animowane zraszacze. Pracują, gdy encja sekcji jest włączona (zawór / przełącznik).

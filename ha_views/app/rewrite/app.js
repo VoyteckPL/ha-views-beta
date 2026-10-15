@@ -10211,14 +10211,48 @@ function startSprinklerDrag(event) {
   const setSlider = (f, v) => { const i = $(`#room-editor-content input[data-path="spr.${id}.${f}"]`); if (!i) return; i.value = String(Math.round(v)); const out = i.closest('.control')?.querySelector('output'); if (out) out.textContent = `${Math.round(v)}${out.dataset.suffix || ''}`; const marks = i.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(m => m.classList.toggle('on', m.title === `${Math.round(v)}px`)); };
   const move = e => {
     if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e);
-    if (!tip) { o.x = Math.round(clamp(start.x + x - p0[0], 0, 100) * 1000) / 1000; o.y = Math.round(clamp(start.y + y - p0[1], 0, 100) * 1000) / 1000; }
-    else { const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, k = sceneScale || 1, dx = (x - o.x) / 100 * W, dy = (y - o.y) / 100 * H;
-      let dir = (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360; if (!e.altKey) { const n = Math.round(dir / 45) * 45; if (Math.abs(n - dir) <= 6) dir = n % 360; }
-      o.dir = Math.round(dir); o.range = Math.round(clamp(Math.hypot(dx, dy) / k, 10, 800)); setSlider('dir', o.dir); setSlider('range', o.range); }
+    if (!tip) { const [sx, sy] = sprSnapHead(room, id, clamp(start.x + x - p0[0], 0, 100), clamp(start.y + y - p0[1], 0, 100), e); o.x = Math.round(sx * 1000) / 1000; o.y = Math.round(sy * 1000) / 1000; }
+    else { const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, k = sceneScale || 1, [tx, ty] = sprSnapTip(room, o, x, y, e), dx = (tx - o.x) / 100 * W, dy = (ty - o.y) / 100 * H;
+      o.dir = Math.round((Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360) % 360; o.range = Math.round(clamp(Math.hypot(dx, dy) / k, 10, 800)); setSlider('dir', o.dir); setSlider('range', o.range); }
     room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater();
   };
-  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); scheduleSave(true); };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); scheduleSave(true); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
+// Snapping a sprinkler to its zone (on screen px, Alt off): a head catches the zone's corners, lies on its walls and lines up
+// (x / y) with the corners, the walls' middles and the other heads; the white dot catches a corner and reaches exactly to the
+// wall in its (45°-snapped) direction.
+function sprSnapGeo(room) { const r = els.scene.getBoundingClientRect(), Wp = r.width || 1, Hp = r.height || 1, pts = (room.points || []).map(([x, y]) => [x / 100 * Wp, y / 100 * Hp]); return { Wp, Hp, pts, segs: pts.map((p, i) => [p, pts[(i + 1) % pts.length]]) }; }
+function sprSegNearest([px, py], [[ax, ay], [bx, by]]) { const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy || 1, t = clamp(((px - ax) * dx + (py - ay) * dy) / l, 0, 1); return [ax + dx * t, ay + dy * t]; }
+function sprSnapHead(room, id, x, y, e) {
+  if (e?.altKey) { showAlignGuides([], []); return [x, y]; }
+  const { Wp, Hp, pts, segs } = sprSnapGeo(room), P = [x / 100 * Wp, y / 100 * Hp], out = v => [v[0] / Wp * 100, v[1] / Hp * 100];
+  const corner = pts.map(c => [c, Math.hypot(c[0] - P[0], c[1] - P[1])]).filter(([, d]) => d <= 14).sort((a, b) => a[1] - b[1])[0];
+  if (corner) { const [cx, cy] = out(corner[0]); showAlignGuides([{ at: cx, kind: 'room' }], [{ at: cy, kind: 'room' }]); return [cx, cy]; }
+  let Q = P.slice(), onEdge = null;
+  segs.forEach(sg => { const n = sprSegNearest(P, sg), d = Math.hypot(n[0] - P[0], n[1] - P[1]); if (d <= 10 && (!onEdge || d < onEdge.d)) onEdge = { n, d, sg }; });
+  if (onEdge) Q = onEdge.n;
+  // Lines to catch: the corners, the walls' middles and the other heads of this zone.
+  const lines = [...pts, ...segs.map(([a, b]) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]), ...sprList(room).filter(o => o.id !== id).map(o => [o.x / 100 * Wp, o.y / 100 * Hp])];
+  const vert = onEdge ? Math.abs(onEdge.sg[0][0] - onEdge.sg[1][0]) < 1 : false, horiz = onEdge ? Math.abs(onEdge.sg[0][1] - onEdge.sg[1][1]) < 1 : false;
+  let gx = null, gy = null;
+  if (!onEdge || horiz) { const bx = lines.map(l => l[0]).filter(v => Math.abs(v - Q[0]) <= 8).sort((a, b) => Math.abs(a - Q[0]) - Math.abs(b - Q[0]))[0]; if (bx !== undefined) { Q[0] = bx; gx = bx; } }
+  if (!onEdge || vert) { const by = lines.map(l => l[1]).filter(v => Math.abs(v - Q[1]) <= 8).sort((a, b) => Math.abs(a - Q[1]) - Math.abs(b - Q[1]))[0]; if (by !== undefined) { Q[1] = by; gy = by; } }
+  if (onEdge && !vert && !horiz) Q = sprSegNearest(Q, onEdge.sg);
+  showAlignGuides(gx !== null || (onEdge && vert) ? [{ at: Q[0] / Wp * 100, kind: 'room' }] : [], gy !== null || (onEdge && horiz) ? [{ at: Q[1] / Hp * 100, kind: 'room' }] : []);
+  return out(Q);
+}
+function sprSnapTip(room, o, x, y, e) {
+  if (e?.altKey) return [x, y];
+  const { Wp, Hp, pts, segs } = sprSnapGeo(room), H0 = [o.x / 100 * Wp, o.y / 100 * Hp], P = [x / 100 * Wp, y / 100 * Hp], out = v => [v[0] / Wp * 100, v[1] / Hp * 100];
+  const corner = pts.find(c => Math.hypot(c[0] - P[0], c[1] - P[1]) <= 12 && Math.hypot(c[0] - H0[0], c[1] - H0[1]) > 4); if (corner) return out(corner);
+  let ang = Math.atan2(P[0] - H0[0], -(P[1] - H0[1])) * 180 / Math.PI; const n = Math.round(ang / 45) * 45; if (Math.abs(n - ang) <= 6) ang = n;
+  const [vx, vy] = sprVec(ang); let len = Math.hypot(P[0] - H0[0], P[1] - H0[1]);
+  // The nearest wall straight ahead: the reach stops on it when the dot is near.
+  let hit = null; segs.forEach(([[ax, ay], [bx, by]]) => { const ex = bx - ax, ey = by - ay, den = vx * ey - vy * ex; if (Math.abs(den) < 1e-9) return; const t = ((ax - H0[0]) * ey - (ay - H0[1]) * ex) / den, u = ((ax - H0[0]) * vy - (ay - H0[1]) * vx) / den;
+    if (t > 4 && u >= 0 && u <= 1 && Math.abs(t - len) <= 12 && (hit === null || Math.abs(t - len) < Math.abs(hit - len))) hit = t; });
+  if (hit !== null) len = hit;
+  return out([H0[0] + vx * len, H0[1] + vy * len]);
 }
 function waterLayer() { let c = $('#water-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'water-layer'; c.className = 'rain-layer water-layer'; const rain = $('#rain-layer'); if (rain) rain.after(c); else $('#rooms').prepend(c); } return c; }
 function syncWater(view = activeSceneView()) {
