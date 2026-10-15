@@ -2155,3 +2155,15 @@ body.editing .cam-layer{z-index:4}
 .empty-bg-img img{display:block;width:100%;height:100%;object-fit:contain}
 .empty-bg-name{display:block;font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty-bg-gallery:not([hidden])~.empty-background-preview-wrap img{display:none}
+.spr-handle,.spr-tip{position:absolute;pointer-events:auto;touch-action:none;cursor:grab;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.55)}
+.spr-handle{width:16px;height:16px;margin:-8px 0 0 -8px;background:#2f9bff;border:2px solid #dff3ff}
+.spr-tip{width:12px;height:12px;margin:-6px 0 0 -6px;background:#fff;border:2px solid #2f9bff;cursor:crosshair}
+.spr-handle.selected{background:#5fd0ff;box-shadow:0 0 0 3px rgba(95,208,255,.45),0 1px 5px rgba(0,0,0,.55)}
+.spr-tip.selected{border-color:#5fd0ff}
+@media(pointer:coarse){.spr-handle{width:24px;height:24px;margin:-12px 0 0 -12px}.spr-tip{width:20px;height:20px;margin:-10px 0 0 -10px}}
+.spr-sub>summary{display:flex;align-items:center;gap:6px}
+.spr-sub.current>summary{color:#7fd6ff}
+.spr-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.18);flex:none}
+.spr-tools{margin-left:auto;display:inline-flex;gap:4px}
+.spr-tools button{display:grid;place-items:center;width:26px;height:26px;padding:0;border-radius:7px}
+.spr-count{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:rgba(47,155,255,.25);color:#cfeaff;font-size:10px}

@@ -1,3 +1,10 @@
+## 0.6.1-beta.768
+
+- Nowy element „Podlewanie” (w „+”): rysujesz obszar sekcji nawadniania i rozmieszczasz w nim animowane zraszacze. Pracują, gdy encja sekcji jest włączona (zawór / przełącznik).
+- Typy zraszaczy: Rotacyjny (strumień chodzi w kącie albo w kółko przy 360°), Udarowy (tyka krokami i wraca), Dyszowy (cały kąt naraz), Mgiełka. Każdy ma zasięg, kierunek, kąt pracy (10–360°), prędkość i moc; kierunek i kąt przyciągają co 45° (strzałki na suwaku).
+- W edycji: niebieska kropka przesuwa zraszacz, biała na końcu ustawia zasięg i kierunek (przyciąga co 45°, Alt wyłącza), zasięgi widać jako przerywane wycinki. Dodaj / duplikuj / usuń zraszacz w sekcji „Zraszacze”. Zraszacze przesuwają się razem z obszarem.
+- Wygląd: kolor wody (paleta niebieskich), krycie, mokra poświata, przycinanie do obszaru, głowice widoczne po wyłączeniu, klikalny obszar.
+
 ## 0.6.1-beta.767
 
 - Nowy widok → „Obraz z siatką”: istniejące tła są pokazane jako galeria miniatur z nazwami zamiast listy rozwijanej. Kliknięcie zaznacza tło, „Załaduj wybrane tło” je wczytuje.
