@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Budzenie kamery…':'Waking the camera…','Łączenie z obrazem…':'Connecting to the picture…','Kamera nie odpowiada':'The camera does not answer','Połączenie z kamerą nie powiodło się':'Connecting to the camera failed','Kamera offline':'Camera offline','ostatnia klatka':'last frame','Godzina klatki':'Frame time','Połysk (szkło)':'Gloss (glass)','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Ta kamera ma tylko WebRTC (np. Mammotion): „Na żywo” trzyma połączenie i pokazuje obraz na planie (na 4G zużywa pakiet danych urządzenia); pozostałe opcje pokazują ostatnią klatkę z podglądu.':'This camera only has WebRTC (e.g. Mammotion): “Live” keeps the connection and shows the picture on the plan (on 4G it uses the device’s data plan); the other options show the last frame from the preview.','Budzenie kamery…':'Waking the camera…','Łączenie z obrazem…':'Connecting to the picture…','Kamera nie odpowiada':'The camera does not answer','Połączenie z kamerą nie powiodło się':'Connecting to the camera failed','Kamera offline':'Camera offline','ostatnia klatka':'last frame','Godzina klatki':'Frame time','Połysk (szkło)':'Gloss (glass)','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -6349,8 +6349,38 @@ function applyMarkerStyle(node, marker) {
 }
 // ===== Camera live window =====
 // What a camera can stream (HA's camera/capabilities), asked once per camera.
-const camInfoCache = new Map();
-function camInfo(entityId) { if (!camInfoCache.has(entityId)) camInfoCache.set(entityId, fetch(`api/camera/info?entity=${encodeURIComponent(entityId)}`).then(r => r.json()).then(d => d?.types || []).catch(() => { camInfoCache.delete(entityId); return []; })); return camInfoCache.get(entityId); }
+const camInfoCache = new Map(), camInfoTypes = new Map();
+function camInfo(entityId) { if (!camInfoCache.has(entityId)) camInfoCache.set(entityId, fetch(`api/camera/info?entity=${encodeURIComponent(entityId)}`).then(r => r.json()).then(d => { const t = d?.types || []; camInfoTypes.set(entityId, t); return t; }).catch(() => { camInfoCache.delete(entityId); return []; })); return camInfoCache.get(entityId); }
+// One WebRTC connection per camera, shared by its tile (live) and its window: started on the first user, closed after the last.
+// The browser's offer goes with the ICE candidates gathered (some cameras - Mammotion / Agora - take none afterwards).
+const camRtc = new Map();
+function camRtcAcquire(entityId) {
+  let l = camRtc.get(entityId); if (l && l.state !== 'failed' && l.state !== 'closed') { l.users++; return l; }
+  l = { users: 1, state: 'waking', stream: new MediaStream(), watchers: new Set(), error: '' }; camRtc.set(entityId, l);
+  const set = st => { l.state = st; l.watchers.forEach(w => { try { w(st); } catch {} }); };
+  const fail = m => { if (l.state === 'closed') return; l.error = m || l.error; set('failed'); try { l.pc?.close(); } catch {} try { l.ws?.close(); } catch {} };
+  const ws = l.ws = new WebSocket(new URL('api/camera/webrtc', location.href).href.replace(/^http/, 'ws')), send = o => { if (ws.readyState === 1) ws.send(JSON.stringify(o)); };
+  let pc = null, sent = false, answered = false;
+  ws.onopen = () => send({ type: 'start', entity: entityId }); ws.onerror = () => fail(); ws.onclose = () => { if (!answered) fail(); };
+  ws.onmessage = async ev => { if (l.state === 'closed') return; let m; try { m = JSON.parse(ev.data); } catch { return; }
+    if (m.type === 'error') return fail(m.message);
+    if (m.type === 'config') {
+      const cfg = m.config || {}; pc = l.pc = new RTCPeerConnection(cfg.configuration || {});
+      pc.addTransceiver('video', { direction: 'recvonly' }); pc.addTransceiver('audio', { direction: 'recvonly' }); if (cfg.dataChannel) pc.createDataChannel(cfg.dataChannel);
+      pc.ontrack = e => { l.stream.addTrack(e.track); e.track.onunmute = () => set('playing'); };
+      const offer = () => { if (sent || !pc.localDescription) return; sent = true; send({ type: 'offer', sdp: pc.localDescription.sdp }); };
+      pc.onicecandidate = e => { if (!e.candidate) return offer(); if (sent) send({ type: 'candidate', candidate: e.candidate.toJSON() }); };
+      pc.onconnectionstatechange = () => { if (['failed', 'closed'].includes(pc.connectionState)) fail('Połączenie z kamerą nie powiodło się'); else if (pc.connectionState === 'connected') set('playing'); };
+      await pc.setLocalDescription(await pc.createOffer()); setTimeout(offer, 1200); return;
+    }
+    if (m.type !== 'event' || !pc) return; const e = m.event || {};
+    if (e.type === 'answer') { answered = true; set('answer'); try { await pc.setRemoteDescription({ type: 'answer', sdp: e.answer }); } catch (err) { fail(String(err?.message || err)); } }
+    else if (e.type === 'candidate' && e.candidate) { const cd = e.candidate; try { await pc.addIceCandidate(typeof cd === 'string' ? { candidate: cd, sdpMLineIndex: 0 } : cd); } catch {} }
+    else if (e.type === 'error') fail(e.message || e.code);
+  };
+  return l;
+}
+function camRtcRelease(entityId, l = camRtc.get(entityId)) { if (!l || l.state === 'closed' && l.users <= 0) return; if (--l.users > 0) return; l.state = 'closed'; if (camRtc.get(entityId) === l) camRtc.delete(entityId); try { l.pc?.close(); } catch {} try { l.ws?.close(); } catch {} l.stream.getTracks().forEach(t => t.stop?.()); }
 // A WebRTC-only camera has no stills: the last frame seen in its live window is kept (in this browser) and shown on its tile.
 const camFrames = new Map();
 function camLastFrame(entityId) { if (camFrames.has(entityId)) return camFrames.get(entityId); try { const v = JSON.parse(localStorage.getItem(`hav-cam-frame:${entityId}`) || 'null'); if (v?.src) { camFrames.set(entityId, v); return v; } } catch {} return null; }
@@ -6370,7 +6400,7 @@ function closeCameraLive() {
   try { c.hls?.destroy(); } catch {} try { c.video.pause(); c.video.removeAttribute('src'); c.video.load(); } catch {} c.img.removeAttribute('src');
   document.removeEventListener('keydown', c.onKey); if (c.onResize) removeEventListener('resize', c.onResize); if (c.onFs) document.removeEventListener('fullscreenchange', c.onFs);
   clearTimeout(c.idle); clearTimeout(c.tapT); clearInterval(c.grab); if (c.rtc && c.mode === 'hls') camGrab(c.video, c.entityId);
-  try { c.pc?.close(); } catch {} try { c.ws?.close(); } catch {} try { if (c.video.srcObject) c.video.srcObject = null; } catch {}
+  try { c.rtcUnwatch?.(); c.rtcRelease?.(); } catch {} try { if (c.video.srcObject) c.video.srcObject = null; } catch {}
   if (c.full) { try { screen.orientation?.unlock?.(); } catch {} if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); }
   // (back into its tile on the plan, when it came from one - not from full screen, whose size is changing back)
   const tile = !c.full && c.tileNode?.(); if (tile) { c.root.classList.add('closing'); flyCam(c.root, tile, false, () => c.root.remove()); } else c.root.remove();
@@ -6446,32 +6476,14 @@ function openCameraLive(entityId, room = null) {
       hls.on(Hls.Events.ERROR, (_, e) => { if (e?.fatal) mjpeg(); }); hls.loadSource(d.url); hls.attachMedia(video); hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
     }).catch(() => mjpeg());
   };
+  // WebRTC: one shared connection per camera (a Mammotion camera takes one viewer) - the window shows the tile's live picture
+  // when the tile already streams it (at once), otherwise it connects itself.
   const webrtc = () => {
-    c.rtc = true; clearTimeout(c.timer); setMsg('Budzenie kamery…'); let pc = null, sent = false, answered = false;
-    const ws = c.ws = new WebSocket(new URL('api/camera/webrtc', location.href).href.replace(/^http/, 'ws'));
-    const fail = m => { if (c.alive && c.mode !== 'hls') setMsg(m || 'Kamera nie odpowiada'); };
-    c.timer = setTimeout(() => fail('Kamera nie odpowiada'), 60000);
-    const send = o => { if (ws.readyState === 1) ws.send(JSON.stringify(o)); };
-    ws.onopen = () => send({ type: 'start', entity: entityId });
-    ws.onerror = () => fail(); ws.onclose = () => { if (!answered) fail(); };
-    ws.onmessage = async ev => { if (!c.alive) return; let m; try { m = JSON.parse(ev.data); } catch { return; }
-      if (m.type === 'error') return fail(`${translateValue('Kamera nie odpowiada')} (${m.message || ''})`);
-      if (m.type === 'config') {
-        const cfg = m.config || {}; pc = c.pc = new RTCPeerConnection(cfg.configuration || {});
-        pc.addTransceiver('video', { direction: 'recvonly' }); pc.addTransceiver('audio', { direction: 'recvonly' }); if (cfg.dataChannel) pc.createDataChannel(cfg.dataChannel);
-        const stream = new MediaStream(); video.srcObject = stream;
-        pc.ontrack = e => { stream.addTrack(e.track); video.play().catch(() => {}); };
-        // The offer goes with the candidates gathered (some cameras take none afterwards), at the latest after 1.2 s.
-        const offer = () => { if (sent || !pc.localDescription) return; sent = true; send({ type: 'offer', sdp: pc.localDescription.sdp }); };
-        pc.onicecandidate = e => { if (!e.candidate) return offer(); if (sent) send({ type: 'candidate', candidate: e.candidate.toJSON() }); };
-        pc.onconnectionstatechange = () => { if (pc.connectionState === 'failed') fail('Połączenie z kamerą nie powiodło się'); };
-        await pc.setLocalDescription(await pc.createOffer()); setTimeout(offer, 1200); return;
-      }
-      if (m.type !== 'event' || !pc) return; const e = m.event || {};
-      if (e.type === 'answer') { answered = true; setMsg('Łączenie z obrazem…'); try { await pc.setRemoteDescription({ type: 'answer', sdp: e.answer }); } catch (err) { fail(String(err?.message || err)); } }
-      else if (e.type === 'candidate' && e.candidate) { const cd = e.candidate; try { await pc.addIceCandidate(typeof cd === 'string' ? { candidate: cd, sdpMLineIndex: 0 } : cd); } catch {} }
-      else if (e.type === 'error') fail(`${translateValue('Kamera nie odpowiada')} (${e.message || e.code || ''})`);
-    };
+    c.rtc = true; clearTimeout(c.timer); const live = camRtcAcquire(entityId); c.rtcRelease = () => camRtcRelease(entityId, live);
+    const show = st => { if (!c.alive || c.mode === 'hls') return; if (st === 'failed') setMsg(live.error ? `${translateValue('Kamera nie odpowiada')} (${live.error})` : 'Kamera nie odpowiada'); else if (st === 'answer') setMsg('Łączenie z obrazem…'); else if (st !== 'playing') setMsg('Budzenie kamery…'); };
+    live.watchers.add(show); c.rtcUnwatch = () => live.watchers.delete(show); show(live.state);
+    video.srcObject = live.stream; video.play().catch(() => {});
+    c.timer = setTimeout(() => { if (c.mode !== 'hls') setMsg('Kamera nie odpowiada'); }, 60000);
   };
   camInfo(entityId).then(types => { if (!c.alive) return; const rtcOnly = types.includes('web_rtc') && !types.includes('hls'); firstStill(rtcOnly); if (rtcOnly && window.RTCPeerConnection) webrtc(); else hlsStart(); });
   mute.addEventListener('click', () => { video.muted = !video.muted; if (!video.muted) video.play().catch(() => {}); mute.setAttribute('aria-pressed', String(!video.muted)); mute.querySelector('i').className = `mdi ${video.muted ? 'mdi-volume-off' : 'mdi-volume-high'}`; });
@@ -9765,7 +9777,7 @@ function renderCameras() {
   cams.forEach(c => {
     let n = layer.querySelector(`.cam-el[data-cam-id="${CSS.escape(c.id)}"]`);
     if (!n) { n = document.createElement('div'); n.className = 'cam-el'; n.dataset.camId = c.id;
-      n.innerHTML = `<img class="cam-a" alt="" draggable="false"><img class="cam-b" alt="" draggable="false"><span class="cam-el-gloss"></span><span class="cam-el-play"><i class="mdi mdi-play"></i></span><span class="cam-el-live"><i></i></span><span class="cam-el-empty"><i class="mdi mdi-cctv"></i></span>`
+      n.innerHTML = `<img class="cam-a" alt="" draggable="false"><img class="cam-b" alt="" draggable="false"><video class="cam-v" muted playsinline autoplay></video><span class="cam-el-gloss"></span><span class="cam-el-play"><i class="mdi mdi-play"></i></span><span class="cam-el-live"><i></i></span><span class="cam-el-empty"><i class="mdi mdi-cctv"></i></span>`
         + `<span class="cam-el-off"><i class="mdi mdi-cctv-off"></i><b>${escapeHtml(translateValue('Kamera offline'))}</b><small></small></span><span class="cam-el-bar"><span class="cam-el-name"></span><span class="cam-el-time"></span></span>`
         + ['nw','ne','sw','se'].map(k => `<i class="cam-el-dot ${k}" data-cam-corner="${k}"></i>`).join('');
       n.addEventListener('pointerdown', camPointerDown); n.addEventListener('click', camClick); layer.appendChild(n); }
@@ -9781,7 +9793,7 @@ function placeCam(n, c) {
   const bw = clamp(Number(r.borderWidth) || 0, 0, 12) * k, op = clamp(Number(r.borderOpacity ?? 35), 0, 100) / 100;
   n.style.boxShadow = [r.border && bw > 0 ? `inset 0 0 0 ${bw}px ${rgba(r.borderColor || '#FFFFFF', op)}` : '', `0 ${12 * k}px ${32 * k}px rgba(0,0,0,.45)`, `0 ${2 * k}px ${6 * k}px rgba(0,0,0,.35)`].filter(Boolean).join(',');
   n.style.setProperty('--cam-k', String(k)); n.classList.toggle('gloss', r.gloss !== false);
-  n.querySelectorAll('img').forEach(img => { img.style.objectFit = r.fit === 'contain' ? 'contain' : 'cover'; });
+  n.querySelectorAll('img, video').forEach(img => { img.style.objectFit = r.fit === 'contain' ? 'contain' : 'cover'; });
   const name = n.querySelector('.cam-el-name'); name.textContent = r.showName && r.name ? r.name : '';
   const time = n.querySelector('.cam-el-time'); time.hidden = r.showTime === false; n.classList.toggle('no-bar', !(r.showName && r.name) && r.showTime === false);
   n.querySelector('.cam-el-live').hidden = !r.live; n.classList.toggle('sel', !!editMode && selectedCamId === c.id); n.classList.toggle('no-entity', !c.entityId);
@@ -9795,14 +9807,29 @@ function camShowFrame(n, v) {
   const [a, b] = n.querySelectorAll('img'); a.src = v.src; a.classList.add('on'); a.style.zIndex = '2'; b.classList.remove('on'); n.classList.add('has-pic'); n.classList.remove('offline');
   const time = n.querySelector('.cam-el-time'); if (time) time.textContent = camClock(new Date(v.t));
 }
-function stopCamFeed(n) { const f = n._feed; if (!f) return; clearInterval(f.timer); clearInterval(f.tick); f.dead = true; if (f.live) n.querySelectorAll('img').forEach(i => i.removeAttribute('src')); n._feed = null; }
+// "Na żywo" on a WebRTC-only camera: the tile keeps the connection (reconnecting after a drop) and shows the video; its frame is
+// kept every 5 s as the last frame.
+function camTileRtc(n, c, f) {
+  if (f.dead) return; const vid = n.querySelector('video.cam-v'), l = f.rtcLive = camRtcAcquire(c.entityId); f.rtcEntity = c.entityId;
+  vid.srcObject = l.stream; vid.play().catch(() => {});
+  const watch = st => { if (f.dead) return; n.classList.toggle('rtc-live', st === 'playing'); if (st === 'playing') { n.classList.add('has-pic'); n.classList.remove('offline'); }
+    if (st === 'failed') { l.watchers.delete(watch); camRtcRelease(c.entityId, l); f.rtcLive = null; n.classList.remove('rtc-live'); f.rtcFails = (f.rtcFails || 0) + 1;
+      // (taken over by another viewer - e.g. the Mammotion app on the same account: the tile waits 2 min not to snatch it back; otherwise a growing pause)
+      const takenOver = /took over|another camera|gateway/i.test(l.error || ''); f.retry = setTimeout(() => camTileRtc(n, c, f), takenOver ? 120000 : Math.min(120000, 10000 * 2 ** Math.min(4, f.rtcFails - 1))); }
+    if (st === 'playing') f.rtcFails = 0; };
+  l.watchers.add(watch); f.rtcUnwatch = () => l.watchers.delete(watch); watch(l.state);
+  clearInterval(f.grab); f.grab = setInterval(() => { if (n.classList.contains('rtc-live')) { camGrab(vid, c.entityId); n.querySelector('.cam-el-time').textContent = camClock(new Date()); } }, 5000);
+}
+function stopCamFeed(n) { const f = n._feed; if (!f) return; clearInterval(f.timer); clearInterval(f.tick); clearInterval(f.grab); clearTimeout(f.retry); f.dead = true;
+  if (f.rtcLive) { f.rtcUnwatch?.(); camRtcRelease(f.rtcEntity, f.rtcLive); f.rtcLive = null; const v = n.querySelector('video.cam-v'); if (v) v.srcObject = null; n.classList.remove('rtc-live'); } if (f.live) n.querySelectorAll('img').forEach(i => i.removeAttribute('src')); n._feed = null; }
 function camFeed(n, c) {
   const live = Number(c.refresh) === 0, key = `${c.entityId}|${c.refresh}|${document.hidden ? 'h' : 'v'}`; if (n._feed?.key === key) return;
   const fails0 = n._feed?.fails || 0; stopCamFeed(n); if (!c.entityId || document.hidden) { n._feed = { key, timer: 0, fails: fails0 }; return; }
   const [a, b] = n.querySelectorAll('img'), q = encodeURIComponent(c.entityId), f = n._feed = { key, timer: 0, live, fails: 0, front: a, z: 1 };
   // A camera that only streams WebRTC gives no stills (its "picture" is a placeholder): the tile shows the last frame seen live.
   camInfo(c.entityId).then(types => { if (f.dead) return; f.rtc = types.includes('web_rtc') && !types.includes('hls'); n.classList.toggle('rtc', f.rtc);
-    if (!f.rtc) return go(); n.classList.remove('offline'); const v = camLastFrame(c.entityId); if (v) camShowFrame(n, v); else { a.classList.remove('on'); b.classList.remove('on'); n.classList.remove('has-pic'); } });
+    if (!f.rtc) return go(); n.classList.remove('offline'); const v = camLastFrame(c.entityId); if (v) camShowFrame(n, v); else { a.classList.remove('on'); b.classList.remove('on'); n.classList.remove('has-pic'); }
+    if (live && window.RTCPeerConnection) camTileRtc(n, c, f); });
   const time = n.querySelector('.cam-el-time'), off = n.querySelector('.cam-el-off small');
   const got = () => { if (f.rtc) return; f.fails = 0; f.last = new Date(); time.textContent = camClock(f.last); n.classList.add('has-pic'); n.classList.remove('offline'); };
   const lost = () => { if (f.dead || f.rtc) return; f.fails++; if (f.fails >= 2 || live) { n.classList.add('offline'); off.textContent = f.last ? `${translateValue('ostatnia klatka')} ${camClock(f.last)}` : ''; } };
@@ -9884,7 +9911,7 @@ function camEditorMarkup(c) {
     + control('Pokaż nazwę', 'showName', 'checkbox', !!r.showName) + control('Godzina klatki', 'showTime', 'checkbox', r.showTime !== false) + control('Znacznik „na żywo”', 'live', 'checkbox', !!r.live), true);
   const picture = section('Obraz', control('Odświeżanie', 'refresh', 'select', String(Number(r.refresh) || 0), { items: CAM_REFRESH, dropdown: true })
     + control('Dopasowanie', 'fit', 'select', r.fit === 'contain' ? 'contain' : 'cover', { items: [['cover', 'Wypełnij'], ['contain', 'Cały obraz']] })
-    + `<p class="flow-section-note">${escapeHtml(translateValue('„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.'))}</p>`);
+    + `<p class="flow-section-note">${escapeHtml(translateValue(camInfoTypes.get(c.entityId)?.includes('web_rtc') && !camInfoTypes.get(c.entityId)?.includes('hls') ? 'Ta kamera ma tylko WebRTC (np. Mammotion): „Na żywo” trzyma połączenie i pokazuje obraz na planie (na 4G zużywa pakiet danych urządzenia); pozostałe opcje pokazują ostatnią klatkę z podglądu.' : '„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.'))}</p>`);
   const size = section('Rozmiar', control('Szerokość', 'camW', 'range', wpx, { min: 40, max: Math.max(1200, wpx), step: 1, suffix: 'px', integer: true }) + control('Wysokość', 'camH', 'range', hpx, { min: 30, max: Math.max(1200, hpx), step: 1, suffix: 'px', integer: true })
     + `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Proporcje'))}</label><div class="cam-ratios">${[['16:9', 16 / 9], ['4:3', 4 / 3], ['1:1', 1], ['9:16', 9 / 16]].map(([t, v]) => `<button type="button" class="seg-btn text" data-cam-ratio="${v}"><span>${t}</span></button>`).join('')}</div></div>`
     + `<p class="flow-section-note">${escapeHtml(translateValue('Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).'))}</p>`);

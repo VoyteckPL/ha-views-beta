@@ -1,3 +1,7 @@
+## 0.6.1-beta.761
+
+- Kamery tylko z WebRTC (Mammotion…): „Odświeżanie → Na żywo” pokazuje obraz na żywo na planie (połączenie WebRTC trzymane przez kafel, ponawiane po zerwaniu z rosnącą przerwą; gdy obraz przejmie inny widz, np. aplikacja Mammotion, kafel czeka 2 min, żeby jej nie wyrzucać). Okno podglądu korzysta z tego samego połączenia – otwiera się od razu, bez drugiego łączenia. Ostatnia klatka zapisywana co 5 s.
+
 ## 0.6.1-beta.760
 
 - Kamery tylko z WebRTC (np. kosiarki Mammotion / Agora, Nest): podgląd na żywo przez WebRTC – dodatek przekazuje ofertę, odpowiedź i kandydatów ICE do HA (WebSocket przez ingress). Dla takich kamer połączenie startuje od razu (bez prób HLS / MJPEG), kandydaci zbierani przed ofertą (Mammotion nie przyjmuje ich później), komunikaty „Budzenie kamery…” / „Łączenie z obrazem…”.
