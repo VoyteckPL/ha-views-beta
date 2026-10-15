@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Kamera offline':'Camera offline','ostatnia klatka':'last frame','Godzina klatki':'Frame time','Połysk (szkło)':'Gloss (glass)','Anuluj dodawanie':'Cancel adding','Nazwa kamery':'Camera name','Wybierz kamerę (encję camera).':'Pick the camera (a camera entity).','Utwórz kamerę':'Create camera','Dodano kamerę':'Camera added','Anulowano dodawanie':'Adding cancelled','Pełny ekran (poziomo)':'Full screen (landscape)','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -6356,8 +6356,24 @@ function closeCameraLive() {
   const c = camLive; camLive = null; if (!c) return; c.alive = false; clearTimeout(c.timer); clearInterval(c.watch);
   try { c.hls?.destroy(); } catch {} try { c.video.pause(); c.video.removeAttribute('src'); c.video.load(); } catch {} c.img.removeAttribute('src');
   document.removeEventListener('keydown', c.onKey); if (c.onResize) removeEventListener('resize', c.onResize); if (c.onFs) document.removeEventListener('fullscreenchange', c.onFs);
+  clearTimeout(c.idle); clearTimeout(c.tapT);
   if (c.full) { try { screen.orientation?.unlock?.(); } catch {} if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); }
-  c.root.remove();
+  // (back into its tile on the plan, when it came from one - not from full screen, whose size is changing back)
+  const tile = !c.full && c.tileNode?.(); if (tile) { c.root.classList.add('closing'); flyCam(c.root, tile, false, () => c.root.remove()); } else c.root.remove();
+}
+// The window grows out of the camera's tile: the tile's last frame flies from its place on the plan to the window
+// (turned with it in a turned full screen), the window fades in over it; on closing it flies back.
+function camFlyGeom(root) { const v = root.querySelector('.cam-live-view').getBoundingClientRect(), rot = root.classList.contains('rot'), cx = v.left + v.width / 2, cy = v.top + v.height / 2, w = rot ? v.height : v.width, h = rot ? v.width : v.height; return { left: cx - w / 2, top: cy - h / 2, width: w, height: h, rot }; }
+function flyCam(root, tile, opening, done) {
+  const img = tile?.querySelector('img.on') || tile?.querySelector('img'), src = img?.currentSrc || img?.src, win = root.querySelector('.cam-live-win');
+  if (!tile || !src || !root.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) { done?.(); return; }
+  const t = tile.getBoundingClientRect(), g = camFlyGeom(root), radius = getComputedStyle(tile).borderRadius, ghost = document.createElement('div');
+  ghost.className = 'cam-fly'; ghost.style.backgroundImage = `url("${src.replace(/"/g, '%22')}")`; ghost.style.backgroundSize = img.style.objectFit === 'contain' ? 'contain' : 'cover'; document.body.appendChild(ghost);
+  const A = { left: `${t.left}px`, top: `${t.top}px`, width: `${t.width}px`, height: `${t.height}px`, transform: 'rotate(0deg)', borderRadius: radius }, B = { left: `${g.left}px`, top: `${g.top}px`, width: `${g.width}px`, height: `${g.height}px`, transform: g.rot ? 'rotate(90deg)' : 'rotate(0deg)', borderRadius: root.classList.contains('full') ? '0px' : '12px' };
+  win.style.opacity = '0';
+  const anim = ghost.animate(opening ? [A, B] : [B, A], { duration: opening ? 340 : 280, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+  const end = () => { if (opening) { win.style.opacity = ''; win.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 160 }); } ghost.remove(); done?.(); };
+  anim.finished.then(end, end);
 }
 function openCameraLive(entityId, room = null) {
   closeCameraLive(); if (!entityId) return;
@@ -6372,6 +6388,10 @@ function openCameraLive(entityId, room = null) {
   const $q = sel => root.querySelector(sel), img = $q('.cam-live-img'), video = $q('.cam-live-video'), stage = $q('.cam-live-stage'), view = $q('.cam-live-view'), msg = $q('.cam-live-msg'), mute = $q('.cam-live-mute'), zoomTag = $q('.cam-live-zoom');
   const c = camLive = { root, img, video, hls: null, alive: true, timer: 0, full, onKey: e => { if (e.key === 'Escape') closeCameraLive(); } };
   document.addEventListener('keydown', c.onKey);
+  c.tileNode = () => room?.tileId ? $(`#cam-layer .cam-el[data-cam-id="${CSS.escape(room.tileId)}"]`) : null;
+  // Full screen: the bar hides by itself after 3 s; a tap brings it back (or hides it).
+  const wake = () => { root.classList.remove('chrome-off'); clearTimeout(c.idle); if (full) c.idle = setTimeout(() => root.classList.add('chrome-off'), 3000); };
+  c.toggleChrome = () => { if (root.classList.contains('chrome-off')) wake(); else { clearTimeout(c.idle); root.classList.add('chrome-off'); } };
   // Full screen, landscape: the browser's full screen and the screen turned when the phone allows it; otherwise (an iPhone,
   // a locked rotation) the picture itself is turned a quarter, so it fills a phone held upright as landscape.
   if (full) {
@@ -6381,6 +6401,7 @@ function openCameraLive(entityId, room = null) {
     try { Promise.resolve(root.requestFullscreen?.({ navigationUI: 'hide' })).then(() => screen.orientation?.lock?.('landscape')).catch(() => {}).finally(() => setTimeout(() => c.onResize?.(), 350)); } catch {}
   }
   $q('.cam-live-close').addEventListener('click', closeCameraLive); $q('.cam-live-backdrop').addEventListener('click', closeCameraLive);
+  wake(); requestAnimationFrame(() => flyCam(root, c.tileNode(), true));
   const setMsg = t => { msg.textContent = t ? translateValue(t) : ''; msg.hidden = !t; };
   setMsg('Łączenie z kamerą…');
   img.onload = () => { if (c.alive && !root.classList.contains('playing')) setMsg(''); }; img.src = `api/camera/snapshot?entity=${q}&t=${Date.now()}`;
@@ -6412,13 +6433,24 @@ function openCameraLive(entityId, room = null) {
   const apply = () => { const w = view.clientWidth, h = view.clientHeight, mx = (z - 1) * w / 2, my = (z - 1) * h / 2; tx = clamp(tx, -mx, mx); ty = clamp(ty, -my, my); stage.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`; zoomTag.textContent = z > 1.01 ? `${z.toFixed(1)}×` : ''; };
   const zoomAt = (nz, cx, cy) => { const r = view.getBoundingClientRect(), [px, py] = local(cx - r.left - r.width / 2, cy - r.top - r.height / 2); nz = clamp(nz, 1, 8); tx = px - (px - tx) * nz / z; ty = py - (py - ty) * nz / z; z = nz; apply(); };
   view.addEventListener('wheel', e => { e.preventDefault(); zoomAt(z * Math.exp(-e.deltaY * .001), e.clientX, e.clientY); }, { passive: false });
+  // One finger down on an unzoomed picture: a swipe down closes the window (the picture follows the finger); a still tap shows /
+  // hides the bar in full screen.
+  let swipe = null; const backdrop = $q('.cam-live-backdrop');
   view.addEventListener('pointerdown', e => { view.setPointerCapture?.(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 1) { swipe = { x: e.clientX, y: e.clientY, dy: 0, moved: false, t: Date.now() }; if (Date.now() - lastTap < 300) clearTimeout(c.tapT); } else swipe = null;
     if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, z, cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2 }; pan = null; }
     else if (pts.size === 1) { pan = { x: e.clientX, y: e.clientY, tx, ty }; const now = Date.now(); if (now - lastTap < 300) { if (z > 1.01) { z = 1; tx = ty = 0; apply(); } else zoomAt(2.5, e.clientX, e.clientY); lastTap = 0; } else lastTap = now; } });
   view.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, [e.clientX, e.clientY]);
     if (pinch && pts.size >= 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); zoomAt(pinch.z * d / pinch.d, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); }
-    else if (pan && z > 1.01) { const [dx, dy] = local(e.clientX - pan.x, e.clientY - pan.y); tx = pan.tx + dx; ty = pan.ty + dy; apply(); } });
-  const lift = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (pts.size === 1) { const [p] = [...pts.values()]; pan = { x: p[0], y: p[1], tx, ty }; } else if (!pts.size) pan = null; };
+    else if (pan && z > 1.01) { const [dx, dy] = local(e.clientX - pan.x, e.clientY - pan.y); tx = pan.tx + dx; ty = pan.ty + dy; apply(); }
+    if (swipe && pts.size === 1) { const [dx, dy] = local(e.clientX - swipe.x, e.clientY - swipe.y); if (Math.hypot(dx, dy) > 8) swipe.moved = true;
+      if (z <= 1.01 && dy > 0 && dy > Math.abs(dx)) { swipe.dy = dy; stage.style.transition = 'none'; stage.style.transform = `translate(0px, ${dy}px) scale(${1 - Math.min(dy, 500) / 2500})`; backdrop.style.opacity = String(Math.max(.2, 1 - dy / 450)); } } });
+  const lift = e => {
+    if (swipe && pts.size === 1 && pts.has(e.pointerId)) { const sw = swipe; swipe = null;
+      if (sw.dy > 110 && e.type === 'pointerup') { pts.clear(); pinch = pan = null; return closeCameraLive(); }
+      if (sw.dy) { stage.style.transition = 'transform .22s ease'; backdrop.style.opacity = ''; apply(); setTimeout(() => { stage.style.transition = ''; }, 240); }
+      else if (!sw.moved && e.type === 'pointerup' && Date.now() - sw.t < 400 && full) { clearTimeout(c.tapT); c.tapT = setTimeout(() => c.toggleChrome(), 300); } }
+    pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (pts.size === 1) { const [p] = [...pts.values()]; pan = { x: p[0], y: p[1], tx, ty }; } else if (!pts.size) pan = null; };
   view.addEventListener('pointerup', lift); view.addEventListener('pointercancel', lift);
 }
 function closeMoreInfo() {
@@ -9660,7 +9692,7 @@ boot();
 // few seconds, as set. A tap in view mode opens the live window (openCameraLive). In edit mode it is moved by dragging
 // and sized by its corner dots; its panel holds its settings.
 const CAM_REFRESH = [['0','Na żywo'],['2','Co 2 s'],['5','Co 5 s'],['10','Co 10 s'],['30','Co 30 s'],['60','Co 1 min'],['300','Co 5 min']];
-const CAM_DEFAULTS = Object.freeze({ refresh: 5, fit: 'cover', radius: 12, border: true, borderColor: '#FFFFFF', borderWidth: 1.5, borderOpacity: 35, showName: true, live: true, orient: 'landscape', tap: 'live' });
+const CAM_DEFAULTS = Object.freeze({ refresh: 5, fit: 'cover', radius: 14, border: true, borderColor: '#FFFFFF', borderWidth: 1, borderOpacity: 28, showName: true, showTime: true, gloss: true, live: true, orient: 'landscape', tap: 'live' });
 const CAM_NEW_PX = [320, 180];
 let selectedCamId = null, camEditorEl = null;
 const camsOf = (view = activeSceneView()) => view?.cameras || {};
@@ -9685,7 +9717,9 @@ function renderCameras() {
   cams.forEach(c => {
     let n = layer.querySelector(`.cam-el[data-cam-id="${CSS.escape(c.id)}"]`);
     if (!n) { n = document.createElement('div'); n.className = 'cam-el'; n.dataset.camId = c.id;
-      n.innerHTML = `<img alt="" draggable="false"><span class="cam-el-name"></span><span class="cam-el-live"><i></i></span><span class="cam-el-empty"><i class="mdi mdi-cctv"></i></span>${['nw','ne','sw','se'].map(k => `<i class="cam-el-dot ${k}" data-cam-corner="${k}"></i>`).join('')}`;
+      n.innerHTML = `<img class="cam-a" alt="" draggable="false"><img class="cam-b" alt="" draggable="false"><span class="cam-el-gloss"></span><span class="cam-el-live"><i></i></span><span class="cam-el-empty"><i class="mdi mdi-cctv"></i></span>`
+        + `<span class="cam-el-off"><i class="mdi mdi-cctv-off"></i><b>${escapeHtml(translateValue('Kamera offline'))}</b><small></small></span><span class="cam-el-bar"><span class="cam-el-name"></span><span class="cam-el-time"></span></span>`
+        + ['nw','ne','sw','se'].map(k => `<i class="cam-el-dot ${k}" data-cam-corner="${k}"></i>`).join('');
       n.addEventListener('pointerdown', camPointerDown); n.addEventListener('click', camClick); layer.appendChild(n); }
     keep.add(n); placeCam(n, c); camFeed(n, c);
   });
@@ -9695,23 +9729,33 @@ function renderCameras() {
 function placeCam(n, c) {
   const b = c.box || { x: 40, y: 40, w: 20, h: 20 }, k = camK(), r = { ...CAM_DEFAULTS, ...c };
   Object.assign(n.style, { left: `${b.x}%`, top: `${b.y}%`, width: `${b.w}%`, height: `${b.h}%`, borderRadius: `${clamp(Number(r.radius) || 0, 0, 120) * k}px` });
+  // Glass: a light edge, a soft highlight across the top and a deep soft shadow under it (the frame's colour / width / opacity as set).
   const bw = clamp(Number(r.borderWidth) || 0, 0, 12) * k, op = clamp(Number(r.borderOpacity ?? 35), 0, 100) / 100;
-  n.style.boxShadow = r.border && bw > 0 ? `inset 0 0 0 ${bw}px ${rgba(r.borderColor || '#FFFFFF', op)}, 0 6px 18px rgba(0,0,0,.28)` : '0 6px 18px rgba(0,0,0,.28)';
-  n.style.setProperty('--cam-k', String(k));
-  const img = n.querySelector('img'); img.style.objectFit = r.fit === 'contain' ? 'contain' : 'cover';
-  const name = n.querySelector('.cam-el-name'); name.textContent = r.name || ''; name.hidden = !r.showName || !r.name;
+  n.style.boxShadow = [r.border && bw > 0 ? `inset 0 0 0 ${bw}px ${rgba(r.borderColor || '#FFFFFF', op)}` : '', `0 ${12 * k}px ${32 * k}px rgba(0,0,0,.45)`, `0 ${2 * k}px ${6 * k}px rgba(0,0,0,.35)`].filter(Boolean).join(',');
+  n.style.setProperty('--cam-k', String(k)); n.classList.toggle('gloss', r.gloss !== false);
+  n.querySelectorAll('img').forEach(img => { img.style.objectFit = r.fit === 'contain' ? 'contain' : 'cover'; });
+  const name = n.querySelector('.cam-el-name'); name.textContent = r.showName && r.name ? r.name : '';
+  const time = n.querySelector('.cam-el-time'); time.hidden = r.showTime === false; n.classList.toggle('no-bar', !(r.showName && r.name) && r.showTime === false);
   n.querySelector('.cam-el-live').hidden = !r.live; n.classList.toggle('sel', !!editMode && selectedCamId === c.id); n.classList.toggle('no-entity', !c.entityId);
+  n.classList.toggle('offline', !!c.entityId && (n._feed?.fails >= 2 || /^(unavailable|unknown)$/.test(String(stateCache[c.entityId]?.state || ''))));
 }
-// The picture: live (MJPEG, one open connection) or a still swapped in when the next one has loaded (no flicker). Nothing
-// is fetched while the page is hidden.
-function stopCamFeed(n) { const f = n._feed; if (!f) return; clearInterval(f.timer); f.dead = true; if (f.live) n.querySelector('img')?.removeAttribute('src'); n._feed = null; }
+// The picture: live (MJPEG, one open connection) or a still every few seconds, the next one fading in over the last. The time
+// of the last frame is shown; a camera that gives no picture (or is unavailable in HA) shows "Kamera offline" over its last
+// frame. Nothing is fetched while the page is hidden.
+const camClock = d => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+function stopCamFeed(n) { const f = n._feed; if (!f) return; clearInterval(f.timer); clearInterval(f.tick); f.dead = true; if (f.live) n.querySelectorAll('img').forEach(i => i.removeAttribute('src')); n._feed = null; }
 function camFeed(n, c) {
   const live = Number(c.refresh) === 0, key = `${c.entityId}|${c.refresh}|${document.hidden ? 'h' : 'v'}`; if (n._feed?.key === key) return;
-  stopCamFeed(n); if (!c.entityId || document.hidden) { n._feed = { key, timer: 0 }; return; }
-  const img = n.querySelector('img'), q = encodeURIComponent(c.entityId), f = n._feed = { key, timer: 0, live };
-  img.onload = () => n.classList.add('has-pic'); img.onerror = () => { if (f.dead) return; n.classList.remove('has-pic'); if (live) setTimeout(() => { if (!f.dead) img.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; }, 5000); };
-  if (live) { img.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; return; }
-  const still = () => { const pre = new Image(); pre.onload = () => { if (!f.dead) img.src = pre.src; }; pre.src = `api/camera/snapshot?entity=${q}&t=${Date.now()}`; };
+  const fails0 = n._feed?.fails || 0; stopCamFeed(n); if (!c.entityId || document.hidden) { n._feed = { key, timer: 0, fails: fails0 }; return; }
+  const [a, b] = n.querySelectorAll('img'), q = encodeURIComponent(c.entityId), f = n._feed = { key, timer: 0, live, fails: 0, front: a, z: 1 };
+  const time = n.querySelector('.cam-el-time'), off = n.querySelector('.cam-el-off small');
+  const got = () => { f.fails = 0; f.last = new Date(); time.textContent = camClock(f.last); n.classList.add('has-pic'); n.classList.remove('offline'); };
+  const lost = () => { if (f.dead) return; f.fails++; if (f.fails >= 2 || live) { n.classList.add('offline'); off.textContent = f.last ? `${translateValue('ostatnia klatka')} ${camClock(f.last)}` : ''; } };
+  if (live) { a.classList.add('on'); b.classList.remove('on'); a.onload = got; a.onerror = () => { lost(); setTimeout(() => { if (!f.dead) a.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; }, 5000); };
+    a.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; f.tick = setInterval(() => { if (n.classList.contains('has-pic') && !n.classList.contains('offline')) time.textContent = camClock(new Date()); }, 1000); return; }
+  const still = () => { const pre = new Image(); pre.onload = () => { if (f.dead) return; const back = f.front === a ? b : a, front = f.front; back.style.zIndex = '2'; front.style.zIndex = '1'; back.src = pre.src; back.classList.add('on'); f.front = back; got();
+      setTimeout(() => { if (!f.dead && f.front === back) front.classList.remove('on'); }, 520); };
+    pre.onerror = lost; pre.src = `api/camera/snapshot?entity=${q}&t=${Date.now()}`; };
   still(); f.timer = setInterval(still, clamp(Number(c.refresh) || 5, 1, 3600) * 1000);
 }
 document.addEventListener('visibilitychange', () => { const layer = $('#cam-layer'); if (!layer) return; Object.values(camsOf()).forEach(c => { const n = layer.querySelector(`.cam-el[data-cam-id="${CSS.escape(c.id)}"]`); if (n) camFeed(n, c); }); });
@@ -9725,7 +9769,7 @@ function camPointerDown(event) {
   // View mode: a tap (no plan pan, short) opens the live window - on release, as the plan may take the pointer for panning.
   if (!editMode) { const sx = event.clientX, sy = event.clientY, t0 = performance.now(), id = event.pointerId; n.dataset.dragged = '1';
     const up = e => { if (e.pointerId !== id) return; window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true);
-      if (e.type === 'pointerup' && Math.hypot(e.clientX - sx, e.clientY - sy) <= 8 && performance.now() - t0 < 800 && c.tap !== 'none' && c.entityId) openCameraLive(c.entityId, { name: c.name, cameraOrient: c.orient, full: c.tap === 'full' }); };
+      if (e.type === 'pointerup' && Math.hypot(e.clientX - sx, e.clientY - sy) <= 8 && performance.now() - t0 < 800 && c.tap !== 'none' && c.entityId) openCameraLive(c.entityId, { name: c.name, cameraOrient: c.orient, full: c.tap === 'full', tileId: c.id }); };
     window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); return; }
   if (event.button !== 0) return; const corner = event.target.closest('[data-cam-corner]')?.dataset.camCorner;
   if (!corner && touchSelectFirst(event, selectedCamId === c.id, () => openCamEditor(c.id))) return;
@@ -9780,14 +9824,14 @@ function camEditorMarkup(c) {
   const cams = [...new Set([...Object.keys(stateCache).filter(id => /^camera\./.test(id)), ...(entityCatalog?.entities || []).map(e => e.entity_id).filter(id => /^camera\./.test(id)), ...(c.entityId ? [c.entityId] : [])])].sort();
   const camName = id => stateCache[id]?.attributes?.friendly_name || (entityCatalog?.entities || []).find(e => e.entity_id === id)?.name || id;
   const general = section('Ogólne', control('Nazwa', 'name', 'text', r.name || '') + control('Kamera', 'entityId', 'select', c.entityId || '', { items: [['', '—'], ...cams.map(id => [id, camName(id)])], dropdown: true })
-    + control('Pokaż nazwę', 'showName', 'checkbox', !!r.showName) + control('Znacznik „na żywo”', 'live', 'checkbox', !!r.live), true);
+    + control('Pokaż nazwę', 'showName', 'checkbox', !!r.showName) + control('Godzina klatki', 'showTime', 'checkbox', r.showTime !== false) + control('Znacznik „na żywo”', 'live', 'checkbox', !!r.live), true);
   const picture = section('Obraz', control('Odświeżanie', 'refresh', 'select', String(Number(r.refresh) || 0), { items: CAM_REFRESH, dropdown: true })
     + control('Dopasowanie', 'fit', 'select', r.fit === 'contain' ? 'contain' : 'cover', { items: [['cover', 'Wypełnij'], ['contain', 'Cały obraz']] })
     + `<p class="flow-section-note">${escapeHtml(translateValue('„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.'))}</p>`);
   const size = section('Rozmiar', control('Szerokość', 'camW', 'range', wpx, { min: 40, max: Math.max(1200, wpx), step: 1, suffix: 'px', integer: true }) + control('Wysokość', 'camH', 'range', hpx, { min: 30, max: Math.max(1200, hpx), step: 1, suffix: 'px', integer: true })
     + `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Proporcje'))}</label><div class="cam-ratios">${[['16:9', 16 / 9], ['4:3', 4 / 3], ['1:1', 1], ['9:16', 9 / 16]].map(([t, v]) => `<button type="button" class="seg-btn text" data-cam-ratio="${v}"><span>${t}</span></button>`).join('')}</div></div>`
     + `<p class="flow-section-note">${escapeHtml(translateValue('Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).'))}</p>`);
-  const frame = section('Ramka', control('Zaokrąglenie', 'radius', 'range', clamp(Number(r.radius) || 0, 0, 120), { min: 0, max: 60, step: 1, suffix: 'px', integer: true })
+  const frame = section('Ramka', control('Połysk (szkło)', 'gloss', 'checkbox', r.gloss !== false) + control('Zaokrąglenie', 'radius', 'range', clamp(Number(r.radius) || 0, 0, 120), { min: 0, max: 60, step: 1, suffix: 'px', integer: true })
     + control('Ramka', 'border', 'checkbox', !!r.border) + control('Kolor ramki', 'borderColor', 'color', r.borderColor || '#FFFFFF')
     + control('Grubość', 'borderWidth', 'range', clamp(Number(r.borderWidth) || 0, 0, 12), { min: 0, max: 8, step: .5, suffix: 'px' }) + control('Krycie ramki', 'borderOpacity', 'range', clamp(Number(r.borderOpacity ?? 35), 0, 100), { min: 0, max: 100, step: 1, suffix: '%', integer: true }));
   const tap = section('Po dotknięciu', control('Dotknięcie w widoku', 'tap', 'select', ['none', 'full'].includes(r.tap) ? r.tap : 'live', { items: [['live', 'Okno podglądu'], ['full', 'Pełny ekran (poziomo)'], ['none', 'Brak akcji']] })

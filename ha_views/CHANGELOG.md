@@ -1,3 +1,8 @@
+## 0.6.1-beta.759
+
+- Kamera na tle: szklana ramka (połysk u góry, jasna krawędź, głęboki miękki cień; opcja „Połysk”), pasek u dołu z nazwą i godziną ostatniej klatki (opcja „Godzina klatki”), płynne przenikanie kolejnych klatek, ekran „Kamera offline” z godziną ostatniej klatki (obraz wyszarzony), gdy kamera nie daje obrazu lub jest niedostępna w HA.
+- Podgląd: okno / pełny ekran „wylatuje” z kafla na planie i wraca do niego przy zamykaniu; przeciągnięcie palcem w dół zamyka (obraz idzie za palcem); w pełnym ekranie pasek chowa się sam po 3 s, stuknięcie pokazuje / chowa go.
+
 ## 0.6.1-beta.758
 
 - Rysowanie pomieszczenia: wyraźny czerwony przycisk „Anuluj” (z napisem także na telefonie) i Esc na komputerze – rysowanie można przerwać w każdej chwili; po narysowaniu X w kreatorze usuwa narysowane pomieszczenie.

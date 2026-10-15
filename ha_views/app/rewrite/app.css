@@ -2070,12 +2070,16 @@ body.editing .dash-quick.on{display:flex}
 .cam-layer{position:absolute;inset:0;z-index:2;pointer-events:none}
 body.editing .cam-layer{z-index:4}
 .cam-el{position:absolute;overflow:hidden;background:#05121a radial-gradient(circle at 50% 45%,#12303f,#05121a 70%);pointer-events:auto;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
-.cam-el img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .25s;pointer-events:none;-webkit-user-drag:none}
-.cam-el.has-pic img{opacity:1}
+.cam-el img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .5s ease;pointer-events:none;-webkit-user-drag:none}
+.cam-el img.on{opacity:1}
 .cam-el-empty{position:absolute;inset:0;display:grid;place-items:center;color:rgba(143,223,255,.55);font-size:calc(34px * var(--cam-k,1));pointer-events:none}
 .cam-el.has-pic .cam-el-empty{display:none}
-.cam-el-name{position:absolute;left:0;right:0;bottom:0;padding:calc(18px * var(--cam-k,1)) calc(10px * var(--cam-k,1)) calc(7px * var(--cam-k,1));background:linear-gradient(transparent,rgba(0,0,0,.62));color:#fff;font:700 calc(13px * var(--cam-k,1))/1.2 inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-.cam-el-name[hidden],.cam-el-live[hidden]{display:none}
+.cam-el-bar{position:absolute;left:0;right:0;bottom:0;z-index:60;display:flex;align-items:flex-end;gap:calc(8px * var(--cam-k,1));padding:calc(22px * var(--cam-k,1)) calc(11px * var(--cam-k,1)) calc(8px * var(--cam-k,1));background:linear-gradient(transparent,rgba(0,0,0,.66));color:#fff;pointer-events:none}
+.cam-el.no-bar .cam-el-bar{display:none}
+.cam-el-name{flex:1;min-width:0;font:700 calc(13px * var(--cam-k,1))/1.2 inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.cam-el-time{flex:none;font:600 calc(11px * var(--cam-k,1))/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.82);letter-spacing:.02em}
+.cam-el-time:empty,.cam-el-time[hidden]{display:none}
+.cam-el-live[hidden]{display:none}
 .cam-el-live{position:absolute;top:calc(8px * var(--cam-k,1));left:calc(8px * var(--cam-k,1));width:calc(9px * var(--cam-k,1));height:calc(9px * var(--cam-k,1));border-radius:50%;background:#ef4444;box-shadow:0 0 calc(6px * var(--cam-k,1)) #ef4444;opacity:.35;pointer-events:none}
 .cam-el.has-pic .cam-el-live{opacity:1;animation:cam-live-dot 1.4s ease-in-out infinite}
 .cam-el-dot{display:none;position:absolute;width:calc(14px / var(--view-zoom,1));height:calc(14px / var(--view-zoom,1));border:calc(2px / var(--view-zoom,1)) solid #20b9e7;border-radius:50%;background:#fff;transform:translate(-50%,-50%);z-index:2;touch-action:none}
@@ -2112,3 +2116,21 @@ body.editing .cam-layer{z-index:4}
   #room-draw-cancel{width:auto!important;padding:0 10px!important}
   #room-draw-cancel span{display:inline!important}
 }
+
+/* Kamera tile, glass: a soft highlight over the top, an edge light; offline: the last frame greyed with a note. */
+.cam-el-live{z-index:61}.cam-el-empty{z-index:59}
+.cam-el-gloss{position:absolute;inset:0;z-index:58;border-radius:inherit;pointer-events:none;display:none;background:linear-gradient(165deg,rgba(255,255,255,.2) 0%,rgba(255,255,255,.06) 22%,transparent 40%);box-shadow:inset 0 calc(1px * var(--cam-k,1)) 0 rgba(255,255,255,.35),inset 0 0 calc(18px * var(--cam-k,1)) rgba(0,0,0,.35)}
+.cam-el.gloss .cam-el-gloss{display:block}
+.cam-el-off{position:absolute;inset:0;z-index:59;display:none;flex-direction:column;align-items:center;justify-content:center;gap:calc(3px * var(--cam-k,1));background:rgba(5,14,20,.55);color:#dce8ef;text-align:center;pointer-events:none}
+.cam-el-off i{font-size:calc(30px * var(--cam-k,1));color:#fca5a5}.cam-el-off b{font-size:calc(13px * var(--cam-k,1))}.cam-el-off small{font-size:calc(10.5px * var(--cam-k,1));color:#9fb6c3}
+.cam-el.offline .cam-el-off{display:flex}.cam-el.offline img{filter:grayscale(1) brightness(.6)}.cam-el.offline .cam-el-live{background:#64748b;box-shadow:none;animation:none}
+.cam-el.offline .cam-el-empty{display:none}
+/* The live window grows out of the tile. */
+.cam-fly{position:fixed;z-index:401;background:#000 center/cover no-repeat;pointer-events:none;box-shadow:0 30px 90px rgba(0,0,0,.6);will-change:left,top,width,height,transform}
+.cam-live-backdrop{animation:cam-live-fade .3s ease both}
+.cam-live.closing{pointer-events:none}.cam-live.closing .cam-live-win{opacity:0!important;transition:opacity .12s}.cam-live.closing .cam-live-backdrop{animation:cam-live-fade-out .28s ease forwards}
+@keyframes cam-live-fade{from{opacity:0}}@keyframes cam-live-fade-out{to{opacity:0}}
+/* Full screen: the bar hides itself after a while (a tap brings it back). */
+.cam-live.full .cam-live-head{transition:opacity .3s ease}
+.cam-live.full.chrome-off .cam-live-head{opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.cam-live-backdrop{animation:none}.cam-el img{transition:none}}
