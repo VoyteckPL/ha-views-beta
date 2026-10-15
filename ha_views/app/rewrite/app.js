@@ -8875,6 +8875,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false, prefetch
     if (els.emptyBackgroundSelect) {
       els.emptyBackgroundSelect.innerHTML = '<option value="">Wybierz istniejące tło…</option>' + items.map(x => `<option value="${escapeHtml(x.name)}">${escapeHtml(x.name)}</option>`).join('');
       els.emptyBackgroundSelect.disabled = !items.length;
+      renderEmptyBackgroundGallery(items);
     }
     view.solidCanvasRatio ||= mobileView() ? 9 / 16 : 16 / 9; syncCanvasControls();
     if (els.solidCanvasRatio) els.solidCanvasRatio.value = String([1.7777777778,1.3333333333,1,.5625].reduce((best, ratio) => Math.abs(ratio - view.solidCanvasRatio) < Math.abs(best - view.solidCanvasRatio) ? ratio : best, 1.7777777778));
@@ -8894,6 +8895,13 @@ async function loadBackgrounds(waitForImage = false, bustCache = false, prefetch
     } else { els.image.removeAttribute('src'); delete els.image.dataset.backgroundName; applyBackgroundTransform(); updateSceneGeometry(); }
     applyNightBackground(true); applyBackgroundBrightness();
   } catch (error) { els.bgStatus.textContent = `Błąd: ${error.message}`; }
+}
+// Wizard „Obraz z siatką”: existing backgrounds as clickable thumbnails (the select stays as hidden state).
+function renderEmptyBackgroundGallery(items) {
+  const gallery = $('#empty-background-gallery'), label = $('.empty-bg-gallery-label'); if (!gallery) return;
+  const chosen = els.emptyBackgroundSelect?.value || '';
+  gallery.hidden = !items.length; if (label) label.hidden = !items.length;
+  gallery.innerHTML = items.map(x => `<button type="button" class="empty-bg-thumb${x.name === chosen ? ' active' : ''}" data-bg-name="${escapeHtml(x.name)}" title="${escapeHtml(x.name)}"><span class="empty-bg-img"><img loading="lazy" decoding="async" alt="" src="api/background/file?name=${encodeURIComponent(x.name)}"></span><span class="empty-bg-name">${escapeHtml(x.name)}</span></button>`).join('');
 }
 async function uploadBackground(file) {
   if (!file) return; els.bgStatus.textContent = 'Wgrywanie…'; els.bgUploadProgress?.classList.add('visible'); const form = new FormData(); form.append('file', file);
@@ -9502,6 +9510,13 @@ function bindEvents() {
   $('#marker-duplicate')?.addEventListener('click', duplicateMarker);
   $('#remove-marker').addEventListener('click', async () => { const m = model.entities[selectedId]; if (!m || !await appConfirm({ title: 'Usunąć marker?', message: `„${m.displayName}” zniknie z tego widoku razem ze swoimi ustawieniami.`, confirmText: 'Usuń', danger: true })) return; removeMarker(selectedId); });
   $('#background-upload').addEventListener('click', () => els.bgFile.click()); $('#empty-upload').addEventListener('click', () => els.bgFile.click()); els.bgFile.addEventListener('change', () => uploadBackground(els.bgFile.files[0]));
+  $('#empty-background-gallery')?.addEventListener('click', event => {
+    const tile = event.target.closest('.empty-bg-thumb'); if (!tile || !els.emptyBackgroundSelect) return;
+    els.emptyBackgroundSelect.value = tile.dataset.bgName;
+    $$('.empty-bg-thumb', tile.parentNode).forEach(node => node.classList.toggle('active', node === tile));
+    els.emptyBackgroundSelect.dispatchEvent(new Event('change'));
+    els.emptyBackgroundConfirm?.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  });
   els.emptyBackgroundSelect?.addEventListener('change', () => {
     const name = els.emptyBackgroundSelect.value, preview = els.emptyBackgroundPreview;
     if (!name || !preview) { if (els.emptyBackgroundPreviewWrap) els.emptyBackgroundPreviewWrap.hidden = true; return; }

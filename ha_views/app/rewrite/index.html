@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-766">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-767">
 </head>
 <body>
   <header class="topbar">
@@ -157,7 +157,8 @@
                   <section class="welcome-choice-panel welcome-image-choice"><button type="button" class="wizard-back" data-wizard="choose"><i class="mdi mdi-arrow-left"></i>Wstecz</button><h3>Obraz z siatką</h3>
                     <div class="welcome-actions">
                   <button id="empty-upload" class="primary" data-i18n="Wgraj nowy obraz"><i class="mdi mdi-image-plus-outline"></i> Wgraj nowy obraz</button>
-                  <div class="welcome-existing-background"><select id="empty-background-select" aria-label="Wybierz istniejące tło"><option value="">Wybierz istniejące tło…</option></select></div>
+                  <div class="welcome-existing-background" hidden><select id="empty-background-select" aria-label="Wybierz istniejące tło"><option value="">Wybierz istniejące tło…</option></select></div>
+                  <span class="wizard-label empty-bg-gallery-label" data-i18n="Wybierz istniejące tło" hidden>Wybierz istniejące tło</span><div id="empty-background-gallery" class="empty-bg-gallery" hidden></div>
                   <div id="empty-background-preview-wrap" class="empty-background-preview-wrap" hidden><img id="empty-background-preview" alt="Podgląd wybranego tła"><button id="empty-background-confirm" type="button" class="primary">Załaduj wybrane tło</button></div>
                     </div>
                   </section>
@@ -378,6 +379,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-766"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-767"></script>
 </body>
 </html>

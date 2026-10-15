@@ -1,3 +1,7 @@
+## 0.6.1-beta.767
+
+- Nowy widok → „Obraz z siatką”: istniejące tła są pokazane jako galeria miniatur z nazwami zamiast listy rozwijanej. Kliknięcie zaznacza tło, „Załaduj wybrane tło” je wczytuje.
+
 ## 0.6.1-beta.766
 
 - Deszcz lepiej widoczny z daleka: krople trzymają minimalny rozmiar na ekranie przy oddaleniu (rzadsze, ale wyraźne), nowe opcje „Rozmiar kropli”, „Mokra poświata” (delikatne zabarwienie obszaru) i „Fale ulewy” (co kilka sekund przez obszar przechodzi gęstszy pas deszczu zgodnie z wiatrem).
