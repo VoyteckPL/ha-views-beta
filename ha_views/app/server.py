@@ -661,6 +661,107 @@ async def api_camera_hls(request):
 
 # ===== END HA Views CAMERA LIVE V1 =====
 
+# ===== HA Views CAMERA WEBRTC V1 =====
+# A camera that only speaks WebRTC (e.g. Mammotion / Agora, Nest, go2rtc): the browser's offer and ICE candidates go to Home
+# Assistant through the add-on (its Supervisor token) over one WebSocket, the answer and HA's candidates come back the same
+# way. Closing the browser's socket closes HA's subscription, which ends the camera's session.
+
+
+async def api_camera_info(request):
+    entity_id = _camera_entity(request)
+    if not entity_id:
+        return web.json_response({"ok": False, "error": "not a camera"}, status=400)
+    try:
+        result = await asyncio.wait_for(ha_ws_command({"type": "camera/capabilities", "entity_id": entity_id}), timeout=10)
+        return web.json_response({"ok": True, "types": list((result or {}).get("frontend_stream_types") or [])})
+    except Exception as err:
+        return web.json_response({"ok": True, "types": [], "error": str(err)})
+
+
+async def api_camera_webrtc(request):
+    browser = web.WebSocketResponse(heartbeat=25, max_msg_size=4 * 1024 * 1024)
+    await browser.prepare(request)
+    entity_id = ""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.ws_connect(HA_WS, headers=headers(), heartbeat=30, max_msg_size=HA_WS_MAX_MSG_SIZE) as ha:
+                first = await ha.receive_json()
+                if first.get("type") == "auth_required":
+                    await ha.send_json({"type": "auth", "access_token": token()})
+                    if (await ha.receive_json()).get("type") != "auth_ok":
+                        raise RuntimeError("HA WebSocket auth failed")
+                next_id = 10
+                offer_id = None
+                session_id = None
+                pending = []
+
+                async def send_candidate(candidate):
+                    nonlocal next_id
+                    next_id += 1
+                    await ha.send_json({"id": next_id, "type": "camera/webrtc/candidate", "entity_id": entity_id, "session_id": session_id, "candidate": candidate})
+
+                async def from_browser():
+                    nonlocal entity_id, next_id, offer_id
+                    async for msg in browser:
+                        if msg.type != aiohttp.WSMsgType.TEXT:
+                            break
+                        data = json.loads(msg.data)
+                        kind = data.get("type")
+                        if kind == "start":
+                            entity_id = str(data.get("entity", ""))
+                            if not CAMERA_ENTITY_RE.match(entity_id):
+                                await browser.send_json({"type": "error", "message": "not a camera"})
+                                break
+                            await ha.send_json({"id": 1, "type": "camera/webrtc/get_client_config", "entity_id": entity_id})
+                        elif kind == "offer" and entity_id:
+                            next_id += 1
+                            offer_id = next_id
+                            await ha.send_json({"id": offer_id, "type": "camera/webrtc/offer", "entity_id": entity_id, "offer": data.get("sdp", "")})
+                        elif kind == "candidate" and entity_id:
+                            if session_id:
+                                await send_candidate(data.get("candidate"))
+                            else:
+                                pending.append(data.get("candidate"))
+
+                async def from_ha():
+                    nonlocal session_id
+                    async for msg in ha:
+                        if msg.type != aiohttp.WSMsgType.TEXT:
+                            break
+                        data = json.loads(msg.data)
+                        if data.get("id") == 1 and data.get("type") == "result":
+                            await browser.send_json({"type": "config", "ok": bool(data.get("success")), "config": data.get("result") or {}, "error": data.get("error")})
+                        elif offer_id is not None and data.get("id") == offer_id:
+                            if data.get("type") == "result" and not data.get("success"):
+                                await browser.send_json({"type": "event", "event": {"type": "error", "code": "offer", "message": str((data.get("error") or {}).get("message", "offer failed"))}})
+                            elif data.get("type") == "event":
+                                event = data.get("event") or {}
+                                if event.get("type") == "session":
+                                    session_id = event.get("session_id")
+                                    for candidate in pending:
+                                        await send_candidate(candidate)
+                                    pending.clear()
+                                await browser.send_json({"type": "event", "event": event})
+
+                tasks = [asyncio.ensure_future(from_browser()), asyncio.ensure_future(from_ha())]
+                done, rest = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+                for task in rest:
+                    task.cancel()
+    except (ConnectionResetError, asyncio.CancelledError):
+        pass
+    except Exception as err:
+        print(f"HA Views camera WebRTC {entity_id}: {type(err).__name__}: {err}", flush=True)
+        try:
+            await browser.send_json({"type": "error", "message": str(err)})
+        except Exception:
+            pass
+    finally:
+        await browser.close()
+    return browser
+
+# ===== END HA Views CAMERA WEBRTC V1 =====
+
+
 USER_ACCESS_CACHE = {}
 USER_ACCESS_CACHE_SECONDS = 60
 
@@ -1986,6 +2087,8 @@ app.router.add_get("/api/states", api_states)
 app.router.add_get("/api/camera/snapshot", api_camera_snapshot)
 app.router.add_get("/api/camera/mjpeg", api_camera_mjpeg)
 app.router.add_get("/api/camera/hls_url", api_camera_hls_url)
+app.router.add_get("/api/camera/info", api_camera_info)
+app.router.add_get("/api/camera/webrtc", api_camera_webrtc)
 app.router.add_get("/api/camera/hls/{tail:.+}", api_camera_hls)
 app.router.add_post("/api/selected_states", api_selected_states)
 app.router.add_get("/api/entity_events", api_entity_events)

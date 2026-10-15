@@ -1,3 +1,8 @@
+## 0.6.1-beta.760
+
+- Kamery tylko z WebRTC (np. kosiarki Mammotion / Agora, Nest): podgląd na żywo przez WebRTC – dodatek przekazuje ofertę, odpowiedź i kandydatów ICE do HA (WebSocket przez ingress). Dla takich kamer połączenie startuje od razu (bez prób HLS / MJPEG), kandydaci zbierani przed ofertą (Mammotion nie przyjmuje ich później), komunikaty „Budzenie kamery…” / „Łączenie z obrazem…”.
+- Kafel takiej kamery na tle: zamiast stałej grafiki zastępczej ostatnia klatka z podglądu na żywo (z godziną) i przycisk ▶; zapamiętywana w przeglądarce co 5 s podczas oglądania.
+
 ## 0.6.1-beta.759
 
 - Kamera na tle: szklana ramka (połysk u góry, jasna krawędź, głęboki miękki cień; opcja „Połysk”), pasek u dołu z nazwą i godziną ostatniej klatki (opcja „Godzina klatki”), płynne przenikanie kolejnych klatek, ekran „Kamera offline” z godziną ostatniej klatki (obraz wyszarzony), gdy kamera nie daje obrazu lub jest niedostępna w HA.

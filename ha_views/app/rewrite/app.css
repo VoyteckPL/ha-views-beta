@@ -2134,3 +2134,6 @@ body.editing .cam-layer{z-index:4}
 .cam-live.full .cam-live-head{transition:opacity .3s ease}
 .cam-live.full.chrome-off .cam-live-head{opacity:0;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.cam-live-backdrop{animation:none}.cam-el img{transition:none}}
+/* A WebRTC-only camera (no stills): its last frame seen live, a play button over it - the picture runs in its window. */
+.cam-el-play{position:absolute;left:50%;top:50%;z-index:59;display:none;place-items:center;width:calc(46px * var(--cam-k,1));height:calc(46px * var(--cam-k,1));border-radius:50%;transform:translate(-50%,-50%);background:rgba(7,25,36,.6);border:calc(1.5px * var(--cam-k,1)) solid rgba(255,255,255,.55);color:#fff;font-size:calc(26px * var(--cam-k,1));backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);pointer-events:none}
+.cam-el.rtc .cam-el-play{display:grid}.cam-el.rtc .cam-el-empty i{opacity:.5}
