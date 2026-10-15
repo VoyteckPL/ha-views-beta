@@ -2186,3 +2186,5 @@ body.card-mode .scene-card{border:0!important;border-radius:0!important;padding:
 @media(pointer:coarse){.drip-handle{width:20px;height:20px;margin:-10px 0 0 -10px}}
 body.drip-drawing .scene{cursor:crosshair}
 #drip-draw-cancel{border-color:rgba(248,113,113,.55)!important;color:#fca5a5!important}
+.drip-handle.mid{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:rgba(255,255,255,.85);border-color:#2f9bff;cursor:copy}
+@media(pointer:coarse){.drip-handle.mid{width:16px;height:16px;margin:-8px 0 0 -8px}}

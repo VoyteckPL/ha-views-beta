@@ -1,3 +1,9 @@
+## 0.7.0-beta.778
+
+- Linie kroplujące: „Dorysuj” (ikona przy linii) przedłuża linię od jej końca; kropka na środku odcinka zaznaczonej linii dodaje punkt (przeciągnij, żeby zrobić zakręt); dwuklik na punkcie go usuwa.
+- Rysowanie i przesuwanie punktów przyciąga się też co 45° względem poprzedniego punktu (poziomo, pionowo, po skosie; Alt wyłącza); przy rysowaniu widać odcinek do kursora.
+- Nowy suwak „Zaokrąglenie zakrętów” (0–300 px): zakręty jako łuki, kroplowniki idą po łuku.
+
 ## 0.7.0-beta.777
 
 - Linie kroplujące: nowe suwaki dla każdej linii – „Grubość węża” (1–24 px), „Poświata linii” (świecenie wzdłuż węża, gdy sekcja pracuje), „Wielkość plam” (20–500%) i „Wielkość kropel” (50–500%). Grubiej ustawiona linia jest dobrze widoczna także z daleka.
