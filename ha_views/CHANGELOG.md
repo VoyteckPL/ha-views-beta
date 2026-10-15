@@ -1,3 +1,9 @@
+## 0.6.1-beta.765
+
+- Deszcz w obszarze: nowa opcja „Klikalny obszar” (domyślnie wyłączona) – dotknięcie przechodzi do obszarów pod deszczem (np. obszar deszczu na cały dom), a etykieta deszczu zostaje klikalna („Więcej informacji” z historią czujnika). Warstwa deszczu jest pod światłami innych obszarów.
+- Obszar z „Dotknięcie w widoku: Brak akcji” nie zasłania już dotknięć obszarom pod nim.
+- Kolor kropli z niebieskiej palety (Lodowy, Błękitny, Niebieski, Lazurowy, Kobaltowy, Turkusowy, Głęboki) albo własny; domyślnie Błękitny i krycie 65% – lepiej widoczne.
+
 ## 0.6.1-beta.764
 
 - Obszar (pomieszczenie): nowy wybór „Efekt: Światło / Deszcz” w sekcji Wygląd. Przy „Deszcz” zamiast opcji światła i koloru są opcje deszczu: wariant (Kręgi, Smugi, Kręgi + smugi + mokro, Mżawka), natężenie, wiatr, krycie, miękka krawędź. Pada wewnątrz kształtu obszaru, gdy jego encja jest włączona (np. czujnik deszczu); czujnik w mm/h steruje natężeniem na żywo. Animacja zatrzymuje się, gdy nic nie pada lub karta jest w tle.
