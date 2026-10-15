@@ -1,3 +1,7 @@
+## 0.6.1-beta.766
+
+- Deszcz lepiej widoczny z daleka: krople trzymają minimalny rozmiar na ekranie przy oddaleniu (rzadsze, ale wyraźne), nowe opcje „Rozmiar kropli”, „Mokra poświata” (delikatne zabarwienie obszaru) i „Fale ulewy” (co kilka sekund przez obszar przechodzi gęstszy pas deszczu zgodnie z wiatrem).
+
 ## 0.6.1-beta.765
 
 - Deszcz w obszarze: nowa opcja „Klikalny obszar” (domyślnie wyłączona) – dotknięcie przechodzi do obszarów pod deszczem (np. obszar deszczu na cały dom), a etykieta deszczu zostaje klikalna („Więcej informacji” z historią czujnika). Warstwa deszczu jest pod światłami innych obszarów.
