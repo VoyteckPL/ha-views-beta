@@ -1,3 +1,8 @@
+## 0.6.1-beta.762
+
+- Kamera na telefonie: podgląd nie zamyka się już zaraz po otwarciu, gdy kafel leży poza obrazem okna (kliknięcie z tego samego stuknięcia trafiało w tło okna).
+- Kamera w edycji przyciąga się jak etykieta: przesuwana – krawędzie i środek do linii etykiet, znaczników, Flow, pomieszczeń, innych kamer i siatki; rozciągana rogami – boki do tych linii (kolorowe linie pomocnicze, Alt = bez przyciągania). Kamery są też celem przyciągania dla innych elementów.
+
 ## 0.6.1-beta.761
 
 - Kamery tylko z WebRTC (Mammotion…): „Odświeżanie → Na żywo” pokazuje obraz na żywo na planie (połączenie WebRTC trzymane przez kafel, ponawiane po zerwaniu z rosnącą przerwą; gdy obraz przejmie inny widz, np. aplikacja Mammotion, kafel czeka 2 min, żeby jej nie wyrzucać). Okno podglądu korzysta z tego samego połączenia – otwiera się od razu, bez drugiego łączenia. Ostatnia klatka zapisywana co 5 s.

@@ -5239,6 +5239,7 @@ function guideTargets({ node = null, roomId = '' } = {}) {
   const elements = [];
   if (t.markers) $$('.marker', els.markers).forEach(other => elements.push([other, 'marker']));
   if (t.flows) $$('.flow-marker', els.markers).forEach(other => elements.push([other, 'flow']));
+  if (t.labels) $$('#cam-layer .cam-el').forEach(other => elements.push([other, 'label'])); // (the cameras on the plan, as labels)
   // Labels: a group as a whole, or each ungrouped part (not the label of the room / label being moved).
   if (t.labels) $$('#room-labels .room-label-card, #room-labels .room-label-part').filter(other => other.dataset.roomId !== roomId).forEach(other => elements.push([other.classList.contains('solo') ? other.querySelector(':scope > .room-card-part') || other : other, 'label']));
   const targets = elements.filter(([other]) => other !== node && !other.contains(node) && other.offsetParent !== null && !(roomId && model.entities[other.dataset?.markerId]?.roomId === roomId)).map(([other, kind]) => [shapedRect(other), kind]).filter(([r]) => onScreen(r)).filter(([r]) => r.width);
@@ -6444,7 +6445,10 @@ function openCameraLive(entityId, room = null) {
     document.addEventListener('fullscreenchange', c.onFs);
     try { Promise.resolve(root.requestFullscreen?.({ navigationUI: 'hide' })).then(() => screen.orientation?.lock?.('landscape')).catch(() => {}).finally(() => setTimeout(() => c.onResize?.(), 350)); } catch {}
   }
-  $q('.cam-live-close').addEventListener('click', closeCameraLive); $q('.cam-live-backdrop').addEventListener('click', closeCameraLive);
+  // (On a phone the tap's click comes after the window is open, at the same spot - over the backdrop when the tile lies
+  // outside the picture, which would close it at once: clicks in the first moment are ignored.)
+  const t0 = performance.now(), fresh = () => performance.now() - t0 < 600;
+  $q('.cam-live-close').addEventListener('click', e => { if (!fresh()) closeCameraLive(); else e.stopPropagation(); }); $q('.cam-live-backdrop').addEventListener('click', e => { if (!fresh()) closeCameraLive(); else e.stopPropagation(); });
   wake(); requestAnimationFrame(() => flyCam(root, c.tileNode(), true));
   const setMsg = t => { msg.textContent = t ? translateValue(t) : ''; msg.hidden = !t; };
   setMsg('Łączenie z kamerą…');
@@ -9860,19 +9864,28 @@ function camPointerDown(event) {
   event.preventDefault(); event.stopPropagation(); closeCompactMenus?.();
   const b0 = { ...c.box }, r0 = els.scene.getBoundingClientRect(), at = e => { const r = els.scene.getBoundingClientRect(); return [(e.clientX - r.left) / Math.max(1, r.width) * 100, (e.clientY - r.top) / Math.max(1, r.height) * 100]; };
   const [gx, gy] = at(event), sx = event.clientX, sy = event.clientY; let moved = false; void r0;
+  // Snapping as a label's: moved, its edges / centre catch the guide lines of labels, markers, Flow, rooms, other cameras and the
+  // grid (alignLabel); sized, the moving sides catch the nearest of those lines (their kind's colour shown). Alt: free.
+  const align = !corner && snapTargets().guides ? alignmentContext(n) : null, g = corner && snapTargets().guides ? guideTargets({ node: n }) : null;
+  const edge = (vPct, fixedPct, sign, list, D, out, hits) => { if (!g || cameraPanning) return vPct; const v = vPct / 100 * D, f = fixedPct / 100 * D, reach = snapReach(); let best = null;
+    list.forEach(t => { const d = Math.abs(t.v - v), sc = d + (t.kind === 'grid' || t.kind === 'major' ? 2.5 : 0); if (sign * (t.v - f) > 4 && d <= reach && (!best || sc < best.sc)) best = { sc, t }; });
+    if (!best) return vPct; out.push({ at: best.t.v / D * 100, kind: best.t.kind || 'label' }); if (best.t.box && !hits.some(h => h.l === best.t.box.l && h.t === best.t.box.t)) hits.push({ ...best.t.box, kind: best.t.kind }); return best.t.v / D * 100; };
   const camera = dragCamera(e => move(e));
   const move = e => {
     if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 4) return; moved = true; const [px, py] = at(e), b = c.box;
     if (corner) {
-      let x0 = b0.x, y0 = b0.y, x1 = b0.x + b0.w, y1 = b0.y + b0.h; const min = 2;
-      if (corner.includes('e')) x1 = clamp(snapPercent(px), x0 + min, 100); if (corner.includes('w')) x0 = clamp(snapPercent(px), 0, x1 - min);
-      if (corner.includes('s')) y1 = clamp(snapPercent(py), y0 + min, 100); if (corner.includes('n')) y0 = clamp(snapPercent(py), 0, y1 - min);
+      let x0 = b0.x, y0 = b0.y, x1 = b0.x + b0.w, y1 = b0.y + b0.h; const min = 2, vg = [], hg = [], hits = [], W = g?.scene.width || 1, H = g?.scene.height || 1, free = e.altKey;
+      if (corner.includes('e')) x1 = clamp(free ? px : edge(px, x0, 1, g?.xs || [], W, vg, hits), x0 + min, 100); if (corner.includes('w')) x0 = clamp(free ? px : edge(px, x1, -1, g?.xs || [], W, vg, hits), 0, x1 - min);
+      if (corner.includes('s')) y1 = clamp(free ? py : edge(py, y0, 1, g?.ys || [], H, hg, hits), y0 + min, 100); if (corner.includes('n')) y0 = clamp(free ? py : edge(py, y1, -1, g?.ys || [], H, hg, hits), 0, y1 - min);
+      if (!g) { if (corner.includes('e')) x1 = clamp(snapPercent(x1), x0 + min, 100); if (corner.includes('w')) x0 = clamp(snapPercent(x0), 0, x1 - min); if (corner.includes('s')) y1 = clamp(snapPercent(y1), y0 + min, 100); if (corner.includes('n')) y0 = clamp(snapPercent(y0), 0, y1 - min); }
+      showAlignGuides(vg, hg, [], hits);
       if (e.shiftKey) { const ratio = b0.w / b0.h, [W, H] = camPlan(), wpx = (x1 - x0) / 100 * W, hpx = wpx / (ratio * W / H) / W * W; void hpx; const nh = (x1 - x0) / ratio; if (corner.includes('n')) y0 = y1 - nh; else y1 = y0 + nh; }
       Object.assign(b, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
-    } else { b.x = clamp(snapPercent(b0.x + px - gx), 0, 100 - b.w); b.y = clamp(snapPercent(b0.y + py - gy), 0, 100 - b.h); }
+    } else if (align) { const r = alignLabel(align, b0.x + b.w / 2 + px - gx, b0.y + b.h / 2 + py - gy, e); b.x = clamp(r.xPercent - b.w / 2, 0, 100 - b.w); b.y = clamp(r.yPercent - b.h / 2, 0, 100 - b.h); }
+    else { b.x = clamp(snapPercent(b0.x + px - gx), 0, 100 - b.w); b.y = clamp(snapPercent(b0.y + py - gy), 0, 100 - b.h); }
     placeCam(n, c); camera.track(e); if (selectedCamId === c.id) syncCamEditorSize(c);
   };
-  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); camera.stop();
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); camera.stop(); showAlignGuides([], []); if (align) { clearTimeout(align.motion?.timer); align.onSettle = null; }
     n.dataset.dragged = moved ? '1' : '0'; if (moved) { c.updatedAt = new Date().toISOString(); scheduleSave(true); } if (!moved || selectedCamId !== c.id) openCamEditor(c.id); };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
