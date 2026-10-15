@@ -1,3 +1,7 @@
+## 0.7.0-beta.776
+
+- Podlewanie: linie kroplujące. W panelu sekcji „Linie kroplujące” → „Rysuj linię kroplującą”: klikasz kolejne punkty na planie (przyciągają się do narożników i ścian sekcji oraz do zraszaczy), Enter / „Gotowe” kończy, Esc / „Anuluj” przerywa. Gdy sekcja pracuje, kroplowniki wzdłuż linii kapią – spada kropla, rozchodzi się mały krąg, a wokół każdego rośnie mokra plama. Ustawienia linii: „Rozstaw kroplowników” i „Wydatek”. Punkty linii przesuwasz kropkami w edycji; linia jedzie razem z sekcją.
+
 ## 0.7.0-beta.775
 
 - Ruch w pomieszczeniu: koniec „Podglądu ruchu” (ponowne kliknięcie albo wyjście z edycji) czyści podgląd od razu – bez zastygniętej fali i powolnego wygaszania; pomieszczenie wraca do prawdziwego stanu czujnika.

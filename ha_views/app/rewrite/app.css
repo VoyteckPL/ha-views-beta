@@ -2178,3 +2178,11 @@ html:has(body.card-mode),body.card-mode{background:transparent!important;overflo
 body.card-mode .topbar,body.card-mode #view-sheet,body.card-mode .view-tabs,body.card-mode .connection,body.card-mode #add-button,body.card-mode .scene-tools{display:none!important}
 body.card-mode main{width:100%!important;margin:0!important;padding:0!important}
 body.card-mode .scene-card{border:0!important;border-radius:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
+.drip-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.drip-draft{fill:none;stroke:#9bd7ff;stroke-width:2.5;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
+.drip-handle{position:absolute;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:#9bd7ff;border:2px solid #0c1d28;box-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:auto;cursor:grab;touch-action:none}
+.drip-handle.selected{width:14px;height:14px;margin:-7px 0 0 -7px;background:#fff;border-color:#2f9bff}
+.drip-handle.draft{pointer-events:none;background:#fff}
+@media(pointer:coarse){.drip-handle{width:20px;height:20px;margin:-10px 0 0 -10px}}
+body.drip-drawing .scene{cursor:crosshair}
+#drip-draw-cancel{border-color:rgba(248,113,113,.55)!important;color:#fca5a5!important}
