@@ -5124,7 +5124,9 @@ function addRoomIcon(room) {
 }
 function editRoomIcon(room) { const id = roomIconId(room.id); if (!model.entities[id]) return; closeRoomEditor(); selectedId = id; renderMarkers(); openEditor(-1); }
 function removeRoomIcon(view, roomId) { const id = roomIconId(roomId); if (!view?.entities?.[id]) return false; delete view.entities[id]; delete stateCache[id]; if (selectedId === id) closeEditor(); return true; }
-function roomUsesEntity(entityId) { return Object.values(roomsOf()).some(room => (room.entityIds || []).includes(entityId) || EXTRA_PARTS.some(([, k]) => room[k] && room[`${k}Entity`] === entityId)); }
+// (also the entities of a room's layers - a motion sensor, a valve, a rain sensor - which are not among its own entities)
+function roomUsesEntity(entityId) { return Object.values(roomsOf()).some(room => (room.entityIds || []).includes(entityId) || EXTRA_PARTS.some(([, k]) => room[k] && room[`${k}Entity`] === entityId)
+  || room.waterEntity === entityId || room.rainEntity === entityId || Object.values(room.motionSensors || {}).some(o => o?.entity === entityId)); }
 // ---- HA default panel -------------------------------------------------------------------
 // Home Assistant opens: the user's default panel (Profile → "Panel", stored in frontend user data "core"),
 // then the system default, then the per-device localStorage "defaultPanel", then Overview. Its picker lists

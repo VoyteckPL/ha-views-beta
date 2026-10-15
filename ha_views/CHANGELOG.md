@@ -1,3 +1,7 @@
+## 0.7.0-beta.773
+
+- Poprawka warstw: zmiana stanu czujnika ruchu (oraz zaworu i czujnika deszczu) z warstwy pomieszczenia od razu odświeża pomieszczenie. Wcześniej ruch pokazywał się dopiero przy innej zmianie w pomieszczeniu (np. gdy zapaliło się światło), więc przy zgaszonym świetle nie było go widać.
+
 ## 0.7.0-beta.772
 
 - Warstwy (Ruch, Podlewanie, Deszcz): encję wybiera się tak jak w „Ogólne” – wyszukiwarka po nazwie / encji / integracji, wybrana encja jako wiersz ze stanem i × do usunięcia. Po kliknięciu w puste pole od razu podpowiada pasujące encje (czujniki ruchu / obecności, zawory, czujniki deszczu).
