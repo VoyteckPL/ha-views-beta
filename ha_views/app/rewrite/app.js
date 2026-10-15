@@ -17,7 +17,7 @@ const TRANSLATIONS = {
     'Widoki':'Views','Integracje':'Integrations','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz Integracje i dodaj encję.':'Open Integrations and add an entity.','Użyj Edytuj, aby ustawić i ostylować marker.':'Use Edit to position and style the marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Nowy widok':'New view','Podaj krótką nazwę nowego widoku.':'Enter a short name for the new view.','Wpisz nową nazwę.':'Enter a new name.','Zapisz':'Save','Usunąć widok?':'Delete view?','Usuń widok':'Delete view','Kopia zachowa tło, markery i wszystkie ich ustawienia.':'The copy will keep the background, markers and all their settings.','Duplikuj':'Duplicate','Przywrócić styl domyślny?':'Restore default style?','Obecne ustawienia wyglądu markera zostaną zastąpione.':'The current marker appearance settings will be replaced.','Przywróć':'Restore','Usunąć marker?':'Remove marker?','Usuń':'Remove','Anuluj':'Cancel','Skopiowano styl':'Style copied','Dodaj pierwszą encję':'Add your first entity','Otwórz menu Integracje u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'Open the Integrations menu above and choose an entity to place on this view.','Ustawienia':'Settings','Język':'Language','Edytuj widok':'Edit view','Siatka':'Grid','Wielkość siatki':'Grid size','Zachód':'Sunset','Fiolet':'Violet','Ogień':'Fire','Lód':'Ice','Róż':'Rose','Złoto':'Gold','Przejrzyste':'Clear','Mleczne':'Milky','Ciemne':'Dark','Niebieskie':'Blue','Fioletowe':'Violet','Miętowe':'Mint','Kolor 1':'Colour 1','Kolor 2':'Colour 2','Kąt':'Angle','Animacja':'Animation','Wnętrze':'Fill','Poświata':'Glow','Rozmycie':'Blur','Biel':'White','Odcień':'Tint','Połysk':'Shine','Kolory':'Colours','Motywy':'Themes','Efekt ikony':'Icon effect','Oddech':'Breathing','Fale':'Ripples','Promienie':'Rays','Wypukła 3D':'Embossed 3D','Szklana kula':'Glass orb','Długi cień':'Long shadow','Unoszenie':'Floating','Wirujący pierścień':'Spinning ring','Światło od środka':'Inner light','Kontur neon':'Neon outline','Zorza':'Aurora','Kryształ':'Crystal','Szron':'Frost','Północ':'Midnight','Mięta':'Mint','Części':'Parts','Części w stylu efektu':'Parts in the effect style','Poświata ikony i stanu (ON)':'Icon and state glow (ON)','Szkło':'Glass','Margines ↕':'Margin ↕','Termostat':'Thermostat','Wskaźnik':'Gauge','Margines ↔':'Margin ↔','Margines wewnętrzny':'Inner margin','Rozciągnij':'Stretch','Etykiet na kaflach':'Labels on tiles','siatka nie może mieć mniej kafli':'the grid cannot have fewer tiles','Opcje widoku':'View options','Nowy widok':'New view','Obraz z siatką':'Image with grid','Kafelki':'Tiles','Twój rzut lub zdjęcie jako tło, elementy kładziesz swobodnie':'Your floor plan or a photo as the background, elements placed freely','Kolorowe tło z siatką kafli - etykiety same się w nie układają':'A colour background with a grid of tiles - labels fit into them','Wstecz':'Back','Format':'Format','z siatką':'with grid','z kafelkami':'with tiles','Ustawienia aplikacji':'App settings','Zapisane szablony elementów':'Saved element templates','Telefon':'Phone','Desktop':'Desktop','Telefon (9:16)':'Phone (9:16)','Desktop (16:9)':'Desktop (16:9)','Opcje i integracje':'Options and integrations','Rodzaj tła':'Background type','Mniej kolumn':'Fewer columns','Więcej kolumn':'More columns','Mniej wierszy':'Fewer rows','Więcej wierszy':'More rows','Obraz':'Image','Małe nad dużym':'Small over big','Odstęp od ikony':'Gap to the icon','Ikona i nazwa w rzędzie, stan pod nimi':'Icon and name in a row, state below','Preset':'Preset','Margines':'Margin','Wielkość':'Size','Wielkość ikony':'Icon size','Wielkość symbolu':'Symbol size','Wielkość koła':'Circle size','Wielkość kwadratu':'Square size','Zarządzaj tłem':'Manage background','Tło':'Background','Format koloru':'Colour canvas format','Dodaj widok':'Add view','Zmień nazwę':'Rename','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Własny kolor RGB…':'Custom RGB colour…','Wgrywanie tła…':'Uploading background…','Mała':'Small','Średnia':'Medium','Duża':'Large','Bardzo duża':'Very large','Zarządzaj widokami':'Manage views','Nowy widok':'New view','Zmień nazwę widoku':'Rename view','Duplikuj widok':'Duplicate view','Usuń widok':'Delete view',
     'Łączenie…':'Connecting…','Siatka włączona':'Grid enabled','Siatka wyłączona':'Grid disabled','Wybierz tło':'Select background','Wgraj obraz':'Upload image','Usuń tło':'Delete background','Zarządzaj tłem':'Manage background','Edytuj widok':'Edit view','Zakończ edycję':'Finish editing',
     'Tło widoku HA Views':'HA Views view background','Wgraj tło widoku':'Upload view background','Tło':'Background','Kolor':'Colour','Obraz':'Image','Dodaj pierwszą encję':'Add your first entity','Otwórz integracje':'Open integrations','Otwórz menu':'Open the','u góry i wybierz encję, którą chcesz umieścić na tym widoku.':'menu above and choose an entity to place on this view.','Wybierz obraz albo kolor tła, aby zacząć.':'Choose an image or a background colour to begin.','Zacznij tworzyć pierwszy widok':'Start your first view','Stwórz wizualny pulpit w trzech prostych krokach.':'Create a visual dashboard in three quick steps.','Wybierz obraz albo kolor tła.':'Choose an image or a background colour.','Otwórz':'Open','i dodaj encję.':'and add an entity.','Użyj':'Use','aby ustawić i ostylować marker.':'to position and style its marker.','Wgraj obraz':'Upload image','Kolor tła':'Background colour','Zacznij z kolorem':'Start with colour','Dodane do widoku':'Added to view','Encje widoczne na scenie':'Entities visible on the scene','Integracje Home Assistant':'Home Assistant integrations','Tylko aktywne integracje widoczne w HA':'Only active integrations visible in HA','Odśwież':'Refresh',
-    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
+    'Marker':'Marker','Ustaw domyślny':'Restore defaults','Kopiuj styl':'Copy style','Wklej styl':'Paste style','Usuń z widoku':'Remove from view','Zamknij':'Close','Kamera':'Camera','Usuń kamerę':'Delete camera','Usunięto kamerę':'Camera deleted','Usunąć kamerę?':'Delete the camera?','Odświeżanie':'Refresh','Dopasowanie':'Fit','Wypełnij':'Fill','Cały obraz':'Whole picture','Pokaż nazwę':'Show name','Proporcje':'Ratio','Po dotknięciu':'On tap','Okno podglądu':'Preview window','Kolor ramki':'Frame colour','Krycie ramki':'Frame opacity','Co 2 s':'Every 2 s','Co 5 s':'Every 5 s','Co 10 s':'Every 10 s','Co 30 s':'Every 30 s','Co 1 min':'Every 1 min','Co 5 min':'Every 5 min','Znacznik „na żywo”':'“Live” badge','Obraz z kamery na planie — na żywo lub odświeżany':'Camera picture on the plan — live or refreshed','Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).':'The corner dots change the size (with Shift – keeping the ratio).','„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.':'“Live” keeps a picture stream open (no sound); a refresh fetches a frame every chosen time. Nothing is fetched while the tab is in the background.','Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.':'The preview window plays live at once (with sound when the camera has it – muted at first); zoom with two fingers or the wheel.','NA ŻYWO':'LIVE','Dźwięk':'Sound','Łączenie z kamerą…':'Connecting to the camera…','Brak obrazu z kamery':'No picture from the camera','Podgląd na żywo':'Live view','Okno kamery':'Camera window','Poziome':'Landscape','Pionowe':'Portrait','Wersja aplikacji HA Views':'HA Views app version',
     'Encja':'Entity','Rozmiar':'Size','Stan':'State','Nazwa':'Name','Ikona':'Icon','Tło':'Background','Ramka':'Border','Aktualny stan':'Current state','Historia':'History','Atrybuty':'Attributes','Wczytywanie…':'Loading…','Potwierdzenie':'Confirmation','Anuluj':'Cancel','Potwierdź':'Confirm',
     'Automatyczna':'Automatic','Brak wody':'No water','Energia domu':'Home energy','Pompa ciepła':'Heat pump','Drzwi otwarte':'Door open','Drzwi zamknięte':'Door closed','Okno otwarte':'Window open','Okno zamknięte':'Window closed',
     'Dodaj':'Add','Pokaż':'Show','Usuń':'Remove','Pozostałe integracje':'Other integrations','używane':'used','Zapisano':'Saved','Brak danych':'No data','Niedostępne':'Unavailable','Nieznany':'Unknown',
@@ -656,14 +656,11 @@ function snapPercent(value) {
 // One set of tap actions (same names and order) for markers and rooms; "toggle" only where something can be switched.
 // Copy / paste style also carries the icon choice (source, own MDI icon, ON/OFF icons) and the tap action.
 const MARKER_ICON_KEYS = ['iconMode','iconName','iconOn','iconOff','iconVariantEnabled'];
-const TAP_ACTIONS = [['camera','Podgląd na żywo'],['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF'],['none','Brak akcji']];
-function tapActionControl(value, canToggle, camera = false) {
-  const items = TAP_ACTIONS.filter(([key]) => (key !== 'toggle' || canToggle) && (key !== 'camera' || camera)), current = items.some(([key]) => key === value) ? value : 'more_info';
+const TAP_ACTIONS = [['more_info','Więcej informacji'],['toggle','Przełącz ON/OFF'],['none','Brak akcji']];
+function tapActionControl(value, canToggle) {
+  const items = TAP_ACTIONS.filter(([key]) => key !== 'toggle' || canToggle), current = items.some(([key]) => key === value) ? value : 'more_info';
   return control('Dotknięcie w widoku','tapAction','select',current,{ items });
 }
-// A label / room on a camera: a tap opens its live window (unless another tap action was picked for it).
-const cameraOf = r => (r?.entityIds || []).find(id => /^camera\./.test(id)) || '';
-const cameraTap = r => !!cameraOf(r) && (r.tapAction === 'camera' || (!r.camTapSet && (r.tapAction ?? 'more_info') === 'more_info'));
 // Thermostat modes that can be parts of their own (see MODE_PARTS) and their default colours.
 const MODE_PART_LIST = ['heat','cool','heat_cool','auto','dry','fan_only','off','eco','electric','gas','heat_pump','high_demand','performance'];
 const MODE_DEFAULT_COLOR = { heat:'#FF7A2F', cool:'#38BDF8', heat_cool:'#34D399', auto:'#34D399', dry:'#FBBF24', fan_only:'#A78BFA', off:'#4B5D6B' };
@@ -3305,7 +3302,7 @@ function startRoomLabelDrag(event) {
   window.addEventListener('pointerup', clearActive, true); window.addEventListener('pointercancel', clearActive, true);
 }
 function renderRooms() {
-  syncRoomIconStates();
+  syncRoomIconStates(); renderCameras(); // (the cameras of the view shown)
   const layer = $('#rooms'); if (!layer) return;
   // A room being moved shows only its outline and label (no light / state effect), so nothing flickers while it
   // is rebuilt on every step; the effect fades back in when the room is dropped.
@@ -3891,8 +3888,7 @@ function roomEditorMarkup(room) {
   const entities = isTextRoom(r) ? section('Ogólne', control('Tekst','name','text',r.name) + linkControls(r)) : section('Ogólne', control('Nazwa','name','text',r.name)
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
-    + tapActionControl(cameraTap(r) ? 'camera' : canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle, !!cameraOf(r))
-    + (cameraOf(r) ? control('Okno kamery','cameraOrient','select',r.cameraOrient === 'portrait' ? 'portrait' : 'landscape',{ items:[['landscape','Poziome'],['portrait','Pionowe']] }) : '')
+    + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle)
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
   const lookSection = () => partBar('room', 'Wygląd', sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
@@ -4497,7 +4493,6 @@ function onRoomEditorInput(event) {
   if (SYNCED_PATHS.test(path)) { cancelAnimationFrame(onRoomEditorInput.after); onRoomEditorInput.after = requestAnimationFrame(() => tileAfterEdit(room, path)); }
   let value = input.type === 'checkbox' ? input.checked : input.value;
   if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number') { value = Number(value); if (!Number.isFinite(value)) return; }
-  if (path === 'tapAction' && cameraOf(room)) room.camTapSet = true; // (a camera's tap picked by hand: no longer the live window by default)
   // On a "Jedno pod drugim" tile the icon's size is its share of the label's height: the name / state take the rest
   // (laid out again, as high as each other, with their text fitted) - so it can go up and back down leaving them as they were.
   if (/^labelIcon(W|H)$/.test(path) && typeof value === 'number' && isTileColumn(room)) {
@@ -4829,9 +4824,8 @@ async function onRoomTap(room, action = null) {
   const r = { ...ROOM_DEFAULTS, ...room, ...(action ? { tapAction: action } : {}) }, ids = r.entityIds || [];
   if (!ids.length) { if (!isViewer()) notify(isIconRoom(room) ? 'Ta etykieta nie ma jeszcze encji — wybierz ją w trybie edycji' : 'To pomieszczenie nie ma jeszcze encji — wybierz je w trybie edycji'); return; }
   const toggleable = ids.filter(id => isToggleableMarker({ entityId: id }));
-  if (cameraTap(r)) return openCameraLive(cameraOf(r), r);
   if (r.tapAction === 'none') return;
-  if (r.tapAction === 'more_info' || r.tapAction === 'camera' || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
+  if (r.tapAction === 'more_info' || !toggleable.length) return openMoreInfo(toggleable[0] || ids[0]);
   if (roomTogglesInFlight.has(r.id)) return;
   const anyOn = toggleable.some(id => String(stateCache[id]?.state || '').toLowerCase() === 'on'), expected = anyOn ? 'off' : 'on';
   roomTogglesInFlight.add(r.id);
@@ -5659,7 +5653,7 @@ function focusLabelBox(room) {
   return true;
 }
 // (an element open in the edit panel: the plan may be moved at any zoom, so the camera can bring an element at its edge to the middle)
-function editPanelOpen() { return ['#room-editor', '#editor', '#flow-editor'].some(sel => $(sel)?.classList.contains('visible')); }
+function editPanelOpen() { return ['#room-editor', '#editor', '#flow-editor', '#cam-editor'].some(sel => $(sel)?.classList.contains('visible')); }
 function deskZoomExpanded() { return !mobileView() && (viewZoom > 1.001 || (editMode && editPanelOpen())); }
 function deskZoomRegion() {
   const bar = $('.topbar')?.getBoundingClientRect().bottom || 0, dock = $('#edit-dock');
@@ -7145,7 +7139,7 @@ function keepEditorInViewport(panel = els.editor) {
 function visibleSceneBand() {
   const v = els.viewport.getBoundingClientRect(), topbar = $('.topbar')?.getBoundingClientRect().bottom || 0;
   let bottom = v.bottom;
-  if (mobileView()) ['#editor', '#flow-editor', '#room-editor'].forEach(sel => { const panel = $(sel); if (panel?.classList.contains('visible')) bottom = Math.min(bottom, panel.getBoundingClientRect().top); });
+  if (mobileView()) ['#editor', '#flow-editor', '#room-editor', '#cam-editor'].forEach(sel => { const panel = $(sel); if (panel?.classList.contains('visible')) bottom = Math.min(bottom, panel.getBoundingClientRect().top); });
   const top = Math.max(v.top, topbar);
   return { left: v.left, right: v.right, top, bottom: Math.max(bottom, top + 80) };
 }
@@ -7848,6 +7842,7 @@ const ADD_TYPES = [
   { key:'flow', label:'Flow', hint:'Przepływ energii, wody', entity:'optional', numeric:true },
   { key:'thermostat', label:'Termostat', hint:'Ogrzewanie / klimatyzacja — temperatura, tryby, sterowanie', entity:'required', domains:['climate'] },
   { key:'text', label:'Przycisk', hint:'Napis z akcją — widok, strona HA, link', entity:'none' },
+  { key:'camera', label:'Kamera', hint:'Obraz z kamery na planie — na żywo lub odświeżany', entity:'required', domains:['camera'] },
 ];
 const ADD_SAMPLES = {
   badge: { entity_id:'sensor.hav_sample_temperature', name:'Salon', state:'21.8', unit:'°C', device_class:'temperature' },
@@ -7924,6 +7919,7 @@ function addThumbStatic(type, entity) {
   if (type === 'icon') return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi ${entity ? addEntityIcon(entity) : 'mdi-lightbulb-on'}"></i></span><b data-no-i18n>${escapeHtml(entity?.name || translateValue('Salon'))}</b><small data-no-i18n>${escapeHtml(entity ? `${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}` : translateValue('Wł.'))}</small></div>`;
   if (type === 'room') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M12 10H62V30H88V52H12Z" fill="#FFD27A" opacity=".6"/><path d="M12 10H62V30H88V52H12Z" fill="none" stroke="#e39a3a" stroke-width=".8" stroke-dasharray="2 1.5"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'flow') return `<div class="add-thumb-flow"><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i></div>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(`${entity.state ?? ''} ${entity.unit || ''}`.trim())}</span>` : ''}`;
+  if (type === 'camera') return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi mdi-cctv"></i></span><b data-no-i18n>${escapeHtml(entity?.name || translateValue('Kamera'))}</b></div>`;
   // Tekst: a label with the tap icon and its text.
   return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi mdi-gesture-tap-button"></i></span><b>${escapeHtml(translateValue('Przycisk'))}</b></div>`;
 }
@@ -8292,6 +8288,7 @@ function createAddedElement(type, entity, [x, y]) {
   if (type === 'icon') return addIconElement([x, y], entity);
   const now = new Date().toISOString(); if (entity) rememberAdded(entity.entity_id);
   if (type === 'text') { addTextLabel([x, y]); return; }
+  if (type === 'camera') { addCameraElement([x, y], entity); return; }
   if (type === 'thermostat') { addThermostatLabel([x, y], entity); return; }
   if (type === 'gauge') { addGaugeLabel([x, y], entity); return; }
   if (type === 'flow') {
@@ -9614,3 +9611,167 @@ async function boot() {
 }
 
 boot();
+
+// ===== Kamera: a camera's picture on the plan =====
+// Its own element (not a label): a box on the plan (scene %) showing the camera - live (MJPEG) or a still refreshed every
+// few seconds, as set. A tap in view mode opens the live window (openCameraLive). In edit mode it is moved by dragging
+// and sized by its corner dots; its panel holds its settings.
+const CAM_REFRESH = [['0','Na żywo'],['2','Co 2 s'],['5','Co 5 s'],['10','Co 10 s'],['30','Co 30 s'],['60','Co 1 min'],['300','Co 5 min']];
+const CAM_DEFAULTS = Object.freeze({ refresh: 5, fit: 'cover', radius: 12, border: true, borderColor: '#FFFFFF', borderWidth: 1.5, borderOpacity: 35, showName: true, live: true, orient: 'landscape', tap: 'live' });
+const CAM_NEW_PX = [320, 180];
+let selectedCamId = null, camEditorEl = null;
+const camsOf = (view = activeSceneView()) => view?.cameras || {};
+const camK = () => sceneScale || 1; // (plan px → the scene's own px)
+const camPlan = () => [Math.max(1, els.scene.offsetWidth / camK()), Math.max(1, els.scene.offsetHeight / camK())];
+function camLayer() { let l = $('#cam-layer'); if (!l && els.scene) { l = document.createElement('div'); l.id = 'cam-layer'; l.className = 'cam-layer'; els.scene.insertBefore(l, $('#markers')); } return l; }
+function addCameraElement([x, y], entity) {
+  const view = activeSceneView(); if (!view || !editMode) return; view.cameras ||= {};
+  const id = 'cam_' + uid(), now = new Date().toISOString(), [W, H] = camPlan(), w = Math.min(90, CAM_NEW_PX[0] / W * 100), h = Math.min(90, CAM_NEW_PX[1] / H * 100);
+  view.cameras[id] = { ...CAM_DEFAULTS, id, entityId: entity?.entity_id || '', name: entity?.name || translateValue('Kamera'), box: { x: clamp(x - w / 2, 0, 100 - w), y: clamp(y - h / 2, 0, 100 - h), w, h }, createdAt: now, updatedAt: now };
+  if (entity) rememberAdded(entity.entity_id);
+  renderCameras(); scheduleSave(true); openCamEditor(id); notify(`${translateValue('Dodano')}: ${translateValue('Kamera')}`);
+}
+function renderCameras() {
+  const layer = camLayer(); if (!layer) return; const cams = Object.values(camsOf()), keep = new Set();
+  layer.classList.toggle('editing', !!editMode);
+  cams.forEach(c => {
+    let n = layer.querySelector(`.cam-el[data-cam-id="${CSS.escape(c.id)}"]`);
+    if (!n) { n = document.createElement('div'); n.className = 'cam-el'; n.dataset.camId = c.id;
+      n.innerHTML = `<img alt="" draggable="false"><span class="cam-el-name"></span><span class="cam-el-live"><i></i></span><span class="cam-el-empty"><i class="mdi mdi-cctv"></i></span>${['nw','ne','sw','se'].map(k => `<i class="cam-el-dot ${k}" data-cam-corner="${k}"></i>`).join('')}`;
+      n.addEventListener('pointerdown', camPointerDown); n.addEventListener('click', camClick); layer.appendChild(n); }
+    keep.add(n); placeCam(n, c); camFeed(n, c);
+  });
+  [...layer.children].forEach(n => { if (!keep.has(n)) { stopCamFeed(n); n.remove(); } });
+  if (selectedCamId && !camsOf()[selectedCamId]) closeCamEditor();
+}
+function placeCam(n, c) {
+  const b = c.box || { x: 40, y: 40, w: 20, h: 20 }, k = camK(), r = { ...CAM_DEFAULTS, ...c };
+  Object.assign(n.style, { left: `${b.x}%`, top: `${b.y}%`, width: `${b.w}%`, height: `${b.h}%`, borderRadius: `${clamp(Number(r.radius) || 0, 0, 120) * k}px` });
+  const bw = clamp(Number(r.borderWidth) || 0, 0, 12) * k, op = clamp(Number(r.borderOpacity ?? 35), 0, 100) / 100;
+  n.style.boxShadow = r.border && bw > 0 ? `inset 0 0 0 ${bw}px ${rgba(r.borderColor || '#FFFFFF', op)}, 0 6px 18px rgba(0,0,0,.28)` : '0 6px 18px rgba(0,0,0,.28)';
+  n.style.setProperty('--cam-k', String(k));
+  const img = n.querySelector('img'); img.style.objectFit = r.fit === 'contain' ? 'contain' : 'cover';
+  const name = n.querySelector('.cam-el-name'); name.textContent = r.name || ''; name.hidden = !r.showName || !r.name;
+  n.querySelector('.cam-el-live').hidden = !r.live; n.classList.toggle('sel', !!editMode && selectedCamId === c.id); n.classList.toggle('no-entity', !c.entityId);
+}
+// The picture: live (MJPEG, one open connection) or a still swapped in when the next one has loaded (no flicker). Nothing
+// is fetched while the page is hidden.
+function stopCamFeed(n) { const f = n._feed; if (!f) return; clearInterval(f.timer); f.dead = true; if (f.live) n.querySelector('img')?.removeAttribute('src'); n._feed = null; }
+function camFeed(n, c) {
+  const live = Number(c.refresh) === 0, key = `${c.entityId}|${c.refresh}|${document.hidden ? 'h' : 'v'}`; if (n._feed?.key === key) return;
+  stopCamFeed(n); if (!c.entityId || document.hidden) { n._feed = { key, timer: 0 }; return; }
+  const img = n.querySelector('img'), q = encodeURIComponent(c.entityId), f = n._feed = { key, timer: 0, live };
+  img.onload = () => n.classList.add('has-pic'); img.onerror = () => { if (f.dead) return; n.classList.remove('has-pic'); if (live) setTimeout(() => { if (!f.dead) img.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; }, 5000); };
+  if (live) { img.src = `api/camera/mjpeg?entity=${q}&t=${Date.now()}`; return; }
+  const still = () => { const pre = new Image(); pre.onload = () => { if (!f.dead) img.src = pre.src; }; pre.src = `api/camera/snapshot?entity=${q}&t=${Date.now()}`; };
+  still(); f.timer = setInterval(still, clamp(Number(c.refresh) || 5, 1, 3600) * 1000);
+}
+document.addEventListener('visibilitychange', () => { const layer = $('#cam-layer'); if (!layer) return; Object.values(camsOf()).forEach(c => { const n = layer.querySelector(`.cam-el[data-cam-id="${CSS.escape(c.id)}"]`); if (n) camFeed(n, c); }); });
+function camClick(event) {
+  const n = event.currentTarget, c = camsOf()[n.dataset.camId]; if (!c) return; event.stopPropagation();
+  if (n.dataset.dragged === '1') { n.dataset.dragged = '0'; return; }
+  if (editMode) return openCamEditor(c.id);
+}
+function camPointerDown(event) {
+  const n = event.currentTarget, c = camsOf()[n.dataset.camId]; if (!c) return;
+  // View mode: a tap (no plan pan, short) opens the live window - on release, as the plan may take the pointer for panning.
+  if (!editMode) { const sx = event.clientX, sy = event.clientY, t0 = performance.now(), id = event.pointerId; n.dataset.dragged = '1';
+    const up = e => { if (e.pointerId !== id) return; window.removeEventListener('pointerup', up, true); window.removeEventListener('pointercancel', up, true);
+      if (e.type === 'pointerup' && Math.hypot(e.clientX - sx, e.clientY - sy) <= 8 && performance.now() - t0 < 800 && c.tap !== 'none' && c.entityId) openCameraLive(c.entityId, { name: c.name, cameraOrient: c.orient }); };
+    window.addEventListener('pointerup', up, true); window.addEventListener('pointercancel', up, true); return; }
+  if (event.button !== 0) return; const corner = event.target.closest('[data-cam-corner]')?.dataset.camCorner;
+  if (!corner && touchSelectFirst(event, selectedCamId === c.id, () => openCamEditor(c.id))) return;
+  event.preventDefault(); event.stopPropagation(); closeCompactMenus?.();
+  const b0 = { ...c.box }, r0 = els.scene.getBoundingClientRect(), at = e => { const r = els.scene.getBoundingClientRect(); return [(e.clientX - r.left) / Math.max(1, r.width) * 100, (e.clientY - r.top) / Math.max(1, r.height) * 100]; };
+  const [gx, gy] = at(event), sx = event.clientX, sy = event.clientY; let moved = false; void r0;
+  const camera = dragCamera(e => move(e));
+  const move = e => {
+    if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 4) return; moved = true; const [px, py] = at(e), b = c.box;
+    if (corner) {
+      let x0 = b0.x, y0 = b0.y, x1 = b0.x + b0.w, y1 = b0.y + b0.h; const min = 2;
+      if (corner.includes('e')) x1 = clamp(snapPercent(px), x0 + min, 100); if (corner.includes('w')) x0 = clamp(snapPercent(px), 0, x1 - min);
+      if (corner.includes('s')) y1 = clamp(snapPercent(py), y0 + min, 100); if (corner.includes('n')) y0 = clamp(snapPercent(py), 0, y1 - min);
+      if (e.shiftKey) { const ratio = b0.w / b0.h, [W, H] = camPlan(), wpx = (x1 - x0) / 100 * W, hpx = wpx / (ratio * W / H) / W * W; void hpx; const nh = (x1 - x0) / ratio; if (corner.includes('n')) y0 = y1 - nh; else y1 = y0 + nh; }
+      Object.assign(b, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
+    } else { b.x = clamp(snapPercent(b0.x + px - gx), 0, 100 - b.w); b.y = clamp(snapPercent(b0.y + py - gy), 0, 100 - b.h); }
+    placeCam(n, c); camera.track(e); if (selectedCamId === c.id) syncCamEditorSize(c);
+  };
+  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); camera.stop();
+    n.dataset.dragged = moved ? '1' : '0'; if (moved) { c.updatedAt = new Date().toISOString(); scheduleSave(true); } if (!moved || selectedCamId !== c.id) openCamEditor(c.id); };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
+// The panel.
+function camEditor() {
+  if (camEditorEl) return camEditorEl;
+  const el = camEditorEl = document.createElement('aside'); el.id = 'cam-editor'; el.className = 'editor flow-editor cam-editor'; el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = `<div class="editor-head"><div class="editor-integration-icon"><span class="integration-icon room-editor-icon"><i class="mdi mdi-cctv"></i></span></div><div class="editor-title-block"><h2 class="cam-editor-title" data-no-i18n>Kamera</h2><code class="cam-editor-entity" data-no-i18n></code></div>
+    <div class="editor-quick-actions"><button type="button" class="editor-icon-button cam-editor-live" title="${escapeHtml(translateValue('Podgląd na żywo'))}" aria-label="${escapeHtml(translateValue('Podgląd na żywo'))}"><i class="mdi mdi-play-circle-outline"></i></button><button type="button" class="editor-icon-button danger cam-editor-remove" title="${escapeHtml(translateValue('Usuń kamerę'))}" aria-label="${escapeHtml(translateValue('Usuń kamerę'))}"><i class="mdi mdi-delete-outline"></i></button><button type="button" class="editor-icon-button cam-editor-close" title="${escapeHtml(translateValue('Zamknij'))}" aria-label="${escapeHtml(translateValue('Zamknij'))}"><i class="mdi mdi-close"></i></button></div></div>
+    <div class="editor-content flow-editor-content cam-editor-content"></div>`;
+  document.body.appendChild(el);
+  el.querySelector('.cam-editor-close').addEventListener('click', closeCamEditor);
+  el.querySelector('.cam-editor-live').addEventListener('click', () => { const c = camsOf()[selectedCamId]; if (c?.entityId) openCameraLive(c.entityId, { name: c.name, cameraOrient: c.orient }); });
+  el.querySelector('.cam-editor-remove').addEventListener('click', async () => { const c = camsOf()[selectedCamId]; if (!c) return;
+    if (!await appConfirm({ title: 'Usunąć kamerę?', message: `„${c.name || c.entityId}” zostanie usunięta z tego widoku.`, confirmText: 'Usuń', danger: true })) return;
+    delete activeSceneView().cameras[c.id]; closeCamEditor(); renderCameras(); scheduleSave(true); notify('Usunięto kamerę'); });
+  const content = el.querySelector('.cam-editor-content');
+  content.addEventListener('input', onCamEditorInput); content.addEventListener('change', onCamEditorInput);
+  content.addEventListener('click', event => {
+    const toggle = event.target.closest('[data-color-toggle]'), swatch = event.target.closest('[data-palette-color]'), rgb = event.target.closest('[data-rgb-color]');
+    if (toggle) { event.preventDefault(); const menu = toggle.closest('.color-picker').querySelector('.color-menu'), open = menu.classList.contains('visible'); $$('.color-menu', content).forEach(x => x.classList.remove('visible')); menu.classList.toggle('visible', !open); return; }
+    if (swatch) { event.preventDefault(); const picker = swatch.closest('.color-picker'), input = $('.color-native', picker); input.value = swatch.dataset.paletteColor; $('.color-current', picker).style.background = input.value; $('.color-menu', picker).classList.remove('visible'); input.dispatchEvent(new Event('change', { bubbles: true })); return; }
+    if (rgb) { event.preventDefault(); rgb.closest('.color-picker').querySelector('.color-native').click(); }
+    const reset = event.target.closest('[data-reset-path]'); if (reset) { event.preventDefault(); const c = camsOf()[selectedCamId]; if (!c) return; const p = reset.dataset.resetPath;
+      if (p === 'camW' || p === 'camH') { const [W, H] = camPlan(), b = c.box; if (p === 'camW') b.w = Math.min(100, CAM_NEW_PX[0] / W * 100); else b.h = Math.min(100, CAM_NEW_PX[1] / H * 100); b.x = clamp(b.x, 0, 100 - b.w); b.y = clamp(b.y, 0, 100 - b.h); }
+      else if (p in CAM_DEFAULTS) c[p] = CAM_DEFAULTS[p];
+      c.updatedAt = new Date().toISOString(); renderCameras(); scheduleSave(true); openCamEditor(c.id); }
+  });
+  return el;
+}
+function camEditorMarkup(c) {
+  const r = { ...CAM_DEFAULTS, ...c }, [W, H] = camPlan(), b = c.box, wpx = Math.round(b.w / 100 * W), hpx = Math.round(b.h / 100 * H);
+  const cams = [...new Set([...Object.keys(stateCache).filter(id => /^camera\./.test(id)), ...(entityCatalog?.entities || []).map(e => e.entity_id).filter(id => /^camera\./.test(id)), ...(c.entityId ? [c.entityId] : [])])].sort();
+  const camName = id => stateCache[id]?.attributes?.friendly_name || (entityCatalog?.entities || []).find(e => e.entity_id === id)?.name || id;
+  const general = section('Ogólne', control('Nazwa', 'name', 'text', r.name || '') + control('Kamera', 'entityId', 'select', c.entityId || '', { items: [['', '—'], ...cams.map(id => [id, camName(id)])], dropdown: true })
+    + control('Pokaż nazwę', 'showName', 'checkbox', !!r.showName) + control('Znacznik „na żywo”', 'live', 'checkbox', !!r.live), true);
+  const picture = section('Obraz', control('Odświeżanie', 'refresh', 'select', String(Number(r.refresh) || 0), { items: CAM_REFRESH, dropdown: true })
+    + control('Dopasowanie', 'fit', 'select', r.fit === 'contain' ? 'contain' : 'cover', { items: [['cover', 'Wypełnij'], ['contain', 'Cały obraz']] })
+    + `<p class="flow-section-note">${escapeHtml(translateValue('„Na żywo” trzyma otwarty strumień obrazu (bez dźwięku); odświeżanie pobiera klatkę co wybrany czas. Gdy karta jest w tle, nic nie jest pobierane.'))}</p>`);
+  const size = section('Rozmiar', control('Szerokość', 'camW', 'range', wpx, { min: 40, max: Math.max(1200, wpx), step: 1, suffix: 'px', integer: true }) + control('Wysokość', 'camH', 'range', hpx, { min: 30, max: Math.max(1200, hpx), step: 1, suffix: 'px', integer: true })
+    + `<div class="control room-card-row compact"><label>${escapeHtml(translateValue('Proporcje'))}</label><div class="cam-ratios">${[['16:9', 16 / 9], ['4:3', 4 / 3], ['1:1', 1], ['9:16', 9 / 16]].map(([t, v]) => `<button type="button" class="seg-btn text" data-cam-ratio="${v}"><span>${t}</span></button>`).join('')}</div></div>`
+    + `<p class="flow-section-note">${escapeHtml(translateValue('Kropki w rogach zmieniają rozmiar (z Shift – z zachowaniem proporcji).'))}</p>`);
+  const frame = section('Ramka', control('Zaokrąglenie', 'radius', 'range', clamp(Number(r.radius) || 0, 0, 120), { min: 0, max: 60, step: 1, suffix: 'px', integer: true })
+    + control('Ramka', 'border', 'checkbox', !!r.border) + control('Kolor ramki', 'borderColor', 'color', r.borderColor || '#FFFFFF')
+    + control('Grubość', 'borderWidth', 'range', clamp(Number(r.borderWidth) || 0, 0, 12), { min: 0, max: 8, step: .5, suffix: 'px' }) + control('Krycie ramki', 'borderOpacity', 'range', clamp(Number(r.borderOpacity ?? 35), 0, 100), { min: 0, max: 100, step: 1, suffix: '%', integer: true }));
+  const tap = section('Po dotknięciu', control('Dotknięcie w widoku', 'tap', 'select', r.tap === 'none' ? 'none' : 'live', { items: [['live', 'Podgląd na żywo'], ['none', 'Brak akcji']] })
+    + control('Okno podglądu', 'orient', 'select', r.orient === 'portrait' ? 'portrait' : 'landscape', { items: [['landscape', 'Poziome'], ['portrait', 'Pionowe']] })
+    + `<p class="flow-section-note">${escapeHtml(translateValue('Okno podglądu gra od razu na żywo (z dźwiękiem, gdy kamera go ma – domyślnie wyciszony); zoom dwoma palcami lub kółkiem.'))}</p>`);
+  return general + picture + size + frame + tap;
+}
+function openCamEditor(id) {
+  const c = camsOf()[id]; if (!c || !editMode) return;
+  closeEditor(); closeFlowEditor(); closeRoomEditor(); selectedCamId = id; const el = camEditor(), content = el.querySelector('.cam-editor-content'), open = $$('.editor-section', content).findIndex(d => d.open);
+  el.querySelector('.cam-editor-title').textContent = c.name || translateValue('Kamera'); el.querySelector('.cam-editor-entity').textContent = c.entityId || '—';
+  content.innerHTML = camEditorMarkup(c); if (open >= 0) $$('.editor-section', content).forEach((d, i) => { d.open = i === open; });
+  $$('.editor-section', content).forEach(d => d.addEventListener('toggle', () => { if (d.open) $$('.editor-section', content).forEach(o => { if (o !== d) o.open = false; }); }));
+  content.querySelectorAll('[data-cam-ratio]').forEach(btn => btn.addEventListener('click', () => { const cc = camsOf()[selectedCamId]; if (!cc) return; const [W, H] = camPlan(), wpx = cc.box.w / 100 * W, hpx = wpx / Number(btn.dataset.camRatio); cc.box.h = Math.min(100, hpx / H * 100); cc.box.y = clamp(cc.box.y, 0, 100 - cc.box.h); cc.updatedAt = new Date().toISOString(); renderCameras(); scheduleSave(true); syncCamEditorSize(cc); }));
+  el.classList.add('visible'); el.setAttribute('aria-hidden', 'false'); renderCameras();
+}
+function closeCamEditor() { selectedCamId = null; if (camEditorEl) { camEditorEl.classList.remove('visible'); camEditorEl.setAttribute('aria-hidden', 'true'); } $$('.cam-el.sel').forEach(n => n.classList.remove('sel')); }
+function syncCamEditorSize(c) {
+  const [W, H] = camPlan(); [['camW', c.box.w / 100 * W], ['camH', c.box.h / 100 * H]].forEach(([p, v]) => { const i = camEditorEl?.querySelector(`input[data-path="${p}"]`); if (!i || i === document.activeElement) return; v = Math.round(v); if (Number(i.max) < v) i.max = String(v); i.value = String(v); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${v}px`; });
+}
+function onCamEditorInput(event) {
+  const c = camsOf()[selectedCamId], input = event.target, path = input.dataset?.path; if (!c || !path) return;
+  let value = input.type === 'checkbox' ? input.checked : input.value; if (input.dataset.valueType === 'range' || input.dataset.valueType === 'number' || input.type === 'range') value = Number(value);
+  const o = input.closest('.control')?.querySelector('output'); if (o && input.type === 'range') o.textContent = `${value}${o.dataset.suffix || ''}`;
+  if (path === 'camW' || path === 'camH') { const [W, H] = camPlan(), b = c.box; if (path === 'camW') { b.w = clamp(value / W * 100, 1, 100); b.x = clamp(b.x, 0, 100 - b.w); } else { b.h = clamp(value / H * 100, 1, 100); b.y = clamp(b.y, 0, 100 - b.h); } }
+  else if (path === 'refresh') c.refresh = Number(value) || 0;
+  else c[path] = value;
+  if (path === 'entityId' && value && (!c.name || c.name === translateValue('Kamera'))) c.name = stateCache[value]?.attributes?.friendly_name || (entityCatalog?.entities || []).find(e => e.entity_id === value)?.name || c.name;
+  c.updatedAt = new Date().toISOString(); renderCameras();
+  if (path === 'name' || path === 'entityId') { camEditorEl.querySelector('.cam-editor-title').textContent = c.name || translateValue('Kamera'); camEditorEl.querySelector('.cam-editor-entity').textContent = c.entityId || '—'; }
+  if (event.type === 'change') scheduleSave(true);
+}
+// Edit mode on / off and a tap elsewhere: the panel closes, the dots go.
+document.addEventListener('pointerdown', event => { if (!selectedCamId || !camEditorEl?.classList.contains('visible')) return; if (event.target.closest?.('.cam-el, #cam-editor, .color-menu, .app-confirm, .confirm-dialog, dialog')) return; if (event.target.closest?.('#scene-viewport')) closeCamEditor(); }, true);
+els.editToggle?.addEventListener('click', () => setTimeout(() => { if (!editMode) closeCamEditor(); renderCameras(); }));

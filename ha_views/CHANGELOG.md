@@ -1,3 +1,9 @@
+## 0.6.1-beta.754
+
+- Nowy element „Kamera” (+ → Kamera, encja camera.*): obraz z kamery bezpośrednio na tle – na żywo albo odświeżany co 2 s / 5 s / 10 s / 30 s / 1 min / 5 min; dopasowanie (wypełnij / cały obraz), rozmiar (suwaki, kropki w rogach, proporcje 16:9 / 4:3 / 1:1 / 9:16), zaokrąglenie, ramka, nazwa i znacznik „na żywo”. Gdy karta jest w tle, nic nie jest pobierane.
+- Dotknięcie kamery w widoku otwiera okno podglądu na żywo (poziome lub pionowe, HLS z dźwiękiem domyślnie wyciszonym albo MJPEG, zoom dwoma palcami / kółkiem).
+- Etykieta bez zmian: wycofano podgląd kamery z etykiety z 0.6.1-beta.753 (etykieta z kamerą znów otwiera „Więcej informacji”). Wpis do 0.6.1-beta.753 wymieniał też przycisk – niesłusznie, przycisk nie miał podglądu kamery.
+
 ## 0.6.1-beta.753
 
 - Kamery: etykieta / pomieszczenie / przycisk z encją camera.* po dotknięciu otwiera własne okno podglądu na żywo – od razu klatka, potem obraz na żywo (HLS z dźwiękiem, gdy kamera umie streamować; inaczej MJPEG), bez klikania „play”.

@@ -2066,3 +2066,21 @@ body.editing .dash-quick.on{display:flex}
 .cam-live-msg[hidden]{display:none}
 .cam-live-zoom{position:absolute;right:10px;bottom:10px;padding:2px 7px;border-radius:7px;background:rgba(7,25,36,.8);color:#8fdfff;font:600 11px/1.5 system-ui;pointer-events:none}
 .cam-live-zoom:empty{display:none}
+/* Kamera on the plan: its picture in its box; in edit mode a frame and corner dots when picked. */
+.cam-layer{position:absolute;inset:0;z-index:2;pointer-events:none}
+body.editing .cam-layer{z-index:4}
+.cam-el{position:absolute;overflow:hidden;background:#05121a radial-gradient(circle at 50% 45%,#12303f,#05121a 70%);pointer-events:auto;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.cam-el img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .25s;pointer-events:none;-webkit-user-drag:none}
+.cam-el.has-pic img{opacity:1}
+.cam-el-empty{position:absolute;inset:0;display:grid;place-items:center;color:rgba(143,223,255,.55);font-size:calc(34px * var(--cam-k,1));pointer-events:none}
+.cam-el.has-pic .cam-el-empty{display:none}
+.cam-el-name{position:absolute;left:0;right:0;bottom:0;padding:calc(18px * var(--cam-k,1)) calc(10px * var(--cam-k,1)) calc(7px * var(--cam-k,1));background:linear-gradient(transparent,rgba(0,0,0,.62));color:#fff;font:700 calc(13px * var(--cam-k,1))/1.2 inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.cam-el-name[hidden],.cam-el-live[hidden]{display:none}
+.cam-el-live{position:absolute;top:calc(8px * var(--cam-k,1));left:calc(8px * var(--cam-k,1));width:calc(9px * var(--cam-k,1));height:calc(9px * var(--cam-k,1));border-radius:50%;background:#ef4444;box-shadow:0 0 calc(6px * var(--cam-k,1)) #ef4444;opacity:.35;pointer-events:none}
+.cam-el.has-pic .cam-el-live{opacity:1;animation:cam-live-dot 1.4s ease-in-out infinite}
+.cam-el-dot{display:none;position:absolute;width:calc(14px / var(--view-zoom,1));height:calc(14px / var(--view-zoom,1));border:calc(2px / var(--view-zoom,1)) solid #20b9e7;border-radius:50%;background:#fff;transform:translate(-50%,-50%);z-index:2;touch-action:none}
+.cam-el.sel{overflow:visible;outline:calc(2px / var(--view-zoom,1)) dashed #20b9e7;outline-offset:0}
+.cam-el.sel .cam-el-dot{display:block}
+.cam-el.sel img,.cam-el.sel .cam-el-name{border-radius:inherit}
+.cam-el-dot.nw{left:0;top:0;cursor:nwse-resize}.cam-el-dot.ne{left:100%;top:0;cursor:nesw-resize}.cam-el-dot.sw{left:0;top:100%;cursor:nesw-resize}.cam-el-dot.se{left:100%;top:100%;cursor:nwse-resize}
+.cam-ratios{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
