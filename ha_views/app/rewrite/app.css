@@ -2167,3 +2167,9 @@ body.editing .cam-layer{z-index:4}
 .spr-tools{margin-left:auto;display:inline-flex;gap:4px}
 .spr-tools button{display:grid;place-items:center;width:26px;height:26px;padding:0;border-radius:7px}
 .spr-count{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:rgba(47,155,255,.25);color:#cfeaff;font-size:10px}
+.layer-chips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
+.layer-chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line);background:rgba(16,42,58,.9);color:#cfe3ec;cursor:pointer}
+.layer-chip.active{border-color:#35c9f3;background:rgba(53,201,243,.18);color:#fff}
+.spr-handle.mot{background:#ff9f43;border-color:#fff1e0}
+.spr-handle.mot.selected{background:#ffc078;box-shadow:0 0 0 3px rgba(255,159,67,.45),0 1px 5px rgba(0,0,0,.55)}
+.spr-tip.mot{border-color:#ff9f43}

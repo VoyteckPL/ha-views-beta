@@ -1,3 +1,10 @@
+## 0.7.0-beta.771
+
+- Warstwy pomieszczenia: w panelu pomieszczenia (efekt Światło) nowa sekcja „Warstwy” z przyciskami Ruch / Podlewanie / Deszcz. Warstwa działa na kształcie tego samego pomieszczenia, ma własną encję i własne ustawienia, a światło pomieszczenia zostaje bez zmian – bez drugiego obszaru na tym samym miejscu. Wyłączenie warstwy zachowuje jej ustawienia.
+- Ruch: nowy wygląd „Cały pokój” (domyślny dla nowych czujników) – przy wykryciu ruchu od czujnika po całym pokoju rozchodzi się miękka fala, ściany na chwilę się podświetlają, a poświata gaśnie powoli po ustaniu ruchu („Zanikanie”, domyślnie 10 s). Stożki (Fale, Radar, Błysk) zostają jako opcja. Domyślny kolor ruchu fioletowy, żeby nie mylił się ze światłem; nowa opcja „Pokaż czujniki”.
+- Warstwa Ruch: każdy czujnik wybiera własną encję binary_sensor (czujniki ruchu / obecności na górze listy; przy dodaniu warstwy dobierany automatycznie po nazwie pomieszczenia, jeśli pasuje). Warstwa Podlewanie: encja zaworu / przełącznika. Warstwa Deszcz: czujnik deszczu (binarny albo w mm/h).
+- Osobne obszary „Ruch” i „Podlewanie” działają jak dotąd.
+
 ## 0.7.0-beta.770
 
 - Nowa numeracja bet: po stabilnej 0.7.0 bety mają numer 0.7.0-beta.N.
