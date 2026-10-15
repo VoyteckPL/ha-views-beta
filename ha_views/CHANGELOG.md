@@ -1,3 +1,11 @@
+## 0.7.0-beta.774
+
+- Porządek w obszarach: Pomieszczenie to światło + opcjonalnie ruch (sekcja „Czujnik ruchu” → „Ruch w pomieszczeniu”). Bez wyboru „Efekt” w panelach – każdy rodzaj obszaru to osobny element w „+”: Pomieszczenie, Podlewanie, Deszcz.
+- Nowy element „Deszcz” w „+”: rysujesz obszar (np. cały plan) i wybierasz czujnik. Domyślnie „Na spodzie”: w edycji kliknięcie wybiera najpierw pomieszczenia i inne obszary, a deszcz tam, gdzie nic innego nie ma, albo przy drugim kliknięciu w to samo miejsce. Opcję można wyłączyć, żeby deszcz był na wierzchu (też w strefach podlewania i ruchu). Kliknięcie w zaznaczony obszar przełącza na następny obszar pod nim.
+- Warstwy deszczu / podlewania pomieszczenia (z 0.7.0-beta.771–773) same zamieniają się w osobne obszary Deszcz / Podlewanie o tym samym kształcie i ustawieniach.
+- Ruch w pomieszczeniu ma własny „Podgląd ruchu”; podgląd ON pomieszczenia zapala tylko światło. Kafel „Czujnik ruchu” zniknął z „+” (ruch dodaje się w pomieszczeniu); istniejące strefy ruchu działają dalej.
+- Karta Home Assistant: w menu widoku „Dodaj jako kartę HA” – dodatek zapisuje kartę w /config/www, rejestruje ją w zasobach dashboardu (gdy dashboardy są w trybie UI) i kopiuje do schowka YAML (type: custom:ha-views-beta-card, view: …). Karta pokazuje jeden widok bez paska i edycji, w proporcjach planu; kliknięcia działają, „Więcej informacji” otwiera natywne okno HA. Edycja zostaje w HA Views.
+
 ## 0.7.0-beta.773
 
 - Poprawka warstw: zmiana stanu czujnika ruchu (oraz zaworu i czujnika deszczu) z warstwy pomieszczenia od razu odświeża pomieszczenie. Wcześniej ruch pokazywał się dopiero przy innej zmianie w pomieszczeniu (np. gdy zapaliło się światło), więc przy zgaszonym świetle nie było go widać.

@@ -2173,3 +2173,8 @@ body.editing .cam-layer{z-index:4}
 .spr-handle.mot{background:#ff9f43;border-color:#fff1e0}
 .spr-handle.mot.selected{background:#ffc078;box-shadow:0 0 0 3px rgba(255,159,67,.45),0 1px 5px rgba(0,0,0,.55)}
 .spr-tip.mot{border-color:#ff9f43}
+/* Card mode: one view inside a Home Assistant dashboard card - only the plan, nothing around it. */
+html:has(body.card-mode),body.card-mode{background:transparent!important;overflow:hidden!important;min-height:0!important}
+body.card-mode .topbar,body.card-mode #view-sheet,body.card-mode .view-tabs,body.card-mode .connection,body.card-mode #add-button,body.card-mode .scene-tools{display:none!important}
+body.card-mode main{width:100%!important;margin:0!important;padding:0!important}
+body.card-mode .scene-card{border:0!important;border-radius:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-773">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20260928-774">
 </head>
 <body>
   <header class="topbar">
@@ -192,6 +192,7 @@
           <label class="vm-field"><span><i class="mdi mdi-dock-right"></i>Panel edycji</span><select id="dock-side-select" aria-label="Panel edycji"><option value="right">Po prawej</option><option value="left">Po lewej</option></select></label>
           <label class="vm-field"><span><i class="mdi mdi-translate"></i>Język</span><select id="language-select" title="Language / Język" aria-label="Language / Język"><option value="en">English</option><option value="pl">Polski</option></select></label>
           <label class="vm-field" id="ha-start-row" hidden><span><i class="mdi mdi-home-import-outline"></i>Panel startowy HA</span><select id="ha-start-select" aria-label="Domyślny panel Home Assistant"><option value="off">Bez zmian</option><option value="user">HA Views (konto)</option><option value="device">HA Views (urządzenie)</option></select></label>
+          <button id="view-card" class="vm-tile vm-link" type="button" title="Dodaj jako kartę HA" aria-label="Dodaj jako kartę HA"><i class="mdi mdi-card-outline"></i><span>Dodaj jako kartę HA</span><i class="mdi mdi-content-copy vm-chev"></i></button>
           <button id="view-link" class="vm-tile vm-link" type="button" title="Kopiuj link do widoku" aria-label="Kopiuj link do widoku"><i class="mdi mdi-link-variant"></i><span>Kopiuj link do widoku</span><i class="mdi mdi-content-copy vm-chev"></i></button>
           </div>
           <div class="panel-head lib-panel-head"><div><h2>Biblioteka</h2><p>Zapisane szablony elementów</p></div></div>
@@ -379,6 +380,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20260928-773"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20260928-774"></script>
 </body>
 </html>
