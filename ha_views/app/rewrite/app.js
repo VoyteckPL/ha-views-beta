@@ -7377,6 +7377,7 @@ document.addEventListener('input', e => { const i = e.target.closest?.('input[da
 document.addEventListener('focusout', e => { if (e.target === mdiPicker?._input) setTimeout(() => { if (document.activeElement !== mdiPicker?._input) closeMdiPicker(); }, 120); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && mdiPicker) closeMdiPicker(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && roomWizard && $('#room-wizard')?.classList.contains('visible')) { e.preventDefault(); cancelRoomWizard(); } }); // (Esc in the wizard: adding cancelled)
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && roomDraft && !roomWizard) { e.preventDefault(); cancelRoomDrawing(); notify('Anulowano dodawanie'); } }); // (Esc while drawing a room: the drawing is dropped)
 document.addEventListener('scroll', e => { if (mdiPicker && !mdiPicker.contains(e.target)) closeMdiPicker(); }, true);
 document.addEventListener('click', e => { const b = e.target.closest?.('.mdi-picker [data-mdi-name]'); if (!b || !mdiPicker) return; const input = mdiPicker._input; closeMdiPicker(); if (!input?.isConnected) return;
   input.value = `mdi:${b.dataset.mdiName}`; syncMdiPreview(input); input.dispatchEvent(new Event('input', { bubbles: true })); input.dispatchEvent(new Event('change', { bubbles: true })); input.blur(); });

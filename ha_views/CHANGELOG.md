@@ -1,3 +1,7 @@
+## 0.6.1-beta.758
+
+- Rysowanie pomieszczenia: wyraźny czerwony przycisk „Anuluj” (z napisem także na telefonie) i Esc na komputerze – rysowanie można przerwać w każdej chwili; po narysowaniu X w kreatorze usuwa narysowane pomieszczenie.
+
 ## 0.6.1-beta.757
 
 - Okno „+”: mniejsze kafle typów (Etykieta, Pomieszczenie, …), na telefonie trzy w rzędzie.
