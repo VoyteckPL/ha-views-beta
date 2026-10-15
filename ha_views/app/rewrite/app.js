@@ -9326,7 +9326,7 @@ function bindEvents() {
   els.flowEditorContent?.addEventListener('click', onFlowEditorClick);
   els.flowEditorContent?.addEventListener('pointerdown', event => { if (event.target.closest('input[type="checkbox"],select')) event.stopPropagation(); });
   $('.flow-editor .editor-head')?.addEventListener('pointerdown', startEditorDrag);
-  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); if (!mobileView()) window.scrollTo(0, 0); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
+  els.editToggle.addEventListener('click', () => { if (isViewer()) return; closeMoreInfo(); editMode = !editMode; if (!editMode) endMotionPreview(); els.body.classList.toggle('editing', editMode); els.editToggle.classList.toggle('active', editMode); els.editToggle.setAttribute('aria-pressed', String(editMode)); syncDock(); els.editToggle.title = translateValue('Edytuj widok'); els.editToggle.setAttribute('aria-label', els.editToggle.title); if (editMode) { closeCompactMenus(); renderMarkers(); } else { editorPreview = { entityId:'', state:'' }; roomPreviewOn = ''; resetViewZoom(); if (!mobileView()) window.scrollTo(0, 0); closeEditor(); closeFlowEditor(); cancelRoomDrawing(); closeRoomEditor(); renderRoomEditLayer(); closeCompactMenus(); els.bgTransformPanel?.classList.remove('open'); els.bgTransformToggle?.classList.remove('active'); renderMarkers(); } requestAnimationFrame(() => { applyBackgroundTransform(); updateSceneGeometry(); }); });
   $('#snap-menu-button')?.addEventListener('click', event => { event.stopPropagation(); const menu = $('#snap-menu'), open = !menu.classList.contains('open'); closeCompactMenus(); menu.classList.toggle('open', open); $('#snap-menu-button').classList.toggle('active', open); syncSnapMenu(); });
   $('#snap-menu')?.addEventListener('click', event => {
     event.stopPropagation();
@@ -10640,7 +10640,13 @@ async function addViewAsCard() {
 
 let motionPreviewId = '';
 document.addEventListener('click', event => { const b = event.target.closest?.('[data-motion-preview]'); if (!b || !editMode) return; event.preventDefault(); event.stopPropagation();
-  motionPreviewId = motionPreviewId === selectedRoomId ? '' : selectedRoomId; b.classList.toggle('active', motionPreviewId === selectedRoomId); syncMotion(); }, true);
+  if (motionPreviewId === selectedRoomId) endMotionPreview(); else { motionPreviewId = selectedRoomId; syncMotion(); } b.classList.toggle('active', motionPreviewId === selectedRoomId); }, true);
+// The end of a preview is immediate (no fade-out, no wave left standing): the room shows its real sensors again.
+function endMotionPreview() {
+  const id = motionPreviewId; if (!id) return; motionPreviewId = '';
+  [...motionSt.s.keys()].forEach(key => { if (key.startsWith(`${id}|`)) motionSt.s.delete(key); });
+  syncMotion();
+}
 // Rain / irrigation were room layers for a short while (0.7.0-beta.771-774): each becomes an area of its own with the
 // same shape and settings (rain at the bottom), the room keeps its light and motion.
 function migrateRoomLayers() {

@@ -1,3 +1,7 @@
+## 0.7.0-beta.775
+
+- Ruch w pomieszczeniu: koniec „Podglądu ruchu” (ponowne kliknięcie albo wyjście z edycji) czyści podgląd od razu – bez zastygniętej fali i powolnego wygaszania; pomieszczenie wraca do prawdziwego stanu czujnika.
+
 ## 0.7.0-beta.774
 
 - Porządek w obszarach: Pomieszczenie to światło + opcjonalnie ruch (sekcja „Czujnik ruchu” → „Ruch w pomieszczeniu”). Bez wyboru „Efekt” w panelach – każdy rodzaj obszaru to osobny element w „+”: Pomieszczenie, Podlewanie, Deszcz.
