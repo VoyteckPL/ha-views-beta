@@ -5680,7 +5680,7 @@ function minViewZoom() {
 function editSheetCover() {
   if (!mobileView() || !editMode) return 0;
   if (editorTyping) return editorTyping.cover; // the panel shrunk for typing must not move the camera
-  const sheets = [els.editor, els.flowEditor, $('#room-editor')].filter(panel => panel?.classList.contains('visible'));
+  const sheets = [els.editor, els.flowEditor, $('#room-editor'), $('#cam-editor')].filter(panel => panel?.classList.contains('visible'));
   if (!sheets.length) return 0;
   // offsetHeight ignores the slide-in transform, so the value is final even while the sheet animates.
   const sheetTop = Math.min(...sheets.map(panel => innerHeight - panel.offsetHeight)), viewportBottom = els.viewport.getBoundingClientRect().bottom;
@@ -5691,7 +5691,7 @@ function clampViewPan() {
   const panorama = mobileWidePanorama();
   // Editing on a phone (the panel open): at any zoom - also below the fitted size, where a whole thermostat often is - the
   // camera may go past the plan's edges, so an element in a corner can be centred above the panel and the finger is free.
-  if (mobileView() && editMode && ['#room-editor', '#editor', '#flow-editor'].some(sel => $(sel)?.classList.contains('visible'))) { // (also a panorama: its viewport ends above the panel)
+  if (mobileView() && editMode && ['#room-editor', '#editor', '#flow-editor', '#cam-editor'].some(sel => $(sel)?.classList.contains('visible'))) { // (also a panorama: its viewport ends above the panel)
     const band = editorFreeBand(), mid = band.top + band.height / 2, halfW = els.viewport.clientWidth / 2, sw = els.scene.offsetWidth * viewZoom, sh = els.scene.offsetHeight * viewZoom;
     viewPanX = clamp(viewPanX, halfW - sw, halfW); viewPanY = clamp(viewPanY, mid - sh, mid); return; // (an edge of the plan at most in the middle)
   }
@@ -6969,7 +6969,7 @@ function focusSelectedMarkerOnMobile() {
 // with a small margin. Selected elements are centred in it.
 function editorFreeBand() {
   const vr = els.viewport.getBoundingClientRect();
-  const panel = ['#room-editor', '#editor', '#flow-editor'].map(sel => $(sel)).find(node => node?.classList.contains('visible'));
+  const panel = ['#room-editor', '#editor', '#flow-editor', '#cam-editor'].map(sel => $(sel)).find(node => node?.classList.contains('visible'));
   const screenBottom = window.visualViewport ? window.visualViewport.offsetTop + window.visualViewport.height : innerHeight;
   const editorTop = panel ? Math.min(panel.getBoundingClientRect().top, screenBottom - panel.offsetHeight) : Math.min(vr.bottom, screenBottom);
   // While the add wizard is open (under the top bar on a phone) the free band starts below it.
@@ -9749,12 +9749,21 @@ function camEditorMarkup(c) {
 }
 function openCamEditor(id) {
   const c = camsOf()[id]; if (!c || !editMode) return;
+  const fresh = selectedCamId !== id || !camEditorEl?.classList.contains('visible');
   closeEditor(); closeFlowEditor(); closeRoomEditor(); selectedCamId = id; const el = camEditor(), content = el.querySelector('.cam-editor-content'), open = $$('.editor-section', content).findIndex(d => d.open);
   el.querySelector('.cam-editor-title').textContent = c.name || translateValue('Kamera'); el.querySelector('.cam-editor-entity').textContent = c.entityId || '—';
   content.innerHTML = camEditorMarkup(c); if (open >= 0) $$('.editor-section', content).forEach((d, i) => { d.open = i === open; });
   $$('.editor-section', content).forEach(d => d.addEventListener('toggle', () => { if (d.open) $$('.editor-section', content).forEach(o => { if (o !== d) o.open = false; }); }));
   content.querySelectorAll('[data-cam-ratio]').forEach(btn => btn.addEventListener('click', () => { const cc = camsOf()[selectedCamId]; if (!cc) return; const [W, H] = camPlan(), wpx = cc.box.w / 100 * W, hpx = wpx / Number(btn.dataset.camRatio); cc.box.h = Math.min(100, hpx / H * 100); cc.box.y = clamp(cc.box.y, 0, 100 - cc.box.h); cc.updatedAt = new Date().toISOString(); renderCameras(); scheduleSave(true); syncCamEditorSize(cc); }));
   el.classList.add('visible'); el.setAttribute('aria-hidden', 'false'); renderCameras();
+  if (fresh) requestAnimationFrame(() => requestAnimationFrame(() => focusCam(camsOf()[id])));
+}
+// (a camera picked: brought to the middle of what is seen - above the panel on a phone, beside it on a computer -, about 60% of it)
+function focusCam(c) {
+  const n = c && $(`#cam-layer .cam-el[data-cam-id="${CSS.escape(c.id)}"]`), sc = els.scene.getBoundingClientRect(); if (!n || !sc.width || !editMode) return;
+  const r = n.getBoundingClientRect(), l = (r.left - sc.left) / viewZoom, t = (r.top - sc.top) / viewZoom, w = Math.max(1, r.width / viewZoom), h = Math.max(1, r.height / viewZoom), area = labelFocusArea(), vp = area.vp;
+  const zoom = clamp(Math.min((area.right - area.left) * .6 / w, (area.bottom - area.top) * .6 / h), zoomFloor(), Math.max(4, viewZoom));
+  glideCamera(zoom, (area.left + area.right) / 2 - vp.left - (l + w / 2) * zoom, (area.top + area.bottom) / 2 - vp.top - (t + h / 2) * zoom);
 }
 function closeCamEditor() { selectedCamId = null; if (camEditorEl) { camEditorEl.classList.remove('visible'); camEditorEl.setAttribute('aria-hidden', 'true'); } $$('.cam-el.sel').forEach(n => n.classList.remove('sel')); }
 function syncCamEditorSize(c) {

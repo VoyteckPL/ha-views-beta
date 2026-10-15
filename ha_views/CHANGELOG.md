@@ -1,3 +1,7 @@
+## 0.6.1-beta.755
+
+- Kamera: po zaznaczeniu w trybie edycji kamera centruje się w widocznej części ekranu (na telefonie nad panelem, na komputerze obok niego), więc panel jej nie zasłania i da się ją przesuwać i skalować kropkami.
+
 ## 0.6.1-beta.754
 
 - Nowy element „Kamera” (+ → Kamera, encja camera.*): obraz z kamery bezpośrednio na tle – na żywo albo odświeżany co 2 s / 5 s / 10 s / 30 s / 1 min / 5 min; dopasowanie (wypełnij / cały obraz), rozmiar (suwaki, kropki w rogach, proporcje 16:9 / 4:3 / 1:1 / 9:16), zaokrąglenie, ramka, nazwa i znacznik „na żywo”. Gdy karta jest w tle, nic nie jest pobierane.
