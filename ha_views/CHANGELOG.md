@@ -1,3 +1,8 @@
+## 0.7.0-beta.789
+
+- Pogoda: chmury wyglądają jak z lotu ptaka – większe, puszyste, z miękkim cieniem na ziemi i w większej liczbie (także na wąskim, wysokim obszarze). Ciemny odcień przy deszczu / burzy jest dużo słabszy, żeby plan i ikony zostały czytelne.
+- Pogoda: płatki śniegu i grad mają delikatny cień, więc widać je też na jasnym podłożu; słońce jest łagodniejsze.
+
 ## 0.7.0-beta.788
 
 - Pogoda: podgląd pogody na samej górze panelu – rząd przycisków (z encji, słońce, zachmurzenie, deszcz, ulewa, śnieg, mgła, noc, grad, burza, wiatr). Jedno kliknięcie pokazuje tę pogodę na planie (tylko w edycji).
