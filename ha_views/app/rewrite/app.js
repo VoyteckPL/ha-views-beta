@@ -1054,6 +1054,14 @@ function syncSoloIcon(room) {
   const pad = room.labelIconBg || room.labelIconBorder ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0, f = Math.min(fw, fh), was = Math.min(W, H || W), k = was > 0 ? (f - 2 * pad) / Math.max(1, was - 2 * pad) : 1;
   room.labelIconW = fw; room.labelIconH = fh; room.labelIconSize = Math.round(clamp((Number(room.labelIconSize) || ROOM_DEFAULTS.labelIconSize) * k, 6, Math.max(6, f - 2 * pad)) * 10) / 10; return true;
 }
+// A lone icon laid out afresh (new label with only its icon, "Przywróć domyślne" of its size): the frame is the label's box at
+// scale 1 and the symbol fills 80% of the inside (90% with no background / frame) - the real px the sliders show.
+function freshSoloIcon(room) {
+  if (!soloIcon(room) || !room.fbox) return false; squareSoloBox(room);
+  const [bw, bh] = freeBoxPx(room), sq = soloSquare(room), fw = sq ? Math.min(bw, bh) : bw, fh = sq ? Math.min(bw, bh) : bh, framed = room.labelIconBg || room.labelIconBorder, pad = framed ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0;
+  delete room.tileNeedsLayout; // (the preset laid out later for a new label would undo this: a lone icon needs none)
+  room.labelCardScale = 1; room.labelIconW = Math.round(fw * 10) / 10; room.labelIconH = Math.round(fh * 10) / 10; room.labelIconSize = Math.round(Math.max(6, (Math.min(fw, fh) - 2 * pad) * (framed ? .8 : .9)) * 10) / 10; return true;
+}
 const syncSoloIconUi = room => { syncSizeRanges(room); const i = $('#room-editor-content input[data-path="labelIconSize"]'); if (i && i !== document.activeElement) { i.value = String(Math.round(Number(room.labelIconSize))); const o = i.closest('.control')?.querySelector('output'); if (o) o.textContent = `${i.value}px`; } };
 function setFreeBox(room, box) {
   const w = clamp(box.w, 1, 100), h = clamp(box.h, 1, 100), r3 = v => Math.round(v * 1000) / 1000;
@@ -1411,7 +1419,7 @@ function fitDashLabels() {
       (fitDashLabels.auto ||= new Set()).add(room.id); setTimeout(() => { fitDashLabels.auto.delete(room.id); const c = $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`);
         if (!dashSpan(room) || !c?.offsetWidth || [...c.querySelectorAll('[data-label-part="name"], [data-label-part="state"]')].some(n => !(n.textContent || '').trim()) || (document.fonts && document.fonts.status !== 'loaded')) return; room.tileFitV = TILE_FIT_V; applyTilePreset(room); renderRooms(); if (!isViewer()) scheduleSave(); }, 600); }
     if (room.tileNeedsLayout && editMode && room.labelLinked && !isThermoRoom(room) && !room.labelCardFree && !fitDashLabels.auto?.has(room.id)) {
-      (fitDashLabels.auto ||= new Set()).add(room.id); requestAnimationFrame(() => { fitDashLabels.auto.delete(room.id); delete room.tileNeedsLayout; if (dashSpan(room)) { applyTilePreset(room, defaultTilePreset(room), '', true); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } }); }
+      (fitDashLabels.auto ||= new Set()).add(room.id); requestAnimationFrame(() => { fitDashLabels.auto.delete(room.id); if (!room.tileNeedsLayout) return; /* (laid out some other way meanwhile, e.g. a lone icon) */ delete room.tileNeedsLayout; if (dashSpan(room)) { applyTilePreset(room, defaultTilePreset(room), '', true); room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(); } }); }
     const keep = [card.style.minWidth, card.style.minHeight, card.style.width, card.style.height]; Object.assign(card.style, { minWidth: '', minHeight: '' });
     if (!card.classList.contains('free')) Object.assign(card.style, { width: '', height: '' });
     const nat = card.classList.contains('free') && Number(card.dataset.natW) > 0 && Number(card.dataset.natH) > 0, nw = nat ? Number(card.dataset.natW) : Math.max(1, card.offsetWidth), nh = nat ? Number(card.dataset.natH) : Math.max(1, card.offsetHeight), tw = pin.w / 100 * W / k, th = pin.h / 100 * H / k;
@@ -3522,7 +3530,7 @@ function closeRoomWizard() {
   if (room.entityIds.join('|') !== before) { room.updatedAt = new Date().toISOString(); refreshStates(); if (isIconRoom(room) && labelCamera(room) && (room.tapAction ?? 'more_info') === 'more_info') room.tapAction = 'camera'; }
   // A thermostat's rows follow its device (fitThermoRows); its frame is put on the grid from its own size, not twice.
   const thermoRows = isThermoRoom(room) && !isGaugeRoom(room) && !fromTemplate && room.entityIds.length, frameSize = [room.labelCardW, room.labelCardH];
-  renderRooms(); fitRoomLabel(id); snapNewLabelToGrid(id); scheduleSave(true);
+  renderRooms(); fitRoomLabel(id); snapNewLabelToGrid(id); if (isIconRoom(room) && !fromTemplate && freshSoloIcon(room)) renderRooms(); scheduleSave(true);
   if (thermoRows) fitThermoRows(id, frameSize, false, !!partsSeen);
   // With entities picked there is nothing left to do in the Room section, so the panel opens collapsed.
   openRoomEditor(id, -1, room.entityIds.length ? -1 : 0);
@@ -4791,7 +4799,7 @@ function onRoomEditorClick(event) {
     room[key] = !room[key];
     if (partKeys.includes(key)) restoreSingleLook(room);
     // Left with one part (not on tiles): grouped again, where the parts were.
-    if (partKeys.includes(key)) requestAnimationFrame(() => { const sq = squareSoloBox(room); if (sq | syncSoloIcon(room)) { renderRooms(); syncSoloIconUi(room); scheduleSave(true); } }); // (the icon left alone: its box made square once, its frame its box - the symbol in real px)
+    if (partKeys.includes(key)) requestAnimationFrame(() => { const fresh = !room[key] && soloIcon(room) && freshSoloIcon(room), sq = !fresh && squareSoloBox(room); if (fresh || (sq | syncSoloIcon(room))) { renderRooms(); syncSoloIconUi(room); scheduleSave(true); } }); // (the icon just left alone: laid out afresh like a new one) // (the icon left alone: its box made square once, its frame its box - the symbol in real px)
     if (partKeys.includes(key) && !room.labelLinked && singleNoUngroup(room)) { renderRooms(); keepLabelPlaceOnRegroup(room); room.labelLinked = true; delete room.labelAutoUngrouped; selectedLabelPart = ''; panelPart = null; }
     const onTileLabel = partKeys.includes(key) && room.labelLinked && !isThermoRoom(room) && !!dashSpan(room);
     if (onTileLabel) applyTilePreset(room); // (on a tile: laid out again with the label's preset)
@@ -4849,9 +4857,8 @@ function onRoomEditorClick(event) {
     // (a tile preset's label: its own defaults - the gaps and margin it is laid out with, the rows split in half)
     Object.assign(defaults, { labelCardPadX: defaults.labelCardPadding ?? 0, tileIconGap: 4, tileRowSplit: room && tilePartsShown(room).length === 2 ? tilePairSplitDefault(room) * 100 : 50 }); if (room?.tileColV2 && dashSpan(room)) Object.assign(defaults, { labelPartGap: 4, labelCardPadding: 4, labelCardPadX: 4 });
     // (a label on the background / a tile: the icon size and the parts' boxes laid out again by the preset, a lone icon's box back to a new one's size)
-    // (a room's lone icon: its frame is its box, the symbol back to 70% of the inside - 90% with no background / frame)
-    if (room && soloIcon(room) && room.fbox && /^label(IconSize|Icon[WH])$/.test(path)) { const [bw, bh] = freeBoxPx(room), sq = soloSquare(room), fw = sq ? Math.min(bw, bh) : bw, fh = sq ? Math.min(bw, bh) : bh, framed = room.labelIconBg || room.labelIconBorder, pad = framed ? clamp(Number(room.labelIconPadding ?? 6), 0, 120) : 0;
-      room.labelIconW = fw; room.labelIconH = fh; room.labelIconSize = Math.round(Math.max(6, (Math.min(fw, fh) - 2 * pad) * (framed ? .7 : .9)) * 10) / 10; room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
+    // (a room's lone icon: laid out afresh (freshSoloIcon))
+    if (room && soloIcon(room) && room.fbox && /^label(IconSize|Icon[WH])$/.test(path)) { freshSoloIcon(room); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     if (room && room.tileColV2 && dashSpan(room) && /^label(IconSize|(Icon|Name|State)[WH])$/.test(path)) { ['Icon','Name','State'].forEach(k => { delete room[`label${k}W`]; delete room[`label${k}H`]; }); delete room.labelIconSize; room.tileColV2Done = room.tileDuoDone = room.tilePairDone = false; applyTilePreset(room, room.tilePreset, '', true); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     if (room && /^fbox[WHS]$/.test(path) && room.fbox && dashSpan(room)) { const s = dashSpan(room), [w0, h0] = freeBoxPx(room), d = soloSquare(room) ? [Math.min(...newBoxPx(room)), Math.min(...newBoxPx(room))] : newBoxPx(room); freeBoxFromPx(room, path === 'fboxH' ? w0 : d[0], path === 'fboxW' ? h0 : d[1], s.x + s.w / 2, s.y + s.h / 2); /* (only its own side back to a new label's - 160 px for a room's label; a lone round / square icon both) */ if (!syncSoloIcon(room) && !soloIcon(room) && room.tileColV2 && room.labelLinked && !room.labelCardFree) { renderRooms(); applyTilePreset(room); } /* (the parts laid out again in the new box, as the slider does) */ room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     if (input && path in defaults) { input.value = defaults[path]; input.dispatchEvent(new Event('change', { bubbles:true })); return; }

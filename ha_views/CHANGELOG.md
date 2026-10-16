@@ -1,3 +1,8 @@
+## 0.7.0-beta.779
+
+- Samotna ikona (etykieta, pomieszczenie, przycisk): nowa etykieta z samą ikoną z kreatora miała zmieszaną skalę (suwak „Wielkość symbolu” pokazywał coś innego niż było widać, a „Przywróć domyślną wartość” zmieniała wygląd). Teraz kreator, wyłączenie nazwy i stanu w panelu oraz reset dają ten sam układ: ramka = pudełko etykiety w skali 1, symbol w realnych px.
+- Domyślny symbol samotnej ikony trochę większy: 80% wnętrza koła (z tłem lub ramką), np. 118 px przy kole 160 px; bez tła i ramki 90% jak dotąd.
+
 ## 0.7.0-beta.778
 
 - Linie kroplujące: „Dorysuj” (ikona przy linii) przedłuża linię od jej końca; kropka na środku odcinka zaznaczonej linii dodaje punkt (przeciągnij, żeby zrobić zakręt); dwuklik na punkcie go usuwa.
