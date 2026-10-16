@@ -2487,7 +2487,9 @@ function startDashResize(event, handle, room) {
     if (c === 'e' || c === 'w') { r0 = d0.r; r1 = d0.r + d0.h - 1; } else if (c === 'n' || c === 's') { c0 = d0.c; c1 = d0.c + d0.w - 1; }
     const t = { c: c0, r: r0, w: c1 - c0 + 1, h: r1 - r0 + 1 }; if (t.c === room.dash.c && t.r === room.dash.r && t.w === room.dash.w && t.h === room.dash.h) return;
     room.dash = t; const span = dashSpan(room); room.x = Math.round((span.x + span.w / 2) * 100) / 100; room.y = Math.round((span.y + span.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0;
-    renderRoomLabels(); renderDashGrid(t);
+    renderRoomLabels();
+    if (room.tileColV2 && room.labelLinked && !room.labelCardFree) { applyTilePreset(room); renderRoomLabels(); } // (live: the preset lays the label out again for every new tile shape while it is dragged)
+    renderDashGrid(t);
   };
   const up = e => {
     if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (moved && resolveDashOverlaps(activeSceneView(), room.id)) renderRoomLabels(); renderDashGrid();

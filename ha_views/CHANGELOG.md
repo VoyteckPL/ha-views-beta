@@ -1,3 +1,7 @@
+## 0.7.0-beta.795
+
+- Siatka kafelków: przy rozciąganiu etykiety jej układ (ikona z lewej, nazwa, stan itd.) dopasowuje się na żywo do każdego kolejnego rozmiaru kafelków, a nie dopiero po puszczeniu myszy.
+
 ## 0.7.0-beta.794
 
 - Kopiuj / wklej styl: kopiuje też rozmiar etykiety (jej własne pudełko na planie z tłem – np. wielkość samej ikony koła / kwadratu). Po wklejeniu element zachowuje swoje miejsce, a bierze rozmiar ze skopiowanego.
