@@ -1,3 +1,7 @@
+## 0.7.0-beta.791
+
+- Panel edycji: wybór w podsekcji (efekt ikony, kształt koła / kwadratu w „Rozmiar” itp.) nie zwija już podsekcji – zostaje otwarta po kliknięciu. Panel źle rozpoznawał otwartą podsekcję zaznaczonej sekcji, bo ta miała dodatkową klasę „current”.
+
 ## 0.7.0-beta.790
 
 - Efekty ikony działają też na elementach bez stanu ON/OFF (np. przycisk, etykieta bez encji do przełączania): neon, oddech, fale, promienie, wirujący pierścień, światło od środka i gradient były rysowane tylko przy włączonym stanie, więc przy takich elementach nic nie było widać. Teraz taki element jest dla efektu zawsze „włączony”.

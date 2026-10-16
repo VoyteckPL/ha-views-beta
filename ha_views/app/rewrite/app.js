@@ -4327,7 +4327,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   const content = $('#room-editor-content'), scroll = content.scrollTop;
   // Open subsections are remembered per section (several sections have a "Rozmiar" or "Kolor"): reopening one must not
   // open the same-named subsection of another part.
-  const subKey = node => `${node.closest('details.editor-section')?.className || ''}|${node.textContent.trim()}`;
+  const subKey = node => `${[...(node.closest('details.editor-section')?.classList || [])].filter(c => /^part-/.test(c) && c !== 'part-section').join(' ')}|${node.textContent.trim()}`; // (not the section's "current" / "no-data" marks: the new panel has not got them yet)
   const openSubs = new Set($$('.gauge-subsection[open] > summary', content).map(subKey));
   content.innerHTML = roomEditorMarkup(room); applyAutoStops(content); syncHeadPreview(panel, roomLight({ ...ROOM_DEFAULTS, ...room }).on); requestAnimationFrame(() => syncSizeRanges(room));
   // Grouping sits on the panel's head, next to "default style" (only for a label with more than one part shown).
