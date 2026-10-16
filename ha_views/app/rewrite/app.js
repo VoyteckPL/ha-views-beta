@@ -4236,6 +4236,9 @@ function roomEditorMarkup(room) {
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
     : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
+    // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
+  const ifxNow = iconEffectOf(r), iconFx = isThermoRoom(r) || !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open" open><summary>${escapeHtml(translateValue('Efekt ikony'))}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${escapeHtml(translateValue(name))}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(name))}</span></button>`).join('')}</div>`
+      + (ifxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })));
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
   const fxSection = isThermoRoom(r) ? '' : (() => {
@@ -4254,10 +4257,7 @@ function roomEditorMarkup(room) {
       body = `<details class="gauge-subsection size-open" open><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-looks">${looks}</div></div></details>`
         + sub('Szkło', control('Rozmycie','labelFxLBlur','range',num(r.labelFxLBlur, 22),{ min:0, max:40, step:1, suffix:'px', integer:true }) + control('Biel','labelFxLTint','range',num(r.labelFxLTint, 24),{ min:0, max:80, step:1, suffix:'%', integer:true }) + control('Odcień','labelFxLColor','color',r.labelFxLColor || '#FFFFFF') + control('Połysk','labelFxLShine','range',num(r.labelFxLShine, 60),{ min:0, max:100, step:1, suffix:'%', integer:true })) + sub('Części', partsRows);
     }
-    // The icon's effect (its own colour; animated while ON), with its strength.
-    const ifxNow = iconEffectOf(r), iconFx = !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open" open><summary>${t('Efekt ikony')}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${t(name)}"><i class="mdi ${mdi}"></i><span>${t(name)}</span></button>`).join('')}</div>`
-      + (ifxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })));
-    return partBar('effects', 'Efekty', themes + styles + body + iconFx, []);
+    return partBar('effects', 'Efekty', themes + styles + body, []);
   })();
   // Ungrouped, only the parts are worked on: no label section then (a thermostat keeps it - its parts are switched there).
   // One shown part: no label section - the label's controls (its size, margin, tiles, background, frame) go to the end of
@@ -4287,6 +4287,7 @@ function roomEditorMarkup(room) {
   const partHtml = item => { const key = item[1]; let h = partSection(item);
     if (false && tileSizes && key === 'labelIcon') h = swapControl(h, 'labelIconSize', r.labelName || r.labelState ? control('Udział ikony','tileIconShare','range',tileIconShare(r),{ min:30, max:70, step:1, suffix:'%', integer:true }) : '');
     h = withBoxRows(h, key);
+    if (key === 'labelIcon' && iconFx) h = h.replace(/<\/div><\/details>$/, () => `${iconFx}</div></details>`);
     // (No margin sliders for a part: its frame is set with its width / height, what is in it with its size.)
     if (['labelIcon','labelName','labelState'].includes(key)) h = swapControl(h, `${key}Padding`, '');
     // (a room's icon that is its label: the label's box size - width / height - in the icon's own Size)

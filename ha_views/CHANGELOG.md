@@ -1,3 +1,7 @@
+## 0.7.0-beta.780
+
+- Efekt ikony przeniesiony z sekcji „Efekty” do sekcji „Ikona” (jako osobna podsekcja „Efekt ikony”). W „Efektach” zostały motywy i style ramki.
+
 ## 0.7.0-beta.779
 
 - Samotna ikona (etykieta, pomieszczenie, przycisk): nowa etykieta z samą ikoną z kreatora miała zmieszaną skalę (suwak „Wielkość symbolu” pokazywał coś innego niż było widać, a „Przywróć domyślną wartość” zmieniała wygląd). Teraz kreator, wyłączenie nazwy i stanu w panelu oraz reset dają ten sam układ: ramka = pudełko etykiety w skali 1, symbol w realnych px.
