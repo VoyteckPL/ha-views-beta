@@ -2134,7 +2134,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   const spec = r.labelIcon ? roomLabelIconSpec(r, on) : null;
   const anim = roomIconAnimation(r, on), animAttr = anim ? { cls: ` ${anim.cls}`, style: `;${anim.style}` } : { cls: '', style: '' };
   const iconHtml = !spec ? '' : spec.domain ? `<img class="room-label-brand${animAttr.cls}" src="api/integration_icon?domain=${encodeURIComponent(spec.domain)}" data-icon-fallback="${escapeHtml(`https://brands.home-assistant.io/_/${encodeURIComponent(spec.domain)}/dark_icon.png`)}" alt="" style="opacity:${iconOpacity}${animAttr.style}">` : (() => {
-    const ig = iconFxGradient(r, iconEffectOf(r), on || iconFxAlwaysOn(r));
+    const ig = iconFxGradient(r, iconEffectOf(r), on || iconFxAlwaysOn(r), iconColor);
     const svg = JSON.stringify({ color: iconColor, fill: ig ? `url(#${ig.id})` : r.labelIconFill !== false ? rgba(iconColor, iconOpacity) : 'none', defs: ig?.defs || '', stroke: r.labelIconOutline ? rgba(outlineColor || '#FFFFFF', outlineOpacity) : '', width: clamp(Number(outlineWidth) || 1.5, .5, 8), anim: anim?.cls || '', animStyle: anim?.style || '' });
     const d = mdiSvgPath(spec.cls);
     return d ? mdiSvgMarkup(d, svg) : `<i class="mdi ${escapeHtml(spec.cls)}${animAttr.cls}" data-svg-icon="${escapeHtml(String(spec.cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(svg)}" style="${iconStyle}${glyphShiftStyle(spec.cls)}${animAttr.style}"></i>`;
@@ -2238,10 +2238,12 @@ const ICON_EFFECTS = [['none','Brak','mdi-close-circle-outline'],['neon','Neon',
 const iconFxAlwaysOn = r => iconEffectOf(r) !== 'none' && !roomSwitchable(r);
 const iconEffectOf = r => ICON_EFFECTS.some(([v]) => v !== 'none' && v === r?.labelIconEffect) ? r.labelIconEffect : 'none';
 // (Metal / Gradient on an SVG icon: its fill is a gradient - animated while ON)
-function iconFxGradient(r, fx, on) {
+function iconFxGradient(r, fx, on, color = '') {
   if (fx !== 'metal' && fx !== 'grad') return null;
-  const id = `ifxg-${String(r.id).replace(/[^a-zA-Z0-9_-]/g, '')}`, stops = fx === 'metal' ? (on ? [[0,'#7a5410'],[.3,'#ffd27a'],[.42,'#fff6d8'],[.55,'#e2a93d'],[1,'#7a5410']] : [[0,'#f4f8fb'],[.45,'#8a9aa5'],[.55,'#e3eaef'],[1,'#5f707b']])
-    : (on ? [[0,'#ff6374'],[.2,'#ffd166'],[.4,'#22d69b'],[.6,'#20b9e7'],[.8,'#b66dff'],[1,'#ff6374']] : [[0,'#5f7686'],[1,'#8fa9b7']]);
+  // (the lit metal / gradient take the icon's own colour: lighter and darker bands of it)
+  const c = /^#[0-9a-f]{6}$/i.test(String(color)) ? color : '#DCE8EF', mix = (a, b, t) => '#' + hexRgb(a).split(',').map((v, i) => Math.round(Number(v) + (Number(hexRgb(b).split(',')[i]) - Number(v)) * t).toString(16).padStart(2, '0')).join('');
+  const id = `ifxg-${String(r.id).replace(/[^a-zA-Z0-9_-]/g, '')}`, stops = fx === 'metal' ? (on ? [[0,mix(c,'#000000',.55)],[.3,c],[.42,mix(c,'#ffffff',.75)],[.55,mix(c,'#000000',.12)],[1,mix(c,'#000000',.55)]] : [[0,'#f4f8fb'],[.45,'#8a9aa5'],[.55,'#e3eaef'],[1,'#5f707b']])
+    : (on ? [[0,mix(c,'#ffffff',.4)],[.25,c],[.5,mix(c,'#000000',.4)],[.75,c],[1,mix(c,'#ffffff',.4)]] : [[0,'#5f7686'],[1,'#8fa9b7']]);
   const anim = on ? `<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="24 ${fx === 'metal' ? 6 : 24}" dur="${fx === 'metal' ? 3.2 : 6}s" repeatCount="indefinite"/>` : '';
   return { id, defs: `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="24" y2="${fx === 'metal' ? 6 : 24}" spreadMethod="${on ? 'repeat' : 'pad'}">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}${anim}</linearGradient></defs>` };
 }

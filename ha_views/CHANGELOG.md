@@ -1,3 +1,7 @@
+## 0.7.0-beta.792
+
+- Efekty ikony „Metal” i „Gradient” biorą kolor ikony (ustawiony w „Kolor”): metal był zawsze złoty, gradient zawsze tęczowy. Teraz to jaśniejsze i ciemniejsze pasy wybranego koloru; wyłączony metal zostaje srebrny.
+
 ## 0.7.0-beta.791
 
 - Panel edycji: wybór w podsekcji (efekt ikony, kształt koła / kwadratu w „Rozmiar” itp.) nie zwija już podsekcji – zostaje otwarta po kliknięciu. Panel źle rozpoznawał otwartą podsekcję zaznaczonej sekcji, bo ta miała dodatkową klasę „current”.
