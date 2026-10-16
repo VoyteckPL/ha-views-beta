@@ -8282,11 +8282,11 @@ function addIconElement([x, y], entity = null) {
 // The default thermostat: frame size, the parts' places in it and their look. Device-specific settings (texts of the
 // work states and modes, used work states, extra entities) are not part of it.
 const THERMO_DEFAULT_LOOK = Object.freeze({
-  tapAction:"more_info", labelCardRadius:26, labelCardPadding:0, labelIconName:"mdi:water", labelIconOn:"#20B9E7", labelIconSize:34,
+  tapAction:"more_info", labelCardRadius:26, labelCardPadding:0, labelIconName:"mdi:water", labelIconOn:"#20B9E7", labelIconSize:52,
   labelIconAnim:true, labelIconVariant:true, labelIconNameOn:"mdi:water", labelIconNameOff:"mdi:water-off", labelIconOutlineWidth:0.5,
   labelIconSource:"mdi", labelCardFree:true, labelNameColorState:true, labelStateColorState:true, labelStateColorOn:"#FFFFFF",
-  labelStateWeight:"bold", labelStateBgState:true, labelIconW:65.8, labelIconH:65.8, labelNameW:204.4, labelNameH:56.8, labelStateW:240.3,
-  labelStateH:52.3, labelIconFY:-400.03, labelNameFY:-309.5, labelStateFX:-4.11, labelStateFY:258.89, labelNameSize:30, labelStateColor:"#FFFFFF",
+  labelStateWeight:"bold", labelStateBgState:true, labelIconW:90, labelIconH:90, labelNameW:260, labelNameH:70, labelStateW:240.3,
+  labelStateH:52.3, labelIconFY:-400.03, labelNameFY:-309.5, labelStateFX:-4.11, labelStateFY:258.89, labelNameSize:40, labelStateColor:"#FFFFFF",
   labelStateSize:28, labelDial:true, labelDialSize:110, labelTarget:true, labelTargetSize:46, labelTargetBorderOpacity:0.35,
   labelTargetBorderWidth:2, labelCurrent:true, labelCurrentSize:71, labelAction:true, labelActionSize:40, labelActionColorOff:"#9FB6C3",
   labelMinus:true, labelMinusSize:24, labelMinusBg:true, labelMinusBgOpacity:0.08, labelMinusBgColor:"#FFFFFF", labelMinusBorder:true,

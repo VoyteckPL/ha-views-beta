@@ -1,3 +1,7 @@
+## 0.7.0-beta.798
+
+- Termostat: większe domyślne rozmiary – ikona (symbol 52 px, koło 90 px) i nazwa (tekst 40, pudełko 260 × 70). Dotyczy nowych termostatów i „Przywróć domyślny wygląd”; istniejące zostają jak są.
+
 ## 0.7.0-beta.797
 
 - Termostat: ikona ma takie same suwaki jak samotna ikona – „Wielkość symbolu” oraz „Wielkość koła” / „Wielkość kwadratu” z zatrzymaniem na pełnych setkach (100, 200 …) i strzałkami pod suwakiem.
