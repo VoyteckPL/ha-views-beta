@@ -1,3 +1,7 @@
+## 0.7.0-beta.782
+
+- Efekt ikony „Szklana kula” i „Wypukła 3D”: nowy przełącznik „Pokaż kulę / podstawę efektu” w podsekcji „Efekt ikony”. Po wyłączeniu zostaje sam symbol ikony (z kolorem i światłem), bez kuli.
+
 ## 0.7.0-beta.781
 
 - Panel edycji: wszystkie podsekcje (też „Rozmiar”, „Efekt ikony”, „Motywy”, „Presety”) są domyślnie zwinięte po wejściu w element i po otwarciu sekcji. Rozwijasz je ręcznie; rozwinięcie jednej zwija pozostałe.

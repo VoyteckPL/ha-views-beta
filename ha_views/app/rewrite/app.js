@@ -2322,7 +2322,7 @@ function renderRoomLabels(view = activeSceneView()) {
     ensureLabelFxDefs();
     { const ifx = iconEffectOf(room), sfx = !isThermoRoom(room) && ['liquid','gradient'].includes(room.labelCardFx) ? room.labelCardFx : 'none'; // (only liquid glass and the gradient frame are left)
       const pv = preview(room.id), lit = pv ? pv === 'on' : !!roomLight(room).on;
-      const cls = `room-label-group${ifx !== 'none' ? ` iefx-${ifx}` : ''}${sfx !== 'none' ? ` lst-${sfx}` : ''}${sfx === 'gradient' && room.labelFxGAnim ? ' lst-ganim' : ''}${sfx !== 'none' && room.labelFxParts !== false ? ' lst-parts' : ''}${sfx !== 'none' && room.labelFxGlow ? ' lst-glow' : ''}${lit ? ' lon' : ''}`; if (group.className !== cls) group.className = cls;
+      const cls = `room-label-group${ifx !== 'none' ? ` iefx-${ifx}` : ''}${sfx !== 'none' ? ` lst-${sfx}` : ''}${sfx === 'gradient' && room.labelFxGAnim ? ' lst-ganim' : ''}${sfx !== 'none' && room.labelFxParts !== false ? ' lst-parts' : ''}${sfx !== 'none' && room.labelFxGlow ? ' lst-glow' : ''}${lit ? ' lon' : ''}${['emboss','glass'].includes(ifx) && room.labelIconFxBody === false ? ' ifx-nobody' : ''}`; if (group.className !== cls) group.className = cls;
       // (the looks' own settings, as variables on the label's wrapper)
       const num = (v, d) => Number.isFinite(Number(v)) && v !== '' && v !== null && v !== undefined ? Number(v) : d;
       [['--g1', room.labelFxG1 || '#20B9E7'], ['--g2', room.labelFxG2 || '#B66DFF'], ['--ga', `${num(room.labelFxGAngle, 135)}deg`], ['--gw', `${num(room.labelFxGWidth, 2)}px`], ['--gbg', String(num(room.labelFxGFill, 72) / 100)], ['--gglow', `${num(room.labelFxGGlow, 0)}px`],
@@ -4238,6 +4238,7 @@ function roomEditorMarkup(room) {
     : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
     // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
   const ifxNow = iconEffectOf(r), iconFx = isThermoRoom(r) || !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open"><summary>${escapeHtml(translateValue('Efekt ikony'))}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${escapeHtml(translateValue(name))}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(name))}</span></button>`).join('')}</div>`
+      + (['emboss','glass'].includes(ifxNow) ? control('Pokaż kulę / podstawę efektu','labelIconFxBody','checkbox',r.labelIconFxBody !== false,{ refresh:true }) : '')
       + (ifxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })));
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
