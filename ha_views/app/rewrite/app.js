@@ -3315,7 +3315,7 @@ function renderRooms() {
   const layer = $('#rooms'); if (!layer) return;
   // A room being moved shows only its outline and label (no light / state effect), so nothing flickers while it
   // is rebuilt on every step; the effect fades back in when the room is dropped.
-  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId && room.roomEffect !== 'rain' && room.roomEffect !== 'water' && room.roomEffect !== 'motion');
+  const view = activeSceneView(), rooms = Object.values(roomsOf(view)).filter(room => (room.points || []).length >= 3 && room.id !== movingRoomId && room.roomEffect !== 'rain' && room.roomEffect !== 'weather' && room.roomEffect !== 'water' && room.roomEffect !== 'motion');
   const width = els.scene.offsetWidth || 1, height = els.scene.offsetHeight || 1, kept = new Set();
   const backdrop = sceneBackdrop();
   rooms.forEach(room => {
@@ -3342,7 +3342,7 @@ function renderRooms() {
   let outlineBox = layer.querySelector('.room-outlines'); if (!outlineBox) { outlineBox = document.createElement('div'); outlineBox.className = 'room-outlines'; }
   if (outlineBox.__html !== outlines) { outlineBox.innerHTML = outlines; outlineBox.__html = outlines; }
   if (layer.lastElementChild !== outlineBox) layer.append(outlineBox);
-  renderRoomLabels(view); syncRain(view); syncWater(view); syncMotion(view);
+  renderRoomLabels(view); syncRain(view); syncWeather(view); syncWater(view); syncMotion(view);
   if (els.addedList && $('#view-integrations')?.classList.contains('active')) renderAdded();
   renderRoomEditLayer();
 }
@@ -3427,11 +3427,11 @@ function pointInPolygon([x, y], points) {
 }
 // tap: a tap in view mode - an area that takes no taps (a rain area without "Klikalny obszar", or one whose tap does nothing) lets it
 // through to the area under it; its label still takes its own taps.
-const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'water' || room.roomEffect === 'motion' ? !!room.rainAreaTap : room.tapAction !== 'none';
+const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'weather' || room.roomEffect === 'water' || room.roomEffect === 'motion' ? !!room.rainAreaTap : room.tapAction !== 'none';
 // Edit mode: all areas under a point, the one to pick first first - an area "Na spodzie przy klikaniu" (by default a rain
 // area, usually over the whole plan) goes under the others, so the rooms in it stay clickable; the rain is picked where no other area is, or by tapping the same spot again.
 function roomsAtEdit(point) { const all = Object.values(roomsOf()).reverse().filter(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); return [...all.filter(r => !editBelow(r)), ...all.filter(editBelow)]; }
-const editBelow = room => room.editBelow ?? room.roomEffect === 'rain'; // ("Na spodzie przy klikaniu": on by default for rain)
+const editBelow = room => room.editBelow ?? (room.roomEffect === 'rain' || room.roomEffect === 'weather'); // ("Na spodzie przy klikaniu": on by default for rain)
 function roomAt(point, tap = false) { return Object.values(roomsOf()).reverse().find(room => (room.points || []).length >= 3 && (!tap || roomTakesTap(room)) && pointInPolygon(point, room.points)); }
 // ---- Drawing a new room
 function startRoomDrawing() {
@@ -3455,6 +3455,7 @@ function finishRoomDrawing() {
   if (view.background && freeBoxRoom(view.rooms[id])) { const r = view.rooms[id], xs = r.points.map(p => p[0]), ys = r.points.map(p => p[1]), [cx, cy] = roomLabelAnchor(r.points), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
     void xs; void ys; void W; void H; void k; freeBoxFromPx(r, ...ROOM_BOX_PX, cx, cy); r.tileNeedsLayout = true; } // (always the same size, whatever the room's)
   if (roomDraft.effect === 'rain') { view.rooms[id].roomEffect = 'rain'; if (!roomDraft.name) view.rooms[id].name = `${translateValue('Deszcz')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'rain').length}`; }
+  if (roomDraft.effect === 'weather') { view.rooms[id].roomEffect = 'weather'; if (!roomDraft.name) view.rooms[id].name = `${translateValue('Pogoda')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'weather').length}`; }
   if (roomDraft.effect === 'motion') { setupMotionZone(view.rooms[id]); if (!roomDraft.name) view.rooms[id].name = `${translateValue('Ruch')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'motion').length}`; }
   if (roomDraft.effect === 'water') setupWaterZone(view.rooms[id], roomDraft.name ? '' : `${translateValue('Sekcja')} ${Object.values(view.rooms).filter(o => o.roomEffect === 'water').length}`);
   const withEntities = view.rooms[id].entityIds.length > 0; pendingTemplate = roomDraft.template || ''; cancelRoomDrawing(); renderRooms(); if (!view.rooms[id].fbox) fitRoomLabel(id); scheduleSave(true); if (withEntities) refreshStates();
@@ -3936,13 +3937,14 @@ function roomEditorMarkup(room) {
     + (labelCamera(r) && isIconRoom(r) && !isThermoRoom(r) ? `<div class="room-icon-actions"><button type="button" data-label-to-cam><i class="mdi mdi-image-outline"></i><span>${escapeHtml(translateValue('Pokaż jako obraz kamery'))}</span></button></div>` : '')
     );
   // Room look: colour, light and (switched on from the section bar) the outline of the shape.
-  const lookSection = () => partBar('room', 'Wygląd', (r.roomEffect === 'rain' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
+  const lookSection = () => partBar('room', 'Wygląd', (r.roomEffect === 'rain' || r.roomEffect === 'weather' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Kolor', control('Kolor zależny ON/OFF','stateEnabled','checkbox',!!r.stateEnabled,refresh)
     + (r.stateEnabled
       ? control('Kolor ON','color','color',r.color) + control('Kolor OFF','offColor','color',r.offColor)
         + control('Intensywność ON','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true })
         + control('Intensywność OFF','offOpacity','range',Math.round(clamp(Number(r.offOpacity) || 0, 0, 1) * 100),{ min:0, max:100, step:1, suffix:'%', integer:true })
       : control('Kolor','color','color',r.color)
         + control('Intensywność','opacity','range',Math.round(clamp(Number(r.opacity) || 0, 0, 1) * 100),{ min:5, max:100, step:1, suffix:'%', integer:true }))))
+    + (r.roomEffect === 'weather' ? weatherLookSub(r) : '')
     + (r.roomEffect === 'rain' ? sub('Deszcz', control('Wariant','rainStyle','select',['ripples','streaks','combo','drizzle'].includes(r.rainStyle) ? r.rainStyle : 'ripples',{ items:[['ripples','Kręgi'],['streaks','Smugi'],['combo','Kręgi + smugi + mokro'],['drizzle','Mżawka']], dropdown:true })
         + `<div class="control rain-color-row"><label>${escapeHtml(translateValue('Kolor kropli'))}</label><div class="rain-swatches">${RAIN_BLUES.map(([c, t]) => `<button type="button" class="rain-swatch${String(r.rainColor || '#9BD7FF').toUpperCase() === c ? ' active' : ''}" data-rain-color="${c}" style="--c:${c}" title="${escapeHtml(translateValue(t))}" aria-label="${escapeHtml(translateValue(t))}"></button>`).join('')}<input type="color" class="rain-own" data-path="rainColor" value="${escapeHtml(r.rainColor || '#9BD7FF')}" title="${escapeHtml(translateValue('Własny kolor'))}" aria-label="${escapeHtml(translateValue('Własny kolor'))}"></div></div>`
         + control('Natężenie','rainRate','range',clamp(Number(r.rainRate ?? 4), .5, 20),{ min:.5, max:20, step:.5, suffix:' mm/h' })
@@ -3958,7 +3960,7 @@ function roomEditorMarkup(room) {
         + `<p class="flow-section-note">${escapeHtml(translateValue('Bez „Klikalny obszar” dotknięcie przechodzi do obszarów pod deszczem; etykieta deszczu zostaje klikalna (np. „Więcej informacji” z historią czujnika).'))}</p>`
         + `<p class="flow-section-note">${escapeHtml(translateValue('Pada, gdy encja obszaru jest włączona (np. czujnik deszczu). Czujnik w mm/h steruje natężeniem na żywo; czujnik binarny używa natężenia z suwaka. W edycji podgląd ON / OFF w nagłówku pokazuje deszcz od razu.'))}</p>`) : '')
     + (r.roomEffect === 'water' ? waterLookSub(r) : '') + (r.roomEffect === 'motion' ? motionLookSub(r) : '')
-    + (r.roomEffect === 'rain' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Światło', control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
+    + (r.roomEffect === 'rain' || r.roomEffect === 'weather' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Światło', control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
     + control('Efekt światła','lightEffect','select',r.lightEffect || 'none',{ items:[['none','Jednolity'],['center','Centralny'],['corner','Róg'],['wall','Od ściany'],['ambient','Ambient']], refresh:true })
     + (r.lightEffect && r.lightEffect !== 'none' ? (r.lightEffect === 'wall'
         ? control('Kierunek','lightDirection','select',r.lightDirection || 'left',{ items:[['left','Lewa'],['right','Prawa'],['top','Góra'],['bottom','Dół']] }) + control('Pozycja na ścianie','lightWallPos','range',Number(r.lightWallPos ?? 50),{ min:0, max:100, step:1, suffix:'%', integer:true })
@@ -4315,7 +4317,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
-  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.dripOnly ? 'Linia kroplująca' : room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : room.roomEffect === 'motion' && !isIconRoom(room) ? 'Ruch' : room.roomEffect === 'rain' && !isIconRoom(room) ? 'Deszcz' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
+  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.dripOnly ? 'Linia kroplująca' : room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : room.roomEffect === 'motion' && !isIconRoom(room) ? 'Ruch' : room.roomEffect === 'rain' && !isIconRoom(room) ? 'Deszcz' : room.roomEffect === 'weather' && !isIconRoom(room) ? 'Pogoda' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
   const lbl = isIconRoom(room), btn = isTextRoom(room); [['#room-duplicate', isThermoRoom(room) ? 'Duplikuj termostat' : btn ? 'Duplikuj przycisk' : lbl ? 'Duplikuj etykietę' : 'Duplikuj pomieszczenie'], ['#room-copy-style', btn ? 'Kopiuj styl przycisku' : lbl ? 'Kopiuj styl etykiety' : 'Kopiuj styl pomieszczenia'], ['#room-paste-style', btn ? 'Wklej styl przycisku' : lbl ? 'Wklej styl etykiety' : 'Wklej styl pomieszczenia'], ['#room-remove', btn ? 'Usuń przycisk' : lbl ? 'Usuń etykietę' : 'Usuń pomieszczenie']].forEach(([sel, title]) => { const b = $(sel); if (b) { b.title = translateValue(title); b.setAttribute('aria-label', translateValue(title)); } });
   const kindIcon = $('#room-editor .room-editor-icon .mdi'); if (kindIcon) kindIcon.className = `mdi ${isTextRoom(room) ? 'mdi-gesture-tap-button' : isIconRoom(room) ? 'mdi-lightbulb-group' : 'mdi-floor-plan'}`;
   const entityInfo = $('#room-editor-entities'); if (entityInfo) entityInfo.textContent = (room.entityIds || []).join(', ') || '—';
@@ -8026,6 +8028,7 @@ const ADD_TYPES = [
   { key:'room', label:'Pomieszczenie', hint:'Obszar ze stanem encji', entity:'optional' },
   { key:'water', label:'Podlewanie', hint:'Zraszacze w obszarze albo linia kroplująca', entity:'optional' },
   { key:'rain', label:'Deszcz', hint:'Animowany deszcz nad obszarem', entity:'optional' },
+  { key:'weather', label:'Pogoda', hint:'Słońce, chmury, śnieg, mgła – wg encji pogody', entity:'optional', domains:['weather'] },
   // Gauge and horseshoe are one tile; which one is chosen in its panel (Badge is no longer added).
   { key:'gauge', label:'Wskaźnik', hint:'Łuk z wartością — temperatura, moc, poziom', entity:'required', numeric:true },
   { key:'flow', label:'Flow', hint:'Przepływ energii, wody', entity:'optional', numeric:true },
@@ -8108,6 +8111,7 @@ function addThumbStatic(type, entity) {
   if (type === 'icon') return `<div class="add-thumb-label"><span class="add-thumb-label-icon"><i class="mdi ${entity ? addEntityIcon(entity) : 'mdi-lightbulb-on'}"></i></span><b data-no-i18n>${escapeHtml(entity?.name || translateValue('Salon'))}</b><small data-no-i18n>${escapeHtml(entity ? `${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}` : translateValue('Wł.'))}</small></div>`;
   if (type === 'room') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M12 10H62V30H88V52H12Z" fill="#FFD27A" opacity=".6"/><path d="M12 10H62V30H88V52H12Z" fill="none" stroke="#e39a3a" stroke-width=".8" stroke-dasharray="2 1.5"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'flow') return `<div class="add-thumb-flow"><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i><i class="mdi mdi-chevron-right"></i></div>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(`${entity.state ?? ''} ${entity.unit || ''}`.trim())}</span>` : ''}`;
+  if (type === 'weather') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M6 6H94V54H6Z" fill="#27465f" opacity=".55"/><path d="M6 6H94V54H6Z" fill="none" stroke="#FFD27A" stroke-width=".8" stroke-dasharray="2 1.5"/><circle cx="72" cy="18" r="9" fill="#FFD166" opacity=".9"/><g fill="#EAF2FA" opacity=".92"><circle cx="34" cy="36" r="9"/><circle cx="46" cy="32" r="11"/><circle cx="58" cy="37" r="8"/><rect x="26" y="37" width="40" height="8" rx="4"/></g></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.name || entity.area)}</span>` : ''}`;
   if (type === 'rain') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M6 6H94V54H6Z" fill="#1d3a52" opacity=".55"/><path d="M6 6H94V54H6Z" fill="none" stroke="#9BD7FF" stroke-width=".8" stroke-dasharray="2 1.5"/>${[[20,16],[44,12],[70,18],[30,34],[58,32],[82,38],[16,46],[46,48],[72,50]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="4" ry="2.4" fill="none" stroke="#9BD7FF" stroke-width=".8" opacity=".8"/>`).join('')}</svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.name || entity.area)}</span>` : ''}`;
   if (type === 'motion') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M10 8H90V52H10Z" fill="#3a3328" opacity=".5"/><path d="M10 8H90V52H10Z" fill="none" stroke="#ffb46b" stroke-width=".8" stroke-dasharray="2 1.5"/><path d="M12 10L78 26A70 70 0 0 1 28 56Z" fill="#FF9F43" opacity=".22"/><path d="M30 15A20 20 0 0 1 20 34" fill="none" stroke="#FFB46B" stroke-width="1.6"/><path d="M46 19A36 36 0 0 1 24 48" fill="none" stroke="#FFB46B" stroke-width="1.2" opacity=".7"/><path d="M62 23A52 52 0 0 1 27 56" fill="none" stroke="#FFB46B" stroke-width=".9" opacity=".4"/><circle cx="12" cy="10" r="3" fill="#ffe2c2"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
   if (type === 'water') return `<svg class="add-thumb-room" viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M10 8H90V52H10Z" fill="#2a6f4a" opacity=".45"/><path d="M10 8H90V52H10Z" fill="none" stroke="#5fd08f" stroke-width=".8" stroke-dasharray="2 1.5"/><path d="M32 44L14 22A26 26 0 0 1 50 18Z" fill="#5FB8FF" opacity=".45"/><path d="M68 44L86 26A24 24 0 0 0 52 22Z" fill="#5FB8FF" opacity=".45"/><circle cx="32" cy="44" r="2.6" fill="#dff3ff"/><circle cx="68" cy="44" r="2.6" fill="#dff3ff"/></svg>${entity ? `<span class="add-thumb-caption" data-no-i18n>${escapeHtml(entity.area || entity.name)}</span>` : ''}`;
@@ -8178,7 +8182,7 @@ function renderAddDialog(part = 'all') {
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
     if (state.waterPick) $('#add-types', els.addDialog).innerHTML = `<button type="button" class="add-back" data-add-water-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button>`
       + [['area', 'Zraszacze w obszarze', 'Obszar na planie ze zraszaczami i własnym zaworem', 'water'], ['drip', 'Linia kroplująca', 'Wąż kroplujący rysowany dowolnie, z własnym zaworem', '']].map(([k, label, hint, thumb]) => `<button type="button" class="add-card" data-add-water="${k}"><span class="add-thumb"${thumb ? ` data-thumb="${thumb}"` : ''}>${thumb ? '' : '<i class="mdi mdi-pipe" style="font-size:34px"></i>'}</span><b>${escapeHtml(translateValue(label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`).join('');
-    else $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water' || type.key === 'rain') && dashGrid().on)).map(type => {
+    else $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water' || type.key === 'rain' || type.key === 'weather') && dashGrid().on)).map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
       return `<button type="button" class="add-card${state.type === type.key ? ' sel' : ''}${allowed ? '' : ' off'}" data-add-type="${type.key}" ${allowed ? '' : 'disabled'}>${entity && recommended === type.key ? `<span class="add-tag">★ ${escapeHtml(translateValue('Polecane'))}</span>` : ''}<span class="add-thumb" data-thumb="${type.key}"></span><b>${escapeHtml(translateValue(type.label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`;
     }).join('');
@@ -8222,12 +8226,12 @@ function cancelAddPicking() { if (!addPicking) return; addPicking = null; els.bo
 function confirmAddDialog() {
   if (!addState || !addGoLabel().ok) return;
   const { type, entity } = addState; closeAddDialog();
-  if (type === 'room' || type === 'water' || type === 'rain') return addRoomFromDialog(entity, type);
+  if (type === 'room' || type === 'water' || type === 'rain' || type === 'weather') return addRoomFromDialog(entity, type);
   createAddedElement(type, entity, viewCenterPercent());
 }
 function addRoomFromDialog(entity, type = 'room') {
   startRoomDrawing(); if (!roomDraft) { pendingTemplate = ''; return; }
-  if (type === 'water' || type === 'rain') roomDraft.effect = type;
+  if (type === 'water' || type === 'rain' || type === 'weather') roomDraft.effect = type;
   roomDraft.template = pendingTemplate; pendingTemplate = '';
   if (entity) { roomDraft.entityIds = [entity.entity_id]; roomDraft.name = entity.area || ''; rememberAdded(entity.entity_id); }
 }
@@ -10105,8 +10109,9 @@ document.addEventListener('click', event => { const sw = event.target.closest?.(
 function rainLayer() { let c = $('#rain-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'rain-layer'; c.className = 'rain-layer'; $('#rooms').prepend(c); } return c; } // (under the other areas' lights and outlines)
 function rainRateOf(room) { for (const id of room.entityIds || []) { const st = stateCache[id], v = parseFloat(st?.state), u = String(st?.attributes?.unit_of_measurement || ''); if (Number.isFinite(v) && /mm|in\/h|in$/.test(u)) return Math.max(0, v); } return null; }
 function syncRain(view = activeSceneView()) {
-  const list = Object.values(roomsOf(view)).filter(r => (r.roomEffect === 'rain' || roomLayers(r).includes('rain')) && (r.points || []).length >= 3 && r.id !== movingRoomId);
-  rainSt.active = list.map(r0 => { const r = { ...ROOM_DEFAULTS, ...r0 }, layer = r0.roomEffect !== 'rain', preview = editMode && r0.id === selectedRoomId ? roomPreviewOn : '', mm = rainRateOf(layer ? { entityIds: r0.rainEntity ? [r0.rainEntity] : [] } : r0);
+  const list = Object.values(roomsOf(view)).filter(r => (r.roomEffect === 'rain' || roomLayers(r).includes('rain') || (r.roomEffect === 'weather' && r.weatherRain !== false && weatherLookOf(r)?.rain)) && (r.points || []).length >= 3 && r.id !== movingRoomId);
+  rainSt.active = list.map(r0 => { if (r0.roomEffect === 'weather') return { r: { ...ROOM_DEFAULTS, ...r0, rainStyle: r0.rainStyle || 'combo' }, rate: weatherLookOf(r0).rain }; // (the weather area's rain: the same drawing as the rain area)
+    const r = { ...ROOM_DEFAULTS, ...r0 }, layer = r0.roomEffect !== 'rain', preview = editMode && r0.id === selectedRoomId ? roomPreviewOn : '', mm = rainRateOf(layer ? { entityIds: r0.rainEntity ? [r0.rainEntity] : [] } : r0);
     const on = preview === 'on' ? true : preview === 'off' ? false : mm !== null ? mm > 0 : layer ? entityOn(r0.rainEntity) : roomLight(r).on; return on ? { r, rate: mm !== null && mm > 0 ? mm : clamp(Number(r.rainRate) || 4, .5, 20) } : null; }).filter(Boolean);
   [...rainSt.rooms.keys()].forEach(id => { if (!rainSt.active.some(a => a.r.id === id)) rainSt.rooms.delete(id); });
   const c = rainLayer(); if (!c) return;
@@ -10167,6 +10172,84 @@ function rainFrame(now) {
     g.globalAlpha = clamp(Number(r.rainOpacity ?? 55), 10, 100) / 100; g.drawImage(st.buf, Math.round(x0 * q), Math.round(y0 * q)); g.globalAlpha = 1;
   });
   rainSt.raf = requestAnimationFrame(rainFrame);
+}
+// ---- Pogoda (weather area): an area like the rain one, driven by a weather entity (e.g. Open Weather Map). Its state picks
+// what is drawn: sun, clouds, snow, fog, stars; the rain of a rainy state goes through the rain layer above. In edit mode a
+// "preview as" choice shows any weather. Like the rain area it sits below the others and does not catch clicks by default.
+const WEATHER_LOOKS = { sunny:{ sun:1 }, 'clear-night':{ stars:1 }, partlycloudy:{ sun:.55, clouds:.4 }, cloudy:{ clouds:.85 }, rainy:{ clouds:.55, dark:.4, rain:2.5 }, pouring:{ clouds:1, dark:.7, rain:10 },
+  snowy:{ clouds:.5, snow:1 }, 'snowy-rainy':{ clouds:.6, dark:.3, snow:.6, rain:2 }, fog:{ fog:1 }, hail:{ clouds:.7, dark:.5, snow:1, hail:true }, lightning:{ clouds:1, dark:.8 }, 'lightning-rainy':{ clouds:1, dark:.8, rain:8 },
+  windy:{ clouds:.35, wind:1 }, 'windy-variant':{ clouds:.5, wind:1 } };
+const WEATHER_NAMES = [['auto','Z encji'],['sunny','Słonecznie'],['clear-night','Pogodna noc'],['partlycloudy','Częściowe zachmurzenie'],['cloudy','Pochmurno'],['rainy','Deszcz'],['pouring','Ulewa'],['snowy','Śnieg'],['snowy-rainy','Deszcz ze śniegiem'],['fog','Mgła'],['hail','Grad'],['lightning','Burza'],['lightning-rainy','Burza z deszczem'],['windy','Wiatr']];
+function weatherCondOf(r) {
+  if (editMode && r.id === selectedRoomId && r.weatherPreview && r.weatherPreview !== 'auto') return r.weatherPreview;
+  for (const id of r.entityIds || []) if (String(id).startsWith('weather.')) { const st = stateCache[id]?.state; if (st) return st; }
+  return '';
+}
+const weatherLookOf = r => WEATHER_LOOKS[weatherCondOf(r)] || null;
+function weatherLookSub(r) {
+  const sub = (title, body) => gaugeSubsection(escapeHtml(translateValue(title)), body);
+  return sub('Pogoda', control('Podgląd (tylko w edycji)','weatherPreview','select',WEATHER_NAMES.some(([v]) => v === r.weatherPreview) ? r.weatherPreview : 'auto',{ items: WEATHER_NAMES, dropdown:true })
+    + control('Deszcz z pogody','weatherRain','checkbox',r.weatherRain !== false)
+    + control('Siła','weatherPower','range',clamp(Number(r.weatherPower ?? 100), 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })
+    + control('Krycie','weatherOpacity','range',clamp(Number(r.weatherOpacity ?? 80), 10, 100),{ min:10, max:100, step:1, suffix:'%', integer:true })
+    + control('Miękka krawędź','weatherEdge','range',clamp(Number(r.weatherEdge ?? 14), 0, 40),{ min:0, max:40, step:1, suffix:'px', integer:true })
+    + `<p class="flow-section-note">${escapeHtml(translateValue('Wybierz encję pogody (weather.…) w „Encje”. Deszcz z fizycznego czujnika dodasz osobnym obszarem „Deszcz”; przy deszczu z czujnika wyłącz tu „Deszcz z pogody”.'))}</p>`);
+}
+const weatherSt = { rooms: new Map(), active: [], raf: 0, last: 0 };
+function weatherLayer() { let c = $('#weather-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'weather-layer'; c.className = 'rain-layer'; const rain = $('#rain-layer'); if (rain) rain.before(c); else $('#rooms').prepend(c); } return c; } // (below the rain)
+function syncWeather(view = activeSceneView()) {
+  const list = Object.values(roomsOf(view)).filter(r => r.roomEffect === 'weather' && (r.points || []).length >= 3 && r.id !== movingRoomId);
+  weatherSt.active = list.map(r0 => { const look = weatherLookOf(r0); return look && (look.sun || look.clouds || look.snow || look.fog || look.stars) ? { r: { ...ROOM_DEFAULTS, ...r0 }, look } : null; }).filter(Boolean);
+  [...weatherSt.rooms.keys()].forEach(id => { if (!weatherSt.active.some(a => a.r.id === id)) weatherSt.rooms.delete(id); });
+  const c = weatherLayer(); if (!c) return;
+  if (!weatherSt.active.length) { cancelAnimationFrame(weatherSt.raf); weatherSt.raf = 0; c.getContext('2d').clearRect(0, 0, c.width, c.height); c.hidden = true; return; }
+  c.hidden = false; if (!weatherSt.raf && !document.hidden) { weatherSt.last = performance.now(); weatherSt.raf = requestAnimationFrame(weatherFrame); }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(weatherSt.raf); weatherSt.raf = 0; } else syncWeather(); });
+function weatherFrame(now) {
+  weatherSt.raf = 0; if (document.hidden || !weatherSt.active.length) return;
+  const dt = Math.min(.05, (now - weatherSt.last) / 1000); if (dt < 1 / 34) { weatherSt.raf = requestAnimationFrame(weatherFrame); return; } weatherSt.last = now;
+  const c = weatherLayer(), W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, q = Math.min(1.5, devicePixelRatio || 1), k = sceneScale || 1;
+  const z = Math.max(.05, (els.scene.getBoundingClientRect().width || W) / W), e = Math.max(k * z, .9), u = e / z, TAU = Math.PI * 2, T = now / 1000;
+  if (c.width !== Math.round(W * q) || c.height !== Math.round(H * q)) { c.width = Math.round(W * q); c.height = Math.round(H * q); }
+  const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height);
+  const step = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : dt;
+  weatherSt.active.forEach(({ r, look }) => {
+    const xs = r.points.map(p => p[0] / 100 * W), ys = r.points.map(p => p[1] / 100 * H), x0 = Math.floor(Math.min(...xs)), y0 = Math.floor(Math.min(...ys)), bw = Math.max(2, Math.ceil(Math.max(...xs)) - x0), bh = Math.max(2, Math.ceil(Math.max(...ys)) - y0);
+    const edge = clamp(Number(r.weatherEdge ?? 14), 0, 40) * k, cond = weatherCondOf(r), key = `${r.points.join(';')}|${W}x${H}|${edge}|${q}|${cond}`;
+    let st = weatherSt.rooms.get(r.id);
+    if (!st || st.key !== key) { const buf = document.createElement('canvas'), mask = document.createElement('canvas'); buf.width = mask.width = Math.round(bw * q); buf.height = mask.height = Math.round(bh * q);
+      const m = mask.getContext('2d'), path = new Path2D(); r.points.forEach((p, i) => { const px = (p[0] / 100 * W - x0) * q, py = (p[1] / 100 * H - y0) * q; i ? path.lineTo(px, py) : path.moveTo(px, py); }); path.closePath();
+      m.filter = edge ? `blur(${edge * q}px)` : 'none'; m.fillStyle = '#fff'; m.fill(path); m.filter = 'none';
+      st = { key, buf, mask, clouds: null, flakes: [], stars: null }; weatherSt.rooms.set(r.id, st); }
+    const f = st.buf.getContext('2d'), Bw = st.buf.width, Bh = st.buf.height, s = q * u, pw = clamp(Number(r.weatherPower ?? 100), 30, 200) / 100, area = (bw * z / e) * (bh * z / e) / (1280 * 800), wind = look.wind ? 3 : 1;
+    f.setTransform(1, 0, 0, 1, 0, 0); f.clearRect(0, 0, Bw, Bh);
+    if (look.dark) { f.fillStyle = `rgba(20,30,45,${Math.min(.5, look.dark * .35 * pw).toFixed(3)})`; f.fillRect(0, 0, Bw, Bh); }
+    if (look.fog) { f.fillStyle = `rgba(220,228,238,${Math.min(.3, .1 * pw).toFixed(3)})`; f.fillRect(0, 0, Bw, Bh);
+      for (let i = 0; i < 3; i++) { const y = Bh * (.2 + .3 * i) + Math.sin(T * .15 + i) * Bh * .05, x = Math.sin(T * .08 + i * 2) * Bw * .1, gr = f.createLinearGradient(0, y - Bh * .25, 0, y + Bh * .25);
+        gr.addColorStop(0, 'rgba(225,232,240,0)'); gr.addColorStop(.5, `rgba(225,232,240,${Math.min(.5, .32 * pw).toFixed(3)})`); gr.addColorStop(1, 'rgba(225,232,240,0)'); f.fillStyle = gr; f.fillRect(x - Bw * .1, y - Bh * .25, Bw * 1.2, Bh * .5); } }
+    if (look.sun) { const cx = Bw * .82, cy = Bh * .18, R = Math.max(Bw, Bh) * .9, gr = f.createRadialGradient(cx, cy, 0, cx, cy, R), a = Math.min(1, look.sun * pw);
+      gr.addColorStop(0, `rgba(255,226,140,${(.6 * a).toFixed(3)})`); gr.addColorStop(.35, `rgba(255,200,90,${(.2 * a).toFixed(3)})`); gr.addColorStop(1, 'rgba(255,200,90,0)'); f.fillStyle = gr; f.fillRect(0, 0, Bw, Bh);
+      for (let i = 0; i < 9; i++) { const an = T * .05 + i * TAU / 9, rg = f.createLinearGradient(cx, cy, cx + Math.cos(an) * R * 1.3, cy + Math.sin(an) * R * 1.3); rg.addColorStop(0, `rgba(255,230,160,${(.14 * a).toFixed(3)})`); rg.addColorStop(1, 'rgba(255,230,160,0)');
+        f.fillStyle = rg; f.beginPath(); f.moveTo(cx, cy); f.lineTo(cx + Math.cos(an - .06) * R * 1.3, cy + Math.sin(an - .06) * R * 1.3); f.lineTo(cx + Math.cos(an + .06) * R * 1.3, cy + Math.sin(an + .06) * R * 1.3); f.closePath(); f.fill(); } }
+    if (look.stars) { f.fillStyle = 'rgba(8,14,40,.28)'; f.fillRect(0, 0, Bw, Bh);
+      if (!st.stars) st.stars = Array.from({ length: Math.max(8, Math.round(70 * Math.min(1, area * 3))) }, () => ({ x: Math.random() * Bw, y: Math.random() * Bh, r: (.6 + Math.random() * 1.4) * s, ph: Math.random() * TAU }));
+      st.stars.forEach(o => { f.fillStyle = `rgba(255,255,255,${(Math.min(1, .35 + .65 * (.5 + .5 * Math.sin(T * 1.5 + o.ph))) * Math.min(1, pw)).toFixed(3)})`; f.beginPath(); f.arc(o.x, o.y, o.r, 0, TAU); f.fill(); }); }
+    if (look.clouds) {
+      if (!st.clouds) { const n = Math.max(1, Math.ceil(Bw / Math.max(1, Bh * .7) * look.clouds * 1.6) + 1);
+        st.clouds = Array.from({ length: n }, () => { const w = Math.min(Bw * .8, Bh * (.7 + Math.random() * .8)); return { x: Math.random() * (Bw + w) - w, y: Math.random() * Bh * .7, w, sp: (6 + Math.random() * 10) * s, puffs: Array.from({ length: 5 }, (_, i) => [(i + .5) / 5 * w, (Math.random() - .5) * w * .18, w * (.16 + Math.random() * .1)]) }; }); }
+      const grey = Math.round(240 - (look.dark || 0) * 110), alpha = Math.min(.5, (.16 + .12 * look.clouds) * pw * (look.dark ? 1.2 : 1));
+      st.clouds.forEach(cl => { cl.x += cl.sp * wind * step; if (cl.x > Bw) cl.x = -cl.w;
+        cl.puffs.forEach(([dx, dy, pr]) => { const px = cl.x + dx, py = cl.y + dy, gr = f.createRadialGradient(px, py, 0, px, py, pr); gr.addColorStop(0, `rgba(${grey},${grey + 5},${grey + 12},${alpha.toFixed(3)})`); gr.addColorStop(1, `rgba(${grey},${grey + 5},${grey + 12},0)`); f.fillStyle = gr; f.fillRect(px - pr, py - pr, pr * 2, pr * 2); }); }); }
+    if (look.snow) { const want = Math.max(12, Math.round(260 * area * look.snow * pw));
+      while (st.flakes.length < want) st.flakes.push({ x: Math.random() * Bw, y: Math.random() * Bh, r: (1 + Math.random() * 2.2) * s * (look.hail ? .7 : 1), vy: (35 + Math.random() * 45) * s * (look.hail ? 3 : 1), ph: Math.random() * TAU });
+      st.flakes.length = Math.min(st.flakes.length, want);
+      f.fillStyle = look.hail ? 'rgba(225,238,255,.9)' : 'rgba(255,255,255,.88)';
+      st.flakes.forEach(o => { o.y += o.vy * step; o.x += (Math.sin(T * 1.2 + o.ph) * 14 * s * (look.hail ? .2 : 1) + (wind - 1) * 20 * s) * step; if (o.y > Bh + o.r) { o.y = -o.r; o.x = Math.random() * Bw; } if (o.x > Bw + 10) o.x = -10; f.beginPath(); f.arc(o.x, o.y, o.r, 0, TAU); f.fill(); }); }
+    f.globalCompositeOperation = 'destination-in'; f.drawImage(st.mask, 0, 0); f.globalCompositeOperation = 'source-over';
+    g.globalAlpha = clamp(Number(r.weatherOpacity ?? 80), 10, 100) / 100; g.drawImage(st.buf, Math.round(x0 * q), Math.round(y0 * q)); g.globalAlpha = 1;
+  });
+  weatherSt.raf = requestAnimationFrame(weatherFrame);
 }
 // ---- Podlewanie (irrigation zone): an area like a room, with sprinklers placed in it. While the zone's entity is on
 // (a valve / switch) its sprinklers run: a rotor sweeps its jet over its angle (or round and round at 360°), an impact

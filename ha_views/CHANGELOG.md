@@ -1,3 +1,9 @@
+## 0.7.0-beta.787
+
+- Nowa karta „Pogoda” (plus → Pogoda): obszar, który pokazuje aktualną pogodę z encji `weather.…` (np. Open Weather Map): słońce z promieniami, chmury, śnieg, grad, mgła, gwiazdki w pogodną noc, wiatr (szybsze chmury). Deszcz i ulewa korzystają z istniejącego deszczu.
+- Pogoda działa jak obszar „Deszcz”: leży na spodzie i nie przechwytuje klikania, więc można ją rozciągnąć na prawie cały ekran obok obszaru deszczu z fizycznego czujnika.
+- W panelu: podgląd dowolnej pogody (tylko w edycji), „Deszcz z pogody” (wyłącz, gdy masz deszcz z czujnika), siła, krycie, miękka krawędź.
+
 ## 0.7.0-beta.786
 
 - Linia kroplująca: usunięta ikonka do przesuwania. Linię łapiesz i przesuwasz w dowolnym miejscu wzdłuż niej (szeroki, niewidoczny uchwyt).
