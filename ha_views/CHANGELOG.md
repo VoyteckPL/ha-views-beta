@@ -1,3 +1,7 @@
+## 0.7.0-beta.797
+
+- Termostat: ikona ma takie same suwaki jak samotna ikona – „Wielkość symbolu” oraz „Wielkość koła” / „Wielkość kwadratu” z zatrzymaniem na pełnych setkach (100, 200 …) i strzałkami pod suwakiem.
+
 ## 0.7.0-beta.796
 
 - Termostat: ikona ma „Efekt ikony” (wygląd + animacja) jak w etykiecie. Reszta termostatu (układ rozrzuconych elementów, stany, tryby) bez zmian.

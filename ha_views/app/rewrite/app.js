@@ -4105,7 +4105,7 @@ function roomEditorMarkup(room) {
       + frameSubs(key, range('Zaokrąglenie',`${key}Radius`,Number.isFinite(Number(r[`${key}Radius`])) && r[`${key}Radius`] !== '' && r[`${key}Radius`] != null ? clamp(Number(r[`${key}Radius`]), 0, 200) : 20,0,200,1,'px')),
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = oneShown !== 'labelIcon' && (r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon');
-    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range(soloIcon(r) ? 'Wielkość symbolu' : 'Wielkość ikony','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, SOLO_ICON_MAX),6,SOLO_ICON_MAX,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
+    if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range(soloIcon(r) || isThermoRoom(r) ? 'Wielkość symbolu' : 'Wielkość ikony','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, SOLO_ICON_MAX),6,SOLO_ICON_MAX,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
       + (iconFramed ? snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1) : '')
       + (iconFramed || oneShown === 'labelIcon' || isThermoRoom(r) || iconEffectOf(r) !== 'none' || iconMotionOf(r) !== 'none' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
       [['labelIconAnim','Animacja','mdi-rotate-right'], ...(source !== 'integration' ? [['labelIconOutline','Obrys','mdi-vector-circle-variant']] : []), ...frameToggles(key)]);
@@ -4295,7 +4295,13 @@ function roomEditorMarkup(room) {
     const snaps = [...new Set([...others, Math.round(w0), Math.round(h0)])].filter(v => v > 0).sort((a, b) => a - b);
     const one = (label, path, v) => control(label, path, 'range', v, { min: 10, max: Math.max(300, Math.ceil(v * 2.5 / 10) * 10), step: 1, suffix: 'px', integer: true }); void snaps;
     if (key === 'labelIcon' && soloIcon(r)) return ''; // (a room's lone icon: its size is its box's - "Wielkość" / Szerokość / Wysokość below)
-    if (key === 'labelIcon' && iconShapeOf(r) !== 'custom') return one('Wielkość', 'labelIconW', Math.max(10, Math.max(w, h))); // (round / square: one size, 1:1)
+    if (key === 'labelIcon' && iconShapeOf(r) !== 'custom') { // (round / square: one size, 1:1)
+      const v = Math.max(10, Math.max(w, h));
+      if (!isThermoRoom(r)) return one('Wielkość', 'labelIconW', v);
+      // (a thermostat's circle / square: the same as a lone icon's - "Wielkość koła" with stops at the round 100s)
+      const maxS = Math.max(SOLO_ICON_MAX, Math.ceil(v / 10) * 10), stops = Array.from({ length: Math.floor(maxS / 100) }, (_, i) => (i + 1) * 100);
+      return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu', 'labelIconW', 'range', v, { min: 10, max: maxS, step: 1, suffix: 'px', integer: true }), 'labelIconW', stops, Math.max(8, Math.round((maxS - 10) * .03))), stops, 10, maxS, [], v);
+    }
     // A name's / state's inner margin: the room round its text inside the frame (the frame stays, the text fits in the rest).
     const inset = Number.isFinite(Number(r[`${key}Inset`])) && r[`${key}Inset`] !== '' && r[`${key}Inset`] !== null ? Number(r[`${key}Inset`]) : Math.round(TILE_TEXT_MARGIN * Math.min(w, h));
     if (key !== 'labelIcon') return one('Szerokość', `${key}W`, Math.max(10, w)) + one('Wysokość', `${key}H`, Math.max(10, h)) + control('Margines wewnętrzny', `${key}Inset`, 'range', clamp(Math.round(inset), 0, Math.max(2, Math.floor(Math.min(w, h) / 2 - 4))), { min: 0, max: Math.max(2, Math.floor(Math.min(w, h) / 2 - 4)), step: 1, suffix: 'px', integer: true }); // (at most what leaves the text some room)
