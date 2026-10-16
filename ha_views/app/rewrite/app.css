@@ -2156,11 +2156,11 @@ body.editing .cam-layer{z-index:4}
 .empty-bg-name{display:block;font-size:10.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty-bg-gallery:not([hidden])~.empty-background-preview-wrap img{display:none}
 .spr-handle,.spr-tip{position:absolute;pointer-events:auto;touch-action:none;cursor:grab;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.55)}
-.spr-handle{width:16px;height:16px;margin:-8px 0 0 -8px;background:#2f9bff;border:2px solid #dff3ff}
-.spr-tip{width:12px;height:12px;margin:-6px 0 0 -6px;background:#fff;border:2px solid #2f9bff;cursor:crosshair}
+.spr-handle{width:10px;height:10px;margin:-5px 0 0 -5px;background:#2f9bff;border:1.5px solid #dff3ff}
+.spr-tip{width:8px;height:8px;margin:-4px 0 0 -4px;background:#fff;border:1.5px solid #2f9bff;cursor:crosshair}
 .spr-handle.selected{background:#5fd0ff;box-shadow:0 0 0 3px rgba(95,208,255,.45),0 1px 5px rgba(0,0,0,.55)}
 .spr-tip.selected{border-color:#5fd0ff}
-@media(pointer:coarse){.spr-handle{width:24px;height:24px;margin:-12px 0 0 -12px}.spr-tip{width:20px;height:20px;margin:-10px 0 0 -10px}}
+@media(pointer:coarse){.spr-handle{width:18px;height:18px;margin:-9px 0 0 -9px}.spr-tip{width:14px;height:14px;margin:-7px 0 0 -7px}}
 .spr-sub>summary{display:flex;align-items:center;gap:6px}
 .spr-sub.current>summary{color:#7fd6ff}
 .spr-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.18);flex:none}
@@ -2180,13 +2180,13 @@ body.card-mode main{width:100%!important;margin:0!important;padding:0!important}
 body.card-mode .scene-card{border:0!important;border-radius:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
 .drip-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .drip-draft{fill:none;stroke:#9bd7ff;stroke-width:2.5;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
-.drip-handle{position:absolute;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:#9bd7ff;border:2px solid #0c1d28;box-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:auto;cursor:grab;touch-action:none}
-.drip-handle.selected{width:14px;height:14px;margin:-7px 0 0 -7px;background:#fff;border-color:#2f9bff}
+.drip-handle{position:absolute;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#9bd7ff;border:2px solid #0c1d28;box-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:auto;cursor:grab;touch-action:none}
+.drip-handle.selected{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:#fff;border-color:#2f9bff}
 .drip-handle.draft{pointer-events:none;background:#fff}
-@media(pointer:coarse){.drip-handle{width:20px;height:20px;margin:-10px 0 0 -10px}}
+@media(pointer:coarse){.drip-handle{width:14px;height:14px;margin:-7px 0 0 -7px}}
 body.drip-drawing .scene{cursor:crosshair}
 #drip-draw-cancel{border-color:rgba(248,113,113,.55)!important;color:#fca5a5!important}
-.drip-handle.mid{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:rgba(255,255,255,.85);border-color:#2f9bff;cursor:copy}
-@media(pointer:coarse){.drip-handle.mid{width:16px;height:16px;margin:-8px 0 0 -8px}}
+.drip-handle.mid{width:6px;height:6px;margin:-3px 0 0 -3px;background:rgba(255,255,255,.85);border-color:#2f9bff;cursor:copy}
+@media(pointer:coarse){.drip-handle.mid{width:12px;height:12px;margin:-6px 0 0 -6px}}
 
 .ifx-nobody :is(.room-card-part,.room-label-part).icon>:is(.ifx-a,.ifx-b){display:none}

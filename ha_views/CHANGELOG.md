@@ -1,3 +1,11 @@
+## 0.7.0-beta.783
+
+- Podlewanie: niebieskie kropki zraszaczy, białe kropki zasięgu i kropki linii kroplujących w edycji są dużo mniejsze.
+- Podlewanie: głowica zraszacza i biała kropka zasięgu przyciągają się teraz także do linii siatki (poza ścianami i narożnikami obszaru). Alt wyłącza.
+- Podlewanie: nowy obszar podlewania nie dodaje już sam zraszacza – dodajesz je ręcznie.
+- Podlewanie: przy podglądzie „włączony” znikają przerywane sektory (kąty pracy), widać samą animację.
+- Linie kroplujące nie są już przycinane do obszaru – linia poza obszarem jest widoczna.
+
 ## 0.7.0-beta.782
 
 - Efekt ikony „Szklana kula” i „Wypukła 3D”: nowy przełącznik „Pokaż kulę / podstawę efektu” w podsekcji „Efekt ikony”. Po wyłączeniu zostaje sam symbol ikony (z kolorem i światłem), bez kuli.

@@ -4612,7 +4612,7 @@ function onRoomEditorInput(event) {
   // A slider with values to catch (the same size / margin as elsewhere): near one, it takes it exactly.
   if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } else if (Number(input.dataset.snapMinor) > 0) { const m = Number(input.dataset.snapMinor), t = Math.round(value / m) * m; if (Math.abs(t - value) <= 1) { value = t; input.value = String(t); } } const marks = input.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(i => i.classList.toggle('on', i.title === `${value}px`)); }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
-  if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); return; }
+  if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); syncWater(); return; }
   if (path === 'labelSizeLock') { if (value) lockLabelFrame(room); else unlockLabelFrame(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   // Showing / hiding a mode in "Tryby" shows / hides its own part.
   const showMode = /^thermoModeShow_(.+)$/.exec(path); if (showMode && room.thermoModeParts && MODE_PART_LIST.includes(showMode[1])) room[`labelMode_${showMode[1]}`] = input.type === 'checkbox' ? input.checked : !!value;
@@ -4832,7 +4832,7 @@ function onRoomEditorClick(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const previewButton = event.target.closest('[data-preview-path="previewOn"]');
-  if (previewButton) { event.preventDefault(); const value = previewButton.dataset.previewValue; roomPreviewOn = roomPreviewOn === value ? '' : value; renderRooms(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+  if (previewButton) { event.preventDefault(); const value = previewButton.dataset.previewValue; roomPreviewOn = roomPreviewOn === value ? '' : value; renderRooms(); syncWater(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const iconAction = event.target.closest('[data-room-icon]')?.dataset.roomIcon;
   if (iconAction) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
@@ -7832,7 +7832,7 @@ function syncHeadPreview(panel, actualOn) {
 }
 function onHeadPreview(event) {
   const button = event.currentTarget, value = button.dataset.previewValue; event.stopPropagation();
-  if (button.dataset.previewPath === 'previewOn') { roomPreviewOn = value; renderRooms(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+  if (button.dataset.previewPath === 'previewOn') { roomPreviewOn = value; renderRooms(); syncWater(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const marker = model.entities[selectedId]; if (!marker) return;
   editorPreview = { entityId: marker.entityId, state: value }; renderMarkers(); openEditor(openSectionIndex(els.editorContent, editorOpenSectionIndex));
 }
@@ -10289,6 +10289,8 @@ function sprSnapHead(room, id, x, y, e) {
   if (!onEdge || horiz) { const bx = lines.map(l => l[0]).filter(v => Math.abs(v - Q[0]) <= 8).sort((a, b) => Math.abs(a - Q[0]) - Math.abs(b - Q[0]))[0]; if (bx !== undefined) { Q[0] = bx; gx = bx; } }
   if (!onEdge || vert) { const by = lines.map(l => l[1]).filter(v => Math.abs(v - Q[1]) <= 8).sort((a, b) => Math.abs(a - Q[1]) - Math.abs(b - Q[1]))[0]; if (by !== undefined) { Q[1] = by; gy = by; } }
   if (onEdge && !vert && !horiz) Q = sprSegNearest(Q, onEdge.sg);
+  // (free in the zone: the grid's lines catch it, too)
+  if (!onEdge) { const sc = els.scene.getBoundingClientRect(), lx = gx === null ? gridLineNear(sc.left + Q[0], true) : null, ly = gy === null ? gridLineNear(sc.top + Q[1], false) : null; if (lx !== null) { Q[0] = lx - sc.left; gx = Q[0]; } if (ly !== null) { Q[1] = ly - sc.top; gy = Q[1]; } }
   showAlignGuides(gx !== null || (onEdge && vert) ? [{ at: Q[0] / Wp * 100, kind: 'room' }] : [], gy !== null || (onEdge && horiz) ? [{ at: Q[1] / Hp * 100, kind: 'room' }] : []);
   return out(Q);
 }
@@ -10302,6 +10304,10 @@ function sprSnapTip(room, o, x, y, e) {
   let hit = null; segs.forEach(([[ax, ay], [bx, by]]) => { const ex = bx - ax, ey = by - ay, den = vx * ey - vy * ex; if (Math.abs(den) < 1e-9) return; const t = ((ax - H0[0]) * ey - (ay - H0[1]) * ex) / den, u = ((ax - H0[0]) * vy - (ay - H0[1]) * vx) / den;
     if (t > 4 && u >= 0 && u <= 1 && Math.abs(t - len) <= 12 && (hit === null || Math.abs(t - len) < Math.abs(hit - len))) hit = t; });
   if (hit !== null) len = hit;
+  else { // (no wall ahead: the reach stops on the grid's lines)
+    const sc = els.scene.getBoundingClientRect(); let best = null;
+    [[vx, true, sc.left, H0[0]], [vy, false, sc.top, H0[1]]].forEach(([v, horizontal, origin, h0]) => { if (Math.abs(v) < .2) return; const line = gridLineNear(origin + h0 + v * len, horizontal); if (line === null) return; const t = (line - origin - h0) / v; if (t > 4 && Math.abs(t - len) <= 12 && (best === null || Math.abs(t - len) < Math.abs(best - len))) best = t; });
+    if (best !== null) len = best; }
   return out([H0[0] + vx * len, H0[1] + vy * len]);
 }
 function waterLayer() { let c = $('#water-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'water-layer'; c.className = 'rain-layer water-layer'; const rain = $('#rain-layer'); if (rain) rain.after(c); else $('#rooms').prepend(c); } return c; }
@@ -10377,14 +10383,14 @@ function waterDraw(dt) {
         st.mist.forEach(m => { const p = m.t / m.T, [vx, vy] = sprVec(m.a), dist = m.D * (.2 + .8 * p), x = hx + vx * dist, y = hy + vy * dist, rr = m.rr * (.6 + .8 * p), gr = g.createRadialGradient(x, y, 0, x, y, rr);
           gr.addColorStop(0, `rgba(${Ch},${(.22 * Math.sin(Math.PI * p) * (.5 + power)).toFixed(3)})`); gr.addColorStop(1, `rgba(${Ch},0)`); g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2); }); }
     });
-    dripDraw(g, r, on, step, W, H, q, k, s, C, Ch, Cw, editing);
-    g.restore();
+    g.restore(); // (the drip lines are not clipped to the zone: they may run outside it)
+    g.save(); g.globalAlpha = alpha; dripDraw(g, r, on, step, W, H, q, k, s, C, Ch, Cw, editing); g.restore();
     // Heads (never clipped): a small dark disc with a ring in the water colour and the nozzle's direction. While the zone is
     // edited: each sprinkler's reach as a dashed sector.
     list.forEach(o => {
       if (!on && r.waterHeads === false && !editMode) return;
       const hx = o.x / 100 * W * q, hy = o.y / 100 * H * q, R = Math.max(4, o.range * k * q), arc = clamp(o.arc, 10, 360), full = arc >= 359.5, sel = editing && o.id === selectedSprId;
-      if (editing) { g.save(); g.setLineDash([5 * q, 4 * q]); g.lineWidth = (sel ? 1.8 : 1.1) * q; g.strokeStyle = sel ? 'rgba(255,255,255,.9)' : `rgba(${C},.75)`; g.fillStyle = `rgba(${C},${sel ? .14 : .07})`;
+      if (editing && roomPreviewOn !== 'on') { g.save(); g.setLineDash([5 * q, 4 * q]); g.lineWidth = (sel ? 1.8 : 1.1) * q; g.strokeStyle = sel ? 'rgba(255,255,255,.9)' : `rgba(${C},.75)`; g.fillStyle = `rgba(${C},${sel ? .14 : .07})`;
         g.beginPath(); if (full) g.arc(hx, hy, R, 0, TAU); else { g.moveTo(hx, hy); g.arc(hx, hy, R, rad(o.dir - arc / 2), rad(o.dir + arc / 2)); g.closePath(); } g.fill(); g.stroke(); g.restore(); }
       const st = waterSt.spr.get(`${r.id}|${o.id}`), a = on && st && (o.kind === 'rotor' || o.kind === 'impact') ? st.ang : o.dir, [vx, vy] = sprVec(a), hr = 3.4 * s;
       g.globalAlpha = on ? 1 : .75; g.fillStyle = '#0c1d28'; g.strokeStyle = `rgb(${on ? Ch : C})`; g.lineWidth = 1.4 * s;
@@ -10592,7 +10598,6 @@ document.addEventListener('click', event => {
     if (k === 'motion' && !Object.keys(room.motionSensors || {}).length) { const o = motionCornerSensor(room), words = String(room.name || '').toLowerCase().split(/\s+/).filter(w => w.length > 2);
       const guess = layerEntityItems(['binary_sensor'], '', MOTION_PREFER).slice(1).map(([id]) => id).find(id => MOTION_PREFER.test(`${id} ${stateCache[id]?.attributes?.friendly_name || ''}`) && words.some(w => `${id} ${stateCache[id]?.attributes?.friendly_name || ''}`.toLowerCase().includes(w)));
       if (guess) o.entity = guess; room.motionSensors = { ['mot_' + uid()]: o }; selectedSprId = Object.keys(room.motionSensors)[0]; }
-    if (k === 'water' && !Object.keys(room.sprinklers || {}).length) { selectedSprId = addSprinkler(room, null, 'water'); const o = room.sprinklers[selectedSprId]; o.arc = 360; }
   }
   room.layers = LAYER_KINDS.map(([x]) => x).filter(x => list.has(x)); room.updatedAt = new Date().toISOString();
   renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); refreshStates();
