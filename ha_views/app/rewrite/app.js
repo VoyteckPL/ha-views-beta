@@ -3389,7 +3389,7 @@ function renderRoomEditLayer() {
     handles += pts.map(([x, y], index) => { const [nx, ny] = pts[(index + 1) % pts.length]; return `<i class="room-handle mid" data-room-mid="${index}" style="left:${(x + nx) / 2}%;top:${(y + ny) / 2}%"></i>`; }).join('');
   }
   if (room && !roomDraft && ptLayers(room).length) handles += sprinklerHandles(room);
-  if (room && !roomDraft && room.roomEffect === 'water') handles += dripHandles(room);
+  if (room && !roomDraft && (room.roomEffect === 'water' || room.dripOnly)) handles += dripHandles(room);
   if (roomDraft) handles += roomDraft.points.map(([x, y], index) => `<i class="room-handle draft${index === 0 && roomDraft.points.length >= 3 ? ' closable' : ''}" style="left:${x}%;top:${y}%"></i>`).join('');
   // Right angles and 45° / 135° corners are marked: of the selected room, and of the room being drawn.
   const angleShapes = room && !roomDraft ? roomAngleMarks(room.points || [], true) : roomDraft ? roomAngleMarks(roomDraft.cursor ? [...roomDraft.points, roomDraft.cursor] : roomDraft.points, false) : { svg:'', html:'' };
@@ -4301,7 +4301,7 @@ function roomEditorMarkup(room) {
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
+  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) + dripSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -4315,7 +4315,7 @@ function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceS
   if (forceSection !== null) preserveSection = roomEditorOpenSectionIndex = forceSection;
   closeEditor(); closeFlowEditor(); selectedRoomId = id;
   $('#room-editor-title').textContent = room.name || translateValue(isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
-  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : room.roomEffect === 'motion' && !isIconRoom(room) ? 'Ruch' : room.roomEffect === 'rain' && !isIconRoom(room) ? 'Deszcz' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
+  const kind = $('#room-editor .editor-meta code'); if (kind) kind.textContent = translateValue(room.dripOnly ? 'Linia kroplująca' : room.roomEffect === 'water' && !isIconRoom(room) ? 'Podlewanie' : room.roomEffect === 'motion' && !isIconRoom(room) ? 'Ruch' : room.roomEffect === 'rain' && !isIconRoom(room) ? 'Deszcz' : isGaugeRoom(room) ? 'Wskaźnik' : isThermoRoom(room) ? 'Termostat' : isTextRoom(room) ? 'Przycisk' : isIconRoom(room) ? 'Etykieta' : 'Pomieszczenie');
   const lbl = isIconRoom(room), btn = isTextRoom(room); [['#room-duplicate', isThermoRoom(room) ? 'Duplikuj termostat' : btn ? 'Duplikuj przycisk' : lbl ? 'Duplikuj etykietę' : 'Duplikuj pomieszczenie'], ['#room-copy-style', btn ? 'Kopiuj styl przycisku' : lbl ? 'Kopiuj styl etykiety' : 'Kopiuj styl pomieszczenia'], ['#room-paste-style', btn ? 'Wklej styl przycisku' : lbl ? 'Wklej styl etykiety' : 'Wklej styl pomieszczenia'], ['#room-remove', btn ? 'Usuń przycisk' : lbl ? 'Usuń etykietę' : 'Usuń pomieszczenie']].forEach(([sel, title]) => { const b = $(sel); if (b) { b.title = translateValue(title); b.setAttribute('aria-label', translateValue(title)); } });
   const kindIcon = $('#room-editor .room-editor-icon .mdi'); if (kindIcon) kindIcon.className = `mdi ${isTextRoom(room) ? 'mdi-gesture-tap-button' : isIconRoom(room) ? 'mdi-lightbulb-group' : 'mdi-floor-plan'}`;
   const entityInfo = $('#room-editor-entities'); if (entityInfo) entityInfo.textContent = (room.entityIds || []).join(', ') || '—';
@@ -4612,7 +4612,7 @@ function onRoomEditorInput(event) {
   // A slider with values to catch (the same size / margin as elsewhere): near one, it takes it exactly.
   if (input.dataset.snap && typeof value === 'number') { const reach = Number(input.dataset.snapReach) || 2, hit = input.dataset.snap.split(',').map(Number).filter(Number.isFinite).reduce((b, v) => Math.abs(v - value) < Math.abs(b - value) ? v : b, Infinity); if (Math.abs(hit - value) <= reach) { value = hit; input.value = String(hit); } else if (Number(input.dataset.snapMinor) > 0) { const m = Number(input.dataset.snapMinor), t = Math.round(value / m) * m; if (Math.abs(t - value) <= 1) { value = t; input.value = String(t); } } const marks = input.parentElement?.querySelector('.stop-marks'); if (marks) [...marks.children].forEach(i => i.classList.toggle('on', i.title === `${value}px`)); }
   if (input.type === 'color') { value = String(value).toUpperCase(); const preview = input.closest('.color-picker')?.querySelector('.color-current'); if (preview) preview.style.background = value; }
-  if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); syncWater(); return; }
+  if (path === 'previewOn') { roomPreviewOn = String(value); renderRooms(); syncWater(); renderRoomEditLayer(); return; }
   if (path === 'labelSizeLock') { if (value) lockLabelFrame(room); else unlockLabelFrame(room); room.updatedAt = new Date().toISOString(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   // Showing / hiding a mode in "Tryby" shows / hides its own part.
   const showMode = /^thermoModeShow_(.+)$/.exec(path); if (showMode && room.thermoModeParts && MODE_PART_LIST.includes(showMode[1])) room[`labelMode_${showMode[1]}`] = input.type === 'checkbox' ? input.checked : !!value;
@@ -4832,7 +4832,7 @@ function onRoomEditorClick(event) {
     room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return;
   }
   const previewButton = event.target.closest('[data-preview-path="previewOn"]');
-  if (previewButton) { event.preventDefault(); const value = previewButton.dataset.previewValue; roomPreviewOn = roomPreviewOn === value ? '' : value; renderRooms(); syncWater(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+  if (previewButton) { event.preventDefault(); const value = previewButton.dataset.previewValue; roomPreviewOn = roomPreviewOn === value ? '' : value; renderRooms(); syncWater(); renderRoomEditLayer(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const iconAction = event.target.closest('[data-room-icon]')?.dataset.roomIcon;
   if (iconAction) {
     event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return;
@@ -7832,7 +7832,7 @@ function syncHeadPreview(panel, actualOn) {
 }
 function onHeadPreview(event) {
   const button = event.currentTarget, value = button.dataset.previewValue; event.stopPropagation();
-  if (button.dataset.previewPath === 'previewOn') { roomPreviewOn = value; renderRooms(); syncWater(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
+  if (button.dataset.previewPath === 'previewOn') { roomPreviewOn = value; renderRooms(); syncWater(); renderRoomEditLayer(); if (selectedRoomId) openRoomEditor(selectedRoomId, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   const marker = model.entities[selectedId]; if (!marker) return;
   editorPreview = { entityId: marker.entityId, state: value }; renderMarkers(); openEditor(openSectionIndex(els.editorContent, editorOpenSectionIndex));
 }
@@ -8025,6 +8025,7 @@ const ADD_TYPES = [
   { key:'icon', label:'Etykieta', hint:'Ikona, nazwa i stan w dowolnym miejscu', entity:'optional' },
   { key:'room', label:'Pomieszczenie', hint:'Obszar ze stanem encji', entity:'optional' },
   { key:'water', label:'Podlewanie', hint:'Sekcja nawadniania ze zraszaczami', entity:'optional' },
+  { key:'drip', label:'Linia kroplująca', hint:'Wąż kroplujący rysowany dowolnie, z własnym zaworem', entity:'optional' },
   { key:'rain', label:'Deszcz', hint:'Animowany deszcz nad obszarem', entity:'optional' },
   // Gauge and horseshoe are one tile; which one is chosen in its panel (Badge is no longer added).
   { key:'gauge', label:'Wskaźnik', hint:'Łuk z wartością — temperatura, moc, poziom', entity:'required', numeric:true },
@@ -8220,6 +8221,7 @@ function confirmAddDialog() {
   if (!addState || !addGoLabel().ok) return;
   const { type, entity } = addState; closeAddDialog();
   if (type === 'room' || type === 'water' || type === 'rain') return addRoomFromDialog(entity, type);
+  if (type === 'drip') return addDripElement(viewCenterPercent(), entity);
   createAddedElement(type, entity, viewCenterPercent());
 }
 function addRoomFromDialog(entity, type = 'room') {
@@ -8227,6 +8229,16 @@ function addRoomFromDialog(entity, type = 'room') {
   if (type === 'water' || type === 'rain') roomDraft.effect = type;
   roomDraft.template = pendingTemplate; pendingTemplate = '';
   if (entity) { roomDraft.entityIds = [entity.entity_id]; roomDraft.name = entity.area || ''; rememberAdded(entity.entity_id); }
+}
+// "Linia kroplująca" from the Add dialog: not an area but a label-like element (its icon marks it and shows its valve's state)
+// that owns drip lines drawn anywhere on the plan; the lines follow its own entity.
+function addDripElement([x, y], entity = null) {
+  const view = activeSceneView(); if (!view || !editMode) return; view.rooms ||= {};
+  const id = 'room_' + uid(), now = new Date().toISOString(), count = Object.values(view.rooms).filter(o => o.dripOnly).length + 1;
+  view.rooms[id] = { ...clone(ROOM_DEFAULTS), ...NEW_ROOM_LABEL, labelCardScale:ICON_LABEL_SCALE, kind:'icon', dripOnly:true, labelName:false, labelState:false, labelIconName:'mdi:water', labelIconSource:'mdi', labelIconOn:'#20B9E7', id, name: entity?.name || `${translateValue('Linia kroplująca')} ${count}`, entityIds: entity ? [entity.entity_id] : [], points: [], dripLines: {}, x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100, createdAt: now, updatedAt: now };
+  if (entity) { rememberAdded(entity.entity_id); refreshStates(); }
+  closeEditor(); closeFlowEditor(); closeRoomEditor(); renderRooms(); scheduleSave(true);
+  openRoomEditor(id); startDripDraw(view.rooms[id]);
 }
 // "Etykieta" (label) from the Add dialog: a room without a shape, with the same group / icon / name / state options.
 // With an entity (the "+" of an entity in Integrations) the label starts with it and the wizard skips the entity step.
@@ -10246,6 +10258,7 @@ document.addEventListener('click', event => {
 document.addEventListener('toggle', event => { const d = event.target; if (!d?.matches?.('details.spr-sub')) return; if (d.open) { selectedSprId = d.dataset.sprSec; $$('details.spr-sub').forEach(x => { x.classList.toggle('current', x === d); if (x !== d) x.open = false; }); renderRoomEditLayer(); syncWater(); syncMotion(); } }, true);
 // In edit mode: a blue dot on each head (moves it) and a white one at the end of its direction (range + direction).
 function sprinklerHandles(room) {
+  if (roomPreviewOn === 'on') return ''; // (the preview shows the animation only)
   const W = els.scene.offsetWidth || 1, H = els.scene.offsetHeight || 1, k = sceneScale || 1;
   return allPts(room).map(o => { const [vx, vy] = sprVec(o.dir), tx = o.x + vx * o.range * k / W * 100, ty = o.y + vy * o.range * k / H * 100, sel = o.id === selectedSprId ? ' selected' : '', mot = o.layer === 'motion' ? ' mot' : '';
     return `<i class="spr-handle${sel}${mot}" data-spr="${o.id}" style="left:${o.x}%;top:${o.y}%"></i>` + (o.layer === 'motion' && o.kind === 'room' ? '' : `<i class="spr-tip${sel}${mot}" data-spr-tip="${o.id}" style="left:${tx}%;top:${ty}%"></i>`); }).join('');
@@ -10312,9 +10325,9 @@ function sprSnapTip(room, o, x, y, e) {
 }
 function waterLayer() { let c = $('#water-layer'); if (!c && $('#rooms')) { c = document.createElement('canvas'); c.id = 'water-layer'; c.className = 'rain-layer water-layer'; const rain = $('#rain-layer'); if (rain) rain.after(c); else $('#rooms').prepend(c); } return c; }
 function syncWater(view = activeSceneView()) {
-  const list = Object.values(roomsOf(view)).filter(r => hasLayer(r, 'water') && !isIconRoom(r) && (r.points || []).length >= 3 && r.id !== movingRoomId);
+  const list = Object.values(roomsOf(view)).filter(r => (r.dripOnly ? dripList(r).length > 0 : hasLayer(r, 'water') && !isIconRoom(r) && (r.points || []).length >= 3) && r.id !== movingRoomId);
   waterSt.all = list.map(r0 => { const r = { ...ROOM_DEFAULTS, ...r0 }, preview = editMode && r0.id === selectedRoomId ? roomPreviewOn : '';
-    return { r, on: preview === 'on' ? true : preview === 'off' ? false : r0.roomEffect === 'water' ? roomLight(r).on : entityOn(r0.waterEntity) }; });
+    return { r, on: preview === 'on' ? true : preview === 'off' ? false : r0.roomEffect === 'water' || r0.dripOnly ? roomLight(r).on : entityOn(r0.waterEntity) }; });
   waterSt.active = waterSt.all.filter(a => a.on);
   const c = waterLayer(); if (!c) return;
   const visible = waterSt.all.some(a => a.on || a.r.waterHeads !== false || editMode);
@@ -10341,7 +10354,7 @@ function waterDraw(dt) {
     const rgb = rainRgb(r.waterColor), C = rainMix(rgb, 0), Ch = rainMix(rgb, .6), Cw = rainMix(rgb, .35), alpha = clamp(Number(r.waterOpacity ?? 85), 10, 100) / 100, tint = clamp(Number(r.waterTint ?? 16), 0, 60) / 100;
     const editing = editMode && r.id === selectedRoomId, list = ptsList(r, 'water');
     g.save(); g.globalAlpha = alpha;
-    if (r.waterClip !== false) { const path = new Path2D(); r.points.forEach((p, i) => { const px = p[0] / 100 * W * q, py = p[1] / 100 * H * q; i ? path.lineTo(px, py) : path.moveTo(px, py); }); path.closePath(); g.clip(path); }
+    if (r.waterClip !== false && (r.points || []).length >= 3) { const path = new Path2D(); r.points.forEach((p, i) => { const px = p[0] / 100 * W * q, py = p[1] / 100 * H * q; i ? path.lineTo(px, py) : path.moveTo(px, py); }); path.closePath(); g.clip(path); }
     list.forEach(o => {
       const key = `${r.id}|${o.id}`; seen.add(key); let st = waterSt.spr.get(key); if (!st) { st = { ang: o.dir - (o.arc >= 360 ? 0 : o.arc / 2), sgn: 1, tick: 0, drops: [], wet: [], mist: [], damp: 0, ret: false }; waterSt.spr.set(key, st); }
       const hx = o.x / 100 * W * q, hy = o.y / 100 * H * q, R = Math.max(4, o.range * k * q), arc = clamp(o.arc, 10, 360), full = arc >= 359.5, lo = o.dir - arc / 2, hi = o.dir + arc / 2;
@@ -10728,7 +10741,7 @@ function dripDraw(g, r, on, step, W, H, q, k, s, C, Ch, Cw, editing) {
       gr.addColorStop(0, `rgba(${Cw},${Math.min(.85, .45 * st.wet * (.7 + .3 * spot)).toFixed(3)})`); gr.addColorStop(1, `rgba(${Cw},0)`); g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2); });
     // The tube.
     g.save(); g.lineJoin = 'round'; g.lineCap = 'round';
-    if (editing && o.id === selectedDripId) { g.lineWidth = (tube * 1.1 + 4) * s; g.strokeStyle = 'rgba(255,255,255,.35)'; path(); g.stroke(); }
+    if (editing && roomPreviewOn !== 'on' && o.id === selectedDripId) { g.lineWidth = (tube * 1.1 + 4) * s; g.strokeStyle = 'rgba(255,255,255,.35)'; path(); g.stroke(); }
     // ("Poświata linii": a soft glow along the tube while it waters - what makes it seen from afar)
     if (on && glow > 0) { g.save(); g.lineWidth = tube * 3.2 * s; g.strokeStyle = `rgba(${Ch},${(.5 * glow * (.4 + .6 * st.wet)).toFixed(3)})`; g.shadowColor = `rgba(${Ch},${(.8 * glow).toFixed(3)})`; g.shadowBlur = tube * 3 * s; path(); g.stroke(); g.restore(); }
     g.lineWidth = tube * 1.1 * s; g.strokeStyle = '#141d24'; path(); g.stroke();
@@ -10756,7 +10769,8 @@ function startDripDraw(room, lineId = '') { if (!room || !editMode) return; cons
 function endDripDraw(save) {
   const d = dripDraft; dripDraft = null; els.body.classList.remove('drip-drawing'); $('#drip-draw-bar')?.classList.remove('visible'); showAlignGuides([], []);
   const room = d && roomsOf()[d.roomId];
-  if (save && room && d.points.length >= 2) { room.dripLines ||= {}; const pts = d.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); if (d.lineId && room.dripLines[d.lineId]) { room.dripLines[d.lineId].points = pts; selectedDripId = d.lineId; } else { const id = 'drip_' + uid(); room.dripLines[id] = { ...DRIP_DEFAULTS, points: pts }; selectedDripId = id; } room.updatedAt = new Date().toISOString(); scheduleSave(true); }
+  if (!save && room?.dripOnly && !Object.keys(room.dripLines || {}).length) { delete roomsOf()[room.id]; closeRoomEditor(); renderRooms(); syncWater(); renderRoomEditLayer(); scheduleSave(true); return; } // (a new line element drawn to nothing)
+  if (save && room && d.points.length >= 2) { room.dripLines ||= {}; const pts = d.points.map(p => p.map(v => Math.round(v * 1000) / 1000)); if (d.lineId && room.dripLines[d.lineId]) { room.dripLines[d.lineId].points = pts; selectedDripId = d.lineId; } else { if (room.dripOnly && !Object.keys(room.dripLines).length) { room.x = pts[0][0]; room.y = pts[0][1]; } const id = 'drip_' + uid(); room.dripLines[id] = { ...DRIP_DEFAULTS, points: pts }; selectedDripId = id; } room.updatedAt = new Date().toISOString(); scheduleSave(true); }
   renderRoomEditLayer(); syncWater(); if (room && selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex));
 }
 window.addEventListener('pointerdown', event => { if (!dripDraft || event.target.closest('#drip-draw-bar') || !event.target.closest('#scene, #room-edit-layer')) return; event.stopPropagation(); event.preventDefault(); }, true);
@@ -10774,6 +10788,7 @@ window.addEventListener('click', event => {
 document.addEventListener('keydown', event => { if (!dripDraft) return; if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); endDripDraw(false); } else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); endDripDraw(dripDraft.points.length >= 2); } }, true);
 // In edit mode: the draft as a dashed line; each line's points as small dots to drag (the selected line's bigger).
 function dripHandles(room) {
+  if (roomPreviewOn === 'on') return '';
   let svg = '', dots = '';
   if (dripDraft?.roomId === room.id && dripDraft.points.length) { svg += `<polyline class="drip-draft" points="${[...dripDraft.points, ...(dripDraft.cursor ? [dripDraft.cursor] : [])].map(p => p.join(',')).join(' ')}"/>`; dots += dripDraft.points.map(([x, y]) => `<i class="drip-handle draft" style="left:${x}%;top:${y}%"></i>`).join(''); }
   if (!dripDraft) dripList(room).forEach(o => { dots += o.points.map(([x, y], i) => `<i class="drip-handle${o.id === selectedDripId ? ' selected' : ''}" data-drip="${o.id}" data-drip-pt="${i}" style="left:${x}%;top:${y}%"></i>`).join('');
@@ -10795,6 +10810,12 @@ function startDripDrag(event) {
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 // The zone's lines in its panel (under the sprinklers).
+function dripLookSub(r) {
+  const esc = t => escapeHtml(translateValue(t)), colour = String(r.waterColor || '#9BD7FF');
+  return section(esc('Linia kroplująca – wygląd'), `<div class="control rain-color-row"><label>${esc('Kolor wody')}</label><div class="rain-swatches">${RAIN_BLUES.map(([c, t]) => `<button type="button" class="rain-swatch${colour.toUpperCase() === c ? ' active' : ''}" data-rain-color="${c}" style="--c:${c}" title="${esc(t)}" aria-label="${esc(t)}"></button>`).join('')}<input type="color" class="rain-own" data-path="waterColor" value="${escapeHtml(colour)}" title="${esc('Własny kolor')}" aria-label="${esc('Własny kolor')}"></div><span></span></div>`
+    + control('Krycie','waterOpacity','range',clamp(Number(r.waterOpacity ?? 85), 10, 100),{ min:10, max:100, step:1, suffix:'%', integer:true })
+    + control('Linia gdy wyłączona','waterHeads','checkbox',r.waterHeads !== false));
+}
 function dripSection(r) {
   const esc = t => escapeHtml(translateValue(t)), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   const rows = dripList(r).map((o, i) => { const p = f => `drip.${o.id}.${f}`, len = o.points.reduce((sum, pt, j) => j ? sum + Math.hypot((pt[0] - o.points[j - 1][0]) / 100 * W, (pt[1] - o.points[j - 1][1]) / 100 * H) / k : 0, 0), n = Math.max(1, Math.floor(len / Math.max(8, o.spacing)));

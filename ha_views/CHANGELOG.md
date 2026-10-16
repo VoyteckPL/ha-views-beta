@@ -1,3 +1,8 @@
+## 0.7.0-beta.784
+
+- Nowy element „Linia kroplująca” (plus → Linia kroplująca): rysujesz wąż kroplujący dowolnie na planie, bez obszaru podlewania, z własną encją (zawór / przełącznik) i podglądem ON/OFF. Ikona elementu stoi na początku linii. W panelu: kolor wody, krycie, a niżej te same ustawienia linii co dotąd. Starsze linie w obszarach podlewania działają jak wcześniej.
+- Podgląd „włączony”: znikają też kropki zraszaczy, kropki zasięgu i kropki linii kroplujących.
+
 ## 0.7.0-beta.783
 
 - Podlewanie: niebieskie kropki zraszaczy, białe kropki zasięgu i kropki linii kroplujących w edycji są dużo mniejsze.
