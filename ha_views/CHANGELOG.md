@@ -1,3 +1,8 @@
+## 0.7.0-beta.790
+
+- Efekty ikony działają też na elementach bez stanu ON/OFF (np. przycisk, etykieta bez encji do przełączania): neon, oddech, fale, promienie, wirujący pierścień, światło od środka i gradient były rysowane tylko przy włączonym stanie, więc przy takich elementach nic nie było widać. Teraz taki element jest dla efektu zawsze „włączony”.
+- Usunięty efekt ikony „Kontur neon”.
+
 ## 0.7.0-beta.789
 
 - Pogoda: chmury wyglądają jak z lotu ptaka – większe, puszyste, z miękkim cieniem na ziemi i w większej liczbie (także na wąskim, wysokim obszarze). Ciemny odcień przy deszczu / burzy jest dużo słabszy, żeby plan i ikony zostały czytelne.

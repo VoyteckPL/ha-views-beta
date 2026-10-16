@@ -2134,7 +2134,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
   const spec = r.labelIcon ? roomLabelIconSpec(r, on) : null;
   const anim = roomIconAnimation(r, on), animAttr = anim ? { cls: ` ${anim.cls}`, style: `;${anim.style}` } : { cls: '', style: '' };
   const iconHtml = !spec ? '' : spec.domain ? `<img class="room-label-brand${animAttr.cls}" src="api/integration_icon?domain=${encodeURIComponent(spec.domain)}" data-icon-fallback="${escapeHtml(`https://brands.home-assistant.io/_/${encodeURIComponent(spec.domain)}/dark_icon.png`)}" alt="" style="opacity:${iconOpacity}${animAttr.style}">` : (() => {
-    const ig = iconFxGradient(r, iconEffectOf(r), on);
+    const ig = iconFxGradient(r, iconEffectOf(r), on || iconFxAlwaysOn(r));
     const svg = JSON.stringify({ color: iconColor, fill: ig ? `url(#${ig.id})` : r.labelIconFill !== false ? rgba(iconColor, iconOpacity) : 'none', defs: ig?.defs || '', stroke: r.labelIconOutline ? rgba(outlineColor || '#FFFFFF', outlineOpacity) : '', width: clamp(Number(outlineWidth) || 1.5, .5, 8), anim: anim?.cls || '', animStyle: anim?.style || '' });
     const d = mdiSvgPath(spec.cls);
     return d ? mdiSvgMarkup(d, svg) : `<i class="mdi ${escapeHtml(spec.cls)}${animAttr.cls}" data-svg-icon="${escapeHtml(String(spec.cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(svg)}" style="${iconStyle}${glyphShiftStyle(spec.cls)}${animAttr.style}"></i>`;
@@ -2233,7 +2233,9 @@ const LABEL_ICON_FX = [['none','Brak'],['emboss','Wypukły'],['depth','Głębia'
 // Ready-made looks: [id, name, icon effect, frame style, icon].
 // "Efekty": two frame looks only - liquid glass and a gradient frame - each with ready looks and its own settings.
 // Icon effects: a look for the icon in its own colour (animated only while ON). [id, name, mdi icon of its button]
-const ICON_EFFECTS = [['none','Brak','mdi-close-circle-outline'],['neon','Neon','mdi-lightbulb-on-outline'],['breath','Oddech','mdi-weather-windy'],['ripple','Fale','mdi-waves'],['rays','Promienie','mdi-white-balance-sunny'],['emboss','Wypukła 3D','mdi-cube-outline'],['glass','Szklana kula','mdi-circle-opacity'],['metal','Metal','mdi-gold'],['grad','Gradient','mdi-gradient-horizontal'],['long','Długi cień','mdi-box-shadow'],['float','Unoszenie','mdi-arrow-up-down'],['ring','Wirujący pierścień','mdi-rotate-right'],['inner','Światło od środka','mdi-lightbulb-on'],['outline','Kontur neon','mdi-vector-circle-variant']];
+const ICON_EFFECTS = [['none','Brak','mdi-close-circle-outline'],['neon','Neon','mdi-lightbulb-on-outline'],['breath','Oddech','mdi-weather-windy'],['ripple','Fale','mdi-waves'],['rays','Promienie','mdi-white-balance-sunny'],['emboss','Wypukła 3D','mdi-cube-outline'],['glass','Szklana kula','mdi-circle-opacity'],['metal','Metal','mdi-gold'],['grad','Gradient','mdi-gradient-horizontal'],['long','Długi cień','mdi-box-shadow'],['float','Unoszenie','mdi-arrow-up-down'],['ring','Wirujący pierścień','mdi-rotate-right'],['inner','Światło od środka','mdi-lightbulb-on']];
+// An element with nothing to switch (a button, a label without an on / off entity) has no ON state: its icon effect is always "lit".
+const iconFxAlwaysOn = r => iconEffectOf(r) !== 'none' && !roomSwitchable(r);
 const iconEffectOf = r => ICON_EFFECTS.some(([v]) => v !== 'none' && v === r?.labelIconEffect) ? r.labelIconEffect : 'none';
 // (Metal / Gradient on an SVG icon: its fill is a gradient - animated while ON)
 function iconFxGradient(r, fx, on) {
@@ -2321,7 +2323,7 @@ function renderRoomLabels(view = activeSceneView()) {
     // Effects: the icon's 3D look and the frame's style (glass, …), with their strength - classes on the label's wrapper.
     ensureLabelFxDefs();
     { const ifx = iconEffectOf(room), sfx = !isThermoRoom(room) && ['liquid','gradient'].includes(room.labelCardFx) ? room.labelCardFx : 'none'; // (only liquid glass and the gradient frame are left)
-      const pv = preview(room.id), lit = pv ? pv === 'on' : !!roomLight(room).on;
+      const pv = preview(room.id), lit = pv ? pv === 'on' : (!!roomLight(room).on || iconFxAlwaysOn(room));
       const cls = `room-label-group${ifx !== 'none' ? ` iefx-${ifx}` : ''}${sfx !== 'none' ? ` lst-${sfx}` : ''}${sfx === 'gradient' && room.labelFxGAnim ? ' lst-ganim' : ''}${sfx !== 'none' && room.labelFxParts !== false ? ' lst-parts' : ''}${sfx !== 'none' && room.labelFxGlow ? ' lst-glow' : ''}${lit ? ' lon' : ''}${['emboss','glass'].includes(ifx) && room.labelIconFxBody === false ? ' ifx-nobody' : ''}`; if (group.className !== cls) group.className = cls;
       // (the looks' own settings, as variables on the label's wrapper)
       const num = (v, d) => Number.isFinite(Number(v)) && v !== '' && v !== null && v !== undefined ? Number(v) : d;
