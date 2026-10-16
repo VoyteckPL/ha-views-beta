@@ -4954,7 +4954,7 @@ function pastePartStyle(room, part, title) {
 function toggleRoomLock() { const room = roomsOf()[selectedRoomId]; if (!room) return; room.geometryLocked = !room.geometryLocked; room.updatedAt = new Date().toISOString(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); notify(room.geometryLocked ? 'Zablokowano geometrię' : 'Odblokowano geometrię'); }
 // Every look setting of a room / label / thermostat: the style list plus every label part and thermostat option.
 const roomLookKey = key => ROOM_STYLE_KEYS.includes(key) || (/^(label|thermo[A-Z_])/.test(key) && !/^labelX\d(Entity)?$/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key));
-function copyRoomStyle() { const live = roomsOf()[selectedRoomId]; if (!live) return; const room = clone(live); restoreSingleLook(room); /* a one-part label's look is copied as its two layers */ roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(key => roomLookKey(key) && key !== 'singleSaved').map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
+function copyRoomStyle() { const live = roomsOf()[selectedRoomId]; if (!live) return; const room = clone(live); restoreSingleLook(room); /* a one-part label's look is copied as its two layers */ roomStyleClipboard = Object.fromEntries(Object.keys(room).filter(key => roomLookKey(key) && key !== 'singleSaved').map(key => [key, clone(room[key])])); roomStyleClipboard.__thermo = isThermoRoom(room); if (live.fbox && dashSpan(live)) roomStyleClipboard.__box = freeBoxPx(live); /* (the label's own box size on a background: kept apart from its place) */ const paste = $('#room-paste-style'); if (paste) paste.disabled = false; notify('Skopiowano styl pomieszczenia — wklej go w innym pomieszczeniu'); }
 // Pasting a style keeps where the target stands: the label / part offsets from its point are its own (a room's label
 // offsets would move a plain label away); only looks (and the group's inner arrangement) are taken over.
 const isLabelPositionKey = key => key.startsWith('label') && /[XY]$/.test(key) && !/F[XY]$/.test(key);
@@ -4964,7 +4964,8 @@ function pasteRoomStyle() {
   const exact = roomStyleClipboard.__thermo && isThermoRoom(room), keep = key => exact ? false : isLabelPositionKey(key);
   Object.keys(room).filter(key => roomLookKey(key) && !keep(key)).forEach(key => delete room[key]);
   if (exact) Object.assign(room, Object.fromEntries(Object.keys(ROOM_DEFAULTS).filter(roomLookKey).map(key => [key, clone(ROOM_DEFAULTS[key])])));
-  Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && !keep(key))), { updatedAt:new Date().toISOString() });
+  Object.assign(room, Object.fromEntries(Object.entries(clone(roomStyleClipboard)).filter(([key]) => key !== '__thermo' && key !== '__box' && !keep(key))), { updatedAt:new Date().toISOString() });
+  if (roomStyleClipboard.__box && room.fbox && dashSpan(room)) { const sp = dashSpan(room); freeBoxFromPx(room, roomStyleClipboard.__box[0], roomStyleClipboard.__box[1], sp.x + sp.w / 2, sp.y + sp.h / 2); } // (the size is taken over, the place stays)
   if (isTextRoom(room)) room.labelState = false; // (a button has no caption)
   delete room.labelAutoUngrouped; delete room.singleSaved; renderRooms(); openRoomEditor(room.id); scheduleSave(true); notify('Wklejono styl pomieszczenia');
 }

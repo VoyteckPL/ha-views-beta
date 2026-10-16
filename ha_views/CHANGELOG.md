@@ -1,3 +1,7 @@
+## 0.7.0-beta.794
+
+- Kopiuj / wklej styl: kopiuje też rozmiar etykiety (jej własne pudełko na planie z tłem – np. wielkość samej ikony koła / kwadratu). Po wklejeniu element zachowuje swoje miejsce, a bierze rozmiar ze skopiowanego.
+
 ## 0.7.0-beta.793
 
 - Efekt ikony podzielony na dwie grupy, które można łączyć (po jednym z każdej): „Wygląd ikony” (Wypukła 3D, Szklana kula, Metal, Gradient, Długi cień) oraz „Animacja i światło” (Neon, Oddech, Fale, Promienie, Unoszenie, Wirujący pierścień, Światło od środka). Np. szklana kula + unoszenie. Starsze zapisy działają dalej (efekt animacji zapisany wcześniej trafia do drugiej grupy).
