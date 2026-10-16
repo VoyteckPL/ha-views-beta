@@ -2969,7 +2969,7 @@ function focusPartSection(part) {
   const target = markPartSection(part); if (!target) return;
   if (!target.open) {
     $$('#room-editor-content details.editor-section[open]').forEach(d => { if (d !== target) d.removeAttribute('open'); });
-    target.querySelectorAll('.gauge-subsection[open]:not(.size-open)').forEach(d => d.removeAttribute('open'));
+    target.querySelectorAll('.gauge-subsection[open]').forEach(d => d.removeAttribute('open'));
     target.open = true;
   }
   requestAnimationFrame(() => target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
@@ -3981,7 +3981,7 @@ function roomEditorMarkup(room) {
   // A part's "Rozmiar": open at once, with all its scaling at hand - size and margin (each catching the values used
   // elsewhere: this label's other parts, the same part of other labels), and for a name / state fitting the box to the
   // text and "Stała ramka" (the box stays, the text changes inside it).
-  const sizeOpen = body => `<details class="gauge-subsection size-open" open><summary>${escapeHtml(translateValue('Rozmiar'))}</summary><div class="gauge-subsection-body">${body}</div></details>`;
+  const sizeOpen = body => `<details class="gauge-subsection size-open"><summary>${escapeHtml(translateValue('Rozmiar'))}</summary><div class="gauge-subsection-body">${body}</div></details>`;
   const okNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
   const fxRows = (path, powerPath, list, icon, title) => { const v = list.some(([x]) => x === r[path]) ? r[path] : 'none';
     return ic(icon, control(title, path, 'select', v, { items: list, dropdown: true, refresh: true })) + (v === 'none' ? '' : ic('mdi-tune-variant', control('Siła', powerPath, 'range', Math.round(clamp(Number(r[powerPath] ?? 1), .3, 2) * 100), { min: 30, max: 200, step: 5, suffix: '%', integer: true }))); };
@@ -4237,24 +4237,24 @@ function roomEditorMarkup(room) {
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
     : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
     // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
-  const ifxNow = iconEffectOf(r), iconFx = isThermoRoom(r) || !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open" open><summary>${escapeHtml(translateValue('Efekt ikony'))}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${escapeHtml(translateValue(name))}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(name))}</span></button>`).join('')}</div>`
+  const ifxNow = iconEffectOf(r), iconFx = isThermoRoom(r) || !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open"><summary>${escapeHtml(translateValue('Efekt ikony'))}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${escapeHtml(translateValue(name))}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(name))}</span></button>`).join('')}</div>`
       + (ifxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })));
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
   const fxSection = isThermoRoom(r) ? '' : (() => {
     const t = text => escapeHtml(translateValue(text)), st = ['liquid','gradient'].includes(r.labelCardFx) ? r.labelCardFx : 'none', num = (v, d) => Number.isFinite(Number(v)) && v !== '' && v !== null && v !== undefined ? Number(v) : d;
     const styles = `<div class="fx-styles">${LABEL_FX_STYLES.map(([v, name, mdi]) => `<button type="button" class="fx-preset${st === v ? ' active' : ''}" data-fx-style="${v}" title="${t(name)}"><i class="mdi ${mdi}"></i><span>${t(name)}</span></button>`).join('')}</div>`;
-    const themes = `<details class="gauge-subsection size-open" open><summary>${t('Motywy')}</summary><div class="gauge-subsection-body"><div class="fx-themes">${LABEL_THEMES.map(th => `<button type="button" class="fx-theme${r.labelTheme === th[0] && st === th[2] ? ' active' : ''}" data-fx-theme="${th[0]}" title="${t(th[1])}" style="--t1:${th[2] === 'gradient' ? th[3].labelFxG1 : th[3].labelFxLColor};--t2:${th[2] === 'gradient' ? th[3].labelFxG2 : th[3].labelFxLColor};--ti:${th[4]};--tn:${th[6]};--ts:${th[7]}"><span class="ft-prev ${th[2]}"><i class="mdi mdi-lightbulb"></i><b>Aa</b><em>ON</em></span><small>${t(th[1])}</small></button>`).join('')}</div></div></details>`;
+    const themes = `<details class="gauge-subsection size-open"><summary>${t('Motywy')}</summary><div class="gauge-subsection-body"><div class="fx-themes">${LABEL_THEMES.map(th => `<button type="button" class="fx-theme${r.labelTheme === th[0] && st === th[2] ? ' active' : ''}" data-fx-theme="${th[0]}" title="${t(th[1])}" style="--t1:${th[2] === 'gradient' ? th[3].labelFxG1 : th[3].labelFxLColor};--t2:${th[2] === 'gradient' ? th[3].labelFxG2 : th[3].labelFxLColor};--ti:${th[4]};--tn:${th[6]};--ts:${th[7]}"><span class="ft-prev ${th[2]}"><i class="mdi mdi-lightbulb"></i><b>Aa</b><em>ON</em></span><small>${t(th[1])}</small></button>`).join('')}</div></div></details>`;
     const partsRows = control('Części w stylu efektu','labelFxParts','checkbox',r.labelFxParts !== false,{ refresh:true }) + control('Poświata ikony i stanu (ON)','labelFxGlow','checkbox',!!r.labelFxGlow,{ refresh:true });
     let body = '';
     if (st === 'gradient') {
       const looks = GRADIENT_LOOKS.map(([id, name, a, b]) => `<button type="button" class="fx-look${(r.labelFxG1 || '#20B9E7').toUpperCase() === a && (r.labelFxG2 || '#B66DFF').toUpperCase() === b ? ' active' : ''}" data-fx-look="g:${id}" title="${t(name)}"><span style="background:linear-gradient(135deg,${a},${b})"></span><small>${t(name)}</small></button>`).join('');
-      body = `<details class="gauge-subsection size-open" open><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-looks">${looks}</div></div></details>`
+      body = `<details class="gauge-subsection size-open"><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-looks">${looks}</div></div></details>`
         + sub('Kolory', control('Kolor 1','labelFxG1','color',r.labelFxG1 || '#20B9E7') + control('Kolor 2','labelFxG2','color',r.labelFxG2 || '#B66DFF') + control('Kąt','labelFxGAngle','range',num(r.labelFxGAngle, 135),{ min:0, max:360, step:5, suffix:'°', integer:true }) + control('Animacja','labelFxGAnim','checkbox',!!r.labelFxGAnim,{ refresh:true }))
         + sub('Ramka', control('Grubość','labelFxGWidth','range',num(r.labelFxGWidth, 2),{ min:1, max:10, step:1, suffix:'px', integer:true }) + control('Wnętrze','labelFxGFill','range',num(r.labelFxGFill, 72),{ min:0, max:100, step:1, suffix:'%', integer:true }) + control('Poświata','labelFxGGlow','range',num(r.labelFxGGlow, 0),{ min:0, max:40, step:1, suffix:'px', integer:true })) + sub('Części', partsRows);
     } else if (st === 'liquid') {
       const looks = LIQUID_LOOKS.map(([id, name, c]) => `<button type="button" class="fx-look${(r.labelFxLColor || '#FFFFFF').toUpperCase() === c && num(r.labelFxLTint, 24) === LIQUID_LOOKS.find(x => x[0] === id)[3] ? ' active' : ''}" data-fx-look="l:${id}" title="${t(name)}"><span class="liquid" style="--c:${hexRgb(c)}"></span><small>${t(name)}</small></button>`).join('');
-      body = `<details class="gauge-subsection size-open" open><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-looks">${looks}</div></div></details>`
+      body = `<details class="gauge-subsection size-open"><summary>${t('Presety')}</summary><div class="gauge-subsection-body"><div class="fx-looks">${looks}</div></div></details>`
         + sub('Szkło', control('Rozmycie','labelFxLBlur','range',num(r.labelFxLBlur, 22),{ min:0, max:40, step:1, suffix:'px', integer:true }) + control('Biel','labelFxLTint','range',num(r.labelFxLTint, 24),{ min:0, max:80, step:1, suffix:'%', integer:true }) + control('Odcień','labelFxLColor','color',r.labelFxLColor || '#FFFFFF') + control('Połysk','labelFxLShine','range',num(r.labelFxLShine, 60),{ min:0, max:100, step:1, suffix:'%', integer:true })) + sub('Części', partsRows);
     }
     return partBar('effects', 'Efekty', themes + styles + body, []);
@@ -7421,8 +7421,8 @@ document.addEventListener('click', event => {
   const summary = event.target.closest('summary'); if (!summary) return;
   const details = summary.parentElement;
   if (details.classList.contains('gauge-subsection')) {
-    if (!details.open) $$(':scope > .gauge-subsection, :scope > * > .gauge-subsection', details.parentElement).forEach(other => { if (other !== details && !other.classList.contains('size-open')) other.open = false; });
-  } else if (details.classList.contains('editor-section') && !details.open) $$('.gauge-subsection', details).forEach(sub => { sub.open = sub.classList.contains('size-open'); }); // a part's sizes stay at hand
+    if (!details.open) $$(':scope > .gauge-subsection, :scope > * > .gauge-subsection', details.parentElement).forEach(other => { if (other !== details) other.open = false; });
+  } else if (details.classList.contains('editor-section') && !details.open) $$('.gauge-subsection', details).forEach(sub => { sub.open = false; }); // all folded
 }, true);
 document.addEventListener('click', event => {
   const button = event.target.closest('.seg-btn'); if (!button || button.disabled) return;
@@ -7771,7 +7771,7 @@ function openEditor(preserveSection = editorOpenSectionIndex) {
   }));
   $$('.gauge-subsection', els.editorContent).forEach(details => details.addEventListener('toggle', () => {
     // One sub-section open at a time - apart from the parts' "Rozmiar", which stays open.
-    if (details.open && !details.classList.contains('size-open')) $$('.gauge-subsection:not(.size-open)', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); });
+    if (details.open) $$('.gauge-subsection', els.editorContent).forEach(other => { if (other !== details) other.removeAttribute('open'); });
     requestAnimationFrame(() => { if (details.open) details.scrollIntoView({ block: 'nearest' }); });
   }));
   syncPreviewStateButton(); syncLockButton($('#geometry-lock'), marker.geometryLocked); requestAnimationFrame(positionEditor);

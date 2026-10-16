@@ -1,3 +1,7 @@
+## 0.7.0-beta.781
+
+- Panel edycji: wszystkie podsekcje (też „Rozmiar”, „Efekt ikony”, „Motywy”, „Presety”) są domyślnie zwinięte po wejściu w element i po otwarciu sekcji. Rozwijasz je ręcznie; rozwinięcie jednej zwija pozostałe.
+
 ## 0.7.0-beta.780
 
 - Efekt ikony przeniesiony z sekcji „Efekty” do sekcji „Ikona” (jako osobna podsekcja „Efekt ikony”). W „Efektach” zostały motywy i style ramki.
