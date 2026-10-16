@@ -2195,3 +2195,6 @@ body.drip-drawing .scene{cursor:crosshair}
 
 .drip-hit{fill:none;stroke:transparent;stroke-width:16px;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;pointer-events:stroke;cursor:move;touch-action:none}
 @media(pointer:coarse){.drip-hit{stroke-width:26px}}
+
+.weather-prev-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.weather-prev-buttons .preview-state-button{min-width:34px;height:34px;padding:0 8px;display:inline-grid;place-items:center}

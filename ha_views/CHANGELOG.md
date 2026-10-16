@@ -1,3 +1,7 @@
+## 0.7.0-beta.788
+
+- Pogoda: podgląd pogody na samej górze panelu – rząd przycisków (z encji, słońce, zachmurzenie, deszcz, ulewa, śnieg, mgła, noc, grad, burza, wiatr). Jedno kliknięcie pokazuje tę pogodę na planie (tylko w edycji).
+
 ## 0.7.0-beta.787
 
 - Nowa karta „Pogoda” (plus → Pogoda): obszar, który pokazuje aktualną pogodę z encji `weather.…` (np. Open Weather Map): słońce z promieniami, chmury, śnieg, grad, mgła, gwiazdki w pogodną noc, wiatr (szybsze chmury). Deszcz i ulewa korzystają z istniejącego deszczu.

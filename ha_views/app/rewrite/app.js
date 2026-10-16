@@ -4303,7 +4303,7 @@ function roomEditorMarkup(room) {
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable || r.dripOnly || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
+  return (r.roomEffect === 'weather' ? weatherPreviewRow(r) : '') + (switchable || r.dripOnly || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -10186,6 +10186,17 @@ function weatherCondOf(r) {
   return '';
 }
 const weatherLookOf = r => WEATHER_LOOKS[weatherCondOf(r)] || null;
+// A row of buttons at the top of the weather panel: one tap shows that weather on the plan (edit mode only, not saved as the real one).
+const WEATHER_BUTTONS = [['auto','mdi-cloud-sync-outline'],['sunny','mdi-weather-sunny'],['partlycloudy','mdi-weather-partly-cloudy'],['cloudy','mdi-weather-cloudy'],['rainy','mdi-weather-rainy'],['pouring','mdi-weather-pouring'],['snowy','mdi-weather-snowy'],['fog','mdi-weather-fog'],['clear-night','mdi-weather-night'],['hail','mdi-weather-hail'],['lightning','mdi-weather-lightning'],['windy','mdi-weather-windy']];
+function weatherPreviewRow(r) {
+  const cur = WEATHER_NAMES.some(([v]) => v === r.weatherPreview) ? r.weatherPreview : 'auto', name = v => escapeHtml(translateValue(WEATHER_NAMES.find(([x]) => x === v)?.[1] || v));
+  return `<div class="control weather-preview"><label>${escapeHtml(translateValue('Podgląd pogody'))}</label><div class="weather-prev-buttons">${WEATHER_BUTTONS.map(([v, mdi]) => `<button type="button" class="preview-state-button${cur === v ? ' active' : ''}" data-weather-preview="${v}" title="${name(v)}" aria-label="${name(v)}" aria-pressed="${cur === v}"><i class="mdi ${mdi}"></i></button>`).join('')}</div><span></span></div>`;
+}
+document.addEventListener('click', event => {
+  const b = event.target.closest?.('[data-weather-preview]'), room = roomsOf()[selectedRoomId]; if (!b || !room || !editMode) return;
+  event.preventDefault(); event.stopPropagation(); room.weatherPreview = b.dataset.weatherPreview;
+  renderRooms(); renderRoomEditLayer(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex));
+}, true);
 function weatherLookSub(r) {
   const sub = (title, body) => gaugeSubsection(escapeHtml(translateValue(title)), body);
   return sub('Pogoda', control('Podgląd (tylko w edycji)','weatherPreview','select',WEATHER_NAMES.some(([v]) => v === r.weatherPreview) ? r.weatherPreview : 'auto',{ items: WEATHER_NAMES, dropdown:true })
