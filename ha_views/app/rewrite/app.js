@@ -3389,7 +3389,7 @@ function renderRoomEditLayer() {
     handles += pts.map(([x, y], index) => { const [nx, ny] = pts[(index + 1) % pts.length]; return `<i class="room-handle mid" data-room-mid="${index}" style="left:${(x + nx) / 2}%;top:${(y + ny) / 2}%"></i>`; }).join('');
   }
   if (room && !roomDraft && ptLayers(room).length) handles += sprinklerHandles(room);
-  if (room && !roomDraft && (room.roomEffect === 'water' || room.dripOnly)) handles += dripHandles(room);
+  if (room && !roomDraft && room.dripOnly) handles += dripHandles(room);
   if (roomDraft) handles += roomDraft.points.map(([x, y], index) => `<i class="room-handle draft${index === 0 && roomDraft.points.length >= 3 ? ' closable' : ''}" style="left:${x}%;top:${y}%"></i>`).join('');
   // Right angles and 45° / 135° corners are marked: of the selected room, and of the room being drawn.
   const angleShapes = room && !roomDraft ? roomAngleMarks(room.points || [], true) : roomDraft ? roomAngleMarks(roomDraft.cursor ? [...roomDraft.points, roomDraft.cursor] : roomDraft.points, false) : { svg:'', html:'' };
@@ -4301,7 +4301,7 @@ function roomEditorMarkup(room) {
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) + dripSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
+  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -8024,8 +8024,7 @@ function updateIntegrationMetadata(entryId) {
 const ADD_TYPES = [
   { key:'icon', label:'Etykieta', hint:'Ikona, nazwa i stan w dowolnym miejscu', entity:'optional' },
   { key:'room', label:'Pomieszczenie', hint:'Obszar ze stanem encji', entity:'optional' },
-  { key:'water', label:'Podlewanie', hint:'Sekcja nawadniania ze zraszaczami', entity:'optional' },
-  { key:'drip', label:'Linia kroplująca', hint:'Wąż kroplujący rysowany dowolnie, z własnym zaworem', entity:'optional' },
+  { key:'water', label:'Podlewanie', hint:'Zraszacze w obszarze albo linia kroplująca', entity:'optional' },
   { key:'rain', label:'Deszcz', hint:'Animowany deszcz nad obszarem', entity:'optional' },
   // Gauge and horseshoe are one tile; which one is chosen in its panel (Badge is no longer added).
   { key:'gauge', label:'Wskaźnik', hint:'Łuk z wartością — temperatura, moc, poziom', entity:'required', numeric:true },
@@ -8177,7 +8176,9 @@ function renderAddDialog(part = 'all') {
     $('#add-sub', els.addDialog).textContent = translateValue(state.step === 'type' ? 'Wybierz, co chcesz dodać' : 'Wybierz encję dla tego elementu');
     $('#add-step-type', els.addDialog).innerHTML = chosen ? `<button type="button" class="add-back" data-add-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button><span class="add-step-chip"><span class="add-thumb" data-thumb="${chosen.key}"></span><b>${escapeHtml(translateValue(chosen.label))}</b></span>` : '';
     $('#add-selected', els.addDialog).innerHTML = entity ? `<div class="add-selected"><span class="add-row-icon"><i class="mdi ${addEntityIcon(entity)}"></i></span><div><b data-no-i18n>${escapeHtml(entity.name || entity.entity_id)}</b><small data-no-i18n>${escapeHtml(entity.entity_id)} · ${escapeHtml(`${entity.state ?? ''}${entity.unit ? ` ${entity.unit}` : ''}`)}${addUsageLabel(entity.entity_id) ? ` · ${escapeHtml(translateValue('na widoku'))}: ${escapeHtml(addUsageLabel(entity.entity_id))}` : ''}</small></div><button type="button" class="add-link" data-add-clear>${escapeHtml(translateValue('Zmień'))}</button></div>` : '';
-    $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water' || type.key === 'rain') && dashGrid().on)).map(type => {
+    if (state.waterPick) $('#add-types', els.addDialog).innerHTML = `<button type="button" class="add-back" data-add-water-back><i class="mdi mdi-arrow-left"></i><span>${escapeHtml(translateValue('Zmień typ'))}</span></button>`
+      + [['area', 'Zraszacze w obszarze', 'Obszar na planie ze zraszaczami i własnym zaworem', 'water'], ['drip', 'Linia kroplująca', 'Wąż kroplujący rysowany dowolnie, z własnym zaworem', '']].map(([k, label, hint, thumb]) => `<button type="button" class="add-card" data-add-water="${k}"><span class="add-thumb"${thumb ? ` data-thumb="${thumb}"` : ''}>${thumb ? '' : '<i class="mdi mdi-pipe" style="font-size:34px"></i>'}</span><b>${escapeHtml(translateValue(label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`).join('');
+    else $('#add-types', els.addDialog).innerHTML = ADD_TYPES.filter(type => !((type.key === 'room' || type.key === 'water' || type.key === 'rain') && dashGrid().on)).map(type => {
       const allowed = addTypeAllowed(type, entity), hint = !allowed ? 'Dla wartości liczbowych' : entity && type.entity === 'none' ? 'Bez encji' : type.hint;
       return `<button type="button" class="add-card${state.type === type.key ? ' sel' : ''}${allowed ? '' : ' off'}" data-add-type="${type.key}" ${allowed ? '' : 'disabled'}>${entity && recommended === type.key ? `<span class="add-tag">★ ${escapeHtml(translateValue('Polecane'))}</span>` : ''}<span class="add-thumb" data-thumb="${type.key}"></span><b>${escapeHtml(translateValue(type.label))}</b><i>${escapeHtml(translateValue(hint))}</i></button>`;
     }).join('');
@@ -8209,6 +8210,7 @@ async function openAddDialog(presetEntity = null) {
 function chooseAddType(key) {
   const type = ADD_TYPES.find(t => t.key === key); if (!type || !addState) return;
   addState.type = key; if (!addState.preset || type.entity === 'none') addState.entity = null;
+  if (key === 'water') { addState.waterPick = true; addState.type = ''; return renderAddDialog(); } // (one category: zraszacze or a drip line)
   // A thermostat / gauge is added like a label: in the middle of the screen at once, its entity picked in its wizard.
   if (type.entity !== 'required' || addState.entity || ['thermostat','gauge','camera'].includes(key)) return confirmAddDialog();
   addState.step = 'entity'; addState.query = ''; const search = $('#add-search', els.addDialog); search.value = '';
@@ -8221,7 +8223,6 @@ function confirmAddDialog() {
   if (!addState || !addGoLabel().ok) return;
   const { type, entity } = addState; closeAddDialog();
   if (type === 'room' || type === 'water' || type === 'rain') return addRoomFromDialog(entity, type);
-  if (type === 'drip') return addDripElement(viewCenterPercent(), entity);
   createAddedElement(type, entity, viewCenterPercent());
 }
 function addRoomFromDialog(entity, type = 'room') {
@@ -8522,6 +8523,9 @@ function onAddPickPointer(event) {
 function onAddDialogClick(event) {
   const target = event.target;
   if (target === els.addDialog || target.closest('[data-add-close]')) return closeAddDialog();
+  if (target.closest('[data-add-water-back]')) { addState.waterPick = false; return renderAddDialog(); }
+  const waterButton = target.closest('[data-add-water]');
+  if (waterButton) { const entity = addState.entity; closeAddDialog(); return waterButton.dataset.addWater === 'drip' ? addDripElement(viewCenterPercent(), entity) : addRoomFromDialog(entity, 'water'); }
   const typeButton = target.closest('[data-add-type]');
   if (typeButton && !typeButton.disabled) return chooseAddType(typeButton.dataset.addType);
   const tplGo = target.closest('[data-add-template-go]'); if (tplGo) { const entity = addState.entity; closeAddDialog(); return addFromTemplate(tplGo.dataset.addTemplateGo, entity); }
@@ -9495,7 +9499,7 @@ function bindEvents() {
   });
   $('#room-edit-layer')?.addEventListener('pointerdown', event => {
     if (event.target.closest('[data-spr],[data-spr-tip]')) { startSprinklerDrag(event); return; }
-    if (event.target.closest('[data-drip-pt],[data-drip-mid]')) { startDripDrag(event); return; }
+    if (event.target.closest('[data-drip-pt],[data-drip-mid],[data-drip-move]')) { startDripDrag(event); return; }
     if (event.target.closest('[data-corner-del]')) {
       event.preventDefault(); event.stopPropagation();
       const swallowClick = e => { e.stopPropagation(); e.preventDefault(); };
@@ -10793,22 +10797,37 @@ function dripHandles(room) {
   if (dripDraft?.roomId === room.id && dripDraft.points.length) { svg += `<polyline class="drip-draft" points="${[...dripDraft.points, ...(dripDraft.cursor ? [dripDraft.cursor] : [])].map(p => p.join(',')).join(' ')}"/>`; dots += dripDraft.points.map(([x, y]) => `<i class="drip-handle draft" style="left:${x}%;top:${y}%"></i>`).join(''); }
   if (!dripDraft) dripList(room).forEach(o => { dots += o.points.map(([x, y], i) => `<i class="drip-handle${o.id === selectedDripId ? ' selected' : ''}" data-drip="${o.id}" data-drip-pt="${i}" style="left:${x}%;top:${y}%"></i>`).join('');
     // (the selected line: a dot in the middle of each segment - dragging it adds a point there, e.g. for a bend)
+    if (o.id === selectedDripId) { const cx = o.points.reduce((a, p) => a + p[0], 0) / o.points.length, cy = o.points.reduce((a, p) => a + p[1], 0) / o.points.length; dots += `<i class="drip-handle grab" data-drip="${o.id}" data-drip-move title="${escapeHtml(translateValue('Przesuń całą linię'))}" style="left:${cx}%;top:${cy}%"><i class="mdi mdi-cursor-move"></i></i>`; }
     if (o.id === selectedDripId) dots += o.points.slice(1).map(([x, y], i) => `<i class="drip-handle mid" data-drip="${o.id}" data-drip-mid="${i}" style="left:${(x + o.points[i][0]) / 2}%;top:${(y + o.points[i][1]) / 2}%"></i>`).join(''); });
   return (svg ? `<svg class="drip-svg" viewBox="0 0 100 100" preserveAspectRatio="none">${svg}</svg>` : '') + dots;
 }
 function startDripDrag(event) {
-  const room = roomsOf()[selectedRoomId], el = event.target.closest('[data-drip-pt],[data-drip-mid]'); if (!room || !el) return;
+  const room = roomsOf()[selectedRoomId], el = event.target.closest('[data-drip-pt],[data-drip-mid],[data-drip-move]'); if (!room || !el) return;
   event.preventDefault(); event.stopPropagation();
   const o = room.dripLines?.[el.dataset.drip]; if (!o) return; let i = Number(el.dataset.dripPt);
+  const whole = el.dataset.dripMove !== undefined;
   if (el.dataset.dripMid !== undefined) { const m = Number(el.dataset.dripMid), a = o.points[m], b = o.points[m + 1]; if (!a || !b) return; i = m + 1; o.points.splice(i, 0, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]); }
-  if (!o.points[i]) return;
+  if (!whole && !o.points[i]) return;
   const swallow = e => { e.stopPropagation(); e.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 700);
   if (selectedDripId !== el.dataset.drip) { selectedDripId = el.dataset.drip; const d = $(`#room-editor-content details.drip-sub[data-drip-sec="${CSS.escape(selectedDripId)}"]`); if (d) { d.open = true; d.closest('details.editor-section')?.setAttribute('open', ''); } }
   try { el.setPointerCapture(event.pointerId); } catch {}
-  const move = e => { if (e.pointerId !== event.pointerId) return; const [x, y] = scenePercentAt(e); o.points[i] = dripSnap(room, o.points[i - 1] || o.points[i + 1], x, y, e).map(v => Math.round(v * 1000) / 1000); room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); };
-  const up = e => { if (e.pointerId !== event.pointerId) return; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); scheduleSave(true); };
+  const p0 = scenePercentAt(event), orig = o.points.map(p => p.slice()); let lp = 0;
+  const syncLabel = () => { if (room.dripOnly) { const first = Object.values(room.dripLines).find(l => l.points?.length)?.points[0]; if (first) { room.x = first[0]; room.y = first[1]; } } };
+  const move = e => { if (e.pointerId !== event.pointerId) return; if (lp && Math.hypot(e.clientX - event.clientX, e.clientY - event.clientY) > 6) { clearTimeout(lp); lp = 0; }
+    const [x, y] = scenePercentAt(e);
+    if (whole) { // (the whole line: its first point snaps like a single point, the others follow by the same shift)
+      const [sx, sy] = dripSnap(room, null, clamp(orig[0][0] + x - p0[0], 0, 100), clamp(orig[0][1] + y - p0[1], 0, 100), e);
+      const dx = clamp(sx - orig[0][0], -Math.min(...orig.map(p => p[0])), 100 - Math.max(...orig.map(p => p[0]))), dy = clamp(sy - orig[0][1], -Math.min(...orig.map(p => p[1])), 100 - Math.max(...orig.map(p => p[1])));
+      o.points = orig.map(p => [Math.round((p[0] + dx) * 1000) / 1000, Math.round((p[1] + dy) * 1000) / 1000]); syncLabel(); }
+    else o.points[i] = dripSnap(room, o.points[i - 1] || o.points[i + 1], x, y, e).map(v => Math.round(v * 1000) / 1000);
+    room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); };
+  const stop = () => { clearTimeout(lp); lp = 0; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); };
+  const up = e => { if (e.pointerId !== event.pointerId) return; stop(); syncLabel(); scheduleSave(true); };
+  // A long press on a point removes it (the phone's way; the mouse has the right button and a double click).
+  if (el.dataset.dripPt !== undefined && o.points.length > 2) lp = setTimeout(() => { lp = 0; stop(); dripLongAt = Date.now(); o.points.splice(i, 1); room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); scheduleSave(true); }, 650);
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
+let dripLongAt = 0;
 // The zone's lines in its panel (under the sprinklers).
 function dripLookSub(r) {
   const esc = t => escapeHtml(translateValue(t)), colour = String(r.waterColor || '#9BD7FF');
@@ -10849,6 +10868,13 @@ window.addEventListener('pointermove', event => {
   const room = roomsOf()[dripDraft.roomId]; if (!room) return; const [x, y] = scenePercentAt(event);
   dripDraft.cursor = dripSnap(room, dripDraft.points[dripDraft.points.length - 1], x, y, event);
   if (!dripDraft.raf) dripDraft.raf = requestAnimationFrame(() => { if (dripDraft) { dripDraft.raf = 0; renderRoomEditLayer(); } });
+}, true);
+// The right mouse button on a point of a line removes it, too.
+document.addEventListener('contextmenu', event => {
+  const el = event.target.closest?.('[data-drip-pt]'), room = roomsOf()[selectedRoomId]; if (!el || !room || !editMode) return;
+  event.preventDefault(); event.stopPropagation(); if (Date.now() - dripLongAt < 1000) return;
+  const o = room.dripLines?.[el.dataset.drip]; if (!o) return; if (o.points.length <= 2) { notify(translateValue('Linia ma co najmniej 2 punkty')); return; }
+  o.points.splice(Number(el.dataset.dripPt), 1); room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); scheduleSave(true);
 }, true);
 // A double click on a point of a line removes it (a line keeps at least two).
 document.addEventListener('dblclick', event => {

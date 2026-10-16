@@ -1,3 +1,9 @@
+## 0.7.0-beta.785
+
+- Plus → jedna kategoria „Podlewanie”; po jej wybraniu wybierasz: „Zraszacze w obszarze” albo „Linia kroplująca”.
+- Linia kroplująca: uchwyt ze strzałkami na środku zaznaczonej linii przesuwa całą linię (przyciąga do siatki). Punkt usuniesz prawym przyciskiem myszy, dwuklikiem albo długim przytrzymaniem palca (telefon).
+- Obszar ze zraszaczami nie ma już sekcji ani uchwytów linii kroplujących (istniejące linie nadal się rysują).
+
 ## 0.7.0-beta.784
 
 - Nowy element „Linia kroplująca” (plus → Linia kroplująca): rysujesz wąż kroplujący dowolnie na planie, bez obszaru podlewania, z własną encją (zawór / przełącznik) i podglądem ON/OFF. Ikona elementu stoi na początku linii. W panelu: kolor wody, krycie, a niżej te same ustawienia linii co dotąd. Starsze linie w obszarach podlewania działają jak wcześniej.
