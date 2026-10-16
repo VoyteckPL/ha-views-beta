@@ -2139,7 +2139,7 @@ function roomLabelMarkup(room, preview = '', interactive = false) {
     const d = mdiSvgPath(spec.cls);
     return d ? mdiSvgMarkup(d, svg) : `<i class="mdi ${escapeHtml(spec.cls)}${animAttr.cls}" data-svg-icon="${escapeHtml(String(spec.cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(svg)}" style="${iconStyle}${glyphShiftStyle(spec.cls)}${animAttr.style}"></i>`;
   })();
-  const ifxLayers = iconHtml && iconEffectOf(r) !== 'none' ? '<span class="ifx-l ifx-a" aria-hidden="true"></span><span class="ifx-l ifx-b" aria-hidden="true"></span>' : '';
+  const ifxLayers = iconHtml && (iconEffectOf(r) !== 'none' || iconMotionOf(r) !== 'none') ? ['a', 'b', 'c', 'd'].map(l => `<span class="ifx-l ifx-${l}" aria-hidden="true"></span>`).join('') : '';
   const content = { icon: iconHtml ? ifxLayers + iconHtml : '', name: r.labelName && r.name ? `<b data-no-i18n style="${roomTextStyle(r, 'labelName', on)}">${escapeHtml(r.name)}</b>` : '', state: state ? `<small data-no-i18n style="${roomTextStyle(r, 'labelState', on)}${ruleColor && r.labelRulesState ? `;color:${escapeHtml(ruleColor)}` : ''}">${escapeHtml(state)}</small>` : '' };
   const thermo = isThermoRoom(r) ? thermoContent(r, on, thermoPreview, previewAct) : null; if (thermo) Object.assign(content, thermo.parts);
   EXTRA_PARTS.forEach(([part, key]) => { if (r[key] && r[`${key}Entity`]) content[part] = `<small data-no-i18n style="${roomTextStyle(r, key, on)}">${escapeHtml(extraEntityText(r, key))}</small>`; });
@@ -2233,10 +2233,15 @@ const LABEL_ICON_FX = [['none','Brak'],['emboss','Wypukły'],['depth','Głębia'
 // Ready-made looks: [id, name, icon effect, frame style, icon].
 // "Efekty": two frame looks only - liquid glass and a gradient frame - each with ready looks and its own settings.
 // Icon effects: a look for the icon in its own colour (animated only while ON). [id, name, mdi icon of its button]
-const ICON_EFFECTS = [['none','Brak','mdi-close-circle-outline'],['neon','Neon','mdi-lightbulb-on-outline'],['breath','Oddech','mdi-weather-windy'],['ripple','Fale','mdi-waves'],['rays','Promienie','mdi-white-balance-sunny'],['emboss','Wypukła 3D','mdi-cube-outline'],['glass','Szklana kula','mdi-circle-opacity'],['metal','Metal','mdi-gold'],['grad','Gradient','mdi-gradient-horizontal'],['long','Długi cień','mdi-box-shadow'],['float','Unoszenie','mdi-arrow-up-down'],['ring','Wirujący pierścień','mdi-rotate-right'],['inner','Światło od środka','mdi-lightbulb-on']];
+// Icon effects in two groups that can be combined: a "look" (changes how the icon itself looks) and a "motion" (light / animation around it).
+const ICON_LOOKS = [['none','Brak','mdi-close-circle-outline'],['emboss','Wypukła 3D','mdi-cube-outline'],['glass','Szklana kula','mdi-circle-opacity'],['metal','Metal','mdi-gold'],['grad','Gradient','mdi-gradient-horizontal'],['long','Długi cień','mdi-box-shadow']];
+const ICON_MOTIONS = [['none','Brak','mdi-close-circle-outline'],['neon','Neon','mdi-lightbulb-on-outline'],['breath','Oddech','mdi-weather-windy'],['ripple','Fale','mdi-waves'],['rays','Promienie','mdi-white-balance-sunny'],['float','Unoszenie','mdi-arrow-up-down'],['ring','Wirujący pierścień','mdi-rotate-right'],['inner','Światło od środka','mdi-lightbulb-on']];
 // An element with nothing to switch (a button, a label without an on / off entity) has no ON state: its icon effect is always "lit".
-const iconFxAlwaysOn = r => iconEffectOf(r) !== 'none' && !roomSwitchable(r);
-const iconEffectOf = r => ICON_EFFECTS.some(([v]) => v !== 'none' && v === r?.labelIconEffect) ? r.labelIconEffect : 'none';
+const iconFxAlwaysOn = r => (iconEffectOf(r) !== 'none' || iconMotionOf(r) !== 'none') && !roomSwitchable(r);
+const iconEffectOf = r => ICON_LOOKS.some(([v]) => v !== 'none' && v === r?.labelIconEffect) ? r.labelIconEffect : 'none';
+// (older saves kept a motion in labelIconEffect: it still counts as the motion)
+const iconMotionOf = r => ICON_MOTIONS.some(([v]) => v !== 'none' && v === r?.labelIconMotion) ? r.labelIconMotion : ICON_MOTIONS.some(([v]) => v !== 'none' && v === r?.labelIconEffect) ? r.labelIconEffect : 'none';
+function iconFxMigrate(room) { if (room.labelIconEffect && !ICON_LOOKS.some(([v]) => v === room.labelIconEffect)) { if (ICON_MOTIONS.some(([v]) => v === room.labelIconEffect)) room.labelIconMotion ||= room.labelIconEffect; delete room.labelIconEffect; } }
 // (Metal / Gradient on an SVG icon: its fill is a gradient - animated while ON)
 function iconFxGradient(r, fx, on, color = '') {
   if (fx !== 'metal' && fx !== 'grad') return null;
@@ -2324,9 +2329,9 @@ function renderRoomLabels(view = activeSceneView()) {
     if (!group) { group = document.createElement('div'); group.className = 'room-label-group'; group.dataset.labelGroup = room.id; layer.append(group); }
     // Effects: the icon's 3D look and the frame's style (glass, …), with their strength - classes on the label's wrapper.
     ensureLabelFxDefs();
-    { const ifx = iconEffectOf(room), sfx = !isThermoRoom(room) && ['liquid','gradient'].includes(room.labelCardFx) ? room.labelCardFx : 'none'; // (only liquid glass and the gradient frame are left)
+    { const ifx = iconEffectOf(room), mfx = iconMotionOf(room), sfx = !isThermoRoom(room) && ['liquid','gradient'].includes(room.labelCardFx) ? room.labelCardFx : 'none'; // (only liquid glass and the gradient frame are left)
       const pv = preview(room.id), lit = pv ? pv === 'on' : (!!roomLight(room).on || iconFxAlwaysOn(room));
-      const cls = `room-label-group${ifx !== 'none' ? ` iefx-${ifx}` : ''}${sfx !== 'none' ? ` lst-${sfx}` : ''}${sfx === 'gradient' && room.labelFxGAnim ? ' lst-ganim' : ''}${sfx !== 'none' && room.labelFxParts !== false ? ' lst-parts' : ''}${sfx !== 'none' && room.labelFxGlow ? ' lst-glow' : ''}${lit ? ' lon' : ''}${['emboss','glass'].includes(ifx) && room.labelIconFxBody === false ? ' ifx-nobody' : ''}`; if (group.className !== cls) group.className = cls;
+      const cls = `room-label-group${ifx !== 'none' ? ` iefx-${ifx}` : ''}${mfx !== 'none' ? ` ianim-${mfx}` : ''}${sfx !== 'none' ? ` lst-${sfx}` : ''}${sfx === 'gradient' && room.labelFxGAnim ? ' lst-ganim' : ''}${sfx !== 'none' && room.labelFxParts !== false ? ' lst-parts' : ''}${sfx !== 'none' && room.labelFxGlow ? ' lst-glow' : ''}${lit ? ' lon' : ''}${['emboss','glass'].includes(ifx) && room.labelIconFxBody === false ? ' ifx-nobody' : ''}`; if (group.className !== cls) group.className = cls;
       // (the looks' own settings, as variables on the label's wrapper)
       const num = (v, d) => Number.isFinite(Number(v)) && v !== '' && v !== null && v !== undefined ? Number(v) : d;
       [['--g1', room.labelFxG1 || '#20B9E7'], ['--g2', room.labelFxG2 || '#B66DFF'], ['--ga', `${num(room.labelFxGAngle, 135)}deg`], ['--gw', `${num(room.labelFxGWidth, 2)}px`], ['--gbg', String(num(room.labelFxGFill, 72) / 100)], ['--gglow', `${num(room.labelFxGGlow, 0)}px`],
@@ -4243,9 +4248,10 @@ function roomEditorMarkup(room) {
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
     : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
     // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
-  const ifxNow = iconEffectOf(r), iconFx = isThermoRoom(r) || !r.labelIcon ? '' : (h => `<details class="gauge-subsection size-open"><summary>${escapeHtml(translateValue('Efekt ikony'))}</summary><div class="gauge-subsection-body">${h}</div></details>`)(`<div class="fx-styles icon-fx">${ICON_EFFECTS.map(([v, name, mdi]) => `<button type="button" class="fx-preset${ifxNow === v ? ' active' : ''}" data-icon-fx="${v}" title="${escapeHtml(translateValue(name))}"><i class="mdi ${mdi}"></i><span>${escapeHtml(translateValue(name))}</span></button>`).join('')}</div>`
+  const ifxNow = iconEffectOf(r), mfxNow = iconMotionOf(r), t2 = text => escapeHtml(translateValue(text)), fxRow = (title, list, now, attr) => `<div class="fx-group-title">${t2(title)}</div><div class="fx-styles icon-fx">${list.map(([v, name, mdi]) => `<button type="button" class="fx-preset${now === v ? ' active' : ''}" data-${attr}="${v}" title="${t2(name)}"><i class="mdi ${mdi}"></i><span>${t2(name)}</span></button>`).join('')}</div>`;
+  const iconFx = isThermoRoom(r) || !r.labelIcon ? '' : `<details class="gauge-subsection size-open"><summary>${t2('Efekt ikony')}</summary><div class="gauge-subsection-body">${fxRow('Wygląd ikony', ICON_LOOKS, ifxNow, 'icon-fx')}${fxRow('Animacja i światło', ICON_MOTIONS, mfxNow, 'icon-motion')}`
       + (['emboss','glass'].includes(ifxNow) ? control('Pokaż kulę / podstawę efektu','labelIconFxBody','checkbox',r.labelIconFxBody !== false,{ refresh:true }) : '')
-      + (ifxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })));
+      + (ifxNow === 'none' && mfxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })) + '</div></details>';
   // A lone part is the label: no group section then (its part's own section holds everything).
   // "Efekty": ready-made looks (icon effect + frame style together) first, then the icon's and the frame's own choice.
   const fxSection = isThermoRoom(r) ? '' : (() => {
@@ -4716,8 +4722,9 @@ function onRoomEditorInput(event) {
 const isThermoLookKey = key => /^(label|thermo[A-Z_])/.test(key) && !['labelCardX','labelCardY','labelAutoUngrouped','labelRegroupSnap','labelUngroupFrame','labelUngroupBase'].includes(key);
 function onRoomEditorClick(event) {
   const fxStyle = event.target.closest?.('[data-fx-style]'), fxLook = event.target.closest?.('[data-fx-look]'), fxTheme = event.target.closest?.('[data-fx-theme]');
-  const iconFxBtn = event.target.closest?.('[data-icon-fx]');
-  if (iconFxBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; if (iconFxBtn.dataset.iconFx === 'none') delete room.labelIconEffect; else room.labelIconEffect = iconFxBtn.dataset.iconFx;
+  const iconFxBtn = event.target.closest?.('[data-icon-fx],[data-icon-motion]');
+  if (iconFxBtn) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; iconFxMigrate(room); const isMotion = iconFxBtn.dataset.iconMotion !== undefined, v = isMotion ? iconFxBtn.dataset.iconMotion : iconFxBtn.dataset.iconFx, key = isMotion ? 'labelIconMotion' : 'labelIconEffect';
+    if (v === 'none') delete room[key]; else room[key] = v;
     room.updatedAt = new Date().toISOString(); renderRooms(); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); return; }
   if (fxStyle || fxLook || fxTheme) { event.preventDefault(); const room = roomsOf()[selectedRoomId]; if (!room) return; delete room.labelTheme;
     if (fxTheme) { const th = LABEL_THEMES.find(x => x[0] === fxTheme.dataset.fxTheme); if (th) Object.assign(room, labelThemeKeys(th)); }

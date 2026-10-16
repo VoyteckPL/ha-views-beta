@@ -1,3 +1,8 @@
+## 0.7.0-beta.793
+
+- Efekt ikony podzielony na dwie grupy, które można łączyć (po jednym z każdej): „Wygląd ikony” (Wypukła 3D, Szklana kula, Metal, Gradient, Długi cień) oraz „Animacja i światło” (Neon, Oddech, Fale, Promienie, Unoszenie, Wirujący pierścień, Światło od środka). Np. szklana kula + unoszenie. Starsze zapisy działają dalej (efekt animacji zapisany wcześniej trafia do drugiej grupy).
+- Suwak „Siła” działa na obie grupy.
+
 ## 0.7.0-beta.792
 
 - Efekty ikony „Metal” i „Gradient” biorą kolor ikony (ustawiony w „Kolor”): metal był zawsze złoty, gradient zawsze tęczowy. Teraz to jaśniejsze i ciemniejsze pasy wybranego koloru; wyłączony metal zostaje srebrny.

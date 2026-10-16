@@ -1998,21 +1998,21 @@ body.editing .dash-quick.on{display:flex}
 
 /* Icon effects (iefx-*): layers inside the icon under its glyph, in its colour (--ic); animated only while ON (.lon) */
 .ifx-l{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0}
-[class*="iefx-"] .room-card-part.icon{position:relative}
-[class*="iefx-"] :is(.room-card-part,.room-label-part).icon:not(.ifr){border-radius:50%}
-[class*="iefx-"] :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg,.room-label-brand){position:relative;z-index:1}
-.iefx-neon.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 0 calc(.05em*var(--fxp)) var(--ic)) drop-shadow(0 0 calc(.2em*var(--fxp)) var(--ic))!important}
-.iefx-neon.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{box-shadow:0 0 calc(.35em*var(--fxp)) color-mix(in srgb,var(--ic) 55%,transparent),inset 0 0 0 .03em var(--ic);animation:iefx-pulse 2.4s ease-in-out infinite}
+:is([class*="iefx-"],[class*="ianim-"]) .room-card-part.icon{position:relative}
+:is([class*="iefx-"],[class*="ianim-"]) :is(.room-card-part,.room-label-part).icon:not(.ifr){border-radius:50%}
+:is([class*="iefx-"],[class*="ianim-"]) :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg,.room-label-brand){position:relative;z-index:1}
+.ianim-neon.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 0 calc(.05em*var(--fxp)) var(--ic)) drop-shadow(0 0 calc(.2em*var(--fxp)) var(--ic))!important}
+.ianim-neon.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{box-shadow:0 0 calc(.35em*var(--fxp)) color-mix(in srgb,var(--ic) 55%,transparent),inset 0 0 0 .03em var(--ic);animation:iefx-pulse 2.4s ease-in-out infinite}
 @keyframes iefx-pulse{0%,100%{opacity:1}50%{opacity:.45}}
-.iefx-breath.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{background:radial-gradient(circle,color-mix(in srgb,var(--ic) calc(38%*var(--fxp)),transparent),transparent 70%);animation:iefx-halo 3s ease-in-out infinite}
+.ianim-breath.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{background:radial-gradient(circle,color-mix(in srgb,var(--ic) calc(38%*var(--fxp)),transparent),transparent 70%);animation:iefx-halo 3s ease-in-out infinite}
 @keyframes iefx-halo{0%,100%{opacity:.55;scale:1}50%{opacity:1;scale:1.2}}
-.iefx-breath.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg):not([class*="icon-anim-"]){animation:iefx-breath 3s ease-in-out infinite}
+.ianim-breath.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg):not([class*="icon-anim-"]){animation:iefx-breath 3s ease-in-out infinite}
 @keyframes iefx-breath{50%{scale:1.08}}
-.iefx-ripple :is(.room-card-part,.room-label-part).icon>.ifx-l{border:calc(.05em*var(--fxp)) solid var(--ic);opacity:0}
-.iefx-ripple.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{animation:iefx-ripple 2.4s ease-out infinite}.iefx-ripple.lon :is(.room-card-part,.room-label-part).icon>.ifx-b{animation:iefx-ripple 2.4s ease-out 1.2s infinite}
+.ianim-ripple :is(.room-card-part,.room-label-part).icon>:is(.ifx-c,.ifx-d){border:calc(.05em*var(--fxp)) solid var(--ic);opacity:0}
+.ianim-ripple.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{animation:iefx-ripple 2.4s ease-out infinite}.ianim-ripple.lon :is(.room-card-part,.room-label-part).icon>.ifx-d{animation:iefx-ripple 2.4s ease-out 1.2s infinite}
 @keyframes iefx-ripple{0%{scale:1;opacity:.75}100%{scale:1.9;opacity:0}}
-.iefx-rays :is(.room-card-part,.room-label-part).icon>.ifx-a{inset:-.45em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--ic) calc(55%*var(--fxp)),transparent) 0 8deg,transparent 8deg 30deg);-webkit-mask:radial-gradient(circle,transparent 42%,#000 47%,transparent 72%);mask:radial-gradient(circle,transparent 42%,#000 47%,transparent 72%);opacity:0;transition:opacity .5s}
-.iefx-rays.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{opacity:1;animation:iefx-spin 14s linear infinite}
+.ianim-rays :is(.room-card-part,.room-label-part).icon>.ifx-c{inset:-.45em;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--ic) calc(55%*var(--fxp)),transparent) 0 8deg,transparent 8deg 30deg);-webkit-mask:radial-gradient(circle,transparent 42%,#000 47%,transparent 72%);mask:radial-gradient(circle,transparent 42%,#000 47%,transparent 72%);opacity:0;transition:opacity .5s}
+.ianim-rays.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{opacity:1;animation:iefx-spin 14s linear infinite}
 @keyframes iefx-spin{to{rotate:360deg}}
 .iefx-emboss :is(.room-card-part,.room-label-part).icon>.ifx-a{background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(0,0,0,.35));box-shadow:calc(-.05em*var(--fxp)) calc(-.05em*var(--fxp)) .12em rgba(255,255,255,.08),calc(.07em*var(--fxp)) calc(.09em*var(--fxp)) .18em rgba(0,0,0,.55),inset 0 .02em 0 rgba(255,255,255,.18)}
 .iefx-emboss :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(calc(-.02em*var(--fxp)) calc(-.02em*var(--fxp)) 0 rgba(255,255,255,.35)) drop-shadow(calc(.04em*var(--fxp)) calc(.04em*var(--fxp)) .05em rgba(0,0,0,.6))!important}
@@ -2027,19 +2027,16 @@ body.editing .dash-quick.on{display:flex}
 .iefx-grad.lon :is(.room-card-part,.room-label-part).icon>.mdi{background:linear-gradient(135deg,color-mix(in srgb,var(--ic,#DCE8EF) 60%,#fff),var(--ic,#DCE8EF),color-mix(in srgb,var(--ic,#DCE8EF) 60%,#000),var(--ic,#DCE8EF),color-mix(in srgb,var(--ic,#DCE8EF) 60%,#fff)) 0 0/300% 300%;-webkit-background-clip:text;background-clip:text}
 .iefx-long :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.34)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.31)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.28)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.25)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.21)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.17)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.13)) drop-shadow(calc(.035em*var(--fxp)) calc(.035em*var(--fxp)) 0 rgba(0,0,0,0.09))!important}
 .iefx-long.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{background:color-mix(in srgb,var(--ic) calc(28%*var(--fxp)),transparent)}
-.iefx-float :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 .08em .08em rgba(0,0,0,.45))!important}
-.iefx-float.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg):not([class*="icon-anim-"]){animation:iefx-float 3s ease-in-out infinite}
+.ianim-float :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 .08em .08em rgba(0,0,0,.45))!important}
+.ianim-float.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg):not([class*="icon-anim-"]){animation:iefx-float 3s ease-in-out infinite}
 @keyframes iefx-float{50%{translate:0 calc(-.12em*var(--fxp))}}
-.iefx-ring :is(.room-card-part,.room-label-part).icon>.ifx-a{inset:-.08em;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 55%,var(--ic) 100%);-webkit-mask:radial-gradient(circle,transparent calc(70% - .06em*var(--fxp)),#000 calc(71% - .06em*var(--fxp)));mask:radial-gradient(circle,transparent calc(70% - .06em*var(--fxp)),#000 calc(71% - .06em*var(--fxp)));opacity:.35}
-.iefx-ring.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{opacity:1;animation:iefx-spin 1.8s linear infinite}
-.iefx-inner.lon :is(.room-card-part,.room-label-part).icon>.ifx-a{background:radial-gradient(circle,color-mix(in srgb,var(--ic) 85%,#fff) 0%,color-mix(in srgb,var(--ic) calc(55%*var(--fxp)),transparent) 38%,transparent 72%);box-shadow:0 0 calc(.4em*var(--fxp)) color-mix(in srgb,var(--ic) 40%,transparent)}
-.iefx-inner.lon :is(.room-card-part,.room-label-part).icon>.mdi{-webkit-text-fill-color:#fff8e6!important}.iefx-inner.lon :is(.room-card-part,.room-label-part).icon>.mdi-svg path{fill:#fff8e6!important}
-.iefx-inner.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 0 .05em rgba(255,255,255,.8))!important}
-.iefx-outline :is(.room-card-part,.room-label-part).icon>.mdi{-webkit-text-fill-color:transparent!important;-webkit-text-stroke:calc(.035em*var(--fxp)) var(--ic)!important}
-.iefx-outline :is(.room-card-part,.room-label-part).icon>.mdi-svg path{fill:transparent!important;stroke:var(--ic);stroke-width:calc(1.1px*var(--fxp))}
-.iefx-outline.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 0 calc(.04em*var(--fxp)) var(--ic)) drop-shadow(0 0 calc(.15em*var(--fxp)) var(--ic))!important}
+.ianim-ring :is(.room-card-part,.room-label-part).icon>.ifx-c{inset:-.08em;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 55%,var(--ic) 100%);-webkit-mask:radial-gradient(circle,transparent calc(70% - .06em*var(--fxp)),#000 calc(71% - .06em*var(--fxp)));mask:radial-gradient(circle,transparent calc(70% - .06em*var(--fxp)),#000 calc(71% - .06em*var(--fxp)));opacity:.35}
+.ianim-ring.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{opacity:1;animation:iefx-spin 1.8s linear infinite}
+.ianim-inner.lon :is(.room-card-part,.room-label-part).icon>.ifx-c{background:radial-gradient(circle,color-mix(in srgb,var(--ic) 85%,#fff) 0%,color-mix(in srgb,var(--ic) calc(55%*var(--fxp)),transparent) 38%,transparent 72%);box-shadow:0 0 calc(.4em*var(--fxp)) color-mix(in srgb,var(--ic) 40%,transparent)}
+.ianim-inner.lon :is(.room-card-part,.room-label-part).icon>.mdi{-webkit-text-fill-color:#fff8e6!important}.ianim-inner.lon :is(.room-card-part,.room-label-part).icon>.mdi-svg path{fill:#fff8e6!important}
+.ianim-inner.lon :is(.room-card-part,.room-label-part).icon>:is(.mdi,.mdi-svg){filter:drop-shadow(0 0 .05em rgba(255,255,255,.8))!important}
 .icon-fx{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (prefers-reduced-motion:reduce){[class*="iefx-"] .ifx-l,[class*="iefx-"] :is(.mdi,.mdi-svg){animation:none!important}}
+@media (prefers-reduced-motion:reduce){:is([class*="iefx-"],[class*="ianim-"]) .ifx-l,:is([class*="iefx-"],[class*="ianim-"]) :is(.mdi,.mdi-svg){animation:none!important}}
 /* Camera live window: its own window over the plan - landscape or portrait, the picture fitted, pinch / wheel zoom. */
 .cam-live{position:fixed;inset:0;z-index:400;display:grid;place-items:center;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
 .cam-live-backdrop{position:absolute;inset:0;background:rgba(2,8,12,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -2198,3 +2195,5 @@ body.drip-drawing .scene{cursor:crosshair}
 
 .weather-prev-buttons{display:flex;flex-wrap:wrap;gap:6px}
 .weather-prev-buttons .preview-state-button{min-width:34px;height:34px;padding:0 8px;display:inline-grid;place-items:center}
+
+.fx-group-title{font-size:11px;letter-spacing:.04em;text-transform:uppercase;opacity:.65;margin:10px 0 4px}
