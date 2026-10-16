@@ -1,3 +1,9 @@
+## 0.7.0-beta.786
+
+- Linia kroplująca: usunięta ikonka do przesuwania. Linię łapiesz i przesuwasz w dowolnym miejscu wzdłuż niej (szeroki, niewidoczny uchwyt).
+- Element „Linia kroplująca” ma teraz podgląd ON/OFF także bez przypisanej encji.
+- Kopiuj / wklej styl: przy każdej linii kroplującej i każdym zraszaczu (w nagłówku jego sekcji) – przenosi wygląd i ustawienia, nie położenie.
+
 ## 0.7.0-beta.785
 
 - Plus → jedna kategoria „Podlewanie”; po jej wybraniu wybierasz: „Zraszacze w obszarze” albo „Linia kroplująca”.

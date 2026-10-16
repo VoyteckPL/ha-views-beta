@@ -4301,7 +4301,7 @@ function roomEditorMarkup(room) {
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (switchable || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
+  return (switchable || r.dripOnly || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();
@@ -10226,7 +10226,7 @@ function sprinklerSection(r, layer = false) {
       + sprAngleSlider(control(fixed ? 'Kąt' : 'Kąt pracy', p('arc'), 'range', clamp(Number(o.arc) || 90, 10, 360), { min:10, max:360, step:1, suffix:'°', integer:true }), [...SPR_ANGLES, 360], 10, 360, Math.round(Number(o.arc) || 90))
       + control('Prędkość', p('speed'), 'range', clamp(Number(o.speed) || 5, 1, 10), { min:1, max:10, step:.5 })
       + control('Moc', p('power'), 'range', clamp(Number(o.power) || 70, 10, 100), { min:10, max:100, step:1, suffix:'%', integer:true });
-    return `<details class="gauge-subsection spr-sub${o.id === selectedSprId ? ' current' : ''}" data-spr-sec="${o.id}"${o.id === selectedSprId ? ' open' : ''}><summary><span class="spr-dot" style="--c:${escapeHtml(r.waterColor || '#9BD7FF')}"></span>${esc('Zraszacz')} ${i + 1} · ${esc(kind[1])} · ${Math.round(o.arc)}°<span class="spr-tools"><button type="button" data-spr-dup="${o.id}" title="${esc('Duplikuj zraszacz')}" aria-label="${esc('Duplikuj zraszacz')}"><i class="mdi mdi-content-copy"></i></button><button type="button" data-spr-del="${o.id}" title="${esc('Usuń zraszacz')}" aria-label="${esc('Usuń zraszacz')}"><i class="mdi mdi-delete-outline"></i></button></span></summary><div class="gauge-subsection-body">${body}</div></details>`; }).join('');
+    return `<details class="gauge-subsection spr-sub${o.id === selectedSprId ? ' current' : ''}" data-spr-sec="${o.id}"${o.id === selectedSprId ? ' open' : ''}><summary><span class="spr-dot" style="--c:${escapeHtml(r.waterColor || '#9BD7FF')}"></span>${esc('Zraszacz')} ${i + 1} · ${esc(kind[1])} · ${Math.round(o.arc)}°<span class="spr-tools"><button type="button" data-spr-dup="${o.id}" title="${esc('Duplikuj zraszacz')}" aria-label="${esc('Duplikuj zraszacz')}"><i class="mdi mdi-content-copy"></i></button><button type="button" data-spr-copy="${o.id}" title="${esc('Kopiuj styl')}" aria-label="${esc('Kopiuj styl')}"><i class="mdi mdi-palette-outline"></i></button><button type="button" data-spr-paste="${o.id}" title="${esc('Wklej styl')}" aria-label="${esc('Wklej styl')}"><i class="mdi mdi-format-paint"></i></button><button type="button" data-spr-del="${o.id}" title="${esc('Usuń zraszacz')}" aria-label="${esc('Usuń zraszacz')}"><i class="mdi mdi-delete-outline"></i></button></span></summary><div class="gauge-subsection-body">${body}</div></details>`; }).join('');
   // (a room's layer: its own entity (valve / switch) and look at the top)
   const head = layer ? layerEntityPicker('waterEntity', r.waterEntity || '', 'switch,valve,input_boolean,binary_sensor', WATER_PREFER)
     + gaugeSubsection(esc('Wygląd'), `<div class="control rain-color-row"><label>${esc('Kolor wody')}</label><div class="rain-swatches">${RAIN_BLUES.map(([c, t]) => `<button type="button" class="rain-swatch${colour.toUpperCase() === c ? ' active' : ''}" data-rain-color="${c}" style="--c:${c}" title="${esc(t)}" aria-label="${esc(t)}"></button>`).join('')}<input type="color" class="rain-own" data-path="waterColor" value="${escapeHtml(colour)}" title="${esc('Własny kolor')}" aria-label="${esc('Własny kolor')}"></div><span></span></div>`
@@ -10797,8 +10797,9 @@ function dripHandles(room) {
   if (dripDraft?.roomId === room.id && dripDraft.points.length) { svg += `<polyline class="drip-draft" points="${[...dripDraft.points, ...(dripDraft.cursor ? [dripDraft.cursor] : [])].map(p => p.join(',')).join(' ')}"/>`; dots += dripDraft.points.map(([x, y]) => `<i class="drip-handle draft" style="left:${x}%;top:${y}%"></i>`).join(''); }
   if (!dripDraft) dripList(room).forEach(o => { dots += o.points.map(([x, y], i) => `<i class="drip-handle${o.id === selectedDripId ? ' selected' : ''}" data-drip="${o.id}" data-drip-pt="${i}" style="left:${x}%;top:${y}%"></i>`).join('');
     // (the selected line: a dot in the middle of each segment - dragging it adds a point there, e.g. for a bend)
-    if (o.id === selectedDripId) { const cx = o.points.reduce((a, p) => a + p[0], 0) / o.points.length, cy = o.points.reduce((a, p) => a + p[1], 0) / o.points.length; dots += `<i class="drip-handle grab" data-drip="${o.id}" data-drip-move title="${escapeHtml(translateValue('Przesuń całą linię'))}" style="left:${cx}%;top:${cy}%"><i class="mdi mdi-cursor-move"></i></i>`; }
     if (o.id === selectedDripId) dots += o.points.slice(1).map(([x, y], i) => `<i class="drip-handle mid" data-drip="${o.id}" data-drip-mid="${i}" style="left:${(x + o.points[i][0]) / 2}%;top:${(y + o.points[i][1]) / 2}%"></i>`).join(''); });
+  // (every line can be caught anywhere along it and moved whole)
+  if (!dripDraft) svg += dripList(room).map(o => `<polyline class="drip-hit" data-drip="${o.id}" data-drip-move points="${o.points.map(p => p.join(',')).join(' ')}"/>`).join('');
   return (svg ? `<svg class="drip-svg" viewBox="0 0 100 100" preserveAspectRatio="none">${svg}</svg>` : '') + dots;
 }
 function startDripDrag(event) {
@@ -10838,7 +10839,7 @@ function dripLookSub(r) {
 function dripSection(r) {
   const esc = t => escapeHtml(translateValue(t)), W = els.scene?.offsetWidth || 1, H = els.scene?.offsetHeight || 1, k = sceneScale || 1;
   const rows = dripList(r).map((o, i) => { const p = f => `drip.${o.id}.${f}`, len = o.points.reduce((sum, pt, j) => j ? sum + Math.hypot((pt[0] - o.points[j - 1][0]) / 100 * W, (pt[1] - o.points[j - 1][1]) / 100 * H) / k : 0, 0), n = Math.max(1, Math.floor(len / Math.max(8, o.spacing)));
-    return `<details class="gauge-subsection drip-sub${o.id === selectedDripId ? ' current' : ''}" data-drip-sec="${o.id}"${o.id === selectedDripId ? ' open' : ''}><summary><span class="spr-dot" style="--c:${escapeHtml(r.waterColor || '#9BD7FF')}"></span>${esc('Linia')} ${i + 1} · ${n} ${esc('kroplowników')}<span class="spr-tools"><button type="button" data-drip-extend="${o.id}" title="${esc('Dorysuj')}" aria-label="${esc('Dorysuj')}"><i class="mdi mdi-vector-polyline-plus"></i></button><button type="button" data-drip-del="${o.id}" title="${esc('Usuń linię')}" aria-label="${esc('Usuń linię')}"><i class="mdi mdi-delete-outline"></i></button></span></summary><div class="gauge-subsection-body">`
+    return `<details class="gauge-subsection drip-sub${o.id === selectedDripId ? ' current' : ''}" data-drip-sec="${o.id}"${o.id === selectedDripId ? ' open' : ''}><summary><span class="spr-dot" style="--c:${escapeHtml(r.waterColor || '#9BD7FF')}"></span>${esc('Linia')} ${i + 1} · ${n} ${esc('kroplowników')}<span class="spr-tools"><button type="button" data-drip-extend="${o.id}" title="${esc('Dorysuj')}" aria-label="${esc('Dorysuj')}"><i class="mdi mdi-vector-polyline-plus"></i></button><button type="button" data-drip-copy="${o.id}" title="${esc('Kopiuj styl')}" aria-label="${esc('Kopiuj styl')}"><i class="mdi mdi-palette-outline"></i></button><button type="button" data-drip-paste="${o.id}" title="${esc('Wklej styl')}" aria-label="${esc('Wklej styl')}"><i class="mdi mdi-format-paint"></i></button><button type="button" data-drip-del="${o.id}" title="${esc('Usuń linię')}" aria-label="${esc('Usuń linię')}"><i class="mdi mdi-delete-outline"></i></button></span></summary><div class="gauge-subsection-body">`
       + control('Rozstaw kroplowników', p('spacing'), 'range', clamp(Number(o.spacing) || 40, 8, 400), { min:8, max:400, step:1, suffix:'px', integer:true })
       + control('Wydatek', p('flow'), 'range', clamp(Number(o.flow) || 60, 10, 100), { min:10, max:100, step:1, suffix:'%', integer:true })
       + control('Zaokrąglenie zakrętów', p('round'), 'range', clamp(Number(o.round) || 0, 0, 300), { min:0, max:300, step:1, suffix:'px', integer:true })
@@ -10868,6 +10869,18 @@ window.addEventListener('pointermove', event => {
   const room = roomsOf()[dripDraft.roomId]; if (!room) return; const [x, y] = scenePercentAt(event);
   dripDraft.cursor = dripSnap(room, dripDraft.points[dripDraft.points.length - 1], x, y, event);
   if (!dripDraft.raf) dripDraft.raf = requestAnimationFrame(() => { if (dripDraft) { dripDraft.raf = 0; renderRoomEditLayer(); } });
+}, true);
+// Copy / paste the style of a sprinkler or of a drip line (what it looks like and how it works, not where it is).
+const SPR_STYLE_KEYS = ['kind', 'range', 'arc', 'speed', 'power'];
+let waterStyleClip = { spr: null, drip: null };
+document.addEventListener('click', event => {
+  const t = event.target.closest?.('[data-spr-copy],[data-spr-paste],[data-drip-copy],[data-drip-paste]'), room = roomsOf()[selectedRoomId]; if (!t || !room || !editMode) return;
+  event.preventDefault(); event.stopPropagation();
+  const d = t.dataset, drip = d.dripCopy !== undefined || d.dripPaste !== undefined, id = d.sprCopy ?? d.sprPaste ?? d.dripCopy ?? d.dripPaste, keys = drip ? Object.keys(DRIP_DEFAULTS) : SPR_STYLE_KEYS;
+  const o = drip ? room.dripLines?.[id] : findPt(room, id)?.o; if (!o) return;
+  if (d.sprCopy !== undefined || d.dripCopy !== undefined) { waterStyleClip[drip ? 'drip' : 'spr'] = Object.fromEntries(keys.map(k => [k, o[k]]).filter(([, v]) => v !== undefined)); notify(translateValue('Skopiowano styl')); return; }
+  const clip = waterStyleClip[drip ? 'drip' : 'spr']; if (!clip) { notify(translateValue('Najpierw skopiuj styl z innego elementu')); return; }
+  Object.assign(o, clip); room.updatedAt = new Date().toISOString(); renderRoomEditLayer(); syncWater(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true);
 }, true);
 // The right mouse button on a point of a line removes it, too.
 document.addEventListener('contextmenu', event => {

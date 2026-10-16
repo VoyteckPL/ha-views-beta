@@ -2192,6 +2192,6 @@ body.drip-drawing .scene{cursor:crosshair}
 .ifx-nobody :is(.room-card-part,.room-label-part).icon>:is(.ifx-a,.ifx-b){display:none}
 
 .drip-handle{-webkit-touch-callout:none;user-select:none}
-.drip-handle.grab{display:grid;place-items:center;width:20px;height:20px;margin:-10px 0 0 -10px;background:rgba(12,29,40,.88);border:1.5px solid #9bd7ff;color:#9bd7ff;font-size:13px;cursor:move}
-.drip-handle.grab .mdi{pointer-events:none}
-@media(pointer:coarse){.drip-handle.grab{width:30px;height:30px;margin:-15px 0 0 -15px;font-size:18px}}
+
+.drip-hit{fill:none;stroke:transparent;stroke-width:16px;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;pointer-events:stroke;cursor:move;touch-action:none}
+@media(pointer:coarse){.drip-hit{stroke-width:26px}}
