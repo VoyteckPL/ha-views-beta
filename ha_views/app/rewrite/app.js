@@ -1503,7 +1503,11 @@ function roomLabelIconSpec(room, on) {
 }
 // Background and frame of the icon share one shape: square, circle or a free corner radius.
 function roomIconFrameStyle(r, on = false) {
-  if (!r.labelIconBg && !r.labelIconBorder) return '';
+  if (!r.labelIconBg && !r.labelIconBorder) { // (no frame, but an effect body: it takes the icon's shape - round, square or its own radius)
+    if (iconEffectOf(r) === 'none' && iconMotionOf(r) === 'none') return '';
+    const sh = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
+    return `;border-radius:${sh === 'circle' ? '50%' : sh === 'square' ? '0' : `calc(${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px * var(--rk, 1))`}`;
+  }
   const pick = (stateKey, base, field) => r[stateKey] ? sv(r, `${base}On${field}`, `${base}Off${field}`, on) : r[`${base}${field}`];
   const shape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle';
   const radius = shape === 'circle' ? '50%' : shape === 'square' ? '0' : `calc(${clamp(Number(r.labelIconRadius) || 0, 0, 200)}px * var(--rk, 1))`; // (--rk: a preset label's corners keep their px however far it is scaled)
@@ -4102,9 +4106,8 @@ function roomEditorMarkup(room) {
       [['thermoDialRange','Zakres min / max','mdi-arrow-expand-horizontal'],['thermoGlow','Poświata podczas pracy','mdi-blur'], ...frameToggles(key)]);
     const iconShape = ['square','circle','custom'].includes(r.labelIconShape) ? r.labelIconShape : 'circle', iconFramed = oneShown !== 'labelIcon' && (r.labelIconBg || r.labelIconBorder || r.singleSaved?.key === 'labelIcon');
     if (part === 'icon') return partBar(part, title, sizeOpen((ownSize ? html => withBox(html, 'labelIcon', 'Dopasuj do ikony') : html => html)(snapSlider(range(soloIcon(r) ? 'Wielkość symbolu' : 'Wielkość ikony','labelIconSize',clamp(Number(r.labelIconSize) || ROOM_DEFAULTS.labelIconSize, 6, SOLO_ICON_MAX),6,SOLO_ICON_MAX,1,'px'), 'labelIconSize', snapValues('labelIconSize', []), 2))
-      + (iconFramed ? (snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1))
-        + icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join(''))
-        : oneShown === 'labelIcon' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
+      + (iconFramed ? snapSlider(range('Margines','labelIconPadding',clamp(Number(r.labelIconPadding ?? 6), 0, 120),0,80,1,'px'), 'labelIconPadding', snapValues('labelIconPadding', []), 1) : '')
+      + (iconFramed || oneShown === 'labelIcon' || isThermoRoom(r) || iconEffectOf(r) !== 'none' || iconMotionOf(r) !== 'none' ? icRow('mdi-shape-outline', 'Kształt', [['circle','mdi-circle-outline','Koło'],['square','mdi-square-outline','Kwadrat'],['custom','mdi-square-rounded-outline','Dowolny']].map(([v, m, t]) => icBtn(`data-icon-shape="${v}"`, m, t, iconShape === v)).join('')) : '')) + animSub + iconOptions() + frameSubs(key, iconShape === 'custom' ? range('Zaokrąglenie','labelIconRadius',clamp(Number(r.labelIconRadius) || 0, 0, 200),0,120,1,'px') : ''),
       [['labelIconAnim','Animacja','mdi-rotate-right'], ...(source !== 'integration' ? [['labelIconOutline','Obrys','mdi-vector-circle-variant']] : []), ...frameToggles(key)]);
     const fontPx = clamp(Number(r[`${key}Size`]) || ROOM_DEFAULTS[`${key}Size`], 6, 420), has = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v));
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
@@ -4251,7 +4254,7 @@ function roomEditorMarkup(room) {
     : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
     // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
   const ifxNow = iconEffectOf(r), mfxNow = iconMotionOf(r), t2 = text => escapeHtml(translateValue(text)), fxRow = (title, list, now, attr) => `<div class="fx-group-title">${t2(title)}</div><div class="fx-styles icon-fx">${list.map(([v, name, mdi]) => `<button type="button" class="fx-preset${now === v ? ' active' : ''}" data-${attr}="${v}" title="${t2(name)}"><i class="mdi ${mdi}"></i><span>${t2(name)}</span></button>`).join('')}</div>`;
-  const iconFx = isThermoRoom(r) || !r.labelIcon ? '' : `<details class="gauge-subsection size-open"><summary>${t2('Efekt ikony')}</summary><div class="gauge-subsection-body">${fxRow('Wygląd ikony', ICON_LOOKS, ifxNow, 'icon-fx')}${fxRow('Animacja i światło', ICON_MOTIONS, mfxNow, 'icon-motion')}`
+  const iconFx = !r.labelIcon ? '' : `<details class="gauge-subsection size-open"><summary>${t2('Efekt ikony')}</summary><div class="gauge-subsection-body">${fxRow('Wygląd ikony', ICON_LOOKS, ifxNow, 'icon-fx')}${fxRow('Animacja i światło', ICON_MOTIONS, mfxNow, 'icon-motion')}`
       + (['emboss','glass'].includes(ifxNow) ? control('Pokaż kulę / podstawę efektu','labelIconFxBody','checkbox',r.labelIconFxBody !== false,{ refresh:true }) : '')
       + (ifxNow === 'none' && mfxNow === 'none' ? '' : control('Siła','labelIconEffectPower','range',clamp(Number(r.labelIconEffectPower) || 100, 30, 200),{ min:30, max:200, step:5, suffix:'%', integer:true })) + '</div></details>';
   // A lone part is the label: no group section then (its part's own section holds everything).

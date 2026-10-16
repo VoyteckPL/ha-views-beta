@@ -1,3 +1,8 @@
+## 0.7.0-beta.796
+
+- Termostat: ikona ma „Efekt ikony” (wygląd + animacja) jak w etykiecie. Reszta termostatu (układ rozrzuconych elementów, stany, tryby) bez zmian.
+- Termostat i etykieta: wybór kształtu ikony (koło / kwadrat / dowolny) jest widoczny także bez tła i ramki ikony – gdy termostat ma efekt albo nie ma ramki, a efekt (np. szklana kula) przyjmuje wybrany kształt.
+
 ## 0.7.0-beta.795
 
 - Siatka kafelków: przy rozciąganiu etykiety jej układ (ikona z lewej, nazwa, stan itd.) dopasowuje się na żywo do każdego kolejnego rozmiaru kafelków, a nie dopiero po puszczeniu myszy.
