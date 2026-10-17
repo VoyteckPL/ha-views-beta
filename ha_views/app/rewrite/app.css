@@ -2218,3 +2218,16 @@ body.drip-drawing .scene{cursor:crosshair}
 
 .vm-sec .vm-icons .vm-icon{width:100%;min-width:0;box-sizing:border-box}
 .vm-sec .vm-icons{width:auto}
+
+/* Light popup: brightness and colour temperature by a long press on a label with a dimmable light */
+.tappable{-webkit-touch-callout:none}
+.light-pop{position:fixed;z-index:60;width:min(250px,calc(100vw - 16px));display:grid;gap:8px;padding:10px 12px;border:1px solid rgba(99,181,216,.35);border-radius:14px;background:rgba(8,28,40,.96);box-shadow:0 10px 30px rgba(0,0,0,.55);color:#dff3ff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);touch-action:none}
+.light-pop .lp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.light-pop .lp-head b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.light-pop .lp-val{color:#ffd27a;font-weight:700}
+.light-pop .lp-row{display:flex;align-items:center;gap:10px}
+.light-pop .lp-row i{font-size:20px;color:#9bd7ff;flex:none}
+.light-pop .lp-row input[type=range]{flex:1;min-width:0;height:28px;margin:0}
+.light-pop .lp-ct{-webkit-appearance:none;appearance:none;height:8px!important;border-radius:6px;background:linear-gradient(90deg,#ffb35a,#fff3e0 50%,#a8cdff)}
+.light-pop .lp-ct::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #20b9e7}
+.light-pop .lp-kv{font-size:11px;color:#9fb6c3;min-width:46px;text-align:right}

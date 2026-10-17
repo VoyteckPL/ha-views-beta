@@ -3947,6 +3947,7 @@ function roomEditorMarkup(room) {
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle, labelCamera(r))
+    + (lightDimIds(r).length ? control('Przytrzymaj: jasność i barwa światła','lightPopup','checkbox',r.lightPopup !== false) : '')
     + (labelCamera(r) && r.tapAction === 'camera' ? control('Okno podglądu','cameraOrient','select',r.cameraOrient === 'portrait' ? 'portrait' : 'landscape',{ items:[['landscape','Poziome'],['portrait','Pionowe']] }) : '')
     + (labelCamera(r) && isIconRoom(r) && !isThermoRoom(r) ? `<div class="room-icon-actions"><button type="button" data-label-to-cam><i class="mdi mdi-image-outline"></i><span>${escapeHtml(translateValue('Pokaż jako obraz kamery'))}</span></button></div>` : '')
     );
@@ -4904,6 +4905,59 @@ async function removeRoom() {
     : { title:'Usunąć pomieszczenie?', message:`Pomieszczenie „${room.name}” zostanie usunięte z tego widoku. Encje i markery zostają.`, confirmText:'Usuń', danger:true })) return;
   delete view.rooms[room.id]; closeRoomEditor(); if (removeRoomIcon(view, room.id)) renderMarkers(); renderRooms(); scheduleSave(true); notify(label ? 'Usunięto etykietę' : 'Usunięto pomieszczenie');
 }
+// ---- Regulacja światła: a long press (the right mouse button on a computer) on a label with a dimmable light opens a small popup
+// by it: brightness and, when the light has it, colour temperature. A plain tap still switches it on / off.
+function lightCaps(id) {
+  const st = stateCache[id]; if (!String(id).startsWith('light.') || !st) return null;
+  const a = st.attributes || {}, modes = Array.isArray(a.supported_color_modes) ? a.supported_color_modes : [];
+  const dim = modes.length ? modes.some(m => m !== 'onoff') : a.brightness != null; if (!dim) return null;
+  return { ct: modes.includes('color_temp'), minK: Number(a.min_color_temp_kelvin) || 2000, maxK: Number(a.max_color_temp_kelvin) || 6500 };
+}
+const lightDimIds = room => (room?.entityIds || []).filter(id => lightCaps(id));
+let lightTapCancel = () => {};
+const lightPop = { el: null, ids: [], timer: 0, idle: 0, send: 0, pending: {} };
+function closeLightPop() { clearTimeout(lightPop.idle); clearTimeout(lightPop.send); lightPop.el?.remove(); lightPop.el = null; if (lightPop.ids.length) setTimeout(() => refreshStates(), 600); lightPop.ids = []; }
+function lightSend(data, off = false) {
+  Object.assign(lightPop.pending, data); clearTimeout(lightPop.send);
+  const go = () => { const d = lightPop.pending; lightPop.pending = {}; lightPop.ids.forEach(id => { const cur = stateCache[id] || { entity_id: id, attributes: {} };
+      if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin } : {}) } };
+      api('control', jsonOptions(off ? { entity_id: id, action: 'turn_off' } : { entity_id: id, action: 'light_set', ...d })).catch(error => notify(`Błąd sterowania światłem: ${error.message}`, true)); });
+    renderRooms(); };
+  if (off) go(); else lightPop.send = setTimeout(go, 160);
+}
+function openLightPop(room, node) {
+  const ids = lightDimIds(room); if (!ids.length) return false; closeLightPop(); lightPop.ids = ids;
+  const caps = lightCaps(ids[0]), a = stateCache[ids[0]]?.attributes || {}, on = String(stateCache[ids[0]]?.state || '').toLowerCase() === 'on', pct = on ? clamp(Math.round((Number(a.brightness) || 0) / 2.55), 1, 100) : 0;
+  const ct = caps.ct ? clamp(Number(a.color_temp_kelvin) || Math.round((caps.minK + caps.maxK) / 2), caps.minK, caps.maxK) : 0, esc = t => escapeHtml(translateValue(t));
+  const el = document.createElement('div'); el.className = 'light-pop'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', translateValue('Regulacja światła'));
+  el.innerHTML = `<div class="lp-head"><b data-no-i18n>${escapeHtml(room.name || '')}</b><output class="lp-val">${pct ? pct + '%' : esc('Wył.')}</output></div>`
+    + `<label class="lp-row"><i class="mdi mdi-brightness-6" title="${esc('Jasność')}"></i><input type="range" class="lp-bri" min="0" max="100" step="1" value="${pct}" aria-label="${esc('Jasność')}"></label>`
+    + (caps.ct ? `<label class="lp-row"><i class="mdi mdi-thermometer" title="${esc('Barwa')}"></i><input type="range" class="lp-ct" min="${caps.minK}" max="${caps.maxK}" step="50" value="${ct}" aria-label="${esc('Barwa')}"><output class="lp-kv">${ct} K</output></label>` : '');
+  document.body.append(el); lightPop.el = el;
+  const r = node.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+  el.style.left = `${clamp(r.left + r.width / 2 - w / 2, 8, Math.max(8, vw - w - 8))}px`; el.style.top = `${r.top - h - 10 > 8 ? r.top - h - 10 : clamp(r.bottom + 10, 8, Math.max(8, vh - h - 8))}px`;
+  const bump = () => { clearTimeout(lightPop.idle); lightPop.idle = setTimeout(closeLightPop, 9000); }; bump();
+  const val = el.querySelector('.lp-val');
+  el.querySelector('.lp-bri').addEventListener('input', e => { bump(); const v = Number(e.target.value); val.textContent = v ? `${v}%` : translateValue('Wył.'); if (v) lightSend({ brightness_pct: v }); else lightSend({}, true); });
+  el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; lightSend({ color_temp_kelvin: v }); });
+  return true;
+}
+window.addEventListener('pointerdown', event => { if (lightPop.el && !event.target.closest?.('.light-pop')) closeLightPop(); }, true);
+window.addEventListener('keydown', event => { if (event.key === 'Escape' && lightPop.el) closeLightPop(); }, true);
+// (the long press: 550 ms without moving; the tap that would follow is dropped)
+let lightHold = null;
+document.addEventListener('pointerdown', event => {
+  clearTimeout(lightHold?.timer); lightHold = null; if (editMode || event.button > 0) return;
+  const node = event.target.closest?.('.tappable'), room = node && roomsOf()[node.dataset.roomId]; if (!room || room.lightPopup === false || isTextRoom(room) || isThermoRoom(room) || !lightDimIds(room).length) return;
+  lightHold = { pid: event.pointerId, x: event.clientX, y: event.clientY, timer: setTimeout(() => { if (!lightHold) return; lightHold = null; const swallow = e => { e.stopPropagation(); e.preventDefault(); }; window.addEventListener('click', swallow, { capture: true, once: true }); setTimeout(() => window.removeEventListener('click', swallow, true), 600); lightTapCancel(event.pointerId); openLightPop(room, node); }, 550) };
+}, true);
+window.addEventListener('pointermove', event => { if (lightHold && lightHold.pid === event.pointerId && Math.hypot(event.clientX - lightHold.x, event.clientY - lightHold.y) > 10) { clearTimeout(lightHold.timer); lightHold = null; } }, true);
+window.addEventListener('pointerup', event => { if (lightHold && lightHold.pid === event.pointerId) { clearTimeout(lightHold.timer); lightHold = null; } }, true);
+window.addEventListener('pointercancel', event => { if (lightHold && lightHold.pid === event.pointerId) { clearTimeout(lightHold.timer); lightHold = null; } }, true);
+document.addEventListener('contextmenu', event => { // (a computer: the right button does the same as the long press)
+  const node = event.target.closest?.('.tappable'), room = node && roomsOf()[node.dataset.roomId]; if (!node || editMode || !room || room.lightPopup === false || isTextRoom(room) || isThermoRoom(room) || !lightDimIds(room).length) return;
+  event.preventDefault(); event.stopPropagation(); openLightPop(room, node);
+}, true);
 // Tapping a room in view mode: toggles its lights/switches (all off when any is on, otherwise all on),
 // or opens More Info of its first entity.
 const roomTogglesInFlight = new Set();
@@ -9482,7 +9536,7 @@ function bindEvents() {
   document.addEventListener('pointerdown', event => { const node = event.target.closest?.('.marker,.flow-marker'); if (node) node.dataset.dragged = '0'; }, true);
   // Icons are tapped by press + release on the label itself. On phones the scene may capture the finger for
   // panning / swiping, and the browser then sends the click to the scene instead of the label.
-  let labelTap = null;
+  let labelTap = null; lightTapCancel = pid => { if (labelTap?.pid === pid) labelTap = null; };
   document.addEventListener('pointerdown', event => { const node = event.target.closest?.('.tappable'); labelTap = node && !editMode ? { id: node.dataset.roomId, pid: event.pointerId, x: event.clientX, y: event.clientY, t: performance.now(), thermo: event.target.closest?.('[data-thermo], [data-thermo-mode], [data-thermo-preset]') || null } : null; }, true);
   window.addEventListener('pointercancel', event => { if (labelTap?.pid === event.pointerId) labelTap = null; }, true);
   window.addEventListener('pointerup', event => {

@@ -162,7 +162,7 @@ async def api_control(request):
         return web.json_response({"ok": False, "error": "Invalid entity ID"}, status=400)
     climate_actions = ("set_temperature", "set_hvac_mode", "set_preset_mode", "set_operation_mode")
     if not is_admin and not (
-        (action in ("turn_on", "turn_off") and entity_id in _viewer_toggle_entities())
+        (action in ("turn_on", "turn_off", "light_set") and entity_id in _viewer_toggle_entities())
         or (action in climate_actions and entity_id in _viewer_thermostat_entities())
     ):
         return web.json_response({"ok": False, "error": "HA Views is view-only for this user"}, status=403)
@@ -171,6 +171,18 @@ async def api_control(request):
     payload = {"entity_id": entity_id}
     if action in ("turn_on", "turn_off") and domain in {"switch", "light", "fan", "input_boolean"}:
         service_url = f"{HA_API}/services/{domain}/{action}"
+    elif action == "light_set" and domain == "light":
+        # Brightness (1-100 %) and / or colour temperature (kelvin) of a light: the popup of a label with a dimmable light.
+        try:
+            if body.get("brightness_pct") is not None:
+                payload["brightness_pct"] = max(1, min(100, int(float(body.get("brightness_pct")))))
+            if body.get("color_temp_kelvin") is not None:
+                payload["color_temp_kelvin"] = max(1000, min(12000, int(float(body.get("color_temp_kelvin")))))
+        except (TypeError, ValueError):
+            return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
+        if len(payload) == 1:
+            return web.json_response({"ok": False, "error": "Nothing to set"}, status=400)
+        service_url = f"{HA_API}/services/light/turn_on"
     elif action == "set_value" and domain in {"number", "input_number"}:
         try:
             payload["value"] = float(body.get("value"))

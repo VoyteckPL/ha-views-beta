@@ -1,3 +1,10 @@
+## 0.7.0-beta.804
+
+- Regulacja światła: długie przytrzymanie etykiety z żarówką (na komputerze prawy przycisk myszy) otwiera mały dymek – suwak jasności 0–100% (0 = wyłącz) i, jeśli lampa to potrafi, suwak temperatury barwy (od ciepłej do zimnej bieli). Zwykłe kliknięcie nadal włącza i wyłącza. Dymek pokazuje się tylko dla świateł z regulacją jasności; zamyka się kliknięciem obok, klawiszem Esc albo po 9 s bez ruchu.
+- Serwer: nowa akcja „light_set” (jasność i barwa) – dostępna dla tych samych świateł, które użytkownik bez uprawnień admina może już przełączać.
+- W edycji, przy encji światła: opcja „Przytrzymaj: jasność i barwa światła” (domyślnie włączona).
+- Kolory (RGB) – w następnej becie.
+
 ## 0.7.0-beta.803
 
 - Menu widoku: ikony w sekcjach „Obraz” i „Tło nocne” rozciągnięte równo na całą szerokość, tak jak rząd ikon u góry (pierwsza i ostatnia równo z krawędziami, równe odstępy).
