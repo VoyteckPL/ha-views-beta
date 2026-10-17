@@ -4958,11 +4958,13 @@ function openLightPop(room, node) {
   // (what the popup last set: it is what "Zapisz jako domyślny" keeps)
   const cur = { bri: pct || 100, mode: ['hs','rgb','rgbw','rgbww','xy'].includes(a.color_mode) ? 'hs' : 'ct', k: ct, hs: [hue, sat] };
   el.querySelector('.lp-bri').addEventListener('input', e => { bump(); const v = Number(e.target.value); val.textContent = v ? `${v}%` : translateValue('Wył.'); if (v) { cur.bri = v; lightSend({ brightness_pct: v }); } else lightSend({}, true); });
-  const hueIn = el.querySelector('.lp-hue'), setHs = (h, sa) => { cur.mode = 'hs'; cur.hs = [h, sa]; lightSend({ hs_color: [h, sa] }); };
+  // (a colour / white chosen while the light is off switches it on: the brightness slider and the label follow, with the last brightness)
+  const briIn = el.querySelector('.lp-bri'), ensureOn = () => { if (Number(briIn.value) > 0) return {}; briIn.value = String(cur.bri); val.textContent = `${cur.bri}%`; return { brightness_pct: cur.bri }; };
+  const hueIn = el.querySelector('.lp-hue'), setHs = (h, sa) => { cur.mode = 'hs'; cur.hs = [h, sa]; lightSend({ hs_color: [h, sa], ...ensureOn() }); };
   hueIn?.addEventListener('input', e => { bump(); setHs(Number(e.target.value), sat); });
   el.querySelectorAll('.lp-dot[data-hue]').forEach(b => b.addEventListener('click', () => { bump(); if (hueIn) hueIn.value = b.dataset.hue; setHs(Number(b.dataset.hue), sat); }));
-  el.querySelector('.lp-white')?.addEventListener('click', () => { bump(); if (caps.ct) { const k = Math.min(caps.maxK, Math.max(caps.minK, 4000)); const ci = el.querySelector('.lp-ct'); if (ci) { ci.value = String(k); el.querySelector('.lp-kv').textContent = `${k} K`; } cur.mode = 'ct'; cur.k = k; lightSend({ color_temp_kelvin: k }); } else setHs(0, 0); });
-  el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; cur.mode = 'ct'; cur.k = v; lightSend({ color_temp_kelvin: v }); });
+  el.querySelector('.lp-white')?.addEventListener('click', () => { bump(); if (caps.ct) { const k = Math.min(caps.maxK, Math.max(caps.minK, 4000)); const ci = el.querySelector('.lp-ct'); if (ci) { ci.value = String(k); el.querySelector('.lp-kv').textContent = `${k} K`; } cur.mode = 'ct'; cur.k = k; lightSend({ color_temp_kelvin: k, ...ensureOn() }); } else setHs(0, 0); });
+  el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; cur.mode = 'ct'; cur.k = v; lightSend({ color_temp_kelvin: v, ...ensureOn() }); });
   // "Zapisz jako domyślny": the colour (and brightness) this label's lights switch on with from now on.
   el.querySelector('.lp-save')?.addEventListener('click', () => { bump(); const live = roomsOf()[room.id]; if (!live) return;
     live.lightDefault = cur.mode === 'hs' && caps.color ? { bri: cur.bri, hs: cur.hs } : { bri: cur.bri, ...(caps.ct ? { k: cur.k } : {}) }; live.lightOnDefault = true; live.updatedAt = new Date().toISOString(); scheduleSave(true); notify(translateValue('Zapisano kolor domyślny – lampa będzie się nim włączać')); });

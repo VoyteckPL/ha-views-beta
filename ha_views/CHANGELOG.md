@@ -1,3 +1,7 @@
+## 0.7.0-beta.812
+
+- Dymek światła: wybór koloru, bieli lub temperatury barwy przy zgaszonej lampie włącza ją z ostatnią (lub 100%) jasnością, a suwak jasności i napis od razu to pokazują (wcześniej lampa się zapalała, ale suwak zostawał na 0 i napis na „Wył.”).
+
 ## 0.7.0-beta.811
 
 - Synchronizacja stanu: koniec migotania świateł po przełączeniu (zgaszona lampa na chwilę „zapala się” w HA Views). Dwie poprawki: (1) odświeżenie stanu, zapytane zanim przyszło nowsze zdarzenie na żywo, nie nadpisuje już tego nowszego stanu; (2) przez 2,5 s po przełączeniu przez HA Views (kliknięcie, marker, dymek światła) ignorowane są sprzeczne aktualizacje (grupy świateł i wolne lampy potrafią na chwilę zgłosić stary stan), a po tym czasie stan jest odświeżany.
