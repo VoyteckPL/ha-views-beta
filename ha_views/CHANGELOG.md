@@ -1,3 +1,7 @@
+## 0.7.0-beta.807
+
+- Pomieszczenie w kolorze lampy: naprawione – obszar pomieszczenia faktycznie rysuje się teraz kolorem lampy (wcześniej wyliczony kolor nie był używany przy rysowaniu, więc blask zostawał w kolorze ustawionym w pomieszczeniu). Zmiana koloru wymusza też przerysowanie blasku.
+
 ## 0.7.0-beta.806
 
 - Dymek regulacji światła: zawartość mieści się w ramce (kolory w jednym rzędzie, wartości w ramce), dymek nieco szerszy (280 px).

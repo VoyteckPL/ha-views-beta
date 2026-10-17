@@ -910,14 +910,14 @@ function roomLayerMarkup(room, prefix, width, height, preview = '') {
   const id = `${prefix}-${String(r.id).replace(/[^a-z0-9_-]/gi, '')}`, fx = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, width), fy = Math.max(0, Number(r.feather) || 0) * 100 / Math.max(1, height);
   const blur = `<filter id="${id}-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${fx.toFixed(3)} ${fy.toFixed(3)}"/></filter>`;
   // Without "Kolor zależny ON/OFF" an off room is invisible; with it, OFF has its own colour and intensity.
-  const dual = Boolean(r.stateEnabled), color = on || !dual ? r.color : r.offColor;
+  const dual = Boolean(r.stateEnabled), onColor = light.on ? light.color : r.color /* (a lamp in a colour mode: the room's own light takes its colour) */, color = on || !dual ? onColor : r.offColor;
   const opacity = on ? clamp(Number(r.opacity) || 0, 0, 1) * level : dual ? clamp(Number(r.offOpacity) || 0, 0, 1) : 0, points = roomPointsAttr(r.points);
   const image = false; // the "lit image" effect was removed; rooms always use the colour glow
   const body = image
     ? `<defs>${blur}<mask id="${id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><polygon points="${points}" fill="#fff" filter="url(#${id}-blur)"/></mask></defs><image href="${escapeHtml(roomBackgroundUrl(r.litImage))}" x="0" y="0" width="100" height="100" preserveAspectRatio="none" mask="url(#${id}-mask)"/>`
     : roomEffectBody(r, id, blur, points, color);
   return { html: `<svg class="room-layer" data-room-id="${escapeHtml(r.id)}" viewBox="0 0 100 100" preserveAspectRatio="none" style="opacity:${opacity.toFixed(3)};mix-blend-mode:screen">${body}</svg>`, body, feather: Math.max(0, Number(r.feather) || 0),
-    signature: [r.mode, r.litImage, r.blend, r.feather, points, width, height, ...ROOM_LIGHT_KEYS.map(key => r[key])].join('|'), opacity, color };
+    signature: [r.mode, r.litImage, r.blend, r.feather, points, width, height, color, ...ROOM_LIGHT_KEYS.map(key => r[key])].join('|'), opacity, color };
 }
 // ---- Room label: icon, name and state drawn as part of the room (not a separate marker) --------------------
 const ROOM_TOGGLE_DOMAINS = ['light', 'switch', 'fan', 'input_boolean'];
