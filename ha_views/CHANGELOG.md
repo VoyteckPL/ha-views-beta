@@ -1,3 +1,7 @@
+## 0.7.0-beta.814
+
+- Termostat: „Przywróć domyślną wartość” przy „Wielkość koła” ustawia teraz razem szerokość i wysokość ikony (wcześniej tylko szerokość, więc koło robiło się jajowate).
+
 ## 0.7.0-beta.813
 
 - Termostat: „Przywróć domyślną wartość” przy „Wielkość koła” (i przy wielkości symbolu, nazwy i stanu) przywraca teraz domyślny rozmiar termostatu (koło 90, symbol 52 itd. – w jednostkach termostatu, które skalują się razem z jego ramką), a nie 10 px jak dla zwykłej etykiety. Zmienia tylko ten jeden suwak, reszta zostaje.
