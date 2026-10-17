@@ -217,6 +217,12 @@ let moreInfoEntityId = '';
 let moreInfoRequest = 0;
 const markerTogglesInFlight = new Set();
 const pendingToggleStates = new Map();
+// Against flicker of a state that was just switched: for a moment after our own switch an update that contradicts it is ignored
+// (HA groups and slow lamps report the old state again for a while), and a refresh that was asked for before a live update
+// came in never overwrites that newer state (its answer may be older than the live event).
+const recentToggle = new Map(), stateSeen = new Map();
+function holdState(id, state, ms = 2500) { recentToggle.set(id, { state, until: performance.now() + ms }); setTimeout(() => { const r = recentToggle.get(id); if (r && performance.now() >= r.until) { recentToggle.delete(id); refreshStates(); } }, ms + 150); }
+const staleState = (id, received) => { const r = recentToggle.get(id); return !!r && performance.now() < r.until && received !== r.state; };
 
 async function api(path, options = {}) {
   const response = await fetch(`api/${path}`, { cache: 'no-store', ...options });
@@ -4925,6 +4931,7 @@ function lightSend(data, off = false) {
   if (data.hs_color) delete lightPop.pending.color_temp_kelvin; if (data.color_temp_kelvin) delete lightPop.pending.hs_color;
   Object.assign(lightPop.pending, data); clearTimeout(lightPop.send);
   const go = () => { const d = lightPop.pending; lightPop.pending = {}; lightPop.ids.forEach(id => { const cur = stateCache[id] || { entity_id: id, attributes: {} };
+      holdState(id, off ? 'off' : 'on', 1800);
       if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin, hs_color: null } : {}), ...(d.hs_color ? { hs_color: d.hs_color, rgb_color: hsToRgb(d.hs_color), color_mode: 'hs' } : {}) } };
       api('control', jsonOptions(off ? { entity_id: id, action: 'turn_off' } : { entity_id: id, action: 'light_set', ...d })).catch(error => notify(`Błąd sterowania światłem: ${error.message}`, true)); });
     renderRooms(); };
@@ -4992,7 +4999,7 @@ async function onRoomTap(room, action = null) {
   if (roomTogglesInFlight.has(r.id)) return;
   const anyOn = toggleable.some(id => String(stateCache[id]?.state || '').toLowerCase() === 'on'), expected = anyOn ? 'off' : 'on';
   roomTogglesInFlight.add(r.id);
-  toggleable.forEach(id => { pendingToggleStates.set(id, expected); stateCache[id] = { ...(stateCache[id] || { entity_id:id, attributes:{} }), state:expected }; });
+  toggleable.forEach(id => { pendingToggleStates.set(id, expected); holdState(id, expected); stateCache[id] = { ...(stateCache[id] || { entity_id:id, attributes:{} }), state:expected }; });
   renderRooms(); toggleable.forEach(id => { if (markersForEntity(id).length) renderMarkerState(id, stateCache[id]); });
   // (a label that switches on in its default colour: "light_set" with the saved brightness and colour instead of a plain turn_on)
   const lightDef = expected === 'on' && r.lightOnDefault && r.lightDefault ? { brightness_pct: r.lightDefault.bri || 100, ...(r.lightDefault.hs ? { hs_color: r.lightDefault.hs } : r.lightDefault.k ? { color_temp_kelvin: r.lightDefault.k } : {}) } : null;
@@ -7214,7 +7221,7 @@ async function toggleMarker(marker) {
   if (!['on', 'off'].includes(state)) return notify('Nie można przełączyć encji w tym stanie.', true);
   const expectedState = state === 'on' ? 'off' : 'on', previous = stateCache[id];
   markerTogglesInFlight.add(id);
-  pendingToggleStates.set(id, expectedState);
+  pendingToggleStates.set(id, expectedState); holdState(id, expectedState);
   renderMarkerState(id, { ...previous, state: expectedState }); if (roomUsesEntity(id)) renderRooms();
   try {
     await api('control', jsonOptions({ entity_id: id, action: expectedState === 'on' ? 'turn_on' : 'turn_off' }));
@@ -8696,11 +8703,13 @@ function allViewEntityIds() {
 }
 async function refreshStates() {
   const ids = allViewEntityIds().filter(id => !isVirtualId(id)); if (!ids.length) return renderMarkers();
+  const askedAt = performance.now();
   try {
     const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
     Object.entries(data.states || {}).forEach(([entityId, nextState]) => {
       const expected = pendingToggleStates.get(entityId);
       const received = String(nextState?.state || '').toLowerCase();
+      if ((stateSeen.get(entityId) || 0) > askedAt || staleState(entityId, received)) return; // (a newer live update, or the state we have just set)
       if (expected && received !== expected) return;
       if (expected) pendingToggleStates.delete(entityId);
       stateCache[entityId] = { ...stateCache[entityId], ...nextState };
@@ -8715,7 +8724,7 @@ function connectEvents() {
   entityEvents?.close();
   entityEvents = new EventSource('api/entity_events');
   entityEvents.onopen = () => { if (els.connection) { els.connection.textContent = 'Na żywo'; els.connection.className = 'connection live'; } };
-  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = markerForEntity(data.entity_id), flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { if (touchGestureActive()) deferredFlows = true; else { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } if (roomUsesEntity(data.entity_id)) renderRooms(); if (activeSceneView()?.nightBackground && data.entity_id === nightEntityOf(activeSceneView())) applyNightBackground(); if (sunDimOn(activeSceneView()) && data.entity_id === nightEntityOf(activeSceneView())) { applyBackgroundBrightness(true); syncNightControls(); } } catch {} };
+  entityEvents.onmessage = event => { try { const data = JSON.parse(event.data), marker = markerForEntity(data.entity_id), flowUsesEntity = Object.values(activeSceneView()?.flows || {}).some(flow => flow.entityId === data.entity_id); if (!marker && !flowUsesEntity && !allViewEntityIds().includes(data.entity_id)) return; const expected = pendingToggleStates.get(data.entity_id), received = String(data.state || '').toLowerCase(); if (expected && received !== expected) return; if (staleState(data.entity_id, received)) return; stateSeen.set(data.entity_id, performance.now()); if (expected) pendingToggleStates.delete(data.entity_id); renderMarkerState(data.entity_id, { entity_id: data.entity_id, state: data.state, attributes: data.attributes || {}, last_changed: data.last_changed || new Date().toISOString() }); if (flowUsesEntity) { if (touchGestureActive()) deferredFlows = true; else { renderFlows(); if (selectedFlowId) syncFlowSelection(); } } if (roomUsesEntity(data.entity_id)) renderRooms(); if (activeSceneView()?.nightBackground && data.entity_id === nightEntityOf(activeSceneView())) applyNightBackground(); if (sunDimOn(activeSceneView()) && data.entity_id === nightEntityOf(activeSceneView())) { applyBackgroundBrightness(true); syncNightControls(); } } catch {} };
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }

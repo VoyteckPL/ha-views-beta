@@ -1,3 +1,7 @@
+## 0.7.0-beta.811
+
+- Synchronizacja stanu: koniec migotania świateł po przełączeniu (zgaszona lampa na chwilę „zapala się” w HA Views). Dwie poprawki: (1) odświeżenie stanu, zapytane zanim przyszło nowsze zdarzenie na żywo, nie nadpisuje już tego nowszego stanu; (2) przez 2,5 s po przełączeniu przez HA Views (kliknięcie, marker, dymek światła) ignorowane są sprzeczne aktualizacje (grupy świateł i wolne lampy potrafią na chwilę zgłosić stary stan), a po tym czasie stan jest odświeżany.
+
 ## 0.7.0-beta.810
 
 - Pomieszczenie: nowa opcja „Klikanie” (obok akcji dotknięcia): „Cały obszar” (jak dotąd) albo „Tylko ikona” – wtedy kliknięcie w sam obszar niczego nie robi, reaguje tylko ikona / etykieta pomieszczenia.
