@@ -1,3 +1,7 @@
+## 0.7.0-beta.810
+
+- Pomieszczenie: nowa opcja „Klikanie” (obok akcji dotknięcia): „Cały obszar” (jak dotąd) albo „Tylko ikona” – wtedy kliknięcie w sam obszar niczego nie robi, reaguje tylko ikona / etykieta pomieszczenia.
+
 ## 0.7.0-beta.809
 
 - Siatka kafelków: w sekcji etykiety / termostatu / wskaźnika pojawiły się wiersze „Szerokość (kafelki)” i „Wysokość (kafelki)” z dużymi przyciskami − i +. Jeden dotyk zmienia rozmiar o jeden kafelek, bez celowania w małe kropki na krawędzi – wygodne na telefonie. Układ etykiety dopasowuje się od razu.

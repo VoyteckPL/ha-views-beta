@@ -3443,7 +3443,7 @@ function pointInPolygon([x, y], points) {
 }
 // tap: a tap in view mode - an area that takes no taps (a rain area without "Klikalny obszar", or one whose tap does nothing) lets it
 // through to the area under it; its label still takes its own taps.
-const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'weather' || room.roomEffect === 'water' || room.roomEffect === 'motion' ? !!room.rainAreaTap : room.tapAction !== 'none';
+const roomTakesTap = room => room.roomEffect === 'rain' || room.roomEffect === 'weather' || room.roomEffect === 'water' || room.roomEffect === 'motion' ? !!room.rainAreaTap : room.tapAction !== 'none' && room.tapScope !== 'icon'; // ("Klikanie: tylko ikona": the area itself does not take the tap, its label does)
 // Edit mode: all areas under a point, the one to pick first first - an area "Na spodzie przy klikaniu" (by default a rain
 // area, usually over the whole plan) goes under the others, so the rooms in it stay clickable; the rain is picked where no other area is, or by tapping the same spot again.
 function roomsAtEdit(point) { const all = Object.values(roomsOf()).reverse().filter(room => (room.points || []).length >= 3 && pointInPolygon(point, room.points)); return [...all.filter(r => !editBelow(r)), ...all.filter(editBelow)]; }
@@ -3949,6 +3949,7 @@ function roomEditorMarkup(room) {
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle, labelCamera(r))
+    + (!icon && (!r.roomEffect || r.roomEffect === 'light') ? control('Klikanie','tapScope','select',r.tapScope === 'icon' ? 'icon' : 'area',{ items:[['area','Cały obszar'],['icon','Tylko ikona']], dropdown:true }) : '')
     + (lightDimIds(r).length ? control('Przytrzymaj: jasność i barwa światła','lightPopup','checkbox',r.lightPopup !== false) + control('Włączaj w kolorze domyślnym','lightOnDefault','checkbox',!!r.lightOnDefault) + (r.lightOnDefault && !r.lightDefault ? `<p class="flow-section-note">${escapeHtml(translateValue('Kolor domyślny ustawisz w dymku (przytrzymaj światło) przyciskiem „Zapisz jako domyślny”.'))}</p>` : '') : '')
     + (labelCamera(r) && r.tapAction === 'camera' ? control('Okno podglądu','cameraOrient','select',r.cameraOrient === 'portrait' ? 'portrait' : 'landscape',{ items:[['landscape','Poziome'],['portrait','Pionowe']] }) : '')
     + (labelCamera(r) && isIconRoom(r) && !isThermoRoom(r) ? `<div class="room-icon-actions"><button type="button" data-label-to-cam><i class="mdi mdi-image-outline"></i><span>${escapeHtml(translateValue('Pokaż jako obraz kamery'))}</span></button></div>` : '')
