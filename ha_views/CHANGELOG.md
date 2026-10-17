@@ -1,3 +1,8 @@
+## 0.7.0-beta.806
+
+- Dymek regulacji światła: zawartość mieści się w ramce (kolory w jednym rzędzie, wartości w ramce), dymek nieco szerszy (280 px).
+- Pomieszczenie świeci kolorem lampy: gdy światło jest w trybie koloru (RGB / HS / XY), blask pomieszczenia przyjmuje jego kolor i zmienia się na bieżąco z dymkiem. Lampy białe i z temperaturą barwy zostawiają kolor pomieszczenia. Opcja „Kolor z lampy (gdy ma kolor)” w „Wygląd → Światło” (domyślnie włączona).
+
 ## 0.7.0-beta.805
 
 - Regulacja światła – kolory: dla lamp z kolorem (RGB / HS / XY) dymek ma rząd 8 gotowych kolorów + biel oraz pasek odcienia. „Biel” ustawia białą barwę (4000 K, jeśli lampa ma temperaturę barwy, inaczej biały kolor). Kolor i temperatura barwy wykluczają się wzajemnie.

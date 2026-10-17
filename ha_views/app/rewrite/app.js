@@ -794,6 +794,8 @@ function roomLight(room) {
     const st = stateCache[id], state = String(st?.state ?? '').toLowerCase(); if (!ROOM_ON_STATES.has(state)) return;
     on = true; const attrs = st?.attributes || {};
     level = 1;
+    // (a lamp in a colour mode: the room's light takes that colour - off with "Kolor z lampy"; white / colour-temperature lights keep the room's own colour)
+    if (!color && room.lightColorSync !== false && ['hs','rgb','rgbw','rgbww','xy'].includes(attrs.color_mode) && Array.isArray(attrs.rgb_color) && attrs.rgb_color.length >= 3) color = '#' + attrs.rgb_color.slice(0, 3).map(v => Math.max(0, Math.min(255, Math.round(Number(v) || 0))).toString(16).padStart(2, '0')).join('');
   });
   return { on, color: color || room.color, level: on ? level || 1 : 0 };
 }
@@ -3975,7 +3977,7 @@ function roomEditorMarkup(room) {
         + `<p class="flow-section-note">${escapeHtml(translateValue('Bez „Klikalny obszar” dotknięcie przechodzi do obszarów pod deszczem; etykieta deszczu zostaje klikalna (np. „Więcej informacji” z historią czujnika).'))}</p>`
         + `<p class="flow-section-note">${escapeHtml(translateValue('Pada, gdy encja obszaru jest włączona (np. czujnik deszczu). Czujnik w mm/h steruje natężeniem na żywo; czujnik binarny używa natężenia z suwaka. W edycji podgląd ON / OFF w nagłówku pokazuje deszcz od razu.'))}</p>`) : '')
     + (r.roomEffect === 'water' ? waterLookSub(r) : '') + (r.roomEffect === 'motion' ? motionLookSub(r) : '')
-    + (r.roomEffect === 'rain' || r.roomEffect === 'weather' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Światło', control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
+    + (r.roomEffect === 'rain' || r.roomEffect === 'weather' || r.roomEffect === 'water' || r.roomEffect === 'motion' ? '' : sub('Światło', control('Kolor z lampy (gdy ma kolor)','lightColorSync','checkbox',r.lightColorSync !== false) + control('Miękkość krawędzi','feather','range',Number(r.feather) || 0,{ min:0, max:80, step:1, suffix:'px', integer:true })
     + control('Efekt światła','lightEffect','select',r.lightEffect || 'none',{ items:[['none','Jednolity'],['center','Centralny'],['corner','Róg'],['wall','Od ściany'],['ambient','Ambient']], refresh:true })
     + (r.lightEffect && r.lightEffect !== 'none' ? (r.lightEffect === 'wall'
         ? control('Kierunek','lightDirection','select',r.lightDirection || 'left',{ items:[['left','Lewa'],['right','Prawa'],['top','Góra'],['bottom','Dół']] }) + control('Pozycja na ścianie','lightWallPos','range',Number(r.lightWallPos ?? 50),{ min:0, max:100, step:1, suffix:'%', integer:true })
@@ -4917,11 +4919,12 @@ const lightDimIds = room => (room?.entityIds || []).filter(id => lightCaps(id));
 let lightTapCancel = () => {};
 const lightPop = { el: null, ids: [], timer: 0, idle: 0, send: 0, pending: {} };
 function closeLightPop() { clearTimeout(lightPop.idle); clearTimeout(lightPop.send); lightPop.el?.remove(); lightPop.el = null; if (lightPop.ids.length) setTimeout(() => refreshStates(), 600); lightPop.ids = []; }
+const hsToRgb = ([h, sat]) => { const s = sat / 100, k = n => (n + h / 60) % 6, f = n => 1 - s * Math.max(0, Math.min(k(n), 4 - k(n), 1)); return [f(5), f(3), f(1)].map(v => Math.round(v * 255)); };
 function lightSend(data, off = false) {
   if (data.hs_color) delete lightPop.pending.color_temp_kelvin; if (data.color_temp_kelvin) delete lightPop.pending.hs_color;
   Object.assign(lightPop.pending, data); clearTimeout(lightPop.send);
   const go = () => { const d = lightPop.pending; lightPop.pending = {}; lightPop.ids.forEach(id => { const cur = stateCache[id] || { entity_id: id, attributes: {} };
-      if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin, hs_color: null } : {}), ...(d.hs_color ? { hs_color: d.hs_color } : {}) } };
+      if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin, hs_color: null } : {}), ...(d.hs_color ? { hs_color: d.hs_color, rgb_color: hsToRgb(d.hs_color), color_mode: 'hs' } : {}) } };
       api('control', jsonOptions(off ? { entity_id: id, action: 'turn_off' } : { entity_id: id, action: 'light_set', ...d })).catch(error => notify(`Błąd sterowania światłem: ${error.message}`, true)); });
     renderRooms(); };
   if (off) go(); else lightPop.send = setTimeout(go, 160);
