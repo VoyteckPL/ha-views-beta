@@ -1,3 +1,7 @@
+## 0.7.0-beta.817
+
+- Termostat: ikony trybów (grzanie, chłodzenie, auto, osuszanie, wentylator, wyłączony i inne domyślne) oraz „+” i „−” mają kształty wbudowane w aplikację, więc są zawsze rysowane jako SVG wyśrodkowane geometrycznie – bez pobierania z internetu. W beta.816 kształty były pobierane z sieci i gdy ta nie była dostępna, ikony zostawały zwykłym glifem i dalej siedziały krzywo. Sprawdzone w Chromium: środek ikony = środek przycisku. Własne, niestandardowe ikony nadal wymagają sieci do wyśrodkowania.
+
 ## 0.7.0-beta.816
 
 - Termostat: ikony przycisków trybów oraz „+” i „−” są rysowane jako SVG wyśrodkowane geometrycznie (środek rysunku ikony), więc leżą idealnie pośrodku na każdym urządzeniu – na telefonie czcionka ikon układała je z przesunięciem. Do czasu pobrania ikony pokazuje się zwykły glif.
