@@ -1,3 +1,7 @@
+## 0.7.0-beta.813
+
+- Termostat: „Przywróć domyślną wartość” przy „Wielkość koła” (i przy wielkości symbolu, nazwy i stanu) przywraca teraz domyślny rozmiar termostatu (koło 90, symbol 52 itd. – w jednostkach termostatu, które skalują się razem z jego ramką), a nie 10 px jak dla zwykłej etykiety. Zmienia tylko ten jeden suwak, reszta zostaje.
+
 ## 0.7.0-beta.812
 
 - Dymek światła: wybór koloru, bieli lub temperatury barwy przy zgaszonej lampie włącza ją z ostatnią (lub 100%) jasnością, a suwak jasności i napis od razu to pokazują (wcześniej lampa się zapalała, ale suwak zostawał na 0 i napis na „Wył.”).
