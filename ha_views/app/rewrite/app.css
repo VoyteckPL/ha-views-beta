@@ -2252,3 +2252,8 @@ body.drip-drawing .scene{cursor:crosshair}
 .dash-stepper button{width:44px;height:44px;border:1px solid rgba(99,181,216,.35);border-radius:11px;background:#0d2e3e;color:#bfe9f8;font-size:22px;display:grid;place-items:center;padding:0}
 .dash-stepper button:disabled{opacity:.35}
 .dash-stepper b{min-width:28px;text-align:center;font-size:16px}
+
+/* A thermostat button's icon as a centred svg (same on every device) */
+.thermo-mode-btn .mdi-svg,.thermo-mode-solo .mdi-svg,.thermo-step .mdi-svg{display:block;width:1.2em;height:1.2em;overflow:visible;position:absolute;left:50%;top:50%;margin:0;transform:translate(-50%,-50%)}
+.thermo-step{position:relative}
+.thermo-step .mdi-svg{width:1.15em;height:1.15em}

@@ -1,3 +1,7 @@
+## 0.7.0-beta.816
+
+- Termostat: ikony przycisków trybów oraz „+” i „−” są rysowane jako SVG wyśrodkowane geometrycznie (środek rysunku ikony), więc leżą idealnie pośrodku na każdym urządzeniu – na telefonie czcionka ikon układała je z przesunięciem. Do czasu pobrania ikony pokazuje się zwykły glif.
+
 ## 0.7.0-beta.815
 
 - Termostat: zniknęła sekcja „Tryby” (jej „Rozmiar” i „Kolor” nic nie zmieniały). Kolejność i widoczność przycisków trybów, układ trybów, presety i potwierdzenia przy przełączeniu są teraz w sekcji „Ogólne”. Zostały tylko sekcje poszczególnych przycisków trybów.

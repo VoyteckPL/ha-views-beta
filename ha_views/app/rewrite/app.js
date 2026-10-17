@@ -1937,11 +1937,25 @@ function roomIconAnimation(r, on) {
   const phase = (performance.now() / 1000) % seconds;
   return { cls: `icon-anim-${type}`, style: `--icon-anim-dur:${seconds.toFixed(2)}s;--icon-anim-dir:${r.labelIconAnimDir === 'ccw' ? 'reverse' : 'normal'};animation-delay:-${phase.toFixed(3)}s` };
 }
+// The centre of a glyph's ink (its bounding box), by geometry: the same on every device (a font glyph is placed by the browser's font metrics).
+const MDI_INK = new Map();
+function mdiInkViewBox(d) {
+  if (MDI_INK.has(d)) return MDI_INK.get(d);
+  let box = '0 0 24 24';
+  try { const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'), path = document.createElementNS(ns, 'path'); svg.setAttribute('viewBox', '0 0 24 24'); svg.style.cssText = 'position:absolute;visibility:hidden;width:0;height:0'; path.setAttribute('d', d); svg.append(path); document.body.append(svg);
+    const b = path.getBBox(); svg.remove(); if (b.width > 0 && b.height > 0) box = `${(b.x + b.width / 2 - 12).toFixed(3)} ${(b.y + b.height / 2 - 12).toFixed(3)} 24 24`; } catch {}
+  MDI_INK.set(d, box); return box;
+}
 function mdiSvgMarkup(d, svg) {
   const o = JSON.parse(svg || '{}');
-  return `<svg class="mdi-svg${o.anim ? ' ' + escapeHtml(o.anim) : ''}" viewBox="0 0 24 24" aria-hidden="true" style="color:${escapeHtml(o.color || 'currentColor')}${o.animStyle ? ';' + escapeHtml(o.animStyle) : ''}">${typeof o.defs === 'string' && /^<defs><linearGradient [^<>]*>(<stop [^<>]*\/>)*(<animateTransform [^<>]*\/>)?<\/linearGradient><\/defs>$/.test(o.defs) ? o.defs : ''}<path d="${String(d).replace(/[^MmLlHhVvCcSsQqTtAaZz0-9.,\s-]/g, '')}" fill="${escapeHtml(o.fill || 'currentColor')}"${o.stroke ? ` stroke="${escapeHtml(o.stroke)}" stroke-width="${Number(o.width) || 1.5}" vector-effect="non-scaling-stroke" stroke-linejoin="round"` : ''}/></svg>`;
+  return `<svg class="mdi-svg${o.anim ? ' ' + escapeHtml(o.anim) : ''}" viewBox="${o.center ? mdiInkViewBox(String(d)) : '0 0 24 24'}" aria-hidden="true" style="color:${escapeHtml(o.color || 'currentColor')}${o.animStyle ? ';' + escapeHtml(o.animStyle) : ''}">${typeof o.defs === 'string' && /^<defs><linearGradient [^<>]*>(<stop [^<>]*\/>)*(<animateTransform [^<>]*\/>)?<\/linearGradient><\/defs>$/.test(o.defs) ? o.defs : ''}<path d="${String(d).replace(/[^MmLlHhVvCcSsQqTtAaZz0-9.,\s-]/g, '')}" fill="${escapeHtml(o.fill || 'currentColor')}"${o.stroke ? ` stroke="${escapeHtml(o.stroke)}" stroke-width="${Number(o.width) || 1.5}" vector-effect="non-scaling-stroke" stroke-linejoin="round"` : ''}/></svg>`;
 }
 const GLYPH_SHIFTS = new Map();
+// An icon of a thermostat's button (a mode, - / +): centred by its ink, as an svg (the font glyph meanwhile).
+function thermoBtnIcon(cls) {
+  const d = mdiSvgPath(cls), spec = JSON.stringify({ center: true });
+  return d ? mdiSvgMarkup(d, spec) : `<i class="mdi ${escapeHtml(cls)}" data-svg-icon="${escapeHtml(String(cls).replace(/^mdi-/, ''))}" data-svg-style="${encodeURIComponent(spec)}"></i>`;
+}
 function glyphShiftStyle(cls) {
   if (GLYPH_SHIFTS.has(cls)) return GLYPH_SHIFTS.get(cls);
   try {
@@ -2085,8 +2099,8 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
   if (r.labelAction && act) { const a = info.mode === 'off' ? 'off' : info.action, anim = THERMO_ACT_ANIMS.some(([v]) => v === r[`thermoActAnim_${a}`]) ? r[`thermoActAnim_${a}`] : 'none';
     parts.action = text('labelAction', anim === 'none' ? esc(thermoActionText(r, a)) : `<span class="thermo-anim ${anim}" style="${syncAnimStyle(r)}">${esc(thermoActionText(r, a))}</span>`); }
   const canSet = info.target !== null && !info.unavailable;
-  if (r.labelMinus) parts.minus = `<button type="button" class="thermo-step" data-thermo="down"${canSet ? '' : ' disabled'} aria-label="−" style="${roomTextStyle(r, 'labelMinus', on)}"><i class="mdi mdi-minus"></i></button>`;
-  if (r.labelPlus) parts.plus = `<button type="button" class="thermo-step" data-thermo="up"${canSet ? '' : ' disabled'} aria-label="+" style="${roomTextStyle(r, 'labelPlus', on)}"><i class="mdi mdi-plus"></i></button>`;
+  if (r.labelMinus) parts.minus = `<button type="button" class="thermo-step" data-thermo="down"${canSet ? '' : ' disabled'} aria-label="−" style="${roomTextStyle(r, 'labelMinus', on)}">${thermoBtnIcon('mdi-minus')}</button>`;
+  if (r.labelPlus) parts.plus = `<button type="button" class="thermo-step" data-thermo="up"${canSet ? '' : ' disabled'} aria-label="+" style="${roomTextStyle(r, 'labelPlus', on)}">${thermoBtnIcon('mdi-plus')}</button>`;
   // Mode buttons: own icon per mode, the active one in the mode's colour (or a chosen one), with or without frames; only the
   // modes chosen in the panel, in its order. "Jeden przycisk": the current mode only, a tap goes to the next one.
   // A change not yet confirmed by the device pulses; presets (eco, comfort, boost…) can follow as a second row.
@@ -2098,7 +2112,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
       const c = m === info.mode ? (r[`thermoModeActive_${m}`] || (r.thermoModeAccent === false && r.thermoModeActiveColor ? r.thermoModeActiveColor : modeColor(m))) : modeColor(m);
       const ownColor = r[`thermoModeColor_${m}`] ? `;color:${esc(r[`thermoModeColor_${m}`])}` : ''; // this mode's icon colour (else the part's colour)
       const pend = tp.hvac_mode === m && info.realMode !== m ? ' pending' : '', label = cycle && target !== m ? `${thermoModeText(r, m)} → ${thermoModeText(r, target)}` : thermoModeText(r, m);
-      return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}${pend}${cycle ? ' cycle' : ''}" data-thermo-mode="${esc(target)}" title="${esc(label)}" aria-label="${esc(label)}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}${ownColor}"><i class="mdi ${esc(icon)}" style="${glyphShiftStyle(icon).replace(/^;/, '')}"></i></button>`; };
+      return `<button type="button" class="thermo-mode-btn${m === info.mode ? ' on' : ''}${pend}${cycle ? ' cycle' : ''}" data-thermo-mode="${esc(target)}" title="${esc(label)}" aria-label="${esc(label)}" style="--mode:${esc(c)};${roomTextStyle(r, 'labelModes', on)}${ownColor}">${thermoBtnIcon(icon)}</button>`; };
     let row = '';
     if (info.modes.length && !(r.thermoModeParts && !cycle)) {
       if (cycle) { const list = shown.length ? shown : info.modes, cur = info.mode, next = list[(list.indexOf(cur) + 1) % list.length] || list[0]; row = modeBtn(cur, next === cur ? (list.find(m => m !== cur) || cur) : next); }
