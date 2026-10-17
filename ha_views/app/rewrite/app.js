@@ -2131,7 +2131,7 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
     const key = `labelMode_${m}`; if (!r[key] || !MODE_PART_LIST.includes(m)) return;
     const d = THERMO_MODES[m] || [m, 'mdi-thermostat'], own = String(r[`thermoModeIcon_${m}`] || '').trim().replace(/^mdi:/, 'mdi-'), icon = own ? (own.startsWith('mdi-') ? own : `mdi-${own}`) : d[1];
     const on = m === info.mode, pend = tp.hvac_mode === m && info.realMode !== m ? ' pending' : '', label = thermoModeText(r, m); modeActive[`mode_${m}`] = on;
-    parts[`mode_${m}`] = `<button type="button" class="thermo-mode-solo${on ? ' on' : ''}${pend}" data-thermo-mode="${esc(m)}" title="${esc(label)}" aria-label="${esc(label)}" style="${roomTextStyle(r, key, on)}"><i class="mdi ${esc(icon)}" style="${glyphShiftStyle(icon).replace(/^;/, '')}"></i></button>`; // (the glyph's ink centred in its frame, as the icon's)
+    parts[`mode_${m}`] = `<button type="button" class="thermo-mode-solo${on ? ' on' : ''}${pend}" data-thermo-mode="${esc(m)}" title="${esc(label)}" aria-label="${esc(label)}" style="${roomTextStyle(r, key, on)}">${thermoBtnIcon(icon)}</button>`; // (the glyph's ink centred in its frame, by geometry)
   });
   return { accent, parts, active: modeActive };
 }

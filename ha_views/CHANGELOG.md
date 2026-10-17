@@ -1,3 +1,7 @@
+## 0.7.0-beta.818
+
+- Termostat: osobne przyciski trybów (każdy tryb jako własna sekcja, np. „Tryb: Grzanie”) też używają wyśrodkowanych ikon SVG. W beta.816–817 poprawiłem tylko wspólny rząd trybów, a Twój termostat rysuje tryby jako osobne przyciski, dlatego nic się nie zmieniało. Sprawdzone w Chromium: środek ikony = środek przycisku.
+
 ## 0.7.0-beta.817
 
 - Termostat: ikony trybów (grzanie, chłodzenie, auto, osuszanie, wentylator, wyłączony i inne domyślne) oraz „+” i „−” mają kształty wbudowane w aplikację, więc są zawsze rysowane jako SVG wyśrodkowane geometrycznie – bez pobierania z internetu. W beta.816 kształty były pobierane z sieci i gdy ta nie była dostępna, ikony zostawały zwykłym glifem i dalej siedziały krzywo. Sprawdzone w Chromium: środek ikony = środek przycisku. Własne, niestandardowe ikony nadal wymagają sieci do wyśrodkowania.
