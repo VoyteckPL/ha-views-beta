@@ -1,3 +1,8 @@
+## 0.7.0-beta.799
+
+- Pogoda: gwiazdy, płatki śniegu, grad i chmury mają teraz stałą wielkość na ekranie, niezależnie od powiększenia planu. Wcześniej ich wielkość rosła razem ze skalą sceny, więc na telefonie i w pełnym widoku gwiazdy były wielkimi szarymi kółkami (w małym podglądzie w edycji wyglądały dobrze). Gwiazdy: promień ok. 0,6–1,5 px; płatki ok. 1–2,5 px.
+- Liczba gwiazd i płatków zależy teraz od powierzchni obszaru na ekranie, a prędkość chmur i śniegu jest liczona w pikselach ekranu.
+
 ## 0.7.0-beta.798
 
 - Termostat: większe domyślne rozmiary – ikona (symbol 52 px, koło 90 px) i nazwa (tekst 40, pudełko 260 × 70). Dotyczy nowych termostatów i „Przywróć domyślny wygląd”; istniejące zostają jak są.
