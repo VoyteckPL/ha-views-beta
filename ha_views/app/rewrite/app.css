@@ -2244,3 +2244,6 @@ body.drip-drawing .scene{cursor:crosshair}
 .light-pop .lp-dot{width:100%;height:auto;max-width:none;aspect-ratio:1}
 .light-pop .lp-row{min-width:0}
 .light-pop .lp-kv{min-width:48px}
+
+.light-pop .lp-save{display:flex;align-items:center;justify-content:center;gap:6px;height:32px;border:1px solid rgba(99,181,216,.35);border-radius:9px;background:rgba(32,185,231,.12);color:#bfe9f8;font-size:12px;cursor:pointer}
+.light-pop .lp-save i{font-size:16px}

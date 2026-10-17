@@ -1,3 +1,7 @@
+## 0.7.0-beta.808
+
+- Regulacja światła: przycisk „Zapisz jako domyślny” w dymku zapamiętuje aktualną jasność i kolor (lub temperaturę barwy) etykiety. Od tego momentu zwykłe kliknięcie włączające światło zapala je w tym kolorze (a nie w ostatnim, jaki miało). Opcja „Włączaj w kolorze domyślnym” w edycji etykiety (włącza się sama po zapisaniu). Zapis dostępny tylko dla admina.
+
 ## 0.7.0-beta.807
 
 - Pomieszczenie w kolorze lampy: naprawione – obszar pomieszczenia faktycznie rysuje się teraz kolorem lampy (wcześniej wyliczony kolor nie był używany przy rysowaniu, więc blask zostawał w kolorze ustawionym w pomieszczeniu). Zmiana koloru wymusza też przerysowanie blasku.

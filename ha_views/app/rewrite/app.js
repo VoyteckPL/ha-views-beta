@@ -3949,7 +3949,7 @@ function roomEditorMarkup(room) {
     + mainEntity + extraEntities + workStates
     + (icon ? '' : `<div class="control room-state-row"><label>Stan</label><strong class="flow-live-value">${translateValue(light.on ? 'Włączone' : r.entityIds.length ? 'Wyłączone' : 'Brak encji')}</strong><span></span></div>`)
     + tapActionControl(canToggle ? r.tapAction : (r.tapAction === 'toggle' ? 'more_info' : r.tapAction), canToggle, labelCamera(r))
-    + (lightDimIds(r).length ? control('Przytrzymaj: jasność i barwa światła','lightPopup','checkbox',r.lightPopup !== false) : '')
+    + (lightDimIds(r).length ? control('Przytrzymaj: jasność i barwa światła','lightPopup','checkbox',r.lightPopup !== false) + control('Włączaj w kolorze domyślnym','lightOnDefault','checkbox',!!r.lightOnDefault) + (r.lightOnDefault && !r.lightDefault ? `<p class="flow-section-note">${escapeHtml(translateValue('Kolor domyślny ustawisz w dymku (przytrzymaj światło) przyciskiem „Zapisz jako domyślny”.'))}</p>` : '') : '')
     + (labelCamera(r) && r.tapAction === 'camera' ? control('Okno podglądu','cameraOrient','select',r.cameraOrient === 'portrait' ? 'portrait' : 'landscape',{ items:[['landscape','Poziome'],['portrait','Pionowe']] }) : '')
     + (labelCamera(r) && isIconRoom(r) && !isThermoRoom(r) ? `<div class="room-icon-actions"><button type="button" data-label-to-cam><i class="mdi mdi-image-outline"></i><span>${escapeHtml(translateValue('Pokaż jako obraz kamery'))}</span></button></div>` : '')
     );
@@ -4940,18 +4940,24 @@ function openLightPop(room, node) {
     + `<label class="lp-row"><i class="mdi mdi-brightness-6" title="${esc('Jasność')}"></i><input type="range" class="lp-bri" min="0" max="100" step="1" value="${pct}" aria-label="${esc('Jasność')}"></label>`
     + (caps.ct ? `<label class="lp-row"><i class="mdi mdi-thermometer" title="${esc('Barwa')}"></i><input type="range" class="lp-ct" min="${caps.minK}" max="${caps.maxK}" step="50" value="${ct}" aria-label="${esc('Barwa')}"><output class="lp-kv">${ct} K</output></label>` : '')
     + (caps.color ? `<div class="lp-sw" role="group" aria-label="${esc('Kolor')}">${SW.map(([c, h]) => `<button type="button" class="lp-dot" data-hue="${h}" style="background:${c}" title="${c}" aria-label="${c}"></button>`).join('')}<button type="button" class="lp-dot lp-white" data-white title="${esc('Biel')}" aria-label="${esc('Biel')}"></button></div>`
-      + `<label class="lp-row"><i class="mdi mdi-palette" title="${esc('Kolor')}"></i><input type="range" class="lp-hue" min="0" max="360" step="1" value="${hue}" aria-label="${esc('Odcień')}"></label>` : '');
+      + `<label class="lp-row"><i class="mdi mdi-palette" title="${esc('Kolor')}"></i><input type="range" class="lp-hue" min="0" max="360" step="1" value="${hue}" aria-label="${esc('Odcień')}"></label>` : '')
+    + (isViewer() ? '' : `<button type="button" class="lp-save"><i class="mdi mdi-content-save-outline"></i><span>${esc('Zapisz jako domyślny')}</span></button>`);
   document.body.append(el); lightPop.el = el;
   const r = node.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
   el.style.left = `${clamp(r.left + r.width / 2 - w / 2, 8, Math.max(8, vw - w - 8))}px`; el.style.top = `${r.top - h - 10 > 8 ? r.top - h - 10 : clamp(r.bottom + 10, 8, Math.max(8, vh - h - 8))}px`;
   const bump = () => { clearTimeout(lightPop.idle); lightPop.idle = setTimeout(closeLightPop, 9000); }; bump();
   const val = el.querySelector('.lp-val');
-  el.querySelector('.lp-bri').addEventListener('input', e => { bump(); const v = Number(e.target.value); val.textContent = v ? `${v}%` : translateValue('Wył.'); if (v) lightSend({ brightness_pct: v }); else lightSend({}, true); });
-  const hueIn = el.querySelector('.lp-hue'), setHue = h => { if (hueIn) hueIn.value = String(h); lightSend({ hs_color: [h, sat] }); };
-  hueIn?.addEventListener('input', e => { bump(); lightSend({ hs_color: [Number(e.target.value), sat] }); });
-  el.querySelectorAll('.lp-dot[data-hue]').forEach(b => b.addEventListener('click', () => { bump(); setHue(Number(b.dataset.hue)); }));
-  el.querySelector('.lp-white')?.addEventListener('click', () => { bump(); if (caps.ct) { const k = Math.min(caps.maxK, Math.max(caps.minK, 4000)); const ci = el.querySelector('.lp-ct'); if (ci) { ci.value = String(k); el.querySelector('.lp-kv').textContent = `${k} K`; } lightSend({ color_temp_kelvin: k }); } else lightSend({ hs_color: [0, 0] }); });
-  el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; lightSend({ color_temp_kelvin: v }); });
+  // (what the popup last set: it is what "Zapisz jako domyślny" keeps)
+  const cur = { bri: pct || 100, mode: ['hs','rgb','rgbw','rgbww','xy'].includes(a.color_mode) ? 'hs' : 'ct', k: ct, hs: [hue, sat] };
+  el.querySelector('.lp-bri').addEventListener('input', e => { bump(); const v = Number(e.target.value); val.textContent = v ? `${v}%` : translateValue('Wył.'); if (v) { cur.bri = v; lightSend({ brightness_pct: v }); } else lightSend({}, true); });
+  const hueIn = el.querySelector('.lp-hue'), setHs = (h, sa) => { cur.mode = 'hs'; cur.hs = [h, sa]; lightSend({ hs_color: [h, sa] }); };
+  hueIn?.addEventListener('input', e => { bump(); setHs(Number(e.target.value), sat); });
+  el.querySelectorAll('.lp-dot[data-hue]').forEach(b => b.addEventListener('click', () => { bump(); if (hueIn) hueIn.value = b.dataset.hue; setHs(Number(b.dataset.hue), sat); }));
+  el.querySelector('.lp-white')?.addEventListener('click', () => { bump(); if (caps.ct) { const k = Math.min(caps.maxK, Math.max(caps.minK, 4000)); const ci = el.querySelector('.lp-ct'); if (ci) { ci.value = String(k); el.querySelector('.lp-kv').textContent = `${k} K`; } cur.mode = 'ct'; cur.k = k; lightSend({ color_temp_kelvin: k }); } else setHs(0, 0); });
+  el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; cur.mode = 'ct'; cur.k = v; lightSend({ color_temp_kelvin: v }); });
+  // "Zapisz jako domyślny": the colour (and brightness) this label's lights switch on with from now on.
+  el.querySelector('.lp-save')?.addEventListener('click', () => { bump(); const live = roomsOf()[room.id]; if (!live) return;
+    live.lightDefault = cur.mode === 'hs' && caps.color ? { bri: cur.bri, hs: cur.hs } : { bri: cur.bri, ...(caps.ct ? { k: cur.k } : {}) }; live.lightOnDefault = true; live.updatedAt = new Date().toISOString(); scheduleSave(true); notify(translateValue('Zapisano kolor domyślny – lampa będzie się nim włączać')); });
   return true;
 }
 window.addEventListener('pointerdown', event => { if (lightPop.el && !event.target.closest?.('.light-pop')) closeLightPop(); }, true);
@@ -4987,7 +4993,9 @@ async function onRoomTap(room, action = null) {
   roomTogglesInFlight.add(r.id);
   toggleable.forEach(id => { pendingToggleStates.set(id, expected); stateCache[id] = { ...(stateCache[id] || { entity_id:id, attributes:{} }), state:expected }; });
   renderRooms(); toggleable.forEach(id => { if (markersForEntity(id).length) renderMarkerState(id, stateCache[id]); });
-  try { await Promise.all(toggleable.map(id => api('control', jsonOptions({ entity_id:id, action: expected === 'on' ? 'turn_on' : 'turn_off' })))); }
+  // (a label that switches on in its default colour: "light_set" with the saved brightness and colour instead of a plain turn_on)
+  const lightDef = expected === 'on' && r.lightOnDefault && r.lightDefault ? { brightness_pct: r.lightDefault.bri || 100, ...(r.lightDefault.hs ? { hs_color: r.lightDefault.hs } : r.lightDefault.k ? { color_temp_kelvin: r.lightDefault.k } : {}) } : null;
+  try { await Promise.all(toggleable.map(id => api('control', jsonOptions(lightDef && lightCaps(id) ? { entity_id:id, action:'light_set', ...lightDef } : { entity_id:id, action: expected === 'on' ? 'turn_on' : 'turn_off' })))); }
   catch (error) { notify(`Błąd przełączania: ${error.message}`, true); }
   // The room accepts the next tap as soon as the command is sent; the expected state is kept a moment longer
   // so a late, stale update does not flip it back.
