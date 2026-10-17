@@ -1,3 +1,7 @@
+## 0.7.0-beta.803
+
+- Menu widoku: ikony w sekcjach „Obraz” i „Tło nocne” rozciągnięte równo na całą szerokość, tak jak rząd ikon u góry (pierwsza i ostatnia równo z krawędziami, równe odstępy).
+
 ## 0.7.0-beta.802
 
 - Menu widoku: ikony w rzędzie rozciągnięte na całą szerokość – pierwsza (z lewej) i ostatnia (plus) są równo z krawędziami sekcji poniżej.

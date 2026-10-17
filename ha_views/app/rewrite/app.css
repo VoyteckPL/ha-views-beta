@@ -2215,3 +2215,6 @@ body.drip-drawing .scene{cursor:crosshair}
 .vm-sub>.vm-field,.vm-sub>.sun-dim-block{margin-top:6px}
 
 .vm-toolbar .vm-icon{width:100%;min-width:0;box-sizing:border-box;justify-self:stretch}
+
+.vm-sec .vm-icons .vm-icon{width:100%;min-width:0;box-sizing:border-box}
+.vm-sec .vm-icons{width:auto}
