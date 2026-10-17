@@ -2231,3 +2231,9 @@ body.drip-drawing .scene{cursor:crosshair}
 .light-pop .lp-ct{-webkit-appearance:none;appearance:none;height:8px!important;border-radius:6px;background:linear-gradient(90deg,#ffb35a,#fff3e0 50%,#a8cdff)}
 .light-pop .lp-ct::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #20b9e7}
 .light-pop .lp-kv{font-size:11px;color:#9fb6c3;min-width:46px;text-align:right}
+
+.light-pop .lp-sw{display:flex;justify-content:space-between;gap:6px}
+.light-pop .lp-dot{flex:1;min-width:0;height:26px;max-width:26px;aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.35);padding:0;cursor:pointer}
+.light-pop .lp-white{background:linear-gradient(135deg,#fff,#cfd8dc)}
+.light-pop .lp-hue{-webkit-appearance:none;appearance:none;height:8px!important;border-radius:6px;background:linear-gradient(90deg,#f00,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00)}
+.light-pop .lp-hue::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #20b9e7}

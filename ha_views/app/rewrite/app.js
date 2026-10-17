@@ -4911,16 +4911,17 @@ function lightCaps(id) {
   const st = stateCache[id]; if (!String(id).startsWith('light.') || !st) return null;
   const a = st.attributes || {}, modes = Array.isArray(a.supported_color_modes) ? a.supported_color_modes : [];
   const dim = modes.length ? modes.some(m => m !== 'onoff') : a.brightness != null; if (!dim) return null;
-  return { ct: modes.includes('color_temp'), minK: Number(a.min_color_temp_kelvin) || 2000, maxK: Number(a.max_color_temp_kelvin) || 6500 };
+  return { color: modes.some(m => ['hs','rgb','rgbw','rgbww','xy'].includes(m)), ct: modes.includes('color_temp'), minK: Number(a.min_color_temp_kelvin) || 2000, maxK: Number(a.max_color_temp_kelvin) || 6500 };
 }
 const lightDimIds = room => (room?.entityIds || []).filter(id => lightCaps(id));
 let lightTapCancel = () => {};
 const lightPop = { el: null, ids: [], timer: 0, idle: 0, send: 0, pending: {} };
 function closeLightPop() { clearTimeout(lightPop.idle); clearTimeout(lightPop.send); lightPop.el?.remove(); lightPop.el = null; if (lightPop.ids.length) setTimeout(() => refreshStates(), 600); lightPop.ids = []; }
 function lightSend(data, off = false) {
+  if (data.hs_color) delete lightPop.pending.color_temp_kelvin; if (data.color_temp_kelvin) delete lightPop.pending.hs_color;
   Object.assign(lightPop.pending, data); clearTimeout(lightPop.send);
   const go = () => { const d = lightPop.pending; lightPop.pending = {}; lightPop.ids.forEach(id => { const cur = stateCache[id] || { entity_id: id, attributes: {} };
-      if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin } : {}) } };
+      if (off) stateCache[id] = { ...cur, state: 'off' }; else stateCache[id] = { ...cur, state: 'on', attributes: { ...(cur.attributes || {}), ...(d.brightness_pct != null ? { brightness: Math.round(d.brightness_pct * 2.55) } : {}), ...(d.color_temp_kelvin != null ? { color_temp_kelvin: d.color_temp_kelvin, hs_color: null } : {}), ...(d.hs_color ? { hs_color: d.hs_color } : {}) } };
       api('control', jsonOptions(off ? { entity_id: id, action: 'turn_off' } : { entity_id: id, action: 'light_set', ...d })).catch(error => notify(`Błąd sterowania światłem: ${error.message}`, true)); });
     renderRooms(); };
   if (off) go(); else lightPop.send = setTimeout(go, 160);
@@ -4928,17 +4929,25 @@ function lightSend(data, off = false) {
 function openLightPop(room, node) {
   const ids = lightDimIds(room); if (!ids.length) return false; closeLightPop(); lightPop.ids = ids;
   const caps = lightCaps(ids[0]), a = stateCache[ids[0]]?.attributes || {}, on = String(stateCache[ids[0]]?.state || '').toLowerCase() === 'on', pct = on ? clamp(Math.round((Number(a.brightness) || 0) / 2.55), 1, 100) : 0;
+  const hs = Array.isArray(a.hs_color) ? a.hs_color : [0, 100], hue = clamp(Math.round(Number(hs[0]) || 0), 0, 360), sat = Number(hs[1]) > 15 ? Number(hs[1]) : 100;
+  const SW = [['#ff3b30', 0], ['#ff9500', 30], ['#ffd60a', 50], ['#34c759', 130], ['#00c7be', 175], ['#0a84ff', 210], ['#bf5af2', 275], ['#ff2d92', 330]];
   const ct = caps.ct ? clamp(Number(a.color_temp_kelvin) || Math.round((caps.minK + caps.maxK) / 2), caps.minK, caps.maxK) : 0, esc = t => escapeHtml(translateValue(t));
   const el = document.createElement('div'); el.className = 'light-pop'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', translateValue('Regulacja światła'));
   el.innerHTML = `<div class="lp-head"><b data-no-i18n>${escapeHtml(room.name || '')}</b><output class="lp-val">${pct ? pct + '%' : esc('Wył.')}</output></div>`
     + `<label class="lp-row"><i class="mdi mdi-brightness-6" title="${esc('Jasność')}"></i><input type="range" class="lp-bri" min="0" max="100" step="1" value="${pct}" aria-label="${esc('Jasność')}"></label>`
-    + (caps.ct ? `<label class="lp-row"><i class="mdi mdi-thermometer" title="${esc('Barwa')}"></i><input type="range" class="lp-ct" min="${caps.minK}" max="${caps.maxK}" step="50" value="${ct}" aria-label="${esc('Barwa')}"><output class="lp-kv">${ct} K</output></label>` : '');
+    + (caps.ct ? `<label class="lp-row"><i class="mdi mdi-thermometer" title="${esc('Barwa')}"></i><input type="range" class="lp-ct" min="${caps.minK}" max="${caps.maxK}" step="50" value="${ct}" aria-label="${esc('Barwa')}"><output class="lp-kv">${ct} K</output></label>` : '')
+    + (caps.color ? `<div class="lp-sw" role="group" aria-label="${esc('Kolor')}">${SW.map(([c, h]) => `<button type="button" class="lp-dot" data-hue="${h}" style="background:${c}" title="${c}" aria-label="${c}"></button>`).join('')}<button type="button" class="lp-dot lp-white" data-white title="${esc('Biel')}" aria-label="${esc('Biel')}"></button></div>`
+      + `<label class="lp-row"><i class="mdi mdi-palette" title="${esc('Kolor')}"></i><input type="range" class="lp-hue" min="0" max="360" step="1" value="${hue}" aria-label="${esc('Odcień')}"></label>` : '');
   document.body.append(el); lightPop.el = el;
   const r = node.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
   el.style.left = `${clamp(r.left + r.width / 2 - w / 2, 8, Math.max(8, vw - w - 8))}px`; el.style.top = `${r.top - h - 10 > 8 ? r.top - h - 10 : clamp(r.bottom + 10, 8, Math.max(8, vh - h - 8))}px`;
   const bump = () => { clearTimeout(lightPop.idle); lightPop.idle = setTimeout(closeLightPop, 9000); }; bump();
   const val = el.querySelector('.lp-val');
   el.querySelector('.lp-bri').addEventListener('input', e => { bump(); const v = Number(e.target.value); val.textContent = v ? `${v}%` : translateValue('Wył.'); if (v) lightSend({ brightness_pct: v }); else lightSend({}, true); });
+  const hueIn = el.querySelector('.lp-hue'), setHue = h => { if (hueIn) hueIn.value = String(h); lightSend({ hs_color: [h, sat] }); };
+  hueIn?.addEventListener('input', e => { bump(); lightSend({ hs_color: [Number(e.target.value), sat] }); });
+  el.querySelectorAll('.lp-dot[data-hue]').forEach(b => b.addEventListener('click', () => { bump(); setHue(Number(b.dataset.hue)); }));
+  el.querySelector('.lp-white')?.addEventListener('click', () => { bump(); if (caps.ct) { const k = Math.min(caps.maxK, Math.max(caps.minK, 4000)); const ci = el.querySelector('.lp-ct'); if (ci) { ci.value = String(k); el.querySelector('.lp-kv').textContent = `${k} K`; } lightSend({ color_temp_kelvin: k }); } else lightSend({ hs_color: [0, 0] }); });
   el.querySelector('.lp-ct')?.addEventListener('input', e => { bump(); const v = Number(e.target.value); el.querySelector('.lp-kv').textContent = `${v} K`; lightSend({ color_temp_kelvin: v }); });
   return true;
 }

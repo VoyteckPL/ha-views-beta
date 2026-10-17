@@ -178,7 +178,10 @@ async def api_control(request):
                 payload["brightness_pct"] = max(1, min(100, int(float(body.get("brightness_pct")))))
             if body.get("color_temp_kelvin") is not None:
                 payload["color_temp_kelvin"] = max(1000, min(12000, int(float(body.get("color_temp_kelvin")))))
-        except (TypeError, ValueError):
+            hs = body.get("hs_color")
+            if isinstance(hs, (list, tuple)) and len(hs) == 2:
+                payload["hs_color"] = [round(float(hs[0]) % 360, 1), round(max(0.0, min(100.0, float(hs[1]))), 1)]
+        except (TypeError, ValueError, IndexError):
             return web.json_response({"ok": False, "error": "Invalid value"}, status=400)
         if len(payload) == 1:
             return web.json_response({"ok": False, "error": "Nothing to set"}, status=400)

@@ -1,3 +1,8 @@
+## 0.7.0-beta.805
+
+- Regulacja światła – kolory: dla lamp z kolorem (RGB / HS / XY) dymek ma rząd 8 gotowych kolorów + biel oraz pasek odcienia. „Biel” ustawia białą barwę (4000 K, jeśli lampa ma temperaturę barwy, inaczej biały kolor). Kolor i temperatura barwy wykluczają się wzajemnie.
+- Serwer: akcja „light_set” przyjmuje też hs_color.
+
 ## 0.7.0-beta.804
 
 - Regulacja światła: długie przytrzymanie etykiety z żarówką (na komputerze prawy przycisk myszy) otwiera mały dymek – suwak jasności 0–100% (0 = wyłącz) i, jeśli lampa to potrafi, suwak temperatury barwy (od ciepłej do zimnej bieli). Zwykłe kliknięcie nadal włącza i wyłącza. Dymek pokazuje się tylko dla świateł z regulacją jasności; zamyka się kliknięciem obok, klawiszem Esc albo po 9 s bez ruchu.
