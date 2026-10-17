@@ -4071,6 +4071,7 @@ function roomEditorMarkup(room) {
   const oneShown = false && icon && !isThermoRoom(r) && !isTextRoom(r) && ROOM_LABEL_PARTS.filter(([, k]) => r[k]).length === 1 ? ROOM_LABEL_PARTS.find(([, k]) => r[k])[1] : '';
   const frameToggles = key => oneShown === key ? [['labelCardBg','Tło','mdi-format-color-fill'],['labelCardBorder','Ramka','mdi-border-all-variant']] : [[`${key}Bg`,'Tło','mdi-format-color-fill'],[`${key}Border`,'Ramka','mdi-border-all-variant']];
   const partSection = ([part, key, title]) => {
+    if (part === 'modes' && isThermoRoom(r)) return ''; // (its content is in "Ogólne")
     if (isTextRoom(r) && part === 'state') title = 'Podpis';
     if (isExtraPart(part)) { if (!r[`${key}Entity`]) return ''; title = String(r[`${key}Prefix`] || '').trim() || extraEntityName(r[`${key}Entity`]); }
     if (isModePart(part)) { const m = part.slice(5); if (!r.thermoModeParts || !r.labelModes || r.thermoModeLayout === 'cycle' || !climateInfo({ entityId: (r.entityIds || [])[0] || '' }).modes.includes(m)) return ''; title = `${translateValue('Tryb')}: ${thermoModeText(r, m)}`; }
@@ -4129,17 +4130,7 @@ function roomEditorMarkup(room) {
       : isExtraPart(part) ? sub('Wartość', control('Tekst przed wartością', `${key}Prefix`, 'text', r[`${key}Prefix`] || '', { placeholder: translateValue('np. Ciśnienie:') })
           + control('Jednostka', `${key}Unit`, 'text', r[`${key}Unit`] || '', { placeholder: stateCache[r[`${key}Entity`]]?.attributes?.unit_of_measurement || '' })
           + control('Zaokrąglenie', `${key}Decimals`, 'select', String(r[`${key}Decimals`] ?? 'auto'), { items: [['auto','Automatycznie'],['0','0'],['1','0,1'],['2','0,01']], dropdown: true }))
-      : part === 'modes' ? (() => {
-        const info = climateInfo({ entityId: (r.entityIds || [])[0] || '' }), all = thermoModesOrdered(r, info.modes, false), name = m => translateValue(THERMO_MODES[m]?.[0] || m);
-        const orderRows = all.map((m, i) => `<div class="control mode-order-row"><label>${escapeHtml(name(m))}</label><span class="mode-order-tools"><input type="checkbox" data-path="thermoModeShow_${escapeHtml(m)}" data-value-type="checkbox"${r[`thermoModeShow_${m}`] !== false ? ' checked' : ''} title="${escapeHtml(translateValue('Pokaż'))}"><button type="button" class="room-card-preset" data-mode-move="${escapeHtml(m)}|-1"${i ? '' : ' disabled'} title="${escapeHtml(translateValue('Wyżej'))}"><i class="mdi mdi-chevron-up"></i></button><button type="button" class="room-card-preset" data-mode-move="${escapeHtml(m)}|1"${i < all.length - 1 ? '' : ' disabled'} title="${escapeHtml(translateValue('Niżej'))}"><i class="mdi mdi-chevron-down"></i></button></span></div>`).join('');
-        const modesSection = info.modes.length ? sub('Tryby', control('Układ','thermoModeLayout','select',r.thermoModeLayout === 'cycle' ? 'cycle' : 'row',{ items:[['row','Wszystkie przyciski'],['cycle','Jeden przycisk (następny tryb)']], dropdown:true, refresh:true }) + orderRows) : '';
-        const presetsSection = info.presets.length && !info.water ? sub('Presety', control('Pokaż presety','thermoPresets','checkbox',!!r.thermoPresets,refresh)
-          + (r.thermoPresets ? info.presets.map(p => control(`${translateValue('Pokaż')} · ${thermoPresetText({}, p)}`, `thermoPresetShow_${p}`, 'checkbox', r[`thermoPresetShow_${p}`] !== false) + control(`${translateValue('Nazwa')} · ${thermoPresetText({}, p)}`, `thermoPresetText_${p}`, 'text', r[`thermoPresetText_${p}`] || '', { placeholder: thermoPresetText({}, p) })).join('') : '')) : '';
-        const confirmSection = sub('Potwierdzenie', `<p class="flow-section-note">${escapeHtml(translateValue('Zaznacz, przy których zmianach zapytać przed wysłaniem.'))}</p>`
-          + all.map(m => control(`${translateValue('Pytaj')} · ${name(m)}`, `thermoConfirm_${m}`, 'checkbox', thermoConfirmPerMode(r) ? !!r[`thermoConfirm_${m}`] : !!r.thermoConfirm && m === 'off')).join('')
-          + (r.thermoPresets && !info.water ? info.presets.map(p => control(`${translateValue('Pytaj')} · ${thermoPresetText(r, p)}`, `thermoConfirmP_${p}`, 'checkbox', !!r[`thermoConfirmP_${p}`])).join('') : ''));
-        return modesSection + presetsSection + confirmSection;
-      })()
+      : part === 'modes' ? ''
       : part === 'state' ? sub('Teksty trybów', [...new Set([...climateInfo({ entityId: (r.entityIds || [])[0] || '' }).modes, ...Object.keys(THERMO_MODES)])].map(m => control(THERMO_MODES[m]?.[0] || m, `thermoModeText_${m}`, 'text', r[`thermoModeText_${m}`] || '', { placeholder: thermoModeText({}, m) })).join('')) : '';
     const contentSub = isThermoRoom(r) ? thermoTexts : part !== 'state' ? '' : onOff
       ? sub('Format', control('Tekst ON','labelStateOnText','text',r.labelStateOnText || '',{ placeholder: translateValue('Wł.') }) + control('Tekst OFF','labelStateOffText','text',r.labelStateOffText || '',{ placeholder: translateValue('Wył.') }))
@@ -4329,11 +4320,23 @@ function roomEditorMarkup(room) {
     // (Its own Size subsection is the first one: the label's rows go at its end.)
     h = h.replace(/(<details class="gauge-subsection size-open"[\s\S]*?)(<\/div><\/details>)/, (m, a, b) => `${a}${oneSize}${b}`);
     return h.replace(/<\/div><\/details>$/, `${bgSub}${borderSub}</div></details>`); };
+  // The thermostat's modes, the visibility / order of their buttons, the presets and the confirmations: part of "Ogólne" (the "Tryby" section had a size and a colour that changed nothing); only the single mode buttons stay as sections.
+  const thermoModesGeneral = () => {
+        const info = climateInfo({ entityId: (r.entityIds || [])[0] || '' }), all = thermoModesOrdered(r, info.modes, false), name = m => translateValue(THERMO_MODES[m]?.[0] || m);
+        const orderRows = all.map((m, i) => `<div class="control mode-order-row"><label>${escapeHtml(name(m))}</label><span class="mode-order-tools"><input type="checkbox" data-path="thermoModeShow_${escapeHtml(m)}" data-value-type="checkbox"${r[`thermoModeShow_${m}`] !== false ? ' checked' : ''} title="${escapeHtml(translateValue('Pokaż'))}"><button type="button" class="room-card-preset" data-mode-move="${escapeHtml(m)}|-1"${i ? '' : ' disabled'} title="${escapeHtml(translateValue('Wyżej'))}"><i class="mdi mdi-chevron-up"></i></button><button type="button" class="room-card-preset" data-mode-move="${escapeHtml(m)}|1"${i < all.length - 1 ? '' : ' disabled'} title="${escapeHtml(translateValue('Niżej'))}"><i class="mdi mdi-chevron-down"></i></button></span></div>`).join('');
+        const modesSection = info.modes.length ? sub('Tryby', control('Układ','thermoModeLayout','select',r.thermoModeLayout === 'cycle' ? 'cycle' : 'row',{ items:[['row','Wszystkie przyciski'],['cycle','Jeden przycisk (następny tryb)']], dropdown:true, refresh:true }) + orderRows) : '';
+        const presetsSection = info.presets.length && !info.water ? sub('Presety', control('Pokaż presety','thermoPresets','checkbox',!!r.thermoPresets,refresh)
+          + (r.thermoPresets ? info.presets.map(p => control(`${translateValue('Pokaż')} · ${thermoPresetText({}, p)}`, `thermoPresetShow_${p}`, 'checkbox', r[`thermoPresetShow_${p}`] !== false) + control(`${translateValue('Nazwa')} · ${thermoPresetText({}, p)}`, `thermoPresetText_${p}`, 'text', r[`thermoPresetText_${p}`] || '', { placeholder: thermoPresetText({}, p) })).join('') : '')) : '';
+        const confirmSection = sub('Potwierdzenie', `<p class="flow-section-note">${escapeHtml(translateValue('Zaznacz, przy których zmianach zapytać przed wysłaniem.'))}</p>`
+          + all.map(m => control(`${translateValue('Pytaj')} · ${name(m)}`, `thermoConfirm_${m}`, 'checkbox', thermoConfirmPerMode(r) ? !!r[`thermoConfirm_${m}`] : !!r.thermoConfirm && m === 'off')).join('')
+          + (r.thermoPresets && !info.water ? info.presets.map(p => control(`${translateValue('Pytaj')} · ${thermoPresetText(r, p)}`, `thermoConfirmP_${p}`, 'checkbox', !!r[`thermoConfirmP_${p}`])).join('') : ''));
+        return modesSection + presetsSection + confirmSection;
+  };
   const noParts = !isIconRoom(r) && !ROOM_LABEL_PARTS.some(([, k]) => r[k]); // (a room with its label hidden: only the room - no label sections)
   const label = noParts ? '' : (soloLabel(r) || oneShown || (!isThermoRoom(r) && !r.labelLinked && !(icon && dashSpan(r))) ? '' : group) + sectionOrder.map(partHtml).join('') + fxSection;
   // The ON / OFF preview only makes sense for entities that switch on and off (not e.g. a temperature sensor).
   const switchable = roomSwitchable(r);
-  return (r.roomEffect === 'weather' ? weatherPreviewRow(r) : '') + (switchable || r.dripOnly || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + entities + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
+  return (r.roomEffect === 'weather' ? weatherPreviewRow(r) : '') + (switchable || r.dripOnly || (isThermoRoom(r) && !isGaugeRoom(r)) ? previewRow('previewOn', roomPreviewOn, isThermoRoom(r) ? { acts: thermoActsUsed(r).join(','), current: thermoActivity(climateInfo({ entityId: r.entityIds[0] || '' })) } : null) : '') + (isThermoRoom(r) && !isGaugeRoom(r) ? entities.replace(/<\/div><\/details>$/, m => thermoModesGeneral() + m) : entities) + (icon ? '' : lookSection()) + (!icon && r.roomEffect === 'water' ? sprinklerSection(r) : '') + (icon && r.dripOnly ? dripLookSub(r) + dripSection(r) : '') + (!icon && r.roomEffect === 'motion' ? motionSection(r) : '') + (!icon && (r.roomEffect || 'light') === 'light' ? layersSection(r) : '') + label;
 }
 function openRoomEditor(id, preserveSection = roomEditorOpenSectionIndex, forceSection = null) {
   const room = roomsOf()[id], panel = $('#room-editor'); if (!room || !panel) return closeRoomEditor();

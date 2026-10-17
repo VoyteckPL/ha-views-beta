@@ -1,3 +1,7 @@
+## 0.7.0-beta.815
+
+- Termostat: zniknęła sekcja „Tryby” (jej „Rozmiar” i „Kolor” nic nie zmieniały). Kolejność i widoczność przycisków trybów, układ trybów, presety i potwierdzenia przy przełączeniu są teraz w sekcji „Ogólne”. Zostały tylko sekcje poszczególnych przycisków trybów.
+
 ## 0.7.0-beta.814
 
 - Termostat: „Przywróć domyślną wartość” przy „Wielkość koła” ustawia teraz razem szerokość i wysokość ikony (wcześniej tylko szerokość, więc koło robiło się jajowate).
