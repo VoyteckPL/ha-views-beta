@@ -1,3 +1,10 @@
+## 0.7.0-beta.801
+
+- Menu widoku uporządkowane: jeden równy rząd ikon – po lewej zmiana nazwy, widok startowy i zoom poza edycją, po prawej usuń, duplikuj i dodaj widok (usuwanie jest teraz samą ikoną).
+- Tytuł menu to nazwa widoku; zniknął mały tekst pod nim, wiersz z typem „Obraz z siatką” i sekcja „Opcje widoku”.
+- Wszystkie sekcje menu (Obraz, Tło nocne, Kolor, Kafelki) są domyślnie zwinięte.
+- Tło nocne: wybór tła, tryb i jasność na wierzchu; encja przełączająca i ściemnianie wg słońca schowane w zwiniętej grupie „Automatyczne przełączanie”.
+
 ## 0.7.0-beta.800
 
 - Pogoda: naprawione wielkie kropki gwiazd (pogodna noc). Rozmiar gwiazd i płatków był zapisywany raz, przy pierwszej klatce, gdy plan nie był jeszcze dopasowany do ekranu, i potem zostawał ogromny. Teraz rozmiar jest liczony w pikselach ekranu przy każdej klatce, a gwiazdy i chmury tworzą się od nowa przy zmianie powiększenia.

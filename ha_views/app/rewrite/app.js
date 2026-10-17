@@ -283,8 +283,7 @@ function setViewMenuPage(page) {
   const menu = els.viewSwitcher; if (!menu) return;
   page = 'background'; // (one page: the view's actions and its background settings, in sections)
   menu.dataset.page = page;
-  const title = $('#vm-title'); if (title) title.textContent = translateValue('Widok');
-  const name = $('#vm-name'); if (name) name.textContent = activeSceneView()?.name || '';
+  const title = $('#vm-title'); if (title) title.textContent = activeSceneView()?.name || translateValue('Widok'); // (the menu's title is the view's own name)
   if (page !== 'background') { hideBackgroundPreview(true); els.backgroundBar?.classList.remove('open','onboarding'); if (els.bgStatus) els.bgStatus.textContent = ''; }
   else { els.backgroundBar?.classList.add('open'); syncCanvasControls(); syncNightControls(); }
 }
@@ -431,7 +430,7 @@ function showMainView(name) {
 }
 function renderViewSelector() {
   if (!els.sceneTabs) return;
-  const sheetName = $('#vm-name'); if (sheetName) sheetName.textContent = activeSceneView()?.name || '';
+  const sheetTitle = $('#vm-title'); if (sheetTitle) sheetTitle.textContent = activeSceneView()?.name || translateValue('Widok');
   syncZoomToggle();
   const transition = $('#view-transition'); if (transition) transition.value = viewTransitionMode();
   els.sceneCard?.parentElement?.classList.toggle('swipe-mode-cube', viewTransitionMode() === 'cube' && mobileView());

@@ -2197,3 +2197,19 @@ body.drip-drawing .scene{cursor:crosshair}
 .weather-prev-buttons .preview-state-button{min-width:34px;height:34px;padding:0 8px;display:inline-grid;place-items:center}
 
 .fx-group-title{font-size:11px;letter-spacing:.04em;text-transform:uppercase;opacity:.65;margin:10px 0 4px}
+
+/* View menu: one even row of icons (the view's own on the left, delete / duplicate / add on the right), sections folded */
+.vm-view-actions.vm-toolbar{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.vm-tb-left,.vm-tb-right{display:contents}
+.vm-tb-right>:first-child{position:relative}
+.vm-tb-right>:first-child::before{content:"";position:absolute;left:-4px;top:18%;bottom:18%;width:1px;background:rgba(99,181,216,.35)}
+.vm-icon-danger{color:#ff6374}
+.vm-toolbar .vm-icon.active{color:#80e9ff}
+.vm-title small{display:none}
+.vm-sub{display:grid;gap:6px;margin-top:2px}
+.vm-sub>summary.vm-sub-title{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:8px;background:rgba(13,46,62,.6);color:#c6d8e1;font-size:11px;cursor:pointer;list-style:none}
+.vm-sub>summary.vm-sub-title::-webkit-details-marker{display:none}
+.vm-sub>summary.vm-sub-title i{font-size:15px;color:#9db7ff}
+.vm-sub>summary.vm-sub-title::after{content:"\F0140";font-family:"Material Design Icons";margin-left:auto;color:#6f8d9c;font-size:15px;transition:transform .15s}
+.vm-sub[open]>summary.vm-sub-title::after{transform:rotate(180deg)}
+.vm-sub>.vm-field,.vm-sub>.sun-dim-block{margin-top:6px}
