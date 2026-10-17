@@ -4226,10 +4226,10 @@ function roomEditorMarkup(room) {
     + tilePresets
     );
   // (On tiles a label is always on its tile, sized with its dots: no tile rows.)
-  const dashRows = (false && icon && r.labelLinked && dashGrid().on ? (dashSpan(r)
-          ? control('Szerokość (kratki)','dashW','range',dashSpan(r).cw,{ min:1, max:dashGrid().cols, step:1, integer:true }) + control('Wysokość (kratki)','dashH','range',dashSpan(r).ch,{ min:1, max:dashGrid().rows, step:1, integer:true })
-            + row('Siatka', `<button type="button" class="room-card-preset active" data-dash-unpin title="${escapeHtml(translateValue('Odepnij od siatki'))}" aria-label="${escapeHtml(translateValue('Odepnij od siatki'))}"><i class="mdi mdi-pin-off-outline"></i></button>`)
-          : row('Siatka', `<button type="button" class="room-card-preset" data-dash-pin title="${escapeHtml(translateValue('Przypnij do siatki'))}" aria-label="${escapeHtml(translateValue('Przypnij do siatki'))}"><i class="mdi mdi-pin-outline"></i></button>`)) : '');
+  // On tiles: its size in tiles with big - / + buttons (the dots on a tile are hard to hit on a phone).
+  const dashRows = (() => { const sp = icon && dashGrid().on ? dashSpan(r) : null; if (!sp || sp.free) return ''; const g = dashGrid();
+    const stepRow = (axis, label, n, max) => `<div class="control dash-step-row"><label>${esc(label)}</label><div class="dash-stepper"><button type="button" data-dash-size="${axis}:-1"${n <= 1 ? ' disabled' : ''} aria-label="${esc('Mniej')}"><i class="mdi mdi-minus"></i></button><b>${n}</b><button type="button" data-dash-size="${axis}:1"${n >= max ? ' disabled' : ''} aria-label="${esc('Więcej')}"><i class="mdi mdi-plus"></i></button></div><span></span></div>`;
+    return stepRow('w', 'Szerokość (kafelki)', sp.cw, g.cols) + stepRow('h', 'Wysokość (kafelki)', sp.ch, g.rows); })();
   const group = (h => presetBar ? h.replace('<span class="section-tools">', presetBar + '<span class="section-tools">') : h)(partBar('group', isTextRoom(r) ? 'Przycisk' : !isThermoRoom(r) ? 'Etykieta' : isGaugeRoom(r) ? 'Wskaźnik' : 'Termostat', `<div class="group-tight">`
     + (isGaugeRoom(r) ? gaugeShowRows(r, row, toggleButton) : isThermoRoom(r) ? thermoShowRows(r, row, toggleButton) : '')
     + (ownSize ? (soloLabel(r) ? '' : groupSize) : (freeSize || (dashSpan(r) ? '' : control('Rozmiar','labelSizeUi','range',Math.round(clamp(Number(r.labelCardScale) || 1, .2, 6) / labelScaleBase(r) * 100) / 100,{ min:.3, max:6, step:.05, suffix:'×' })))
@@ -10443,6 +10443,18 @@ function sprinklerInput(room, path, value, input, event) {
   renderRoomEditLayer(); syncWater(); syncMotion(); if (input.dataset.editorRefresh === 'true') { openRoomEditor(room.id); scheduleSave(true); return; }
   scheduleSave(event.type === 'change');
 }
+// The size of a label / thermostat on tiles: width and height in tiles, one step per tap (- / +).
+document.addEventListener('click', event => {
+  const b = event.target.closest?.('[data-dash-size]'), room = roomsOf()[selectedRoomId]; if (!b || !room || !editMode || b.disabled) return;
+  event.preventDefault(); event.stopPropagation();
+  const [axis, delta] = b.dataset.dashSize.split(':'), span = dashSpan(room), g = dashGrid(); if (!span || span.free || !room.dash) return;
+  const d = room.dash, w = clamp(Math.round((axis === 'w' ? span.cw + Number(delta) : span.cw)), 1, g.cols), h = clamp(Math.round((axis === 'h' ? span.ch + Number(delta) : span.ch)), 1, g.rows);
+  room.dash = { c: clamp(d.c, 0, g.cols - w), r: clamp(d.r, 0, g.rows - h), w, h }; const s2 = dashSpan(room);
+  room.x = Math.round((s2.x + s2.w / 2) * 100) / 100; room.y = Math.round((s2.y + s2.h / 2) * 100) / 100; room.labelCardX = 0; room.labelCardY = 0; room.updatedAt = new Date().toISOString();
+  renderRoomLabels(); if (resolveDashOverlaps(activeSceneView(), room.id)) renderRoomLabels();
+  if (room.tileColV2 && room.labelLinked && !room.labelCardFree) { applyTilePreset(room); renderRooms(); } // (its preset laid out again for the new shape, as when the dots are dragged)
+  renderDashGrid(room.dash); scheduleSave(true); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex));
+}, true);
 document.addEventListener('click', event => {
   const t = event.target.closest?.('[data-spr-add],[data-spr-del],[data-spr-dup]'); const room = roomsOf()[selectedRoomId];
   if (!t || !room || !editMode) return; event.preventDefault(); event.stopPropagation();

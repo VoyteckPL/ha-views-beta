@@ -1,3 +1,7 @@
+## 0.7.0-beta.809
+
+- Siatka kafelków: w sekcji etykiety / termostatu / wskaźnika pojawiły się wiersze „Szerokość (kafelki)” i „Wysokość (kafelki)” z dużymi przyciskami − i +. Jeden dotyk zmienia rozmiar o jeden kafelek, bez celowania w małe kropki na krawędzi – wygodne na telefonie. Układ etykiety dopasowuje się od razu.
+
 ## 0.7.0-beta.808
 
 - Regulacja światła: przycisk „Zapisz jako domyślny” w dymku zapamiętuje aktualną jasność i kolor (lub temperaturę barwy) etykiety. Od tego momentu zwykłe kliknięcie włączające światło zapala je w tym kolorze (a nie w ostatnim, jaki miało). Opcja „Włączaj w kolorze domyślnym” w edycji etykiety (włącza się sama po zapisaniu). Zapis dostępny tylko dla admina.
