@@ -1,3 +1,7 @@
+## 0.7.0-beta.800
+
+- Pogoda: naprawione wielkie kropki gwiazd (pogodna noc). Rozmiar gwiazd i płatków był zapisywany raz, przy pierwszej klatce, gdy plan nie był jeszcze dopasowany do ekranu, i potem zostawał ogromny. Teraz rozmiar jest liczony w pikselach ekranu przy każdej klatce, a gwiazdy i chmury tworzą się od nowa przy zmianie powiększenia.
+
 ## 0.7.0-beta.799
 
 - Pogoda: gwiazdy, płatki śniegu, grad i chmury mają teraz stałą wielkość na ekranie, niezależnie od powiększenia planu. Wcześniej ich wielkość rosła razem ze skalą sceny, więc na telefonie i w pełnym widoku gwiazdy były wielkimi szarymi kółkami (w małym podglądzie w edycji wyglądały dobrze). Gwiazdy: promień ok. 0,6–1,5 px; płatki ok. 1–2,5 px.

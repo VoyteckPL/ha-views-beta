@@ -10258,6 +10258,7 @@ function weatherFrame(now) {
       st = { key, buf, mask, clouds: null, flakes: [], stars: null }; weatherSt.rooms.set(r.id, st); }
     const f = st.buf.getContext('2d'), Bw = st.buf.width, Bh = st.buf.height, sp = q / z /* (buffer px in one screen px: stars, flakes and clouds keep their size on screen whatever the zoom) */, pw = clamp(Number(r.weatherPower ?? 100), 30, 200) / 100, area = (bw * z) * (bh * z) / (1280 * 800), wind = look.wind ? 3 : 1;
     f.setTransform(1, 0, 0, 1, 0, 0); f.clearRect(0, 0, Bw, Bh);
+    const cz = Math.round(z * 10); if (st.cz !== cz) { st.cz = cz; st.clouds = null; st.stars = null; } // (their count and size follow the zoom: made again when it changes - the first frames may come before the plan is fitted)
     if (look.dark) { f.fillStyle = `rgba(20,30,45,${Math.min(.26, look.dark * .2 * pw).toFixed(3)})`; f.fillRect(0, 0, Bw, Bh); }
     if (look.fog) { f.fillStyle = `rgba(220,228,238,${Math.min(.3, .1 * pw).toFixed(3)})`; f.fillRect(0, 0, Bw, Bh);
       for (let i = 0; i < 3; i++) { const y = Bh * (.2 + .3 * i) + Math.sin(T * .15 + i) * Bh * .05, x = Math.sin(T * .08 + i * 2) * Bw * .1, gr = f.createLinearGradient(0, y - Bh * .25, 0, y + Bh * .25);
@@ -10267,21 +10268,21 @@ function weatherFrame(now) {
       for (let i = 0; i < 9; i++) { const an = T * .05 + i * TAU / 9, rg = f.createLinearGradient(cx, cy, cx + Math.cos(an) * R * 1.3, cy + Math.sin(an) * R * 1.3); rg.addColorStop(0, `rgba(255,230,160,${(.1 * a).toFixed(3)})`); rg.addColorStop(1, 'rgba(255,230,160,0)');
         f.fillStyle = rg; f.beginPath(); f.moveTo(cx, cy); f.lineTo(cx + Math.cos(an - .06) * R * 1.3, cy + Math.sin(an - .06) * R * 1.3); f.lineTo(cx + Math.cos(an + .06) * R * 1.3, cy + Math.sin(an + .06) * R * 1.3); f.closePath(); f.fill(); } }
     if (look.stars) { f.fillStyle = 'rgba(8,14,40,.28)'; f.fillRect(0, 0, Bw, Bh);
-      if (!st.stars) st.stars = Array.from({ length: clamp(Math.round(area * 260), 14, 260) }, () => ({ x: Math.random() * Bw, y: Math.random() * Bh, r: (.6 + Math.random() * .9) * sp, ph: Math.random() * TAU }));
-      st.stars.forEach(o => { f.fillStyle = `rgba(255,255,255,${(Math.min(1, .35 + .65 * (.5 + .5 * Math.sin(T * 1.5 + o.ph))) * Math.min(1, pw)).toFixed(3)})`; f.beginPath(); f.arc(o.x, o.y, o.r, 0, TAU); f.fill(); }); }
+      if (!st.stars) st.stars = Array.from({ length: clamp(Math.round(area * 260), 14, 260) }, () => ({ x: Math.random() * Bw, y: Math.random() * Bh, r: .6 + Math.random() * .9, ph: Math.random() * TAU }));
+      st.stars.forEach(o => { f.fillStyle = `rgba(255,255,255,${(Math.min(1, .35 + .65 * (.5 + .5 * Math.sin(T * 1.5 + o.ph))) * Math.min(1, pw)).toFixed(3)})`; f.beginPath(); f.arc(o.x, o.y, o.r * sp, 0, TAU); f.fill(); }); }
     if (look.clouds) {
       if (!st.clouds) { const w0 = Math.max(40 * sp, Math.min(Bw * .7, Bh * .5, 420 * sp)), n = clamp(Math.ceil(look.clouds * (Bw * Bh) / (w0 * w0) * .9), 2, 14);
-        st.clouds = Array.from({ length: n }, () => { const w = w0 * (.7 + Math.random() * .6); return { x: Math.random() * (Bw + w) - w, y: Math.random() * Bh, w, sp: (5 + Math.random() * 7) * sp,
+        st.clouds = Array.from({ length: n }, () => { const w = w0 * (.7 + Math.random() * .6); return { x: Math.random() * (Bw + w) - w, y: Math.random() * Bh, w, sp: 5 + Math.random() * 7,
           puffs: Array.from({ length: 9 }, (_, i) => { const t = (i + .5) / 9, mid = 1 - Math.abs(t - .5) * 1.1; return [t * w, (Math.random() - .5) * w * .22, w * (.1 + .14 * mid + Math.random() * .05)]; }) }; }); }
       const grey = Math.round(246 - (look.dark || 0) * 120), alpha = Math.min(.6, (.3 + .18 * look.clouds) * pw), sh = Math.min(.3, .18 * pw * (1 + (look.dark || 0)));
       const puff = (px, py, pr, rgb, a) => { const gr = f.createRadialGradient(px, py, 0, px, py, pr); gr.addColorStop(0, `rgba(${rgb},${a.toFixed(3)})`); gr.addColorStop(.55, `rgba(${rgb},${(a * .6).toFixed(3)})`); gr.addColorStop(1, `rgba(${rgb},0)`); f.fillStyle = gr; f.fillRect(px - pr, py - pr, pr * 2, pr * 2); };
-      st.clouds.forEach(cl => { cl.x += cl.sp * wind * step; if (cl.x > Bw) { cl.x = -cl.w; cl.y = Math.random() * Bh; } });
+      st.clouds.forEach(cl => { cl.x += cl.sp * sp * wind * step; if (cl.x > Bw) { cl.x = -cl.w; cl.y = Math.random() * Bh; } });
       st.clouds.forEach(cl => cl.puffs.forEach(([dx, dy, pr]) => puff(cl.x + dx + cl.w * .22, cl.y + dy + cl.w * .2, pr * 1.1, '12,22,34', sh))); // (the shadow on the ground)
       st.clouds.forEach(cl => cl.puffs.forEach(([dx, dy, pr]) => puff(cl.x + dx, cl.y + dy, pr, `${grey},${grey + 4},${grey + 10}`, alpha))); }
     if (look.snow) { const want = clamp(Math.round(300 * area * look.snow * pw), 12, 700);
-      while (st.flakes.length < want) st.flakes.push({ x: Math.random() * Bw, y: Math.random() * Bh, r: (1.1 + Math.random() * 1.5) * sp * (look.hail ? .8 : 1), vy: (26 + Math.random() * 34) * sp * (look.hail ? 3 : 1), ph: Math.random() * TAU });
+      while (st.flakes.length < want) st.flakes.push({ x: Math.random() * Bw, y: Math.random() * Bh, r: (1.1 + Math.random() * 1.5) * (look.hail ? .8 : 1), vy: (26 + Math.random() * 34) * (look.hail ? 3 : 1), ph: Math.random() * TAU });
       st.flakes.length = Math.min(st.flakes.length, want);
-      st.flakes.forEach(o => { o.y += o.vy * step; o.x += (Math.sin(T * 1.2 + o.ph) * 12 * sp * (look.hail ? .2 : 1) + (wind - 1) * 14 * sp) * step; if (o.y > Bh + o.r) { o.y = -o.r; o.x = Math.random() * Bw; } if (o.x > Bw + 10) o.x = -10; f.fillStyle = 'rgba(40,60,90,.28)'; f.beginPath(); f.arc(o.x, o.y, o.r * 1.6, 0, TAU); f.fill(); f.fillStyle = look.hail ? 'rgba(225,238,255,.95)' : 'rgba(255,255,255,.95)'; f.beginPath(); f.arc(o.x, o.y, o.r, 0, TAU); f.fill(); }); }
+      st.flakes.forEach(o => { o.y += o.vy * sp * step; o.x += (Math.sin(T * 1.2 + o.ph) * 12 * sp * (look.hail ? .2 : 1) + (wind - 1) * 14 * sp) * step; if (o.y > Bh + o.r * sp) { o.y = -o.r * sp; o.x = Math.random() * Bw; } if (o.x > Bw + 10) o.x = -10; f.fillStyle = 'rgba(40,60,90,.28)'; f.beginPath(); f.arc(o.x, o.y, o.r * sp * 1.6, 0, TAU); f.fill(); f.fillStyle = look.hail ? 'rgba(225,238,255,.95)' : 'rgba(255,255,255,.95)'; f.beginPath(); f.arc(o.x, o.y, o.r * sp, 0, TAU); f.fill(); }); }
     f.globalCompositeOperation = 'destination-in'; f.drawImage(st.mask, 0, 0); f.globalCompositeOperation = 'source-over';
     g.globalAlpha = clamp(Number(r.weatherOpacity ?? 80), 10, 100) / 100; g.drawImage(st.buf, Math.round(x0 * q), Math.round(y0 * q)); g.globalAlpha = 1;
   });
