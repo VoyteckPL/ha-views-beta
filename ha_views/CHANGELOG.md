@@ -1,3 +1,7 @@
+## 0.7.0-beta.802
+
+- Menu widoku: ikony w rzędzie rozciągnięte na całą szerokość – pierwsza (z lewej) i ostatnia (plus) są równo z krawędziami sekcji poniżej.
+
 ## 0.7.0-beta.801
 
 - Menu widoku uporządkowane: jeden równy rząd ikon – po lewej zmiana nazwy, widok startowy i zoom poza edycją, po prawej usuń, duplikuj i dodaj widok (usuwanie jest teraz samą ikoną).

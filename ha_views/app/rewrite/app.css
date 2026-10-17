@@ -2213,3 +2213,5 @@ body.drip-drawing .scene{cursor:crosshair}
 .vm-sub>summary.vm-sub-title::after{content:"\F0140";font-family:"Material Design Icons";margin-left:auto;color:#6f8d9c;font-size:15px;transition:transform .15s}
 .vm-sub[open]>summary.vm-sub-title::after{transform:rotate(180deg)}
 .vm-sub>.vm-field,.vm-sub>.sun-dim-block{margin-top:6px}
+
+.vm-toolbar .vm-icon{width:100%;min-width:0;box-sizing:border-box;justify-self:stretch}
