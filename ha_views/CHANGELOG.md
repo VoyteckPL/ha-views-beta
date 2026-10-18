@@ -1,3 +1,7 @@
+## 0.7.0-beta.819
+
+- Powrót do aplikacji po tym, jak była w tle: strumień zdarzeń na żywo jest nawiązywany od nowa (po telefonie mógł wyglądać na otwarty, a być martwy), a stany są pobierane z ponawianiem (po 0, 1, 2,5, 6 i 12 s, do pierwszego sukcesu) – pierwsze pobranie tuż po wybudzeniu często szło bez sieci i zostawiało stare stany encji do następnego zdarzenia.
+
 ## 0.7.0-beta.818
 
 - Termostat: osobne przyciski trybów (każdy tryb jako własna sekcja, np. „Tryb: Grzanie”) też używają wyśrodkowanych ikon SVG. W beta.816–817 poprawiłem tylko wspólny rząd trybów, a Twój termostat rysuje tryby jako osobne przyciski, dlatego nic się nie zmieniało. Sprawdzone w Chromium: środek ikony = środek przycisku.

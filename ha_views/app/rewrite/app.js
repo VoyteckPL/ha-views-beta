@@ -8729,7 +8729,7 @@ function allViewEntityIds() {
   return [...ids];
 }
 async function refreshStates() {
-  const ids = allViewEntityIds().filter(id => !isVirtualId(id)); if (!ids.length) return renderMarkers();
+  const ids = allViewEntityIds().filter(id => !isVirtualId(id)); if (!ids.length) { renderMarkers(); return true; }
   const askedAt = performance.now();
   try {
     const data = await api('selected_states', jsonOptions({ entity_ids: ids }));
@@ -8745,7 +8745,8 @@ async function refreshStates() {
     applyNightBackground();
     prebuildSwipePreviews();
     if (els.connection) { els.connection.textContent = 'Połączono'; els.connection.className = 'connection live'; }
-  } catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } }
+    return true;
+  } catch (error) { if (els.connection) { els.connection.textContent = 'Błąd danych'; els.connection.className = 'connection error'; } return false; }
 }
 function connectEvents() {
   entityEvents?.close();
@@ -8755,12 +8756,23 @@ function connectEvents() {
   entityEvents.onerror = () => { if (els.connection) { els.connection.textContent = 'Ponowne łączenie…'; els.connection.className = 'connection error'; } };
   entityEvents.addEventListener('open', refreshStates);
 }
+// Back in the app after it slept in the background: the live stream may look open but be dead (the phone cut it), and the network
+// may not be up yet for the first refresh - so the stream is made again and the states are asked for until an answer comes.
+let awayAt = 0, refreshRun = 0;
+document.addEventListener('visibilitychange', () => { if (document.hidden && !awayAt) awayAt = Date.now(); });
+window.addEventListener('blur', () => { if (!awayAt) awayAt = Date.now(); });
+window.addEventListener('pagehide', () => { if (!awayAt) awayAt = Date.now(); });
+async function refreshStatesRetry() {
+  const run = ++refreshRun;
+  for (const wait of [0, 900, 2500, 6000, 12000]) { if (wait) await delay(wait); if (run !== refreshRun || document.hidden) return; if (await refreshStates()) return; }
+}
 function resumeLiveConnection() {
   if (document.hidden || !appRevealed) return;
   checkRemoteLayout();
   clearTimeout(resumeTimer); resumeTimer = setTimeout(() => {
-    refreshStates();
-    if (!entityEvents || entityEvents.readyState === EventSource.CLOSED) connectEvents();
+    const away = awayAt ? Date.now() - awayAt : 0; awayAt = 0;
+    if (away > 4000 || !entityEvents || entityEvents.readyState === EventSource.CLOSED) connectEvents();
+    refreshStatesRetry();
   }, 120);
 }
 // ---- Night background -----------------------------------------------------------------------
