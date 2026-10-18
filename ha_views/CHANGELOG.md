@@ -1,3 +1,7 @@
+## 0.7.0-beta.820
+
+- Stany w HA Views po powrocie: odświeżanie uruchamia się też wtedy, gdy telefon zamroził stronę i nie wysłał żadnego zdarzenia powrotu (wykrycie zatrzymanych zegarów na ponad 15 s) oraz gdy wraca sieć.
+
 ## 0.7.0-beta.819
 
 - Powrót do aplikacji po tym, jak była w tle: strumień zdarzeń na żywo jest nawiązywany od nowa (po telefonie mógł wyglądać na otwarty, a być martwy), a stany są pobierane z ponawianiem (po 0, 1, 2,5, 6 i 12 s, do pierwszego sukcesu) – pierwsze pobranie tuż po wybudzeniu często szło bez sieci i zostawiało stare stany encji do następnego zdarzenia.

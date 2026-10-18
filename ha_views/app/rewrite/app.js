@@ -8766,6 +8766,10 @@ async function refreshStatesRetry() {
   const run = ++refreshRun;
   for (const wait of [0, 900, 2500, 6000, 12000]) { if (wait) await delay(wait); if (run !== refreshRun || document.hidden) return; if (await refreshStates()) return; }
 }
+// (a page the phone froze may get no "back" event at all: timers that stop for a long time, or the network coming back, are a return as well)
+let beatAt = Date.now();
+setInterval(() => { const now = Date.now(); if (now - beatAt > 15000 && !document.hidden) { awayAt = awayAt || beatAt; resumeLiveConnection(); } beatAt = now; }, 5000);
+window.addEventListener('online', () => { awayAt = awayAt || Date.now() - 5000; resumeLiveConnection(); });
 function resumeLiveConnection() {
   if (document.hidden || !appRevealed) return;
   checkRemoteLayout();
