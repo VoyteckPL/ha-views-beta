@@ -8425,7 +8425,7 @@ const THERMO_DEFAULT_LOOK = Object.freeze({
   labelMode_heatColorOn:"#03101A", thermoDialStyle:"classic", thermoRoomWidth:30, thermoNeonGlow:5, thermoScaleStep:5, thermoSegCount:44,
   thermoSegGap:50, thermoCometTail:69, labelCardCentred:true, labelCardExact:true, labelMode_cool:true, labelMode_heat_cool:true,
   labelMode_auto:true, labelMode_dry:true, labelMode_fan_only:true, labelMode_eco:true, labelMode_electric:true, labelMode_gas:true,
-  labelMode_heat_pump:true, labelMode_high_demand:true, labelMode_performance:true, thermoModeShow_off:true, labelActionW:200, labelActionH:60,
+  labelMode_heat_pump:true, labelMode_high_demand:true, labelMode_performance:true, thermoModeShow_off:true, labelActionW:200, labelActionH:60, labelNameInset:10, labelStateInset:10, labelTargetInset:10, labelCurrentInset:10, labelActionInset:10,
   labelMinusW:74.5, labelMinusH:74.5, labelPlusW:75, labelPlusH:74.5, labelCurrentW:240.2, labelCurrentH:80.1
 });
 // Its size on the plan: as made on a tall (9:16) plan; on a wider plan smaller, so it takes the same share of the

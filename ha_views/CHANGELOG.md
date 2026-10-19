@@ -1,3 +1,7 @@
+## 0.7.0-beta.826
+
+- Termostat: nowo dodany termostat zaczyna z tymi samymi wartościami, które przywracają przyciski „domyślne” – dochodzi margines wewnętrzny 10 px w nazwie, stanie, temperaturze ustawionej i aktualnej oraz stanie pracy. Istniejące termostaty bez zmian.
+
 ## 0.7.0-beta.825
 
 - Termostat, „Stan pracy”: przyciski „domyślne” przy suwakach działają tak samo jak w nazwie – wysokość 60 px, szerokość 200 px, rozmiar tekstu 40 px, margines wewnętrzny 10 px.
