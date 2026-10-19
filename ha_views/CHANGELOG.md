@@ -1,3 +1,8 @@
+## 0.7.0-beta.821
+
+- Termostat: „Temperatura ustawiona”, „Temperatura aktualna” i „Stan pracy” mają teraz te same suwaki i podsekcje co „Nazwa”: Rozmiar tekstu, Grubość czcionki, Szerokość i Wysokość pudełka, Kolor, Tło i Ramka (oraz swoje własne ustawienia: format, jednostka, teksty i animacje stanów pracy).
+- Termostat: sekcja „Tarcza” jest w menu zaraz pod sekcją „Termostat”.
+
 ## 0.7.0-beta.820
 
 - Stany w HA Views po powrocie: odświeżanie uruchamia się też wtedy, gdy telefon zamroził stronę i nie wysłał żadnego zdarzenia powrotu (wykrycie zatrzymanych zegarów na ponad 15 s) oraz gdy wraca sieć.

@@ -4164,7 +4164,7 @@ function roomEditorMarkup(room) {
         + (r.thermoModeAccent === false ? control('Kolor aktywnego','thermoModeActiveColor','color',r.thermoModeActiveColor || '#FF7A2F') : '')
         + control('Ramki przycisków','thermoModeFrame','checkbox',r.thermoModeFrame !== false)
         + range('Odstęp','thermoModeGap',clamp(Number(r.thermoModeGap ?? 40), 0, 300),0,300,5,'%') + range('Zaokrąglenie','thermoModeRadius',clamp(Number(r.thermoModeRadius ?? 30), 0, 50),0,50,1,'%'));
-    const boxText = BOX_TEXT_KEYS.includes(key), other = key === 'labelName' ? 'labelState' : 'labelName';
+    const boxText = BOX_TEXT_KEYS.includes(key) || (thermoR && ['labelTarget','labelCurrent','labelAction'].includes(key)), other = key === 'labelName' ? 'labelState' : 'labelName';
     const framed = oneShown !== key && (r[`${key}Bg`] || r[`${key}Border`] || r.singleSaved?.key === key);
     // The text's weight on a slider (any weight, smoothly; snapped to whole hundreds by the font).
     const weightRow = range('Grubość czcionki',`${key}Weight`,textWeight(r, key, key === 'labelName' ? 700 : 400),100,900,50,'');
@@ -4268,7 +4268,7 @@ function roomEditorMarkup(room) {
   // A gauge: its own parts (the arc and value under their gauge names), no thermostat parts.
   const gaugeTitles = { dial:'Łuk', target:'Wartość' };
   const sectionOrder = isGaugeRoom(r) ? [...ROOM_LABEL_PARTS.slice(0, 2), ...THERMO_PARTS.filter(([p]) => ['dial','target','percent'].includes(p)).map(([p, k, t]) => [p, k, gaugeTitles[p] || t]), ...EXTRA_PARTS]
-    : [...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent'), ...MODE_PARTS, ...EXTRA_PARTS];
+    : [...(isThermoRoom(r) ? THERMO_PARTS.filter(([p]) => p === 'dial') : []), ...(isTextRoom(r) ? ROOM_LABEL_PARTS.slice(0, 2).map(([p, k, t, ...x]) => [p, k, k === 'labelName' ? 'Tekst' : t, ...x]) : ROOM_LABEL_PARTS.slice(0, 3)), ...THERMO_PARTS.filter(([p]) => p !== 'percent' && !(isThermoRoom(r) && p === 'dial')), ...MODE_PARTS, ...EXTRA_PARTS];
     // The icon's effect - a subsection of the icon's own section; (its own colour; animated while ON), with its strength.
   const ifxNow = iconEffectOf(r), mfxNow = iconMotionOf(r), t2 = text => escapeHtml(translateValue(text)), fxRow = (title, list, now, attr) => `<div class="fx-group-title">${t2(title)}</div><div class="fx-styles icon-fx">${list.map(([v, name, mdi]) => `<button type="button" class="fx-preset${now === v ? ' active' : ''}" data-${attr}="${v}" title="${t2(name)}"><i class="mdi ${mdi}"></i><span>${t2(name)}</span></button>`).join('')}</div>`;
   const iconFx = !r.labelIcon ? '' : `<details class="gauge-subsection size-open"><summary>${t2('Efekt ikony')}</summary><div class="gauge-subsection-body">${fxRow('Wygląd ikony', ICON_LOOKS, ifxNow, 'icon-fx')}${fxRow('Animacja i światło', ICON_MOTIONS, mfxNow, 'icon-motion')}`
@@ -4303,10 +4303,11 @@ function roomEditorMarkup(room) {
   const tileSizes = onTile && r.labelLinked, swapControl = (h, path, repl) => { const i = h.indexOf(`data-path="${path}"`); if (i < 0) return h; const a = h.lastIndexOf('<div class="control', i), b = h.indexOf('</output></div>', i); return a < 0 || b < 0 ? h : h.slice(0, a) + repl + h.slice(b + 15); };
   // Each part's "Rozmiar": its box's width and height (0 = as its content needs). They snap, while being moved, to the other
   // parts' widths / heights and to the part's own natural size.
-  const partNode = k => { const p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : 'state', id = CSS.escape(r.id); return document.querySelector(`.room-label-card[data-room-id="${id}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${id}"][data-label-part="${p}"]`); };
+  const partNode = k => { const p = k === 'labelIcon' ? 'icon' : k === 'labelName' ? 'name' : ROOM_LABEL_PARTS.find(([, kk]) => kk === k)?.[0] || 'state', id = CSS.escape(r.id); return document.querySelector(`.room-label-card[data-room-id="${id}"] > [data-label-part="${p}"], .room-label-part[data-room-id="${id}"][data-label-part="${p}"]`); };
   const boxNow = k => { const n = partNode(k); return n ? [n.offsetWidth, n.offsetHeight] : [0, 0]; };
   const boxRows = key => {
-    if (!['labelIcon','labelName','labelState'].includes(key) || !r[key]) return ''; // (a thermostat's icon / name / state too - the same as a label's)
+    const thermoText = isThermoRoom(r) && ['labelTarget','labelCurrent','labelAction'].includes(key);
+    if (!['labelIcon','labelName','labelState'].includes(key) && !thermoText || !r[key]) return ''; // (a thermostat's icon / name / state too - the same as a label's)
     const [w0, h0] = boxNow(key), w = Number(r[`${key}W`]) > 0 ? Number(r[`${key}W`]) : Math.round(w0), h = Number(r[`${key}H`]) > 0 ? Number(r[`${key}H`]) : Math.round(h0);
     const others = ['labelIcon','labelName','labelState'].filter(k => k !== key && r[k]).map(boxNow).flat().filter(v => v > 0).map(Math.round);
     const snaps = [...new Set([...others, Math.round(w0), Math.round(h0)])].filter(v => v > 0).sort((a, b) => a - b);
@@ -4319,6 +4320,7 @@ function roomEditorMarkup(room) {
       const maxS = Math.max(SOLO_ICON_MAX, Math.ceil(v / 10) * 10), stops = Array.from({ length: Math.floor(maxS / 100) }, (_, i) => (i + 1) * 100);
       return stopMarks(snapSlider(control(iconShapeOf(r) === 'circle' ? 'Wielkość koła' : 'Wielkość kwadratu', 'labelIconW', 'range', v, { min: 10, max: maxS, step: 1, suffix: 'px', integer: true }), 'labelIconW', stops, Math.max(8, Math.round((maxS - 10) * .03))), stops, 10, maxS, [], v);
     }
+    if (thermoText) return one('Szerokość', `${key}W`, Math.max(10, w)) + one('Wysokość', `${key}H`, Math.max(10, h)); // (a thermostat's set / current temperature and work state: the box only - no inner margin, as on its name's tile text)
     // A name's / state's inner margin: the room round its text inside the frame (the frame stays, the text fits in the rest).
     const inset = Number.isFinite(Number(r[`${key}Inset`])) && r[`${key}Inset`] !== '' && r[`${key}Inset`] !== null ? Number(r[`${key}Inset`]) : Math.round(TILE_TEXT_MARGIN * Math.min(w, h));
     if (key !== 'labelIcon') return one('Szerokość', `${key}W`, Math.max(10, w)) + one('Wysokość', `${key}H`, Math.max(10, h)) + control('Margines wewnętrzny', `${key}Inset`, 'range', clamp(Math.round(inset), 0, Math.max(2, Math.floor(Math.min(w, h) / 2 - 4))), { min: 0, max: Math.max(2, Math.floor(Math.min(w, h) / 2 - 4)), step: 1, suffix: 'px', integer: true }); // (at most what leaves the text some room)
