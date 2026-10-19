@@ -1,3 +1,7 @@
+## 0.7.0-beta.825
+
+- Termostat, „Stan pracy”: przyciski „domyślne” przy suwakach działają tak samo jak w nazwie – wysokość 60 px, szerokość 200 px, rozmiar tekstu 40 px, margines wewnętrzny 10 px.
+
 ## 0.7.0-beta.824
 
 - Termostat: przycisk „domyślne” przy szerokości, wysokości, rozmiarze tekstu i marginesie wewnętrznym (Nazwa, Stan, Temperatura ustawiona i aktualna, Stan pracy) ustawia teraz stałą wartość zamiast dopasowywać pudełko od nowa – wysokość nie skacze już 73/76/72. Domyślnie: wysokość nazwy 60 px, rozmiar tekstu 40 px (nazwa), margines wewnętrzny 10 px.
