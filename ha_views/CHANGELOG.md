@@ -1,3 +1,7 @@
+## 0.7.0-beta.822
+
+- Termostat: „Temperatura ustawiona”, „Temperatura aktualna” i „Stan pracy” działają teraz dokładnie jak „Nazwa”: dochodzi „Margines wewnętrzny”, a suwaki szerokości, wysokości i rozmiaru tekstu zachowują się tak samo – rozmiar tekstu ma kreski i górną granicę wynikającą z pudełka, pudełko przyciąga się do innych części, a zmiana marginesu dopasowuje tekst. Wcześniej te trzy części miały uproszczone sterowanie.
+
 ## 0.7.0-beta.821
 
 - Termostat: „Temperatura ustawiona”, „Temperatura aktualna” i „Stan pracy” mają teraz te same suwaki i podsekcje co „Nazwa”: Rozmiar tekstu, Grubość czcionki, Szerokość i Wysokość pudełka, Kolor, Tło i Ramka (oraz swoje własne ustawienia: format, jednostka, teksty i animacje stanów pracy).
