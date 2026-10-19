@@ -2098,8 +2098,8 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
   }
   if (r.labelTarget) parts.target = text('labelTarget', info.unavailable ? esc(tr('Niedostępny')) : value === null ? (info.mode === 'off' ? esc(String(r.thermoModeText_off || '').trim() || tr('Wył.')) : '–') : info.target === null && info.low !== null ? `${esc(thermoNumber(info.low, info.step))}–${esc(thermoNumber(info.high, info.step))}°` : `${esc(thermoFormat(value, r.labelTargetDecimals, info.step))}${String(r.labelTargetUnit ?? '°C') ? `<span class="thermo-deg">${esc(String(r.labelTargetUnit ?? '°C'))}</span>` : ''}`, 'thermo-target-text');
   if (r.labelCurrent && info.current !== null) parts.current = text('labelCurrent', `${esc(thermoFormat(info.current, r.labelCurrentDecimals, .1))}${esc(String(r.labelCurrentUnit ?? '°C'))}`);
-  const act = info.mode === 'off' ? THERMO_ACTIONS.off : THERMO_ACTIONS[info.action];
-  if (r.labelAction && act) { const a = info.mode === 'off' ? 'off' : info.action, anim = THERMO_ACT_ANIMS.some(([v]) => v === r[`thermoActAnim_${a}`]) ? r[`thermoActAnim_${a}`] : 'none';
+  const act = info.mode === 'off' ? THERMO_ACTIONS.off : THERMO_ACTIONS[info.action] || (editMode && r.labelAction ? THERMO_ACTIONS.off : null); /* (no state yet: still drawn while editing, so its box and font can be set) */
+  if (r.labelAction && act) { const a = info.mode === 'off' || !THERMO_ACTIONS[info.action] ? 'off' : info.action, anim = THERMO_ACT_ANIMS.some(([v]) => v === r[`thermoActAnim_${a}`]) ? r[`thermoActAnim_${a}`] : 'none';
     parts.action = text('labelAction', anim === 'none' ? esc(thermoActionText(r, a)) : `<span class="thermo-anim ${anim}" style="${syncAnimStyle(r)}">${esc(thermoActionText(r, a))}</span>`); }
   const canSet = info.target !== null && !info.unavailable;
   if (r.labelMinus) parts.minus = `<button type="button" class="thermo-step" data-thermo="down"${canSet ? '' : ' disabled'} aria-label="−" style="${roomTextStyle(r, 'labelMinus', on)}">${thermoBtnIcon('mdi-minus')}</button>`;
