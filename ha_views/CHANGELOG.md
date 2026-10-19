@@ -1,3 +1,7 @@
+## 0.7.0-beta.824
+
+- Termostat: przycisk „domyślne” przy szerokości, wysokości, rozmiarze tekstu i marginesie wewnętrznym (Nazwa, Stan, Temperatura ustawiona i aktualna, Stan pracy) ustawia teraz stałą wartość zamiast dopasowywać pudełko od nowa – wysokość nie skacze już 73/76/72. Domyślnie: wysokość nazwy 60 px, rozmiar tekstu 40 px (nazwa), margines wewnętrzny 10 px.
+
 ## 0.7.0-beta.823
 
 - Termostat: „Stan pracy” jest teraz widoczny w edycji także zaraz po dodaniu termostatu (gdy encja jeszcze nie ma stanu lub jest niedostępna), więc suwaki rozmiaru tekstu, szerokości i wysokości od razu zmieniają pudełko. Wcześniej ta część w ogóle się nie rysowała.

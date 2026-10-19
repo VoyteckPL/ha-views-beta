@@ -4913,7 +4913,9 @@ function onRoomEditorClick(event) {
     { const room0 = roomsOf()[selectedRoomId]; if (room0 && isThermoRoom(room0) && input && /^label(Icon|Name|State)(Size|W|H)$/.test(reset.dataset.resetPath) && reset.dataset.resetPath in THERMO_DEFAULT_LOOK) {
       // (a round / square icon keeps width = height: both go back together, else it turns into an egg)
       if (/^labelIcon[WH]$/.test(reset.dataset.resetPath) && iconShapeOf(room0) !== 'custom') { room0.labelIconW = room0.labelIconH = THERMO_DEFAULT_LOOK.labelIconW; room0.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room0.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; }
-      input.value = THERMO_DEFAULT_LOOK[reset.dataset.resetPath]; input.dispatchEvent(new Event('change', { bubbles:true })); return; } }
+      // (a text's box: set straight to the round default - through the slider's handler the box was fitted again and drifted: 73, 76, 72…)
+      room0[reset.dataset.resetPath] = THERMO_DEFAULT_LOOK[reset.dataset.resetPath]; room0.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room0.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; } }
+    { const room0 = roomsOf()[selectedRoomId], m0 = /^label(Name|State|Target|Current|Action)(Inset|W|H|Size)$/.exec(reset.dataset.resetPath); if (room0 && isThermoRoom(room0) && m0) { const p0 = reset.dataset.resetPath, v0 = m0[2] === 'Inset' ? 10 : THERMO_DEFAULT_LOOK[p0]; if (v0 !== undefined) { room0[p0] = v0; room0.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room0.id, openSectionIndex(content, roomEditorOpenSectionIndex)); scheduleSave(true); return; } } }
     // (an inner margin back to automatic: the preset's own, the text fitted again)
     if (room && /^label(Name|State|Target|Current|Action)Inset$/.test(path)) { delete room[path]; if (room.tileColV2 && dashSpan(room) && room.labelLinked) applyTilePreset(room); room.updatedAt = new Date().toISOString(); renderRooms(); openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); scheduleSave(true); return; }
     // (a tile preset's label: its own defaults - the gaps and margin it is laid out with, the rows split in half)
@@ -8395,7 +8397,7 @@ const THERMO_DEFAULT_LOOK = Object.freeze({
   tapAction:"more_info", labelCardRadius:26, labelCardPadding:0, labelIconName:"mdi:water", labelIconOn:"#20B9E7", labelIconSize:52,
   labelIconAnim:true, labelIconVariant:true, labelIconNameOn:"mdi:water", labelIconNameOff:"mdi:water-off", labelIconOutlineWidth:0.5,
   labelIconSource:"mdi", labelCardFree:true, labelNameColorState:true, labelStateColorState:true, labelStateColorOn:"#FFFFFF",
-  labelStateWeight:"bold", labelStateBgState:true, labelIconW:90, labelIconH:90, labelNameW:260, labelNameH:70, labelStateW:240.3,
+  labelStateWeight:"bold", labelStateBgState:true, labelIconW:90, labelIconH:90, labelNameW:260, labelNameH:60, labelStateW:240.3,
   labelStateH:52.3, labelIconFY:-400.03, labelNameFY:-309.5, labelStateFX:-4.11, labelStateFY:258.89, labelNameSize:40, labelStateColor:"#FFFFFF",
   labelStateSize:28, labelDial:true, labelDialSize:110, labelTarget:true, labelTargetSize:46, labelTargetBorderOpacity:0.35,
   labelTargetBorderWidth:2, labelCurrent:true, labelCurrentSize:71, labelAction:true, labelActionSize:40, labelActionColorOff:"#9FB6C3",
