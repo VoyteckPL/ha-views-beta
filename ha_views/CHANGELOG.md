@@ -1,3 +1,7 @@
+## 0.7.0-beta.827
+
+- Termostat, ikona: „przywróć domyślną” przy wielkości koła przywraca teraz także wielkość symbolu (52 px). Wcześniej koło wracało do 90 px, a symbol zostawał duży.
+
 ## 0.7.0-beta.826
 
 - Termostat: nowo dodany termostat zaczyna z tymi samymi wartościami, które przywracają przyciski „domyślne” – dochodzi margines wewnętrzny 10 px w nazwie, stanie, temperaturze ustawionej i aktualnej oraz stanie pracy. Istniejące termostaty bez zmian.
