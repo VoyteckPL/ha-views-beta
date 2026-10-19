@@ -1,3 +1,7 @@
+## 0.7.0-beta.828
+
+- Termostat, ikona: powiększanie koła ikony nie zmienia już rozmiaru ani położenia pozostałych elementów. Ikona rośnie wewnątrz ramki termostatu, jest przycinana na jej brzegu (nie wychodzi poza termostat), a suwak wielkości koła kończy się na rozmiarze ramki.
+
 ## 0.7.0-beta.827
 
 - Termostat, ikona: „przywróć domyślną” przy wielkości koła przywraca teraz także wielkość symbolu (52 px). Wcześniej koło wracało do 90 px, a symbol zostawał duży.

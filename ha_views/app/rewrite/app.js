@@ -1848,7 +1848,9 @@ function fitFreeCard(room, group) {
   // centre offset is moved onto the card, so the shown parts stay exactly where they are on the plan.
   const parts = [...card.children].map(node => [node, partKey(node)]).filter(([, key]) => key); if (!parts.length) return;
   const pad = clamp(Number(room.labelCardPadding ?? ROOM_DEFAULTS.labelCardPadding) || 0, 0, 150);
-  const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0; return [fx - node.offsetWidth / 2, fx + node.offsetWidth / 2, fy - node.offsetHeight / 2, fy + node.offsetHeight / 2]; });
+  // (a thermostat's icon counts up to its default size only - a bigger one grows inside the frame the other parts make, it never resizes or moves them)
+  const thermoIc = isThermoRoom(room) && parts.length > 1 ? THERMO_DEFAULT_LOOK.labelIconW : 0;
+  const box = parts.map(([node, key]) => { const fx = Number(room[`${key}FX`]) || 0, fy = Number(room[`${key}FY`]) || 0, w = key === 'labelIcon' && thermoIc ? Math.min(node.offsetWidth, thermoIc) : node.offsetWidth, h = key === 'labelIcon' && thermoIc ? Math.min(node.offsetHeight, thermoIc) : node.offsetHeight; return [fx - w / 2, fx + w / 2, fy - h / 2, fy + h / 2]; });
   const minX = Math.min(...box.map(b => b[0])), maxX = Math.max(...box.map(b => b[1])), minY = Math.min(...box.map(b => b[2])), maxY = Math.max(...box.map(b => b[3]));
   card.dataset.natCW = Math.max(1, maxX - minX); card.dataset.natCH = Math.max(1, maxY - minY); FREE_NAT.set(room.id, { cw: Math.max(1, maxX - minX), ch: Math.max(1, maxY - minY) });
   // A group centred on its frame (grouped again with the frame it kept): the frame's size, its centre on the group's point.
@@ -1861,7 +1863,10 @@ function fitFreeCard(room, group) {
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   card.style.width = `${Math.round(maxX - minX + 2 * cardPadX(room))}px`; card.style.height = `${Math.round(maxY - minY + pad * 2)}px`; card.dataset.natW = parseFloat(card.style.width); card.dataset.natH = parseFloat(card.style.height);
   card.style.setProperty('--fsx', `${cx}px`); card.style.setProperty('--fsy', `${cy}px`);
-  parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${(Number(room[`${key}FX`]) || 0) - cx}px,${(Number(room[`${key}FY`]) || 0) - cy}px)`; });
+  parts.forEach(([node, key]) => { node.style.transform = `translate(-50%,-50%) translate(${(Number(room[`${key}FX`]) || 0) - cx}px,${(Number(room[`${key}FY`]) || 0) - cy}px)`;
+    // (a thermostat's big icon is cut at the frame: it never reaches past it)
+    if (key === 'labelIcon' && thermoIc) { const dx = (Number(room.labelIconFX) || 0) - cx, dy = (Number(room.labelIconFY) || 0) - cy, hw = node.offsetWidth / 2, hh = node.offsetHeight / 2, fw = (maxX - minX) / 2 + cardPadX(room), fh = (maxY - minY) / 2 + pad, c = v => Math.max(0, Math.round(v * 10) / 10);
+      node.style.clipPath = hw > fw - dx - 0 || hh > fh - dy || hw > fw + dx || hh > fh + dy ? `inset(${c(hh - dy - fh)}px ${c(hw + dx - fw)}px ${c(hh + dy - fh)}px ${c(hw - dx - fw)}px)` : ''; } });
 }
 // Background, frame and corners of the group (the grouped card, or the backdrop behind ungrouped parts).
 // A label showing only its icon is the icon: its frame takes the icon's shape (circle / square / own corners).
@@ -4483,7 +4488,7 @@ function partNodes(room) { const id = CSS.escape(room.id); return $$(`.room-labe
 // How wide / high a part can get without going past those bounds (null: no limit). In a grouped label the parts beside
 // it along that line give way: they can get smaller (all in proportion) down to a fifth of their size.
 function partWHMax(room, k, axis) {
-  partWHMax.stack = null; if (isThermoRoom(room)) return null; /* (a thermostat's frame grows round its parts - its box then scales them all to fit) */ const n = partBoxNode(room, k), B = n && partBounds(room); if (!B) return null;
+  partWHMax.stack = null; if (isThermoRoom(room)) { /* (the icon may fill the thermostat's frame, not leave it; the other parts keep their own size) */ const ic = k === 'labelIcon' ? partBoxNode(room, k)?.closest('.room-label-card') : null, cw = Number(ic?.dataset.natCW), ch = Number(ic?.dataset.natCH); if (!(cw > 0 && ch > 0)) return null; return Math.floor(iconShapeOf(room) !== 'custom' ? Math.min(cw, ch) : axis === 'x' ? cw : ch); } /* (a thermostat's frame grows round its parts - its box then scales them all to fit) */ const n = partBoxNode(room, k), B = n && partBounds(room); if (!B) return null;
   const X = axis === 'x', r = n.getBoundingClientRect(), z = (X ? r.width / Math.max(1, n.offsetWidth) : r.height / Math.max(1, n.offsetHeight)) || 1;
   const lo = X ? 'left' : 'top', hi = X ? 'right' : 'bottom', clo = X ? 'top' : 'left', chi = X ? 'bottom' : 'right', inLo = X ? B.l : B.t, inHi = X ? B.r : B.b, cur = (r[hi] - r[lo]) / z;
   const card = room.labelLinked ? n.closest('.room-label-card') : null;
