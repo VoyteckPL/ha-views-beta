@@ -1,3 +1,8 @@
+## 0.7.0-beta.831
+
+- Termostat (zgrupowany i rozgrupowany): zmiana szerokości, wysokości i rozmiaru tekstu nazwy, stanu, temperatur i stanu pracy nie przesuwa już żadnych innych elementów (ramka termostatu zapamiętuje rozmiar tekstu, a mniejsza czcionka w małym pudełku jej nie zmienia). Suwaki kończą się na rozmiarze ramki, a pudełko większe niż ramka jest na jej brzegu przycinane. Nic nie jest już automatycznie zmniejszane „na zapas”.
+- Termostat: po zmniejszeniu pudełka do minimum i ponownym powiększeniu tekst znów rośnie, żeby wypełnić pudełko, do rozmiaru ustawionego ręcznie (albo domyślnego), zamiast zostawać mały.
+
 ## 0.7.0-beta.830
 
 - Termostat (zgrupowany): suwaki szerokości i wysokości części nie zależą już od jej aktualnego rozmiaru – po zmniejszeniu można ją znów zwiększyć, a limit to rozmiar kafelka (wcześniej wysokość zatrzymywała się na 60 i nie dało się jej zwiększyć). Ramka termostatu liczy teksty według ich rzeczywistego rozmiaru, nie według ustawionej szerokości i wysokości, więc te suwaki nie przesuwają ani nie zmieniają pozostałych elementów.
