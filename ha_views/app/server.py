@@ -1984,7 +1984,7 @@ async def api_rewrite_state_save(request):
             )
         data["revision"] = current_revision + 1
     encoded = json.dumps(data, ensure_ascii=False).encode("utf-8")
-    if len(encoded) > 2 * 1024 * 1024:
+    if len(encoded) > 8 * 1024 * 1024:
         return web.json_response(
             {"ok": False, "error": "Stan jest za duży"},
             status=413,

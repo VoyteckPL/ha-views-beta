@@ -1469,9 +1469,6 @@ function withExtraPartDefaults(d) {
   // Each extra part starts with the "Stan" part's look (size, colours, frames…), hidden until an entity is added.
   [1, 2, 3, 4].forEach(i => Object.keys(d).filter(k => k.startsWith('labelState') && k !== 'labelState' && !/^labelState(X|Y|FX|FY|DX|DY|OnText|OffText|Unit|Decimals)$/.test(k)).forEach(k => { d[`labelX${i}${k.slice(10)}`] = d[k]; }));
   [1, 2, 3, 4].forEach(i => Object.assign(d, { [`labelX${i}`]: false, [`labelX${i}Size`]: 18, [`labelX${i}X`]: 0, [`labelX${i}Y`]: 0 }));
-  // Their icon and name parts start with the same look, hidden.
-  [1, 2, 3, 4].forEach(i => { Object.keys(d).filter(k => k.startsWith('labelState') && k !== 'labelState' && !/^labelState(X|Y|FX|FY|DX|DY|OnText|OffText|Unit|Decimals)$/.test(k)).forEach(k => { d[`labelX${i}Name${k.slice(10)}`] = d[k]; d[`labelX${i}Icon${k.slice(10)}`] = d[k]; });
-    Object.assign(d, { [`labelX${i}Name`]: false, [`labelX${i}NameSize`]: 14, [`labelX${i}NameX`]: 0, [`labelX${i}NameY`]: 0, [`labelX${i}Icon`]: false, [`labelX${i}IconSize`]: 26, [`labelX${i}IconX`]: 0, [`labelX${i}IconY`]: 0 }); });
   // A mode button: filled in its mode's colour when active, a quiet frame when not ("ON" = active, "OFF" = not).
   MODE_PART_LIST.forEach(m => { const k = `labelMode_${m}`, c = MODE_DEFAULT_COLOR[m] || '#FF7A2F';
     Object.keys(d).filter(key => key.startsWith('labelState') && key !== 'labelState' && !/^labelState(X|Y|FX|FY|DX|DY|OnText|OffText|Unit|Decimals)$/.test(key)).forEach(key => { d[`${k}${key.slice(10)}`] = d[key]; });
@@ -4666,6 +4663,9 @@ function onRoomEditorInput(event) {
   // An extra entity's icon / name switched on for the first time: it appears next to its value (not on top of it), with the inner margin.
   { const xm = /^(labelX\d)(Icon|Name)$/.exec(path); if (xm && (input.type === 'checkbox' ? input.checked : value) === true && room[`${path}FX`] === undefined) {
     const bx = xm[1], icon = xm[2] === 'Icon', n = v => Number(v) || 0;
+    // (its look - colours, frame, weight… - is copied from the "Stan" part only now, so the rooms that never use it stay small)
+    Object.keys(ROOM_DEFAULTS).filter(k => k.startsWith('labelState') && k !== 'labelState' && !/^labelState(X|Y|FX|FY|DX|DY|OnText|OffText|Unit|Decimals)$/.test(k)).forEach(k => { const t = `${path}${k.slice(10)}`; if (room[t] === undefined) room[t] = clone(ROOM_DEFAULTS[k]); });
+    room[`${path}Size`] = icon ? 26 : 14;
     Object.assign(room, { [`${path}FX`]: n(room[`${bx}FX`]) - (icon ? 60 : 0), [`${path}FY`]: n(room[`${bx}FY`]) - (icon ? 0 : 22), [`${path}X`]: n(room[`${bx}X`]) - (icon ? 60 : 0), [`${path}Y`]: n(room[`${bx}Y`]) - (icon ? 0 : 22), [`${path}Inset`]: 10 }); } }
   { const sm = /^(label(?:Name|State|Target|Current|Action|X\d(?:Icon|Name)?))(Size|Weight|Inset|Padding)$/.exec(path); if (sm && room && isThermoRoom(room) && typeof value === 'number') { if (sm[2] === 'Size') room[`${sm[1]}SizeWant`] = value; FRAME_NAT.delete(`${room.id}|${sm[1]}`); } } // (the size set by hand is the one the text tries to fill its box with)
   { const bm = /^(label(?:Icon|Name|State|Target|Current|Action|X\d(?:Icon|Name)?))(W|H)$/.exec(path); if (bm) { const b = tileAfterEdit.base; if (!b || b.k !== bm[1]) { const n0 = partBoxNode(room, bm[1]); tileAfterEdit.base = { k: bm[1], size: (isThermoRoom(room) && Number(room[`${bm[1]}SizeWant`]) > 0 ? Number(room[`${bm[1]}SizeWant`]) : Math.max(Number(room[`${bm[1]}Size`]) || ROOM_DEFAULTS[`${bm[1]}Size`], isThermoRoom(room) && bm[1] !== 'labelIcon' ? Number(THERMO_DEFAULT_LOOK[`${bm[1]}Size`]) || 0 : 0)), frame: bm[1] === 'labelIcon' ? iconFrameNow(room, n0) : 0 }; } clearTimeout(tileAfterEdit.baseOff); tileAfterEdit.baseOff = setTimeout(() => { tileAfterEdit.base = null; partSizeSnap.frozen = null; partWHMax.frozen = null; keepSquare.frozen = null; }, event.type === 'change' ? 300 : 1500); } }

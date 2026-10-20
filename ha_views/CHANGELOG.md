@@ -1,3 +1,7 @@
+## 0.7.0-beta.844
+
+- Naprawiony błąd zapisu „Stan jest za duży”: limit zapisu stanu podniesiony z 2 MB do 8 MB, a ikona i nazwa dodatkowych encji nie powiększają już każdej etykiety i pokoju (ich wygląd jest kopiowany dopiero po ich włączeniu).
+
 ## 0.7.0-beta.843
 
 - Termostat, dodatkowe encje: każda encja (Encja 1–4) może teraz mieć osobną ikonę i osobną nazwę. W jej sekcji są przełączniki „Pokaż ikonę” i „Pokaż nazwę” (domyślnie wyłączone, więc istniejące termostaty wyglądają tak samo). Ikona domyślnie jest z encji (można wpisać własną), nazwa domyślnie z encji (można wpisać własny tekst). Każda część ma własną sekcję z rozmiarem, szerokością, wysokością, marginesem, kolorem, tłem i ramką oraz własne uchwyty na planszy, jak teksty.
