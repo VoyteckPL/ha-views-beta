@@ -1,3 +1,7 @@
+## 0.7.0-beta.836
+
+- Termostat: suwak „Rozmiar tekstu” kończy się tam, gdzie tekst jeszcze zostawia ustawiony margines wewnętrzny. Wcześniej można było powiększyć czcionkę tak, że wchodziła w margines, choć suwak marginesu dalej pokazywał 10 px.
+
 ## 0.7.0-beta.835
 
 - Termostat: podczas przeciągania żółtej kropki margines wewnętrzny jest już zachowany (wcześniej wskakiwał na 0 i dopiero po puszczeniu pokazywał się ustawiony).

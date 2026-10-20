@@ -4518,6 +4518,8 @@ function partWHMax(room, k, axis) {
   return Math.max(10, Math.floor(max));
 }
 // How big a part's icon / text can get and still fit in its frame (its slider runs only up to there).
+// A thermostat's text with an inner margin set: its size stops where the text still leaves that margin (1 = the margin counts).
+function thermoInsetMargin(room, k) { return isThermoRoom(room) && k !== 'labelIcon' && Number.isFinite(Number(room[`${k}Inset`])) && room[`${k}Inset`] !== '' && room[`${k}Inset`] !== null && Number(room[`${k}Inset`]) > 0 ? 1 : 0; }
 function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 0) {
   const path = `${k}Size`, s0 = Number(room[path]) || ROOM_DEFAULTS[path]; if (!n) return 420;
   const cs = getComputedStyle(n), bw = Number(room[`${k}W`]) > 0 ? Number(room[`${k}W`]) : n.offsetWidth, bh = Number(room[`${k}H`]) > 0 ? Number(room[`${k}H`]) : n.offsetHeight;
@@ -4558,7 +4560,7 @@ function syncSizeRanges(room) {
     if (wm && wm[1] === 'labelIcon' && isTileColumn(room)) { if (i !== document.activeElement) { const row = room.labelCardLayout === 'iconLeft', duo = room.labelCardLayout === 'iconName', hs = tileColumnHs(room), dt = tileDuoTop(room); i.min = String(duo ? Math.ceil(dt * .2) : row ? 10 : Math.ceil(hs * .1)); i.max = String(Math.floor(duo ? Math.min(dt * .8, TILE_COL_U * .6) : row ? tileRowIconMax(room) : hs * .7)); } return; }
     if (wm && !(partWHMax.frozen && i === document.activeElement)) { const mx = partWHMax(room, wm[1], wm[2] === 'W' ? 'x' : 'y'); if (mx) { const v = Math.max(mx, Number(i.value) || 0); if (Number(i.max) !== v) i.max = String(v); } return; }
     const m = /^(label(?:Icon|Name|State|Target|Current|Action))Size$/.exec(i.dataset.path); if (!m || i === document.activeElement && syncSizeRanges.dragging) return;
-    const mx = partSizeMax(room, m[1]); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
+    const mx = partSizeMax(room, m[1], undefined, false, thermoInsetMargin(room, m[1])); if (Number(i.max) !== mx) { i.max = String(mx); if (Number(i.value) > mx) i.value = String(mx); } });
   applyAutoStops();
 }
 function syncEditorValues(room) {
@@ -4663,7 +4665,7 @@ function onRoomEditorInput(event) {
   // A part's size: its frame stays as it is (taken now if it had none) and what is in it can grow only as far as it fits.
   { const sm = /^(label(?:Icon|Name|State|Target|Current|Action))Size$/.exec(path); if (sm && typeof value === 'number') { const k = sm[1], n = partBoxNode(room, k);
     if (n) { if (!(Number(room[`${k}W`]) > 0)) room[`${k}W`] = n.offsetWidth; if (!(Number(room[`${k}H`]) > 0)) room[`${k}H`] = n.offsetHeight; delete room[`${k}Lock`];
-      let max = partSizeMax(room, k, n); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
+      let max = partSizeMax(room, k, n, false, thermoInsetMargin(room, k)); if (value > max) { value = max; input.value = String(max); const o = input.closest('.control')?.querySelector('output'); if (o) o.textContent = `${Math.round(max)}${o.dataset.suffix || ''}`; } } } }
   // A part's width / height slider: the label's grid shows while it is moved (gone a moment after it is let go).
   if (/^label(Icon|Name|State|Target|Current|Action)(W|H)$|^labelCard(Padding|PadX)$|^labelPartGap$/.test(path)) { clearTimeout(onRoomEditorInput.gridOff); requestAnimationFrame(() => { const ctx = groupSnap(room), card = room.labelLinked && $(`.room-label-card[data-room-id="${CSS.escape(room.id)}"]`)?.getBoundingClientRect(); if (ctx && card?.width) { ctx.area = { l: card.left, t: card.top, r: card.right, b: card.bottom }; ctx.anchor = { x: (card.left + card.right) / 2, y: (card.top + card.bottom) / 2 }; } showGroupGrid(ctx); }); if (event.type === 'change') onRoomEditorInput.gridOff = setTimeout(hideGroupGrid, 700); }
   // A part's two margins: the first one moved makes the other one its own value too (as it is drawn now).
