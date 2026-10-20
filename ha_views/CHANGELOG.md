@@ -1,3 +1,7 @@
+## 0.7.0-beta.830
+
+- Termostat (zgrupowany): suwaki szerokości i wysokości części nie zależą już od jej aktualnego rozmiaru – po zmniejszeniu można ją znów zwiększyć, a limit to rozmiar kafelka (wcześniej wysokość zatrzymywała się na 60 i nie dało się jej zwiększyć). Ramka termostatu liczy teksty według ich rzeczywistego rozmiaru, nie według ustawionej szerokości i wysokości, więc te suwaki nie przesuwają ani nie zmieniają pozostałych elementów.
+
 ## 0.7.0-beta.829
 
 - Termostat: suwaki szerokości i wysokości części (nazwa, stan, temperatury, stan pracy) kończą się na brzegu ramki, zamiast zmniejszać szerokość i rozmiar tekstu tej części (rozgrupowany) albo przesuwać i zmniejszać pozostałe elementy (zgrupowany). Zmiana jednej części nie rusza już innych.
