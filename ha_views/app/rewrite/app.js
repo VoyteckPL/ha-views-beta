@@ -2647,7 +2647,7 @@ function startFreeResize(event, handle) {
   // per px of text, taken now); the text's width is fitted into the box. No 1:1 snapping for a text.
   // (The height a pill of this text has by itself, per px of text: measured with the box's own height taken off.)
   // (The icon's box is sized the same way: its dots scale the icon in proportion, its side dots its box only.)
-  const textBox = !isCard && !isThermoRoom(room) && (BOX_TEXT_KEYS.includes(key) || key === 'labelIcon'), sizeNode = node, sizeStart = startSize;
+  const textBox = !isCard && (isThermoRoom(room) ? THERMO_TEXT_PARTS.includes(key) && key !== 'labelPercent' : BOX_TEXT_KEYS.includes(key) || key === 'labelIcon'), sizeNode = node, sizeStart = startSize; /* (a thermostat's texts are sized by their dots like a label's name) */
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
   const textPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, textPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0;
@@ -2904,6 +2904,8 @@ function startFreeResize(event, handle) {
     camera.stop(); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); showAlignGuides([], []); hideGroupGrid();
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
+    // (a thermostat's text: a side dot leaves its size to the box - it fills it up to the size set by hand; a corner dot's size is the one set)
+    if (moved && textBox && isThermoRoom(room)) { FRAME_NAT.delete(`${room.id}|${key}`); if (c.length === 1) { const fit = partSizeMax(room, key, undefined, true), want = Number(room[`${key}SizeWant`]) > 0 ? Number(room[`${key}SizeWant`]) : Math.max(Number(room[`${key}Size`]) || 0, Number(THERMO_DEFAULT_LOOK[`${key}Size`]) || 0); if (fit > 0) room[`${key}Size`] = Math.round(clamp(Math.min(want, fit), 6, 420) * 10) / 10; } else room[`${key}SizeWant`] = room[`${key}Size`]; renderRoomLabels(); }
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); } if (moved) refocusLabel(room); // the camera keeps the resized label in view, 20% round it
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);

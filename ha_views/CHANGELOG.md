@@ -1,3 +1,7 @@
+## 0.7.0-beta.832
+
+- Termostat, rozgrupowany: uchwyty na planszy (żółte narożniki i fioletowe boki) nazwy, stanu, temperatur i stanu pracy działają teraz jak w etykiecie. Poszerzenie pudełka znów powiększa tekst (wcześniej zostawał mały, np. 8 px), a zmiana wysokości nie zmienia szerokości i odwrotnie (wcześniej ramka zapadała się do 10 px wysokości albo 54 px szerokości).
+
 ## 0.7.0-beta.831
 
 - Termostat (zgrupowany i rozgrupowany): zmiana szerokości, wysokości i rozmiaru tekstu nazwy, stanu, temperatur i stanu pracy nie przesuwa już żadnych innych elementów (ramka termostatu zapamiętuje rozmiar tekstu, a mniejsza czcionka w małym pudełku jej nie zmienia). Suwaki kończą się na rozmiarze ramki, a pudełko większe niż ramka jest na jej brzegu przycinane. Nic nie jest już automatycznie zmniejszane „na zapas”.
