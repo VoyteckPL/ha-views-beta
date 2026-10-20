@@ -2018,7 +2018,7 @@ function thermoConfirmPerMode(r) { return Object.keys(r || {}).some(k => /^therm
 function thermoActionText(r, action) { return String(r?.[`thermoActText_${action}`] || '').trim() || translateValue(THERMO_ACTIONS[action]?.[0] || action); }
 function thermoModeText(r, mode) { return String(r?.[`thermoModeText_${mode}`] || '').trim() || translateValue(mode === 'off' ? 'Wyłączony' : THERMO_MODES[mode]?.[0] || mode); }
 // Set / current temperature with its own rounding ("auto": the entity's step, 0,1 for the current one) and unit.
-function thermoFormat(v, decimals, autoStep, sep) { const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', sep === 'dot' ? '.' : ','); }
+function thermoFormat(v, decimals, autoStep, sep) { if (decimals === 'trim') return Number(v).toFixed(2).replace(/\.?0+$/, '').replace('.', sep === 'dot' ? '.' : ','); /* (18 stays 18, 18.5 stays 18.5) */ const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', sep === 'dot' ? '.' : ','); }
 const THERMO_DIAL_STYLES = [['classic','Klasyczna'],['segments','Segmenty LED'],['chrono','Chronograf'],['twin','Podwójny pierścień'],['thermal','Termiczna'],['neon','Neon'],['half','Półkole'],['comet','Kometa'],['scale','Podziałka']];
 function thermoContent(r, on, previewMode = null, previewAct = '') {
   const gauge = isGaugeRoom(r), marker = { entityId: (r.entityIds || [])[0] || '' }, info = gauge ? gaugeInfo(r) : climateInfo(marker, previewMode); if (previewAct && !gauge) info.action = previewAct;
@@ -4155,7 +4155,7 @@ function roomEditorMarkup(room) {
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
     const decimalsItems = [['auto','Automatycznie'],['0','0'],['1','0,1'],['2','0,01']];
     const thermoTexts = !isThermoRoom(r) ? '' : part === 'target' || part === 'current'
-      ? sub('Format', control('Zaokrąglenie',`${key}Decimals`,'select',String(r[`${key}Decimals`] ?? 'auto'),{ items: decimalsItems, dropdown:true }) + control('Separator dziesiętny',`${key}Sep`,'select',r[`${key}Sep`] === 'dot' ? 'dot' : 'comma',{ items: [['comma','Przecinek (21,5)'],['dot','Kropka (21.5)']], dropdown:true }) + control('Jednostka',`${key}Unit`,'text',String(r[`${key}Unit`] ?? '°C'),{ placeholder:'°C' }))
+      ? sub('Format', control('Zaokrąglenie',`${key}Decimals`,'select',String(r[`${key}Decimals`] ?? 'auto'),{ items: [...decimalsItems, ['trim','Bez zbędnych zer (18 / 18,5)']], dropdown:true }) + control('Separator dziesiętny',`${key}Sep`,'select',r[`${key}Sep`] === 'dot' ? 'dot' : 'comma',{ items: [['comma','Przecinek (21,5)'],['dot','Kropka (21.5)']], dropdown:true }) + control('Jednostka',`${key}Unit`,'text',String(r[`${key}Unit`] ?? '°C'),{ placeholder:'°C' }))
       : part === 'action'
       ? sub('Teksty', thermoActsUsed(r).map(a => control(THERMO_ACTIONS[a][0], `thermoActText_${a}`, 'text', r[`thermoActText_${a}`] || '', { placeholder: translateValue(THERMO_ACTIONS[a][0]) })).join(''))
         + sub('Animacja', thermoActsUsed(r).map(a => control(THERMO_ACTIONS[a][0], `thermoActAnim_${a}`, 'select', r[`thermoActAnim_${a}`] || 'none', { items: THERMO_ACT_ANIMS, dropdown:true })).join(''))

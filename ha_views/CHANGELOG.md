@@ -1,3 +1,7 @@
+## 0.7.0-beta.840
+
+- Termostat: w „Zaokrągleniu” temperatury ustawionej i aktualnej dochodzi opcja „Bez zbędnych zer” – 18 pokazuje się jako 18, a 18,5 jako 18,5 (zamiast 18,0).
+
 ## 0.7.0-beta.839
 
 - Termostat: w formacie temperatury ustawionej i aktualnej dochodzi wybór „Separator dziesiętny” – przecinek (21,5) albo kropka (21.5). Domyślnie przecinek, jak dotąd.
