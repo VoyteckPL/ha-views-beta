@@ -1,3 +1,7 @@
+## 0.7.0-beta.842
+
+- Termostat, dodatkowe encje (Encja 1–4): działają jak teksty – margines wewnętrzny, suwaki szerokości, wysokości i rozmiaru tekstu zatrzymują się na ramce i marginesie, tekst rośnie z powrotem razem z pudełkiem, uchwyty na planszy zachowują margines, a zmiana rozmiaru nie rusza pozostałych elementów. Nowo dodana encja ma margines wewnętrzny 10 px.
+
 ## 0.7.0-beta.841
 
 - Termostat: rozgrupowanie nie włącza już automatycznie tła i ramki nazwy ani stanu, gdy były wyłączone. Zwykłe etykiety działają jak dotąd.
