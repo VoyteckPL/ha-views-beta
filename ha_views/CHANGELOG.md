@@ -1,3 +1,7 @@
+## 0.7.0-beta.838
+
+- Termostat: temperatura ustawiona, temperatura aktualna, stan pracy i stan zachowują się przy zmianie rozmiaru tak samo jak nazwa. Naprawiony pomiar tekstu: tekst wewnątrz szerokiego pudełka był mierzony jako tak szeroki jak całe pudełko, więc po przeciągnięciu boku czcionka spadała do 6 px.
+
 ## 0.7.0-beta.837
 
 - Termostat: przeciągając fioletowe boki pudełka tekstu, tekst od razu rośnie i maleje razem z pudełkiem i zatrzymuje się na marginesie wewnętrznym (wcześniej dopasowywał się dopiero po puszczeniu myszy).

@@ -4537,7 +4537,7 @@ function partSizeMax(room, k, n = partBoxNode(room, k), exact = false, margin = 
     const t = n.querySelector('b, small') || n, tc = getComputedStyle(t), cx = (partSizeMax.cx ||= document.createElement('canvas').getContext('2d')), fs = parseFloat(tc.fontSize) || s0;
     cx.font = `${tc.fontStyle} ${tc.fontWeight} ${fs}px ${tc.fontFamily}`; const txt = (t.textContent || '').trim(), mt = cx.measureText(txt || 'M');
     const mtT = null; // (the text as it is fills its frame - a short value grows bigger)
-    const rg = document.createRange(); rg.selectNodeContents(t); const zz = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1, dw = rg.getBoundingClientRect().width / zz; /* (as drawn: the canvas may measure a fallback font) */
+    const rg = document.createRange(); rg.selectNodeContents(t); { /* (the letters only: a text inside a block span would be measured as wide as its box) */ const tw = document.createTreeWalker(t, NodeFilter.SHOW_TEXT), tns = []; for (let x = tw.nextNode(); x; x = tw.nextNode()) if ((x.textContent || '').trim()) tns.push(x); if (tns.length) { rg.setStartBefore(tns[0]); rg.setEndAfter(tns[tns.length - 1]); } } const zz = n.getBoundingClientRect().width / Math.max(1, n.offsetWidth) || 1, dw = rg.getBoundingClientRect().width / zz; /* (as drawn: the canvas may measure a fallback font) */
     // (the text sits centred by its line, not by its letters: what counts is how far the letters reach above and below the
     // line's middle - a "y" hangs below it - so the height is twice the further of the two)
     const fa = mt.fontBoundingBoxAscent || fs * .97, fd = mt.fontBoundingBoxDescent || fs * .24, mid = (fa - fd) / 2;
