@@ -1,3 +1,7 @@
+## 0.7.0-beta.835
+
+- Termostat: podczas przeciągania żółtej kropki margines wewnętrzny jest już zachowany (wcześniej wskakiwał na 0 i dopiero po puszczeniu pokazywał się ustawiony).
+
 ## 0.7.0-beta.834
 
 - Termostat: zmiana rozmiaru żółtą kropką (i bokami) nie zeruje już marginesu wewnętrznego – tekst zostawia wokół siebie ustawiony margines (np. 10 px) także podczas i po przeciąganiu. Wcześniej tekst wypełniał pudełko do samej krawędzi, mimo że suwak pokazywał 10 px.

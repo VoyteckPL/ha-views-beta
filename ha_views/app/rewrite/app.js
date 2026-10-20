@@ -2651,7 +2651,7 @@ function startFreeResize(event, handle) {
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
   const insetSet = textBox && isThermoRoom(room) && Number.isFinite(Number(room[`${key}Inset`])) && room[`${key}Inset`] !== '' && room[`${key}Inset`] !== null ? clamp(Number(room[`${key}Inset`]), 0, 200) : 0; /* (a thermostat's inner margin set: the room kept round the text) */
-  const textPadX0 = textBox ? Math.max(parseFloat(getComputedStyle(node).paddingLeft) || 0, insetSet) : 0, textPadY0 = textBox ? Math.max(parseFloat(getComputedStyle(node).paddingTop) || 0, insetSet) : 0;
+  const realPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, realPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0, textPadX0 = Math.max(realPadX0, insetSet), textPadY0 = Math.max(realPadY0, insetSet);
   const textRadPx0 = textBox && key !== 'labelIcon' && (room[`${key}Bg`] || room[`${key}Border`]) ? parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0 : 0;
   const [boxPerPx, boxWPerPx] = textBox ? (() => {
     const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
@@ -2865,7 +2865,7 @@ function startFreeResize(event, handle) {
       // Its width and height each follow the dot freely; the content scales with the tighter side (centred in the box).
       lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
       // (Measured against the content's own size, not the box: a box made wider, then taller, grows the content.)
-      const natIW = Math.max(1, boxWPerPx * sizeStart - 2 * textPadX0), natIH = Math.max(1, boxPerPx * sizeStart - 2 * textPadY0);
+      const natIW = Math.max(1, boxWPerPx * sizeStart - 2 * realPadX0), natIH = Math.max(1, boxPerPx * sizeStart - 2 * realPadY0); /* (the text's own size - the padding the box really has, not the inner margin kept round it) */
       const f = clamp(Math.min((lw - 2 * textPadX0) / natIW, (lh - 2 * textPadY0) / natIH), fMin, 420 / Math.max(1, sizeStart));
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
       if (textPad0 === null && textPadY0 > 0 && !insetSet) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
