@@ -2650,7 +2650,8 @@ function startFreeResize(event, handle) {
   const textBox = !isCard && (isThermoRoom(room) ? THERMO_TEXT_PARTS.includes(key) && key !== 'labelPercent' : BOX_TEXT_KEYS.includes(key) || key === 'labelIcon'), sizeNode = node, sizeStart = startSize; /* (a thermostat's texts are sized by their dots like a label's name) */
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
-  const textPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, textPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0;
+  const insetSet = textBox && isThermoRoom(room) && Number.isFinite(Number(room[`${key}Inset`])) && room[`${key}Inset`] !== '' && room[`${key}Inset`] !== null ? clamp(Number(room[`${key}Inset`]), 0, 200) : 0; /* (a thermostat's inner margin set: the room kept round the text) */
+  const textPadX0 = textBox ? Math.max(parseFloat(getComputedStyle(node).paddingLeft) || 0, insetSet) : 0, textPadY0 = textBox ? Math.max(parseFloat(getComputedStyle(node).paddingTop) || 0, insetSet) : 0;
   const textRadPx0 = textBox && key !== 'labelIcon' && (room[`${key}Bg`] || room[`${key}Border`]) ? parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0 : 0;
   const [boxPerPx, boxWPerPx] = textBox ? (() => {
     const n = sizeNode, keep = [n.style.width, n.style.height, n.style.minWidth, n.style.minHeight], t = n.querySelector('b, small'), fs = t?.style.fontSize || '';
@@ -2859,7 +2860,7 @@ function startFreeResize(event, handle) {
         // A side's dot: the box gets wider / taller, the text keeps its size (centred; fitted in when the box is narrower).
         lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
         room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
-        if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
+        if (textPad0 === null && textPadY0 > 0 && !insetSet) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       } else {
       // Its width and height each follow the dot freely; the content scales with the tighter side (centred in the box).
       lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
@@ -2867,7 +2868,7 @@ function startFreeResize(event, handle) {
       const natIW = Math.max(1, boxWPerPx * sizeStart - 2 * textPadX0), natIH = Math.max(1, boxPerPx * sizeStart - 2 * textPadY0);
       const f = clamp(Math.min((lw - 2 * textPadX0) / natIW, (lh - 2 * textPadY0) / natIH), fMin, 420 / Math.max(1, sizeStart));
       room[`${key}Size`] = Math.round(clamp(sizeStart * f, 6, 420) * 10) / 10;
-      if (textPad0 === null && textPadY0 > 0) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
+      if (textPad0 === null && textPadY0 > 0 && !insetSet) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
       // Corners keep their radius (an unset one, growing with the text, is kept at its present px).
       if (textRad0 === null && textRadPx0 > 0) room[`${key}Radius`] = Math.round(textRadPx0 * 10) / 10;
       room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
@@ -2905,7 +2906,7 @@ function startFreeResize(event, handle) {
     const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', swallow, { capture:true, once:true }); setTimeout(() => window.removeEventListener('click', swallow, true), 250);
     if (moved && isCard) { if (Number(room.labelCardScale) < cardBase - .001) room.labelCardFitBase = cardBase; else delete room.labelCardFitBase; }
     // (a thermostat's text: a side dot leaves its size to the box - it fills it up to the size set by hand; a corner dot's size is the one set)
-    if (moved && textBox && isThermoRoom(room)) { FRAME_NAT.delete(`${room.id}|${key}`); if (c.length === 1) { const fit = partSizeMax(room, key, undefined, true), want = Number(room[`${key}SizeWant`]) > 0 ? Number(room[`${key}SizeWant`]) : Math.max(Number(room[`${key}Size`]) || 0, Number(THERMO_DEFAULT_LOOK[`${key}Size`]) || 0); if (fit > 0) room[`${key}Size`] = Math.round(clamp(Math.min(want, fit), 6, 420) * 10) / 10; } else room[`${key}SizeWant`] = room[`${key}Size`]; renderRoomLabels(); }
+    if (moved && textBox && isThermoRoom(room)) { FRAME_NAT.delete(`${room.id}|${key}`); if (c.length === 1) { const fit = partSizeMax(room, key, undefined, true, insetSet > 0 ? 1 : 0), want = Number(room[`${key}SizeWant`]) > 0 ? Number(room[`${key}SizeWant`]) : Math.max(Number(room[`${key}Size`]) || 0, Number(THERMO_DEFAULT_LOOK[`${key}Size`]) || 0); if (fit > 0) room[`${key}Size`] = Math.round(clamp(Math.min(want, fit), 6, 420) * 10) / 10; } else { const fit = partSizeMax(room, key, undefined, true, insetSet > 0 ? 1 : 0); if (fit > 0 && room[`${key}Size`] > fit) room[`${key}Size`] = Math.round(clamp(fit, 6, 420) * 10) / 10; room[`${key}SizeWant`] = room[`${key}Size`]; } renderRoomLabels(); }
     if (moved) { room.updatedAt = new Date().toISOString(); scheduleSave(true); if (selectedRoomId === room.id) openRoomEditor(room.id, openSectionIndex($('#room-editor-content'), roomEditorOpenSectionIndex)); } if (moved) refocusLabel(room); // the camera keeps the resized label in view, 20% round it
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
