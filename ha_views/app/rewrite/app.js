@@ -975,7 +975,7 @@ function gaugeAccent(r, v) {
 // A round step (1, 2 or 5 × a power of ten) at least as big as the given one.
 function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(Math.max(1e-9, raw)))); return [1, 2, 5, 10].map(k => k * p).find(v => v >= raw - 1e-12) || 10 * p; }
 function gaugeValueText(r, info) {
-  const unit = r.labelTargetUnit ?? info.unit ?? ''; return `${thermoFormat(info.target, r.labelTargetDecimals, Number.isInteger(info.target) ? 1 : .1)}${unit ? (/^[%°]/.test(unit) ? '' : ' ') + unit : ''}`;
+  const unit = r.labelTargetUnit ?? info.unit ?? ''; return `${thermoFormat(info.target, r.labelTargetDecimals, Number.isInteger(info.target) ? 1 : .1, r.labelTargetSep)}${unit ? (/^[%°]/.test(unit) ? '' : ' ') + unit : ''}`;
 }
 // Sensible start values for a new gauge, from what the entity measures (its device class, unit, name): the range, the
 // thresholds and their colours (e.g. room temperature 10–30 °C, cold under 18, warm from 24; solar power 0–5 kW).
@@ -2018,7 +2018,7 @@ function thermoConfirmPerMode(r) { return Object.keys(r || {}).some(k => /^therm
 function thermoActionText(r, action) { return String(r?.[`thermoActText_${action}`] || '').trim() || translateValue(THERMO_ACTIONS[action]?.[0] || action); }
 function thermoModeText(r, mode) { return String(r?.[`thermoModeText_${mode}`] || '').trim() || translateValue(mode === 'off' ? 'Wyłączony' : THERMO_MODES[mode]?.[0] || mode); }
 // Set / current temperature with its own rounding ("auto": the entity's step, 0,1 for the current one) and unit.
-function thermoFormat(v, decimals, autoStep) { const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', ','); }
+function thermoFormat(v, decimals, autoStep, sep) { const d = decimals === 'auto' || decimals === undefined || decimals === null || decimals === '' ? (String(autoStep).includes('.') ? 1 : 0) : clamp(Number(decimals) || 0, 0, 3); return Number(v).toFixed(d).replace('.', sep === 'dot' ? '.' : ','); }
 const THERMO_DIAL_STYLES = [['classic','Klasyczna'],['segments','Segmenty LED'],['chrono','Chronograf'],['twin','Podwójny pierścień'],['thermal','Termiczna'],['neon','Neon'],['half','Półkole'],['comet','Kometa'],['scale','Podziałka']];
 function thermoContent(r, on, previewMode = null, previewAct = '') {
   const gauge = isGaugeRoom(r), marker = { entityId: (r.entityIds || [])[0] || '' }, info = gauge ? gaugeInfo(r) : climateInfo(marker, previewMode); if (previewAct && !gauge) info.action = previewAct;
@@ -2105,8 +2105,8 @@ function thermoContent(r, on, previewMode = null, previewAct = '') {
     if (r.labelPercent && !info.unavailable) parts.percent = text('labelPercent', `${Math.round(clamp((info.target - info.min) / (info.max - info.min), 0, 1) * 100)}%`);
     return { accent, parts, active: false };
   }
-  if (r.labelTarget) parts.target = text('labelTarget', info.unavailable ? esc(tr('Niedostępny')) : value === null ? (info.mode === 'off' ? esc(String(r.thermoModeText_off || '').trim() || tr('Wył.')) : '–') : info.target === null && info.low !== null ? `${esc(thermoNumber(info.low, info.step))}–${esc(thermoNumber(info.high, info.step))}°` : `${esc(thermoFormat(value, r.labelTargetDecimals, info.step))}${String(r.labelTargetUnit ?? '°C') ? `<span class="thermo-deg">${esc(String(r.labelTargetUnit ?? '°C'))}</span>` : ''}`, 'thermo-target-text');
-  if (r.labelCurrent && info.current !== null) parts.current = text('labelCurrent', `${esc(thermoFormat(info.current, r.labelCurrentDecimals, .1))}${esc(String(r.labelCurrentUnit ?? '°C'))}`);
+  if (r.labelTarget) parts.target = text('labelTarget', info.unavailable ? esc(tr('Niedostępny')) : value === null ? (info.mode === 'off' ? esc(String(r.thermoModeText_off || '').trim() || tr('Wył.')) : '–') : info.target === null && info.low !== null ? `${esc(thermoNumber(info.low, info.step, r.labelTargetSep))}–${esc(thermoNumber(info.high, info.step, r.labelTargetSep))}°` : `${esc(thermoFormat(value, r.labelTargetDecimals, info.step, r.labelTargetSep))}${String(r.labelTargetUnit ?? '°C') ? `<span class="thermo-deg">${esc(String(r.labelTargetUnit ?? '°C'))}</span>` : ''}`, 'thermo-target-text');
+  if (r.labelCurrent && info.current !== null) parts.current = text('labelCurrent', `${esc(thermoFormat(info.current, r.labelCurrentDecimals, .1, r.labelCurrentSep))}${esc(String(r.labelCurrentUnit ?? '°C'))}`);
   const act = info.mode === 'off' ? THERMO_ACTIONS.off : THERMO_ACTIONS[info.action] || (editMode && r.labelAction ? THERMO_ACTIONS.off : null); /* (no state yet: still drawn while editing, so its box and font can be set) */
   if (r.labelAction && act) { const a = info.mode === 'off' || !THERMO_ACTIONS[info.action] ? 'off' : info.action, anim = THERMO_ACT_ANIMS.some(([v]) => v === r[`thermoActAnim_${a}`]) ? r[`thermoActAnim_${a}`] : 'none';
     parts.action = text('labelAction', anim === 'none' ? esc(thermoActionText(r, a)) : `<span class="thermo-anim ${anim}" style="${syncAnimStyle(r)}">${esc(thermoActionText(r, a))}</span>`); }
@@ -4155,7 +4155,7 @@ function roomEditorMarkup(room) {
     const number = part === 'state' && !onOff && roomNumber(r) !== null;
     const decimalsItems = [['auto','Automatycznie'],['0','0'],['1','0,1'],['2','0,01']];
     const thermoTexts = !isThermoRoom(r) ? '' : part === 'target' || part === 'current'
-      ? sub('Format', control('Zaokrąglenie',`${key}Decimals`,'select',String(r[`${key}Decimals`] ?? 'auto'),{ items: decimalsItems, dropdown:true }) + control('Jednostka',`${key}Unit`,'text',String(r[`${key}Unit`] ?? '°C'),{ placeholder:'°C' }))
+      ? sub('Format', control('Zaokrąglenie',`${key}Decimals`,'select',String(r[`${key}Decimals`] ?? 'auto'),{ items: decimalsItems, dropdown:true }) + control('Separator dziesiętny',`${key}Sep`,'select',r[`${key}Sep`] === 'dot' ? 'dot' : 'comma',{ items: [['comma','Przecinek (21,5)'],['dot','Kropka (21.5)']], dropdown:true }) + control('Jednostka',`${key}Unit`,'text',String(r[`${key}Unit`] ?? '°C'),{ placeholder:'°C' }))
       : part === 'action'
       ? sub('Teksty', thermoActsUsed(r).map(a => control(THERMO_ACTIONS[a][0], `thermoActText_${a}`, 'text', r[`thermoActText_${a}`] || '', { placeholder: translateValue(THERMO_ACTIONS[a][0]) })).join(''))
         + sub('Animacja', thermoActsUsed(r).map(a => control(THERMO_ACTIONS[a][0], `thermoActAnim_${a}`, 'select', r[`thermoActAnim_${a}`] || 'none', { items: THERMO_ACT_ANIMS, dropdown:true })).join(''))
@@ -6437,7 +6437,7 @@ function thermoActivity(info) {
 }
 function thermoActColor(s, activity) { return s?.[`thermoActColor_${activity}`] || THERMO_ACT_COLORS[activity] || THERMO_ACT_COLORS.idle; }
 function thermoAccent(s, info) { return thermoActColor(s, thermoActivity(info)); }
-function thermoNumber(v, step = .5) { if (v === null || v === undefined) return '–'; const d = String(step).includes('.') ? 1 : 0; return Number(v).toFixed(d).replace('.', ','); }
+function thermoNumber(v, step = .5, sep) { if (v === null || v === undefined) return '–'; const d = String(step).includes('.') ? 1 : 0; return Number(v).toFixed(d).replace('.', sep === 'dot' ? '.' : ','); }
 function thermostatMarkup(marker) {
   const s = marker.style, info = climateInfo(marker), accent = thermoAccent(s, info), esc = escapeHtml, tr = translateValue;
   const cx = 100, cy = 92, r = 74, start = 135, sweep = 270, angle = v => start + sweep * clamp((v - info.min) / (info.max - info.min), 0, 1);
@@ -6450,7 +6450,7 @@ function thermostatMarkup(marker) {
   const svg = `<svg class="thermo-dial" viewBox="0 0 200 172" preserveAspectRatio="xMidYMid meet"><path class="thermo-track" d="${track}" style="stroke:${esc(s.thermoTrackColor)}"/>${arc ? `<path class="thermo-arc${working ? ' working' : ''}" d="${arc}" style="stroke:${esc(accent)}"/>` : ''}${cur && s.thermoShowCurrent ? `<circle class="thermo-cur" cx="${cur.x.toFixed(1)}" cy="${cur.y.toFixed(1)}" r="4.2"/>` : ''}${knob ? `<circle class="thermo-knob" cx="${knob.x.toFixed(1)}" cy="${knob.y.toFixed(1)}" r="7.5" style="stroke:${esc(accent)}"/>` : ''}${range}</svg>`;
   const actInfo = info.mode === 'off' ? THERMO_ACTIONS.off : THERMO_ACTIONS[info.action] || null;
   const action = s.thermoShowAction && actInfo ? `<span class="thermo-action${working ? ' working' : ''}" style="--accent:${esc(accent)}"><i class="mdi ${actInfo[1]}"></i>${esc(tr(actInfo[0]))}</span>` : '';
-  const big = info.unavailable ? tr('Niedostępny') : value === null ? (info.mode === 'off' ? tr('Wył.') : '–') : info.target === null && info.low !== null ? `${thermoNumber(info.low, info.step)}–${thermoNumber(info.high, info.step)}` : thermoNumber(value, info.step);
+  const big = info.unavailable ? tr('Niedostępny') : value === null ? (info.mode === 'off' ? tr('Wył.') : '–') : info.target === null && info.low !== null ? `${thermoNumber(info.low, info.step, r.labelTargetSep)}–${thermoNumber(info.high, info.step, r.labelTargetSep)}` : thermoNumber(value, info.step);
   const centre = `<div class="thermo-centre"><small>${esc(tr(value === null && info.mode === 'off' ? 'Termostat' : 'Ustawiona'))}</small><b class="thermo-target${value === null || info.unavailable ? ' off' : ''}">${esc(big)}${!info.unavailable && value !== null ? '<sup>°</sup>' : ''}</b>${s.thermoShowCurrent && info.current !== null ? `<span class="thermo-now"><i class="mdi mdi-thermometer"></i>${esc(thermoNumber(info.current, .1))}°</span>` : ''}</div>`;
   const chips = [
     s.thermoShowHumidity && info.humidity !== null ? `<span class="thermo-chip"><i class="mdi mdi-water-percent"></i>${esc(String(Math.round(info.humidity)))}%</span>` : '',
