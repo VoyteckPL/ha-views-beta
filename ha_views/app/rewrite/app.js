@@ -1665,7 +1665,7 @@ function roomTextStyle(r, key, on = false) {
 // Ungrouped, the name and state get their own background and frame (like the icon) when they had none;
 // grouping again keeps the look they have.
 function togglePartFrames(room, grouping) {
-  if (grouping || room.soloPartLook) return;
+  if (grouping || room.soloPartLook || isThermoRoom(room)) return; /* (a thermostat's parts keep the frames they have - ungrouping turns none on) */
   ['labelName','labelState'].filter(key => room[key] && !room[`${key}Bg`] && !room[`${key}Border`]).forEach(key => { room[`${key}Bg`] = true; room[`${key}Border`] = true; });
 }
 // Switching grouping on / off keeps everything where it is on the plan: ungrouped parts take the places they had

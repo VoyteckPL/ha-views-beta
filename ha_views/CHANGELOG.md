@@ -1,3 +1,7 @@
+## 0.7.0-beta.841
+
+- Termostat: rozgrupowanie nie włącza już automatycznie tła i ramki nazwy ani stanu, gdy były wyłączone. Zwykłe etykiety działają jak dotąd.
+
 ## 0.7.0-beta.840
 
 - Termostat: w „Zaokrągleniu” temperatury ustawionej i aktualnej dochodzi opcja „Bez zbędnych zer” – 18 pokazuje się jako 18, a 18,5 jako 18,5 (zamiast 18,0).
