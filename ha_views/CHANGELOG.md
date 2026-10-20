@@ -1,3 +1,7 @@
+## 0.7.0-beta.829
+
+- Termostat: suwaki szerokości i wysokości części (nazwa, stan, temperatury, stan pracy) kończą się na brzegu ramki, zamiast zmniejszać szerokość i rozmiar tekstu tej części (rozgrupowany) albo przesuwać i zmniejszać pozostałe elementy (zgrupowany). Zmiana jednej części nie rusza już innych.
+
 ## 0.7.0-beta.828
 
 - Termostat, ikona: powiększanie koła ikony nie zmienia już rozmiaru ani położenia pozostałych elementów. Ikona rośnie wewnątrz ramki termostatu, jest przycinana na jej brzegu (nie wychodzi poza termostat), a suwak wielkości koła kończy się na rozmiarze ramki.
