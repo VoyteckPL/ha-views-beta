@@ -1,3 +1,7 @@
+## 0.7.0-beta.837
+
+- Termostat: przeciągając fioletowe boki pudełka tekstu, tekst od razu rośnie i maleje razem z pudełkiem i zatrzymuje się na marginesie wewnętrznym (wcześniej dopasowywał się dopiero po puszczeniu myszy).
+
 ## 0.7.0-beta.836
 
 - Termostat: suwak „Rozmiar tekstu” kończy się tam, gdzie tekst jeszcze zostawia ustawiony margines wewnętrzny. Wcześniej można było powiększyć czcionkę tak, że wchodziła w margines, choć suwak marginesu dalej pokazywał 10 px.

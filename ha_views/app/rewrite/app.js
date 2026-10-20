@@ -2650,6 +2650,7 @@ function startFreeResize(event, handle) {
   const textBox = !isCard && (isThermoRoom(room) ? THERMO_TEXT_PARTS.includes(key) && key !== 'labelPercent' : BOX_TEXT_KEYS.includes(key) || key === 'labelIcon'), sizeNode = node, sizeStart = startSize; /* (a thermostat's texts are sized by their dots like a label's name) */
   const setNum = v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) ? Number(v) : null;
   const textPad0 = textBox ? setNum(room[`${key}Padding`]) : null, textRad0 = textBox ? setNum(room[`${key}Radius`]) : null;
+  const thermoWant = isThermoRoom(room) ? (Number(room[`${key}SizeWant`]) > 0 ? Number(room[`${key}SizeWant`]) : Math.max(startSize, Number(THERMO_DEFAULT_LOOK[`${key}Size`]) || 0)) : 0;
   const insetSet = textBox && isThermoRoom(room) && Number.isFinite(Number(room[`${key}Inset`])) && room[`${key}Inset`] !== '' && room[`${key}Inset`] !== null ? clamp(Number(room[`${key}Inset`]), 0, 200) : 0; /* (a thermostat's inner margin set: the room kept round the text) */
   const realPadX0 = textBox ? parseFloat(getComputedStyle(node).paddingLeft) || 0 : 0, realPadY0 = textBox ? parseFloat(getComputedStyle(node).paddingTop) || 0 : 0, textPadX0 = Math.max(realPadX0, insetSet), textPadY0 = Math.max(realPadY0, insetSet);
   const textRadPx0 = textBox && key !== 'labelIcon' && (room[`${key}Bg`] || room[`${key}Border`]) ? parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0 : 0;
@@ -2861,6 +2862,8 @@ function startFreeResize(event, handle) {
         lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
         room[`${key}W`] = Math.round(lw * 10) / 10; room[`${key}H`] = Math.round(lh * 10) / 10; delete room[`${key}Lock`]; delete room[`${key}WideW`]; delete room[`${key}WideH`];
         if (textPad0 === null && textPadY0 > 0 && !insetSet) room[`${key}Padding`] = Math.round(textPadY0 * 10) / 10;
+        // (a thermostat's text follows its box as it is dragged - it grows back up to the size set and stops at its inner margin)
+        if (isThermoRoom(room)) { renderRoomLabels(); const fit = partSizeMax(room, key, undefined, true, insetSet > 0 ? 1 : 0); if (fit > 0) room[`${key}Size`] = Math.round(clamp(Math.min(thermoWant, fit), 6, 420) * 10) / 10; }
       } else {
       // Its width and height each follow the dot freely; the content scales with the tighter side (centred in the box).
       lw = Math.max(2 * textPadX0 + 8, lw); lh = Math.max(2 * textPadY0 + 6, lh);
