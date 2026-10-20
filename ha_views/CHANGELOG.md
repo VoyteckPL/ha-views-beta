@@ -1,3 +1,7 @@
+## 0.7.0-beta.833
+
+- Termostat: „Margines wewnętrzny” trzyma ustawioną wartość przy zmianie rozmiaru pudełka. Suwak nie obcina już pokazywanej wartości do rozmiaru pudełka (przy małym pudełku wyglądało to jak wyzerowanie marginesu, np. 10 → 2).
+
 ## 0.7.0-beta.832
 
 - Termostat, rozgrupowany: uchwyty na planszy (żółte narożniki i fioletowe boki) nazwy, stanu, temperatur i stanu pracy działają teraz jak w etykiecie. Poszerzenie pudełka znów powiększa tekst (wcześniej zostawał mały, np. 8 px), a zmiana wysokości nie zmienia szerokości i odwrotnie (wcześniej ramka zapadała się do 10 px wysokości albo 54 px szerokości).
