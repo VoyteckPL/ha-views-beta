@@ -1,3 +1,7 @@
+## 0.7.0-beta.843
+
+- Termostat, dodatkowe encje: każda encja (Encja 1–4) może teraz mieć osobną ikonę i osobną nazwę. W jej sekcji są przełączniki „Pokaż ikonę” i „Pokaż nazwę” (domyślnie wyłączone, więc istniejące termostaty wyglądają tak samo). Ikona domyślnie jest z encji (można wpisać własną), nazwa domyślnie z encji (można wpisać własny tekst). Każda część ma własną sekcję z rozmiarem, szerokością, wysokością, marginesem, kolorem, tłem i ramką oraz własne uchwyty na planszy, jak teksty.
+
 ## 0.7.0-beta.842
 
 - Termostat, dodatkowe encje (Encja 1–4): działają jak teksty – margines wewnętrzny, suwaki szerokości, wysokości i rozmiaru tekstu zatrzymują się na ramce i marginesie, tekst rośnie z powrotem razem z pudełkiem, uchwyty na planszy zachowują margines, a zmiana rozmiaru nie rusza pozostałych elementów. Nowo dodana encja ma margines wewnętrzny 10 px.
