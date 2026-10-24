@@ -1,3 +1,7 @@
+## 0.7.0-beta.846
+
+- Szybszy start: tło pokazane ostatnim razem zaczyna się pobierać od razu przy otwarciu aplikacji, równolegle z pobieraniem samej aplikacji, a nie dopiero po wczytaniu układu. Przy pierwszym uruchomieniu po aktualizacji działa jak dotąd (nazwa tła zapamiętuje się przy pierwszym wczytaniu).
+
 ## 0.7.0-beta.845
 
 - Szybsze otwieranie aplikacji: pliki aplikacji (app.js, app.css) są kompresowane (z ok. 1,65 MB do ok. 450 KB) i zapamiętywane w telefonie / przeglądarce na stałe, dopóki nie wyjdzie nowa wersja. Pierwsze otwarcie po aktualizacji pobiera około 450 KB, kolejne praktycznie nic. Wcześniej cała aplikacja pobierała się w całości, bez kompresji, przy każdym otwarciu.

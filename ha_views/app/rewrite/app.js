@@ -9126,6 +9126,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false, prefetch
     view.solidCanvasRatio ||= mobileView() ? 9 / 16 : 16 / 9; syncCanvasControls();
     if (els.solidCanvasRatio) els.solidCanvasRatio.value = String([1.7777777778,1.3333333333,1,.5625].reduce((best, ratio) => Math.abs(ratio - view.solidCanvasRatio) < Math.abs(best - view.solidCanvasRatio) ? ratio : best, 1.7777777778));
     applyBackgroundColour(); updateEmptyState(); els.image.hidden = !currentBackground; syncBackgroundTransformControls();
+    if (!currentBackground) { try { localStorage.removeItem('ha-views:bg-preload'); } catch {} }
     if (currentBackground) {
       applyBackgroundTransform(); applyBackgroundBrightness();
       const cacheKey = bustCache ? `&v=${Date.now()}` : '', src = `api/background/file?name=${encodeURIComponent(currentBackground)}${cacheKey}`;
@@ -9136,6 +9137,7 @@ async function loadBackgrounds(waitForImage = false, bustCache = false, prefetch
           els.image.addEventListener('load', done, { once:true }); els.image.addEventListener('error', done, { once:true });
         });
         els.image.dataset.backgroundName = currentBackground; els.image.src = src;
+        if (!bustCache) { try { localStorage.setItem('ha-views:bg-preload', currentBackground); } catch {} } // (read by index.html: the next start downloads it at once)
         if (waitForImage) await (imageTimeout > 0 ? Promise.race([loaded, new Promise(resolve => setTimeout(resolve, imageTimeout))]) : loaded);
       }
     } else { els.image.removeAttribute('src'); delete els.image.dataset.backgroundName; applyBackgroundTransform(); updateSceneGeometry(); }

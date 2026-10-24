@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link id="mdi-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
   <style>.app-booting .markers,.app-booting .scene-empty,.app-booting .selection,.app-booting .flow-selection,.app-booting #edit-toggle,.app-booting #view-manage,.app-booting #settings-toggle{visibility:hidden!important}</style>
-  <link rel="stylesheet" href="rewrite-assets/app.css?v=20261024-845">
+  <link rel="stylesheet" href="rewrite-assets/app.css?v=20261024-846">
+  <script>
+    // The background shown last time starts downloading now, alongside the app, not after the layout has arrived.
+    try { var bgName = localStorage.getItem('ha-views:bg-preload'); if (bgName) { var pre = document.createElement('link'); pre.rel = 'preload'; pre.as = 'image'; pre.href = 'api/background/file?name=' + encodeURIComponent(bgName); document.head.appendChild(pre); } } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -384,6 +388,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script type="module" src="rewrite-assets/app.js?v=20261024-845"></script>
+  <script type="module" src="rewrite-assets/app.js?v=20261024-846"></script>
 </body>
 </html>
