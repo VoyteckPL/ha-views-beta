@@ -1,3 +1,7 @@
+## 0.7.0-beta.845
+
+- Szybsze otwieranie aplikacji: pliki aplikacji (app.js, app.css) są kompresowane (z ok. 1,65 MB do ok. 450 KB) i zapamiętywane w telefonie / przeglądarce na stałe, dopóki nie wyjdzie nowa wersja. Pierwsze otwarcie po aktualizacji pobiera około 450 KB, kolejne praktycznie nic. Wcześniej cała aplikacja pobierała się w całości, bez kompresji, przy każdym otwarciu.
+
 ## 0.7.0-beta.844
 
 - Naprawiony błąd zapisu „Stan jest za duży”: limit zapisu stanu podniesiony z 2 MB do 8 MB, a ikona i nazwa dodatkowych encji nie powiększają już każdej etykiety i pokoju (ich wygląd jest kopiowany dopiero po ich włączeniu).

@@ -1,6 +1,8 @@
 import os
 import asyncio
+import gzip
 import json
+import mimetypes
 import re
 import shutil
 import time
@@ -2066,11 +2068,54 @@ async def index(request):
 @web.middleware
 async def frontend_no_store(request, handler):
     response = await handler(request)
-    if request.path.startswith("/rewrite-assets/"):
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        response.headers["Pragma"] = "no-cache"
-        response.headers["Expires"] = "0"
+    # (the app's own files - /rewrite-assets/ - are served by rewrite_asset below, with their own cache rules)
     return response
+
+
+# The app's files (app.js, app.css, ...): compressed once and kept in memory, and cached by the browser for good when the
+# address carries the version (?v=...: it changes with every release, so a new version is always fetched afresh).
+REWRITE_ASSET_DIR = os.path.realpath("/app/rewrite")
+COMPRESSIBLE_ASSETS = {".js", ".css", ".html", ".json", ".svg", ".txt", ".map"}
+_asset_cache = {}
+
+
+def _asset_entry(path):
+    stat = os.stat(path)
+    key = (stat.st_mtime_ns, stat.st_size)
+    cached = _asset_cache.get(path)
+    if cached and cached["key"] == key:
+        return cached
+    with open(path, "rb") as handle:
+        raw = handle.read()
+    ext = os.path.splitext(path)[1].lower()
+    gz = gzip.compress(raw, 6, mtime=0) if ext in COMPRESSIBLE_ASSETS and len(raw) > 1024 else None
+    ctype = mimetypes.guess_type(path)[0] or "application/octet-stream"
+    entry = {"key": key, "raw": raw, "gz": gz, "ctype": ctype, "etag": '"%x-%x"' % (stat.st_mtime_ns, stat.st_size)}
+    _asset_cache[path] = entry
+    return entry
+
+
+async def rewrite_asset(request):
+    name = request.match_info.get("name", "")
+    path = os.path.realpath(os.path.join(REWRITE_ASSET_DIR, name))
+    if not path.startswith(REWRITE_ASSET_DIR + os.sep) or not os.path.isfile(path):
+        raise web.HTTPNotFound()
+    entry = await asyncio.get_running_loop().run_in_executor(None, _asset_entry, path)
+    headers = {
+        "ETag": entry["etag"],
+        "Vary": "Accept-Encoding",
+        # With the version in the address the file never changes under it: kept for a year. Without it: asked about each time.
+        "Cache-Control": "public, max-age=31536000, immutable" if request.query.get("v") else "no-cache",
+    }
+    if request.headers.get("If-None-Match") == entry["etag"]:
+        return web.Response(status=304, headers=headers)
+    body, encoding = entry["raw"], None
+    if entry["gz"] is not None and "gzip" in request.headers.get("Accept-Encoding", "").lower():
+        body, encoding = entry["gz"], "gzip"
+    if encoding:
+        headers["Content-Encoding"] = encoding
+    headers["Content-Type"] = entry["ctype"] + ("; charset=utf-8" if entry["ctype"].startswith("text/") or entry["ctype"] in ("application/javascript", "application/json") else "")
+    return web.Response(body=body, headers=headers)
 
 
 # ===== HA VIEWS CARD V1 =====
@@ -2190,11 +2235,7 @@ app.router.add_get("/api/rewrite_state_revision", api_rewrite_state_revision)
 app.router.add_post("/api/rewrite_state", api_rewrite_state_save)
 app.router.add_get("/api/integration_icon", api_integration_icon)
 
-app.router.add_static(
-    "/rewrite-assets/",
-    "/app/rewrite/",
-    show_index=False
-)
+app.router.add_get("/rewrite-assets/{name:.+}", rewrite_asset)
 
 app.router.add_static(
     "/static/",
